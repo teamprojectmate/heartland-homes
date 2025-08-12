@@ -2,24 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useSelector } from 'react-redux'; // Імпортуємо useSelector для доступу до стану Redux
 
-// Моковані дані для розробки. Видали їх або закоментуй, коли бекенд буде готовий.
-const mockBookingsDetails = {
-  '101': {
-    accommodationId: 'Затишна квартира в центрі',
-    totalAmount: 250,
-  },
-  '102': {
-    accommodationId: 'Котедж в горах',
-    totalAmount: 400,
-  },
-};
+// URL для бекенду.
+const BASE_URL = 'http://localhost:8080/api/v1';
 
 const Payment = () => {
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
   const { bookingId } = useParams();
+  const { isAuthenticated, token } = useSelector((state) => state.auth); // Отримуємо токен з Redux
 
   const [bookingDetails, setBookingDetails] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -28,53 +21,53 @@ const Payment = () => {
   const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
-    // Отримуємо деталі бронювання для відображення.
-    // Замінимо реальний API-запит на моковані дані.
+    if (!isAuthenticated || !token) {
+      navigate('/login');
+      return;
+    }
+
     const fetchBookingDetails = async () => {
       try {
-        // Закоментуй цей блок, коли будеш використовувати реальний бекенд.
-        // const token = JSON.parse(localStorage.getItem('user')).token;
-        // const response = await axios.get(
-        //   `http://localhost:8080/api/v1/bookings/${bookingId}`,
-        //   {
-        //     headers: {
-        //       'Authorization': `Bearer ${token}`
-        //     }
-        //   }
-        // );
-        // setBookingDetails(response.data);
-
-        // Цей блок використовує моковані дані.
-        const details = mockBookingsDetails[bookingId];
-        if (details) {
-          setBookingDetails(details);
-        } else {
-          setError('Бронювання не знайдено.');
-        }
-
+        setLoading(true);
+        // Робимо реальний запит до бекенду, щоб отримати деталі бронювання
+        const response = await axios.get(`${BASE_URL}/bookings/${bookingId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setBookingDetails(response.data);
       } catch (err) {
-        setError(err.message);
+        setError(err.response?.data?.message || err.message || 'Не вдалося отримати деталі бронювання.');
       } finally {
         setLoading(false);
       }
     };
     fetchBookingDetails();
-  }, [bookingId]);
+  }, [bookingId, isAuthenticated, token, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setProcessing(true);
 
-    if (!stripe || !elements) {
+    if (!stripe || !elements || !bookingDetails) {
+      setProcessing(false);
       return;
     }
 
     try {
-      // Крок 1: Замість реального запиту на бекенд, імітуємо його.
-      console.log('Імітуємо запит до бекенду для створення PaymentIntent...');
-      const clientSecret = 'pi_3PjA3E2eZvKYlo2C0pYdE6a1_secret_gX3XJ3X3X3X3X3X3X3X3X3X3X3'; // Мокований client_secret
-
-      // Крок 2: Підтвердження оплати з клієнтської сторони.
+      // Крок 1: Відправляємо запит на бекенд для створення PaymentIntent
+      const response = await axios.post(
+        `${BASE_URL}/payments/create`,
+        { bookingId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const { clientSecret } = response.data;
+      
+      // Крок 2: Підтвердження оплати з клієнтської сторони
       const cardElement = elements.getElement(CardElement);
       const { paymentIntent, error } = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
@@ -90,7 +83,7 @@ const Payment = () => {
         navigate('/bookings/my');
       }
     } catch (err) {
-      setPaymentError(err.response?.data?.message || err.message);
+      setPaymentError(err.response?.data?.message || err.message || 'Помилка при обробці платежу.');
       setProcessing(false);
     }
   };
@@ -103,8 +96,8 @@ const Payment = () => {
       <h2>Оплата бронювання</h2>
       {bookingDetails && (
         <div className="alert alert-info">
-          Помешкання: **{bookingDetails.accommodationId}**,
-          Ціна: **{bookingDetails.totalAmount} $**
+          Помешкання: <strong>{bookingDetails.accommodationName}</strong>,
+          Сума: <strong>{bookingDetails.totalAmount} $</strong>
         </div>
       )}
 
