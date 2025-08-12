@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 
 const BASE_URL = 'http://localhost:8080/api/v1';
 
 const AccommodationDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  // Отримуємо isAuthenticated і токен з Redux-стану
+  const { isAuthenticated, token } = useSelector((state) => state.auth);
 
   const [accommodation, setAccommodation] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -39,9 +39,7 @@ const AccommodationDetails = () => {
     }
 
     try {
-      // Отримуємо токен з локального сховища
-      const token = JSON.parse(localStorage.getItem('token'));
-      
+      // ✅ Отримуємо токен з Redux-стану замість localStorage
       const response = await axios.post(
         `${BASE_URL}/bookings`,
         {

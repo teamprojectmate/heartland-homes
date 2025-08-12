@@ -3,52 +3,27 @@ import axios from 'axios'; // Імпортуємо axios для запитів
 import { useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 
-// Моковані дані для розробки
-const mockBookings = [
-  {
-    id: 101,
-    accommodationId: 1,
-    accommodationName: 'Затишна квартира в центрі',
-    checkInDate: '2025-08-20',
-    checkOutDate: '2025-08-25',
-    totalAmount: 250,
-    isPaid: false, // Додано для імітації статусу оплати
-  },
-  {
-    id: 102,
-    accommodationId: 3,
-    accommodationName: 'Котедж в горах',
-    checkInDate: '2025-09-10',
-    checkOutDate: '2025-09-15',
-    totalAmount: 400,
-    isPaid: true,
-  },
-];
+// Моковані дані для розробки. Цей код було видалено, оскільки тепер ми використовуємо реальний бекенд.
 
 const MyBookings = () => {
   const navigate = useNavigate();
-  const { user, isAuthenticated } = useSelector((state) => state.auth);
+  // Тепер отримуємо token з Redux стану, а не з localStorage напряму
+  const { user, isAuthenticated, token } = useSelector((state) => state.auth);
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    // Перевіряємо, чи користувач автентифікований і чи є токен
+    if (!isAuthenticated || !token) {
       navigate('/login');
       return;
     }
 
-    // Симулюємо запит до API з мокованими даними
-    setTimeout(() => {
-      setBookings(mockBookings);
-      setLoading(false);
-    }, 500);
-
-    // Коли бекенд буде готовий, заміни цей код на реальний запит
-    /*
     const fetchBookings = async () => {
       try {
-        const token = user.token;
+        setLoading(true);
+        // Робимо реальний запит до API з використанням токена
         const response = await axios.get('http://localhost:8080/api/v1/bookings/my', {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -56,14 +31,15 @@ const MyBookings = () => {
         });
         setBookings(response.data);
       } catch (err) {
-        setError(err.message);
+        // Додаємо більш детальну обробку помилок
+        setError(err.response?.data?.message || err.message || 'Не вдалося отримати бронювання');
       } finally {
         setLoading(false);
       }
     };
+    
     fetchBookings();
-    */
-  }, [isAuthenticated, navigate, user]);
+  }, [isAuthenticated, navigate, token]); // Додали token до залежностей useEffect
 
   if (loading) {
     return (
@@ -105,7 +81,6 @@ const MyBookings = () => {
                     Дати: {new Date(booking.checkInDate).toLocaleDateString()} - {new Date(booking.checkOutDate).toLocaleDateString()}
                   </p>
                   <p className="card-text">Сума: {booking.totalAmount} $</p>
-                  {/* Умовний рендеринг кнопки оплати, як ми обговорювали */}
                   {!booking.isPaid ? (
                     <Link to={`/payment/${booking.id}`} className="btn btn-outline-success">
                       Оплатити
