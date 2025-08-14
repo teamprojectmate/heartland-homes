@@ -1,45 +1,44 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const BASE_URL = 'http://localhost:8080/api/v1';
+const BASE_URL = "http://localhost:8080/api/v1";
 
 const Profile = () => {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [isEditMode, setIsEditMode] = useState(false);
 
   const { isAuthenticated, token } = useSelector((state) => state.auth);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Якщо користувач не аутентифікований, перенаправляємо на сторінку входу
     if (!isAuthenticated) {
-      navigate('/login');
+      navigate("/login");
       return;
     }
 
-    // Завантажуємо дані профілю з бекенду
     const fetchProfile = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${BASE_URL}/users/me`, {
+        // ✅ Виправлення: Змінюємо URL на /users
+        const response = await axios.get(`${BASE_URL}/users`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
         setUsername(response.data.username);
         setEmail(response.data.email);
-        setFirstName(response.data.firstName || '');
-        setLastName(response.data.lastName || '');
+        setFirstName(response.data.firstName || "");
+        setLastName(response.data.lastName || "");
         setLoading(false);
       } catch (err) {
-        setMessage('Не вдалося завантажити профіль.');
+        setMessage("Не вдалося завантажити профіль.");
         setLoading(false);
       }
     };
@@ -51,16 +50,17 @@ const Profile = () => {
     try {
       setLoading(true);
       const updatedUser = { username, email, firstName, lastName };
-      await axios.put(`${BASE_URL}/users/me`, updatedUser, {
+      // ✅ Виправлення: Змінюємо URL на /users
+      await axios.put(`${BASE_URL}/users`, updatedUser, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      setMessage('Профіль успішно оновлено!');
+      setMessage("Профіль успішно оновлено!");
       setLoading(false);
       setIsEditMode(false);
     } catch (err) {
-      setMessage('Не вдалося оновити профіль.');
+      setMessage("Не вдалося оновити профіль.");
       setLoading(false);
     }
   };
@@ -79,7 +79,9 @@ const Profile = () => {
         <div className="col-md-6 offset-md-3 col-xs-12">
           <h1 className="text-xs-center">Профіль</h1>
           {message && (
-            <div className={`alert ${message.includes('успішно') ? 'alert-success' : 'alert-danger'}`}>
+            <div
+              className={`alert ${message.includes("успішно") ? "alert-success" : "alert-danger"}`}
+            >
               {message}
             </div>
           )}

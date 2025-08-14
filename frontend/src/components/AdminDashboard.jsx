@@ -1,15 +1,15 @@
-import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    // Перевірка, чи користувач є адміністратором
-    if (!user || user.role !== 'ADMIN') {
-      navigate('/'); // Перенаправляємо, якщо не адміністратор
+    // ✅ Виправлення: Перевірка на роль 'MANAGER'
+    if (!user || user.role !== "MANAGER") {
+      navigate("/"); // Перенаправляємо, якщо не адміністратор
     }
   }, [user, navigate]);
 
@@ -28,9 +28,7 @@ const AdminDashboard = () => {
                   </Link>
                 </li>
                 <li className="list-group-item">
-                  <Link to="/admin/bookings">
-                    Управління бронюваннями
-                  </Link>
+                  <Link to="/admin/bookings">Управління бронюваннями</Link>
                 </li>
               </ul>
             </div>

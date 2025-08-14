@@ -1,25 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useSelector } from "react-redux";
 
-const BASE_URL = 'http://localhost:8080/api/v1';
+const BASE_URL = "http://localhost:8080/api/v1";
 
 const AccommodationDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  // Отримуємо isAuthenticated і токен з Redux-стану
   const { isAuthenticated, token } = useSelector((state) => state.auth);
 
   const [accommodation, setAccommodation] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [checkInDate, setCheckInDate] = useState('');
-  const [checkOutDate, setCheckOutDate] = useState('');
+  const [checkInDate, setCheckInDate] = useState("");
+  const [checkOutDate, setCheckOutDate] = useState("");
 
   useEffect(() => {
     const fetchAccommodation = async () => {
       try {
+        // Запит до бекенду для отримання даних про житло
         const response = await axios.get(`${BASE_URL}/accommodations/${id}`);
         setAccommodation(response.data);
       } catch (err) {
@@ -34,14 +34,13 @@ const AccommodationDetails = () => {
   const handleBooking = async (e) => {
     e.preventDefault();
     if (!isAuthenticated) {
-      navigate('/login');
+      navigate("/login");
       return;
     }
 
     try {
-      // ✅ Отримуємо токен з Redux-стану замість localStorage
       const response = await axios.post(
-        `${BASE_URL}/bookings`,
+        `${BASE_URL}/bookings`, // Припускаємо, що ендпоінт для бронювання - /bookings
         {
           accommodationId: id,
           checkInDate,
@@ -49,17 +48,15 @@ const AccommodationDetails = () => {
         },
         {
           headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        }
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
-      console.log('Бронювання успішне!', response.data);
-      // Перенаправляємо на сторінку оплати з ID бронювання
-      navigate(`/payment/${response.data.id}`); 
+      console.log("Бронювання успішне!", response.data);
+      navigate(`/payment/${response.data.id}`);
     } catch (err) {
-      console.error('Помилка бронювання:', err.response.data);
-      // Додаємо обробку помилки для користувача
-      setError(err.response?.data?.message || 'Помилка бронювання');
+      console.error("Помилка бронювання:", err.response?.data?.message || err.message);
+      setError(err.response?.data?.message || "Помилка бронювання");
     }
   };
 
@@ -78,44 +75,60 @@ const AccommodationDetails = () => {
   return (
     <div className="container mt-4">
       <div className="card">
-        {/* <img src={accommodation.imageUrl} className="card-img-top" alt={accommodation.name} /> */}
+        {/* Використовуємо поле 'picture' з бекенду */}
+        {accommodation.picture && (
+          <img src={accommodation.picture} className="card-img-top" alt={accommodation.location} />
+        )}
         <div className="card-body">
-          <h1 className="card-title">{accommodation.name}</h1>
-          <p className="card-text"><strong>Опис:</strong> {accommodation.description}</p>
-          <p className="card-text"><strong>Ціна за ніч:</strong> {accommodation.pricePerNight} $</p>
-          <p className="card-text"><strong>Адреса:</strong> {accommodation.address}</p>
-          <p className="card-text"><strong>Рейтинг:</strong> {accommodation.rating}</p>
-          
+          <h1 className="card-title">{accommodation.location}</h1>
+          <p className="card-text">
+            <strong>Тип:</strong> {accommodation.type}
+          </p>
+          <p className="card-text">
+            <strong>Розмір:</strong> {accommodation.size}
+          </p>
+          <p className="card-text">
+            <strong>Зручності:</strong> {accommodation.amenities.join(", ")}
+          </p>
+          <p className="card-text">
+            <strong>Ціна за добу:</strong> {accommodation.dailyRate} $
+          </p>
+          <p className="card-text">
+            <strong>Доступно:</strong> {accommodation.availability}
+          </p>
+          <p className="card-text">
+            <strong>Адреса:</strong> {accommodation.location}
+          </p>
+
           <hr />
 
+          {/* Форма бронювання */}
           <form onSubmit={handleBooking}>
             <h3>Забронювати</h3>
             <div className="form-group">
               <label>Дата заїзду:</label>
-              <input 
-                type="date" 
-                className="form-control" 
-                value={checkInDate} 
-                onChange={(e) => setCheckInDate(e.target.value)} 
-                required 
+              <input
+                type="date"
+                className="form-control"
+                value={checkInDate}
+                onChange={(e) => setCheckInDate(e.target.value)}
+                required
               />
             </div>
             <div className="form-group mt-3">
               <label>Дата виїзду:</label>
-              <input 
-                type="date" 
-                className="form-control" 
-                value={checkOutDate} 
-                onChange={(e) => setCheckOutDate(e.target.value)} 
-                required 
+              <input
+                type="date"
+                className="form-control"
+                value={checkOutDate}
+                onChange={(e) => setCheckOutDate(e.target.value)}
+                required
               />
             </div>
-            {error && (
-              <div className="alert alert-danger mt-3">
-                {error}
-              </div>
-            )}
-            <button type="submit" className="btn btn-success mt-3">Забронювати</button>
+            {error && <div className="alert alert-danger mt-3">{error}</div>}
+            <button type="submit" className="btn btn-success mt-3" disabled={!accommodation.availability}>
+              Забронювати
+            </button>
           </form>
         </div>
       </div>

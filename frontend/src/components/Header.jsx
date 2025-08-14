@@ -1,23 +1,22 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import { logout } from '../store/slices/authSlice';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../store/slices/authSlice";
 
 const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user, isAuthenticated } = useSelector((state) => state.auth);
 
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate('/login');
+    navigate("/login");
   };
 
   const handleSearch = (e) => {
     e.preventDefault();
-    // Перенаправляємо на сторінку помешкань з параметром запиту
     if (searchQuery.trim()) {
       navigate(`/accommodations?query=${searchQuery}`);
     } else {
@@ -52,8 +51,8 @@ const Header = () => {
           </li>
           {isAuthenticated ? (
             <>
-              {/* Додаємо посилання на адмін-панель, якщо користувач є адміном */}
-              {user && user.role === 'ADMIN' && (
+              {/* ✅ Виправлення: перевіряємо на роль 'MANAGER' */}
+              {user && user.role === "MANAGER" && (
                 <li className="nav-item">
                   <Link className="nav-link" to="/admin">
                     <i className="ion-gear-a"></i> Адмін-панель
@@ -66,12 +65,18 @@ const Header = () => {
                 </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/profile">
-                  <i className="ion-person"></i> Профіль ({user.username})
-                </Link>
+                {user && (
+                  <Link className="nav-link" to="/profile">
+                    <i className="ion-person"></i> Профіль ({user.username})
+                  </Link>
+                )}
               </li>
               <li className="nav-item">
-                <a className="nav-link" onClick={handleLogout} style={{ cursor: 'pointer' }}>
+                <a
+                  className="nav-link"
+                  onClick={handleLogout}
+                  style={{ cursor: "pointer" }}
+                >
                   <i className="ion-power"></i> Вийти
                 </a>
               </li>
