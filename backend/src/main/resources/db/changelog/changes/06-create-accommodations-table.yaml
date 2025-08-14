@@ -24,6 +24,11 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: city
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
                   name: size
                   type: VARCHAR(255)
                   constraints:
@@ -39,8 +44,10 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: picture
+                  name: image
                   type: VARCHAR(255)
+                  constraints:
+                    nullable: false
               - column:
                   name: is_deleted
                   type: TINYINT(1)

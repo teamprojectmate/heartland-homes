@@ -1,15 +1,18 @@
 package booking.service.service.impl;
 
 import booking.service.dto.accommodation.AccommodationDto;
+import booking.service.dto.accommodation.AccommodationSearchParametersDto;
 import booking.service.dto.accommodation.CreateAccommodationRequestDto;
 import booking.service.exception.EntityNotFoundException;
 import booking.service.mapper.AccommodationMapper;
 import booking.service.model.Accommodation;
 import booking.service.repository.accommodation.AccommodationRepository;
+import booking.service.repository.accommodation.AccommodationSpecificationBuilder;
 import booking.service.service.AccommodationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,6 +21,7 @@ public class AccommodationServiceImpl implements AccommodationService {
 
     private final AccommodationRepository accommodationRepository;
     private final AccommodationMapper accommodationMapper;
+    private final AccommodationSpecificationBuilder accommodationSpecificationBuilder;
 
     @Override
     public AccommodationDto save(CreateAccommodationRequestDto requestDto) {
@@ -55,6 +59,16 @@ public class AccommodationServiceImpl implements AccommodationService {
             throw new EntityNotFoundException("Can't find accommodation by id: " + id);
         }
         accommodationRepository.deleteById(id);
+    }
+
+    @Override
+    public Page<AccommodationDto> search(AccommodationSearchParametersDto params,
+            Pageable pageable) {
+        Specification<Accommodation> accommodationSpecificationSpecification =
+                accommodationSpecificationBuilder.build(params);
+        Page<Accommodation> accommodationPagePage = accommodationRepository
+                .findAll(accommodationSpecificationSpecification, pageable);
+        return accommodationPagePage.map(accommodationMapper::toDto);
     }
 }
 

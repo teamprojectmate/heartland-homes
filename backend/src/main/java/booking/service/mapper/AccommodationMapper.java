@@ -17,5 +17,6 @@ public interface AccommodationMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "deleted", ignore = true)
-    void updateAccommodationFromDto(CreateAccommodationRequestDto requestDto, @MappingTarget Accommodation accommodation);
+    void updateAccommodationFromDto(CreateAccommodationRequestDto requestDto,
+            @MappingTarget Accommodation accommodation);
 }
