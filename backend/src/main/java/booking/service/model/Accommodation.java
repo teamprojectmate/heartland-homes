@@ -35,8 +35,12 @@ public class Accommodation {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private AccommodationType type;
+
     @Column(nullable = false)
     private String location;
+
+    @Column(nullable = false)
+    private String city;
 
     @Column(nullable = false)
     private String size;
@@ -55,7 +59,8 @@ public class Accommodation {
     @Column(nullable = false)
     private Integer availability;
 
-    private String picture;
+    @Column(nullable = false)
+    private String image;
 
     @Column(nullable = false)
     private boolean isDeleted = false;

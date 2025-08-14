@@ -1,6 +1,7 @@
 package booking.service.controller;
 
 import booking.service.dto.accommodation.AccommodationDto;
+import booking.service.dto.accommodation.AccommodationSearchParametersDto;
 import booking.service.dto.accommodation.CreateAccommodationRequestDto;
 import booking.service.service.AccommodationService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,14 +33,16 @@ public class AccommodationController {
     @PreAuthorize("hasRole('MANAGER')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Save a new accommodation", description = "Add a new accommodation to inventory")
+    @Operation(summary = "Save a new accommodation",
+            description = "Add a new accommodation to inventory")
     public AccommodationDto save(@RequestBody @Valid CreateAccommodationRequestDto requestDto) {
         return accommodationService.save(requestDto);
     }
 
     @PreAuthorize("hasAnyRole('CUSTOMER', 'MANAGER')")
     @GetMapping
-    @Operation(summary = "Get a list of accommodations", description = "Get a page of available accommodations")
+    @Operation(summary = "Get a list of accommodations",
+            description = "Get a page of available accommodations")
     public Page<AccommodationDto> findAll(Pageable pageable) {
         return accommodationService.findAll(pageable);
     }
@@ -66,5 +69,14 @@ public class AccommodationController {
     @Operation(summary = "Delete accommodation", description = "Remove accommodation by id")
     public void delete(@PathVariable Long id) {
         accommodationService.deleteById(id);
+    }
+
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'MANAGER')")
+    @GetMapping("/search")
+    @Operation(summary = "Search accommodations",
+            description = "Search accommodations by selected parameters with pagination")
+    public Page<AccommodationDto> search(
+            AccommodationSearchParametersDto searchParameters, Pageable pageable) {
+        return accommodationService.search(searchParameters, pageable);
     }
 }

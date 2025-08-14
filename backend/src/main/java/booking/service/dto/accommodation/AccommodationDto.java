@@ -12,8 +12,10 @@ public class AccommodationDto {
     private Long id;
     private AccommodationType type;
     private String location;
+    private String city;
     private String size;
     private List<String> amenities;
     private BigDecimal dailyRate;
     private Integer availability;
+    private String image;
 }

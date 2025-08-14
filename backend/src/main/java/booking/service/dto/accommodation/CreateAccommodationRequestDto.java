@@ -19,6 +19,9 @@ public class CreateAccommodationRequestDto {
     private String location;
 
     @NotBlank
+    private String city;
+
+    @NotBlank
     private String size;
 
     @NotNull
@@ -31,4 +34,7 @@ public class CreateAccommodationRequestDto {
     @NotNull
     @Positive
     private Integer availability;
+
+    @NotNull
+    private String image;
 }
