@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 const BASE_URL = "http://localhost:8080/api/v1";
 
 const Profile = () => {
-  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -26,13 +25,12 @@ const Profile = () => {
     const fetchProfile = async () => {
       try {
         setLoading(true);
-        // ✅ Виправлення: Змінюємо URL на /users
-        const response = await axios.get(`${BASE_URL}/users`, {
+        // ✅ Виправлення: Змінюємо URL на /users/me
+        const response = await axios.get(`${BASE_URL}/users/me`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        setUsername(response.data.username);
         setEmail(response.data.email);
         setFirstName(response.data.firstName || "");
         setLastName(response.data.lastName || "");
@@ -49,9 +47,10 @@ const Profile = () => {
     e.preventDefault();
     try {
       setLoading(true);
-      const updatedUser = { username, email, firstName, lastName };
-      // ✅ Виправлення: Змінюємо URL на /users
-      await axios.put(`${BASE_URL}/users`, updatedUser, {
+      // ✅ Виправлення: Прибираємо `username`
+      const updatedUser = { email, firstName, lastName };
+      // ✅ Виправлення: Змінюємо URL на /users/me
+      await axios.put(`${BASE_URL}/users/me`, updatedUser, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -87,16 +86,7 @@ const Profile = () => {
           )}
           <form onSubmit={handleUpdate}>
             <fieldset disabled={!isEditMode}>
-              <fieldset className="form-group">
-                <input
-                  className="form-control form-control-lg"
-                  type="text"
-                  placeholder="Ім'я користувача"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  required
-                />
-              </fieldset>
+              {/* ✅ Виправлення: Прибрано поле `username` */}
               <fieldset className="form-group">
                 <input
                   className="form-control form-control-lg"

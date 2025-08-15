@@ -29,8 +29,8 @@ const logout = () => {
   localStorage.removeItem('user');
 };
 
-const updateUser = async (userId, userData, token) => {
-  const response = await axios.put(`${USERS_API_URL}/${userId}/me`, userData, {
+const updateUser = async (userData, token) => {
+  const response = await axios.put(USERS_API_URL, userData, {
     headers: {
       'Authorization': `Bearer ${token}`,
     },

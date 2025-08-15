@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const BASE_URL = "http://localhost:8080/api/v1"; // ✅ Додано `/api/v1`
+const BASE_URL = "http://localhost:8080/api/v1";
 
 export const login = createAsyncThunk(
   "auth/login",
@@ -9,7 +9,6 @@ export const login = createAsyncThunk(
     try {
       const response = await axios.post(`${BASE_URL}/auth/login`, credentials);
       if (response.data && response.data.token) {
-        // ✅ Зберігаємо токен та дані користувача
         localStorage.setItem("user", JSON.stringify(response.data));
         return response.data;
       } else {
@@ -28,22 +27,14 @@ export const register = createAsyncThunk(
   "auth/register",
   async (userData, { rejectWithValue }) => {
     try {
-      // ✅ Виправлення: Змінюємо `registration` на `register`
-      const response = await axios.post(`${BASE_URL}/auth/register`, userData);
-      // При успішній реєстрації можемо автоматично увійти
-      const loginResponse = await axios.post(`${BASE_URL}/auth/login`, {
-        email: userData.email,
-        password: userData.password,
-      });
-      if (loginResponse.data && loginResponse.data.token) {
-        // ✅ Зберігаємо токен та дані користувача
-        localStorage.setItem("user", JSON.stringify(loginResponse.data));
-        return loginResponse.data;
-      } else {
-        return rejectWithValue({
-          message: "Токен не був отриманий після реєстрації.",
-        });
-      }
+      // ✅ Виправлення: Змінюємо URL на `/auth/registration`
+      const response = await axios.post(
+        `${BASE_URL}/auth/registration`,
+        userData,
+      );
+      // ✅ Зміни: Після успішної реєстрації просто повертаємо відповідь.
+      // Користувач буде перенаправлений на сторінку входу.
+      return response.data;
     } catch (error) {
       console.error("Registration error:", error.response.data);
       return rejectWithValue(error.response.data);
@@ -51,7 +42,6 @@ export const register = createAsyncThunk(
   },
 );
 
-// Отримуємо об'єкт користувача з локального сховища
 const savedUser = localStorage.getItem("user");
 const initialState = {
   user: savedUser ? JSON.parse(savedUser) : null,
@@ -66,7 +56,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
-      localStorage.removeItem("user"); // ✅ Видаляємо весь об'єкт
+      localStorage.removeItem("user");
       state.user = null;
       state.isAuthenticated = false;
       state.token = null;
@@ -81,7 +71,6 @@ const authSlice = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
         state.isAuthenticated = true;
-        // ✅ Зберігаємо весь об'єкт користувача
         state.user = action.payload;
         state.token = action.payload.token;
       })
@@ -96,12 +85,10 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
+      // ✅ Зміни: Після успішної реєстрації ми не входимо автоматично
       .addCase(register.fulfilled, (state, action) => {
         state.loading = false;
-        state.isAuthenticated = true;
-        // ✅ Зберігаємо весь об'єкт користувача
-        state.user = action.payload;
-        state.token = action.payload.token;
+        state.error = null;
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;

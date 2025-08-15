@@ -1,9 +1,5 @@
-// cypress/e2e/e2e.cy.jsx
-
 describe("Повні E2E сценарії для застосунку оренди помешкань", () => {
-  // Використовуємо beforeEach для імітації запиту і очищення стану перед кожним тестом
   beforeEach(() => {
-    // Мокуємо запит до помешкань, щоб запобігти таймауту на початковому завантаженні
     cy.intercept("GET", "**/api/v1/accommodations*", {
       statusCode: 200,
       body: {
@@ -31,44 +27,35 @@ describe("Повні E2E сценарії для застосунку оренд
     }).as("getAccommodations");
 
     cy.visit("http://localhost:5173/");
-    // Очищаємо локальне сховище та очікуємо, поки запит буде виконано.
-    // Це забезпечує, що кожен тест починається з неавторизованого стану.
     cy.clearLocalStorage();
     cy.wait("@getAccommodations");
   });
 
   // ==================== Тестування реєстрації ====================
-  it("повинен успішно зареєструвати нового користувача та автоматично увійти в систему", () => {
-    // ✅ Виправлення: Змінюємо ендпоінт на `registration` на `register`
-    cy.intercept("POST", "**/api/v1/auth/register", {
+  it("повинен успішно зареєструвати нового користувача та перенаправити на вхід", () => {
+    // ✅ Виправлення: Змінюємо ендпоінт на `registration` згідно зі Swagger
+    cy.intercept("POST", "**/api/v1/auth/registration", {
       statusCode: 201,
       body: { message: "Користувача успішно зареєстровано" },
     }).as("registerRequest");
 
-    cy.intercept("POST", "**/api/v1/auth/login", {
-      statusCode: 200,
-      body: {
-        user: { username: "testuser", email: "test@example.com", role: "USER" },
-        token: "mock-jwt-token",
-      },
-    }).as("loginRequest");
-
     cy.get("a.nav-link").contains("Реєстрація").should("be.visible").click();
     cy.url().should("include", "/register");
 
-    cy.get('input[placeholder="Ім\'я користувача"]').type("testuser");
+    // ✅ Додаємо нові поля, які були додані у форму
+    cy.get('input[placeholder="Ім\'я"]').type("Test");
+    cy.get('input[placeholder="Прізвище"]').type("User");
     cy.get('input[placeholder="Електронна пошта"]').type("test@example.com");
     cy.get('input[placeholder="Пароль"]').type("password123");
+    cy.get('input[placeholder="Повторіть пароль"]').type("password123");
 
     cy.get('button[type="submit"]').click();
 
     cy.wait("@registerRequest");
-    cy.wait("@loginRequest");
 
-    cy.url().should("eq", "http://localhost:5173/");
-    // Очікуємо, поки сторінка завантажиться, і перевіряємо, що з'явилося посилання "Профіль"
-    cy.get("a.nav-link").contains("Профіль").should("be.visible");
-    cy.get("a.nav-link").contains("Вийти").should("be.visible");
+    // ✅ Виправлення: Після реєстрації перенаправляємо на `/login`, а не входимо автоматично
+    cy.url().should("include", "/login");
+    cy.contains("Вже маєте акаунт?").should("be.visible");
   });
 
   // ==================== Тестування входу та виходу ====================
@@ -89,13 +76,11 @@ describe("Повні E2E сценарії для застосунку оренд
     cy.get('button[type="submit"]').click();
 
     cy.url().should("eq", "http://localhost:5173/");
-    // Очікуємо, що після входу з'явиться посилання "Вийти"
     cy.get("a.nav-link").contains("Вийти").should("be.visible");
 
     cy.get("a.nav-link").contains("Вийти").click();
 
     cy.url().should("include", "/login");
-    // Очікуємо, що після виходу з'являться посилання "Увійти" та "Реєстрація"
     cy.get("a.nav-link").contains("Увійти").should("be.visible");
     cy.get("a.nav-link").contains("Реєстрація").should("be.visible");
   });
@@ -144,7 +129,7 @@ describe("Повні E2E сценарії для застосунку оренд
     cy.get("button").contains("Забронювати").click();
 
     cy.wait("@createBooking");
-    // ✅ URL повинен вести на сторінку "Мої бронювання", а не "payment"
+    // ✅ Коректний URL після успішного бронювання
     cy.url().should("include", "/my-bookings");
   });
 
@@ -188,10 +173,7 @@ describe("Повні E2E сценарії для застосунку оренд
     cy.url().should("eq", "http://localhost:5173/");
     cy.wait("@getAccommodations");
 
-    cy.get("a.nav-link")
-      .contains("Мої бронювання")
-      .should("be.visible")
-      .click();
+    cy.get("a.nav-link").contains("Мої бронювання").should("be.visible").click();
     cy.url().should("include", "/my-bookings");
     cy.wait("@getBookings");
 
@@ -209,21 +191,23 @@ describe("Повні E2E сценарії для застосунку оренд
       },
     });
 
-    // ✅ Виправлення: Змінюємо ендпоінти на `users`
-    cy.intercept("GET", "**/api/v1/users", {
+    // ✅ Виправлення: Змінюємо ендпоінти на `/users/me` згідно зі Swagger
+    cy.intercept("GET", "**/api/v1/users/me", {
       statusCode: 200,
       body: {
-        username: "testuser",
         email: "test@example.com",
+        firstName: "Test",
+        lastName: "User",
       },
     }).as("fetchProfile");
 
-    // ✅ Виправлення: Змінюємо ендпоінти на `users`
-    cy.intercept("PUT", "**/api/v1/users", {
+    // ✅ Виправлення: Змінюємо ендпоінти на `/users/me` згідно зі Swagger
+    cy.intercept("PUT", "**/api/v1/users/me", {
       statusCode: 200,
       body: {
-        username: "newusername",
         email: "newemail@example.com",
+        firstName: "New",
+        lastName: "User",
       },
     }).as("updateProfile");
 
@@ -244,12 +228,12 @@ describe("Повні E2E сценарії для застосунку оренд
       .should("be.visible")
       .click();
 
-    cy.get('input[placeholder="Ім\'я користувача"]')
-      .clear()
-      .type("newusername");
+    // ✅ Виправлення: Змінюємо селектори для оновлених полів форми
     cy.get('input[placeholder="Електронна пошта"]')
       .clear()
       .type("newemail@example.com");
+    cy.get('input[placeholder="Ім\'я"]').clear().type("New");
+    cy.get('input[placeholder="Прізвище"]').clear().type("User");
 
     cy.get("button").contains("Зберегти зміни").click();
     cy.wait("@updateProfile");
@@ -258,7 +242,6 @@ describe("Повні E2E сценарії для застосунку оренд
 
   // ==================== Тестування пошуку ====================
   it("повинен дозволяти користувачу шукати помешкання", () => {
-    // Перехоплюємо запит пошуку більш гнучко
     cy.intercept("GET", "**/api/v1/accommodations?*", (req) => {
       if (req.query.location === "Київ") {
         req.reply({
@@ -274,7 +257,9 @@ describe("Повні E2E сценарії для застосунку оренд
       }
     }).as("searchAccommodations");
 
-    cy.get('input[placeholder="Місто"]').should("be.visible").type("Київ");
+    cy.get('input[placeholder="Місто (через кому)"]')
+      .should("be.visible")
+      .type("Київ");
 
     cy.wait("@searchAccommodations");
     cy.contains("Київ").should("be.visible");
@@ -327,14 +312,11 @@ describe("Повні E2E сценарії для застосунку оренд
 
   // ==================== Тестування адмін-панелі ====================
   it("повинен дозволяти адміну доступ до адмін-панелі", () => {
-    // Логін адміна
     cy.intercept("POST", "**/api/v1/auth/login", {
       statusCode: 200,
       body: {
         user: {
-          username: "adminuser",
           email: "admin@example.com",
-          // ✅ Виправлення: Змінюємо роль на `MANAGER`
           role: "MANAGER",
         },
         token: "mock-admin-jwt-token",
@@ -347,7 +329,7 @@ describe("Повні E2E сценарії для застосунку оренд
     cy.get('input[placeholder="Пароль"]').type("password123");
     cy.get('button[type="submit"]').click();
     cy.url().should("eq", "http://localhost:5173/");
-    // Очікуємо, поки сторінка завантажиться, і перевіряємо, що з'явилося посилання на "Адмін-панель"
+
     cy.get("a.nav-link").contains("Адмін-панель").should("be.visible").click();
     cy.url().should("include", "/admin");
     cy.contains("Адмін-панель").should("be.visible");
