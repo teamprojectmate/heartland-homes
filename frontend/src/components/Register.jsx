@@ -25,25 +25,23 @@ const Register = () => {
     e.preventDefault();
 
     if (password !== repeatPassword) {
-      // ✅ Нова перевірка: Паролі повинні збігатися
       alert("Паролі не збігаються!");
       return;
     }
 
-    // ✅ Оновлення: Відправляємо всі необхідні дані
     const resultAction = await dispatch(
       register({ firstName, lastName, email, password, repeatPassword }),
     );
     if (register.fulfilled.match(resultAction)) {
-      navigate("/login"); // ✅ Після реєстрації перенаправляємо на сторінку входу
+      navigate("/login");
     }
   };
 
   return (
     <div className="container page">
       <div className="row">
-        <div className="col-md-6 offset-md-3 col-xs-12">
-          <h1 className="text-xs-center">Реєстрація</h1>
+        <div className="col-md-6 offset-md-3 col-xs-12 auth-form-container">
+          <h1 className="auth-title">Реєстрація</h1>
           <p className="text-xs-center">
             <a href="/login">Вже маєте акаунт?</a>
           </p>

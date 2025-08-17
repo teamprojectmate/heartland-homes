@@ -1,0 +1,12 @@
+// src/styles/components/_footer.scss
+@use "sass:color";
+@use "../abstract/variables" as *;
+
+.main-footer {
+  background-color: $secondary-color;
+  color: $text-color;
+  padding: $spacer 0;
+  text-align: center;
+  border-top: 1px solid $border-color;
+  margin-top: auto; // Притискає футер до низу
+}

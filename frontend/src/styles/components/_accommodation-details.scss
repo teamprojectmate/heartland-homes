@@ -1,0 +1,61 @@
+// src/styles/components/_accommodation-details.scss
+@use "sass:color";
+@use "../abstract/variables" as *;
+
+.location-map-container {
+  height: 500px;
+  width: 100%;
+  margin-top: 1rem;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  .leaflet-container {
+    height: 100%;
+    width: 100%;
+  }
+}
+
+.accommodation-details-container {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.details-heading {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: $heading-color;
+}
+
+.details-subheading {
+  font-size: 1.25rem;
+  font-weight: 400;
+  color: #6c757d;
+  margin-bottom: 1rem;
+}
+
+.details-list {
+  list-style: none;
+  padding: 0;
+  li {
+    font-size: 1rem;
+    line-height: 1.5;
+    margin-bottom: 0.5rem;
+  }
+}
+
+.booking-card {
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+}
+
+.booking-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}

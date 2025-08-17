@@ -1,0 +1,14 @@
+// src/styles/layout/_main-layout.scss
+
+@use "../abstract/variables" as *;
+
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex-grow: 1;
+  padding: $spacer 0;
+}

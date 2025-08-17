@@ -1,0 +1,29 @@
+// src/styles/abstract/_variables.scss
+
+//  Палітра кольорів
+$primary-color: #00897B;      // Темно-бірюзовий для основних елементів
+$secondary-color: #00796B;    // Ще темніший відтінок для ховер-ефектів
+$tertiary-color: #38676a;     // Темно-синій, що ми вже використовували для фону
+$background-color: #f8f9fa;   // Світло-сірий фон
+$text-color: #34495e;         // Темний текст
+$heading-color: #2c3e50;      // Колір заголовків
+$border-color: #e0e0e0;       // Колір рамок
+$accent-color: #e67e22;      // Помаранчевий для акцентів
+$light-gray: #ecf0f1;
+
+// Кольори для повідомлень
+$success-color: #2ecc71;      // Зелений
+$danger-color: #e74c3c;       // Червоний
+$warning-color: #ffc107;      // Жовтий
+$info-color: #3498db;         // Блакитний
+
+// Шрифти
+$font-family-base: 'Source Sans Pro', sans-serif;
+$font-family-headings: 'Merriweather Sans', serif;
+
+//  Розміри та тіні
+$spacer: 1.5rem;
+$border-radius: 0.25rem;
+$border-radius-base: 8px;
+$box-shadow-base: 0 4px 12px rgba(0, 0, 0, 0.1);
+$box-shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.15);

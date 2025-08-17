@@ -1,0 +1,26 @@
+// src/styles/main.scss
+
+// 1. Імпортуємо абстрактні файли (використовуючи @use)
+@use "abstract/variables" as *;
+@use "abstract/mixins" as *;
+
+// 2. Імпортуємо стилі для макета (використовуючи @use)
+@use "layout/main-layout";
+
+// 3. Імпортуємо стилі для компонентів (використовуючи @use)
+@use "components/header";
+@use "components/footer";
+@use "components/cards";
+@use "components/forms";
+@use "components/hero";
+@use "components/admin";
+@use "components/offers";
+@use "components/notification";
+@use "components/accommodation-details";
+@use "components/admin-dashboard";
+@use "components/accommodation-list";
+@use "components/filters";
+
+// Імпортуємо стилі для галереї
+// ✅ Використовуємо @import, оскільки це сторонній пакет і шлях до нього спрощено
+@use "../../node_modules/react-image-gallery/styles/scss/image-gallery.scss";

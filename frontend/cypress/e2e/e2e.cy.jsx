@@ -1,6 +1,6 @@
 describe("Повні E2E сценарії для застосунку оренди помешкань", () => {
   beforeEach(() => {
-    cy.intercept("GET", "**/api/v1/accommodations*", {
+    cy.intercept("GET", "**/accommodations*", {
       statusCode: 200,
       body: {
         content: [
@@ -33,8 +33,8 @@ describe("Повні E2E сценарії для застосунку оренд
 
   // ==================== Тестування реєстрації ====================
   it("повинен успішно зареєструвати нового користувача та перенаправити на вхід", () => {
-    // ✅ Виправлення: Змінюємо ендпоінт на `registration` згідно зі Swagger
-    cy.intercept("POST", "**/api/v1/auth/registration", {
+
+    cy.intercept("POST", "**/auth/registration", {
       statusCode: 201,
       body: { message: "Користувача успішно зареєстровано" },
     }).as("registerRequest");
@@ -42,7 +42,6 @@ describe("Повні E2E сценарії для застосунку оренд
     cy.get("a.nav-link").contains("Реєстрація").should("be.visible").click();
     cy.url().should("include", "/register");
 
-    // ✅ Додаємо нові поля, які були додані у форму
     cy.get('input[placeholder="Ім\'я"]').type("Test");
     cy.get('input[placeholder="Прізвище"]').type("User");
     cy.get('input[placeholder="Електронна пошта"]').type("test@example.com");
@@ -53,14 +52,13 @@ describe("Повні E2E сценарії для застосунку оренд
 
     cy.wait("@registerRequest");
 
-    // ✅ Виправлення: Після реєстрації перенаправляємо на `/login`, а не входимо автоматично
     cy.url().should("include", "/login");
     cy.contains("Вже маєте акаунт?").should("be.visible");
   });
 
   // ==================== Тестування входу та виходу ====================
   it("повинен успішно увійти та вийти з системи", () => {
-    cy.intercept("POST", "**/api/v1/auth/login", {
+    cy.intercept("POST", "**/auth/login", {
       statusCode: 200,
       body: {
         user: { username: "testuser", email: "test@example.com", role: "USER" },
@@ -87,7 +85,7 @@ describe("Повні E2E сценарії для застосунку оренд
 
   // ==================== Тестування бронювання помешкання ====================
   it("повинен дозволити аутентифікованому користувачу забронювати помешкання", () => {
-    cy.intercept("POST", "**/api/v1/auth/login", {
+    cy.intercept("POST", "**/auth/login", {
       statusCode: 200,
       body: {
         user: { username: "testuser", email: "test@example.com", role: "USER" },
@@ -95,7 +93,7 @@ describe("Повні E2E сценарії для застосунку оренд
       },
     });
 
-    cy.intercept("GET", "**/api/v1/accommodations/1", {
+    cy.intercept("GET", "**/accommodations/1", {
       statusCode: 200,
       body: {
         id: 1,
@@ -107,7 +105,7 @@ describe("Повні E2E сценарії для застосунку оренд
       },
     }).as("getAccommodationDetails");
 
-    cy.intercept("POST", "**/api/v1/bookings", {
+    cy.intercept("POST", "**/bookings", {
       statusCode: 201,
       body: { id: 101, message: "Бронювання успішне" },
     }).as("createBooking");
@@ -135,7 +133,7 @@ describe("Повні E2E сценарії для застосунку оренд
 
   // ==================== Тестування сторінки "Мої бронювання" ====================
   it("повинен відображати бронювання для аутентифікованого користувача", () => {
-    cy.intercept("POST", "**/api/v1/auth/login", {
+    cy.intercept("POST", "**/auth/login", {
       statusCode: 200,
       body: {
         user: { username: "testuser", email: "test@example.com", role: "USER" },
@@ -143,7 +141,7 @@ describe("Повні E2E сценарії для застосунку оренд
       },
     });
 
-    cy.intercept("GET", "**/api/v1/bookings/my", {
+    cy.intercept("GET", "**/bookings/my", {
       statusCode: 200,
       body: [
         {
@@ -183,7 +181,7 @@ describe("Повні E2E сценарії для застосунку оренд
 
   // ==================== Тестування редагування профілю ====================
   it("повинен дозволити аутентифікованому користувачу редагувати профіль", () => {
-    cy.intercept("POST", "**/api/v1/auth/login", {
+    cy.intercept("POST", "**/auth/login", {
       statusCode: 200,
       body: {
         user: { username: "testuser", email: "test@example.com", role: "USER" },
@@ -191,8 +189,7 @@ describe("Повні E2E сценарії для застосунку оренд
       },
     });
 
-    // ✅ Виправлення: Змінюємо ендпоінти на `/users/me` згідно зі Swagger
-    cy.intercept("GET", "**/api/v1/users/me", {
+    cy.intercept("GET", "**/users/me", {
       statusCode: 200,
       body: {
         email: "test@example.com",
@@ -201,8 +198,7 @@ describe("Повні E2E сценарії для застосунку оренд
       },
     }).as("fetchProfile");
 
-    // ✅ Виправлення: Змінюємо ендпоінти на `/users/me` згідно зі Swagger
-    cy.intercept("PUT", "**/api/v1/users/me", {
+    cy.intercept("PUT", "**/users/me", {
       statusCode: 200,
       body: {
         email: "newemail@example.com",
@@ -228,7 +224,6 @@ describe("Повні E2E сценарії для застосунку оренд
       .should("be.visible")
       .click();
 
-    // ✅ Виправлення: Змінюємо селектори для оновлених полів форми
     cy.get('input[placeholder="Електронна пошта"]')
       .clear()
       .type("newemail@example.com");
@@ -242,7 +237,7 @@ describe("Повні E2E сценарії для застосунку оренд
 
   // ==================== Тестування пошуку ====================
   it("повинен дозволяти користувачу шукати помешкання", () => {
-    cy.intercept("GET", "**/api/v1/accommodations?*", (req) => {
+    cy.intercept("GET", "**/accommodations?*", (req) => {
       if (req.query.location === "Київ") {
         req.reply({
           statusCode: 200,
@@ -267,7 +262,7 @@ describe("Повні E2E сценарії для застосунку оренд
 
   // ==================== Тестування помилок ====================
   it("повинен показати помилку при невдалому вході", () => {
-    cy.intercept("POST", "**/api/v1/auth/login", {
+    cy.intercept("POST", "**/auth/login", {
       statusCode: 401,
       body: { message: "Неправильний логін або пароль" },
     }).as("failedLogin");
@@ -287,7 +282,7 @@ describe("Повні E2E сценарії для застосунку оренд
 
   // ==================== Тестування неаутентифікованого доступу ====================
   it("повинен перенаправити на сторінку входу при спробі забронювати без аутентифікації", () => {
-    cy.intercept("GET", "**/api/v1/accommodations/1", {
+    cy.intercept("GET", "**/accommodations/1", {
       statusCode: 200,
       body: {
         id: 1,
@@ -312,7 +307,7 @@ describe("Повні E2E сценарії для застосунку оренд
 
   // ==================== Тестування адмін-панелі ====================
   it("повинен дозволяти адміну доступ до адмін-панелі", () => {
-    cy.intercept("POST", "**/api/v1/auth/login", {
+    cy.intercept("POST", "**/auth/login", {
       statusCode: 200,
       body: {
         user: {

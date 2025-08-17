@@ -7,27 +7,26 @@ const AdminDashboard = () => {
   const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    // ✅ Виправлення: Перевірка на роль 'MANAGER'
     if (!user || user.role !== "MANAGER") {
-      navigate("/"); // Перенаправляємо, якщо не адміністратор
+      navigate("/");
     }
   }, [user, navigate]);
 
   return (
     <div className="container page mt-4">
-      <h1 className="text-xs-center">Панель адміністратора</h1>
+      <h1 className="text-center auth-title">Панель адміністратора</h1>
       <div className="row mt-4">
         <div className="col-md-6 offset-md-3">
-          <div className="card">
+          <div className="card admin-dashboard-card"> 
             <div className="card-body">
               <h5 className="card-title">Управління</h5>
               <ul className="list-group list-group-flush">
-                <li className="list-group-item">
+                <li className="list-group-item admin-dashboard-list-group-item">
                   <Link to="/admin/accommodations">
                     Управління помешканнями
                   </Link>
                 </li>
-                <li className="list-group-item">
+                <li className="list-group-item admin-dashboard-list-group-item">
                   <Link to="/admin/bookings">Управління бронюваннями</Link>
                 </li>
               </ul>

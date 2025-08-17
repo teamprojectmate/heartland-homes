@@ -1,0 +1,7 @@
+// src/styles/abstract/_mixins.scss
+
+// Міксин для тіней
+@mixin card-shadows($shadow) {
+  box-shadow: $shadow;
+  transition: all 0.3s ease;
+}

@@ -1,0 +1,128 @@
+// src/styles/components/_admin-dashboard.scss
+@use "sass:color";
+@use "../abstract/variables" as *;
+
+.admin-dashboard-card {
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.admin-dashboard-list-group-item {
+  border: none;
+  padding: 1rem 1.5rem;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #f8f9fa;
+  }
+
+  a {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: $primary-color;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+
+  th,
+  td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+
+  th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+  }
+
+  tr:hover {
+    background-color: #f1f1f1;
+  }
+}
+
+.btn-delete {
+  background-color: #dc3545;
+  color: white;
+  border-color: #dc3545;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+      background-color: color.adjust($danger-color, $lightness: -10%);
+      border-color: color.adjust($danger-color, $lightness: -10%);
+  }
+}
+
+.modal-dialog {
+  display: flex;
+  align-items: center;
+  min-height: calc(100% - 1rem);
+}
+
+.modal-content {
+  border-radius: 8px;
+}
+
+.admin-page-container {
+  padding: 2rem 0;
+}
+
+.card-custom {
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  height: 100%;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.card-img-top-custom {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  object-fit: cover;
+  height: 200px;
+}
+
+.btn-action {
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background-color: $primary-color;
+  border-color: $primary-color;
+  &:hover {
+    background-color: color.adjust($primary-color, $lightness: -10%);
+    border-color: color.adjust($primary-color, $lightness: -10%);
+  }
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  border-color: #dc3545;
+  &:hover {
+    background-color: color.adjust(#dc3545, $lightness: -10%);
+    border-color: color.adjust(#dc3545, $lightness: -10%);
+  }
+}
+
+.ml-2 {
+  margin-left: 0.5rem;
+}

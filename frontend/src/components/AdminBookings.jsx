@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import Notification from "./Notification";
 
-const BASE_URL = "http://localhost:8080/api/v1";
+const BASE_URL = "http://localhost:8080";
 
 const AdminBookings = () => {
   const navigate = useNavigate();
@@ -14,7 +15,6 @@ const AdminBookings = () => {
   const [confirmCancelId, setConfirmCancelId] = useState(null);
 
   useEffect(() => {
-    // ✅ Виправлення: Перевірка на роль 'MANAGER'
     if (!user || user.role !== "MANAGER") {
       navigate("/");
       return;
@@ -28,7 +28,6 @@ const AdminBookings = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        // ✅ Виправлення: Отримуємо дані з поля `content`
         setBookings(response.data.content);
       } catch (err) {
         setError(err.response?.data?.message || err.message);
@@ -56,70 +55,59 @@ const AdminBookings = () => {
 
   if (loading) {
     return (
-      <div className="container page">
-        <h1 className="text-xs-center">Усі бронювання (Адмін-панель)</h1>
-        <div className="row">
-          <div className="col-md-8 offset-md-2 col-xs-12">
-            <p className="text-xs-center">Завантаження...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="container page">
-        <h1 className="text-xs-center">Усі бронювання (Адмін-панель)</h1>
-        <div className="row">
-          <div className="col-md-8 offset-md-2 col-xs-12">
-            <p className="text-xs-center text-danger">Помилка: {error}</p>
-          </div>
-        </div>
+      <div className="container admin-page-container text-center">
+        <h1 className="section-heading">Усі бронювання (Адмін-панель)</h1>
+        <p>Завантаження...</p>
       </div>
     );
   }
 
   return (
-    <div className="container page">
-      <h1 className="text-xs-center">Усі бронювання (Адмін-панель)</h1>
-      <div className="row">
-        <div className="col-md-8 offset-md-2 col-xs-12">
-          {bookings.length > 0 ? (
-            <ul className="list-group">
-              {bookings.map((booking) => (
-                <li key={booking.id} className="list-group-item">
-                  <div className="d-flex justify-content-between align-items-center">
-                    <div>
-                      {/* ✅ Використовуємо припущені поля, їх треба перевірити з бекендом */}
-                      <strong>Помешкання:</strong> {booking.accommodationName}
-                      <br />
-                      <strong>Користувач:</strong> {booking.userName} (ID:{" "}
-                      {booking.userId})
-                      <br />
-                      <strong>Дати:</strong>{" "}
-                      {new Date(booking.checkInDate).toLocaleDateString()} -{" "}
-                      {new Date(booking.checkOutDate).toLocaleDateString()}
-                      <br />
-                      <strong>Сума:</strong> {booking.totalAmount} $
-                    </div>
-                    <button
-                      onClick={() => setConfirmCancelId(booking.id)}
-                      className="btn btn-sm btn-danger"
-                    >
-                      Скасувати
-                    </button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <div className="alert alert-info text-xs-center">
-              Бронювань ще немає.
-            </div>
-          )}
+    <div className="container admin-page-container">
+      <h1 className="section-heading text-center">Усі бронювання (Адмін-панель)</h1>
+      {error && <Notification message={error} type="error" />}
+
+      {bookings.length > 0 ? (
+        <table className="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Помешкання</th>
+              <th>Користувач</th>
+              <th>Дати</th>
+              <th>Сума</th>
+              <th>Дії</th>
+            </tr>
+          </thead>
+          <tbody>
+            {bookings.map((booking) => (
+              <tr key={booking.id}>
+                <td>{booking.id}</td>
+                <td>{booking.accommodationName}</td>
+                <td>{booking.userName}</td>
+                <td>
+                  {new Date(booking.checkInDate).toLocaleDateString()} -{" "}
+                  {new Date(booking.checkOutDate).toLocaleDateString()}
+                </td>
+                <td>{booking.totalAmount}$</td>
+                <td>
+                  <button
+                    onClick={() => setConfirmCancelId(booking.id)}
+                    className="btn btn-sm btn-delete btn-action"
+                  >
+                    Скасувати
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <div className="alert alert-info text-center">
+          Бронювань ще немає.
         </div>
-      </div>
+      )}
+
       {/* Модальне вікно для підтвердження скасування */}
       {confirmCancelId && (
         <div className="modal d-block" tabIndex="-1" role="dialog">

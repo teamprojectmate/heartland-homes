@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const BASE_URL = "http://localhost:8080/api/v1";
+const BASE_URL = "http://localhost:8080";
 
 export const login = createAsyncThunk(
   "auth/login",
@@ -27,12 +27,11 @@ export const register = createAsyncThunk(
   "auth/register",
   async (userData, { rejectWithValue }) => {
     try {
-      // ✅ Виправлення: Змінюємо URL на `/auth/registration`
       const response = await axios.post(
         `${BASE_URL}/auth/registration`,
         userData,
       );
-      // ✅ Зміни: Після успішної реєстрації просто повертаємо відповідь.
+      //  Після успішної реєстрації просто повертаємо відповідь.
       // Користувач буде перенаправлений на сторінку входу.
       return response.data;
     } catch (error) {
@@ -85,7 +84,7 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      // ✅ Зміни: Після успішної реєстрації ми не входимо автоматично
+      // Після успішної реєстрації ми не входимо автоматично
       .addCase(register.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;

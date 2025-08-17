@@ -2,15 +2,15 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import Notification from "./Notification";
 
-const BASE_URL = "http://localhost:8080/api/v1";
+const BASE_URL = "http://localhost:8080";
 
 const AdminEditAccommodation = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { user } = useSelector((state) => state.auth);
 
-  // ✅ Виправлення: Стан форми відповідає структурі DTO
   const [formData, setFormData] = useState({
     type: "APARTMENT",
     location: "",
@@ -25,7 +25,6 @@ const AdminEditAccommodation = () => {
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   useEffect(() => {
-    // ✅ Виправлення: Перевірка на роль 'MANAGER'
     if (!user || user.role !== "MANAGER") {
       navigate("/");
       return;
@@ -35,12 +34,11 @@ const AdminEditAccommodation = () => {
       try {
         const response = await axios.get(`${BASE_URL}/accommodations/${id}`);
         const data = response.data;
-        // ✅ Виправлення: Заповнюємо форму даними з правильними іменами полів
         setFormData({
           type: data.type,
           location: data.location,
           size: data.size,
-          amenities: data.amenities.join(", "), // Перетворюємо масив в рядок
+          amenities: data.amenities.join(", "),
           dailyRate: data.dailyRate,
           availability: data.availability,
           picture: data.picture || "",
@@ -76,12 +74,10 @@ const AdminEditAccommodation = () => {
     setLoading(true);
     setError(null);
 
-    // ✅ Виправлення: Перетворюємо рядок amenities в масив
     const amenitiesArray = amenities.split(",").map((item) => item.trim());
 
     try {
       const token = user.token;
-      // ✅ Виправлення: Надсилаємо правильні дані для оновлення
       await axios.put(
         `${BASE_URL}/accommodations/${id}`,
         {
@@ -126,21 +122,16 @@ const AdminEditAccommodation = () => {
   };
 
   if (loading) {
-    return <p className="text-xs-center mt-5">Завантаження...</p>;
-  }
-
-  if (error) {
-    return <p className="text-xs-center text-danger mt-5">Помилка: {error}</p>;
+    return <p className="text-center mt-5">Завантаження...</p>;
   }
 
   return (
-    <div className="container mt-4">
-      <h2 className="text-xs-center">Редагувати помешкання</h2>
+    <div className="container page">
       <div className="row">
-        <div className="col-md-6 offset-md-3 col-xs-12">
-          {error && <div className="alert alert-danger">{error}</div>}
+        <div className="col-md-6 offset-md-3 col-xs-12 auth-form-container">
+          <h2 className="auth-title">Редагувати помешкання</h2>
+          {error && <Notification message={error} type="error" />}
           <form onSubmit={handleSubmit}>
-            {/* ✅ Використовуємо правильні поля форми */}
             <fieldset className="form-group">
               <label>Тип житла</label>
               <select
@@ -224,7 +215,7 @@ const AdminEditAccommodation = () => {
               />
             </fieldset>
 
-            <div className="d-flex justify-content-between mt-3">
+            <div className="d-flex justify-content-between mt-4">
               <button
                 className="btn btn-lg btn-danger"
                 type="button"

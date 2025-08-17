@@ -13,6 +13,9 @@ import CreateAccommodation from "./components/CreateAccommodation";
 import AdminEditAccommodation from "./components/AdminEditAccommodation";
 import AdminBookings from "./components/AdminBookings";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Profile from "./components/Profile";
+import TelegramNotifications from "./components/TelegramNotifications";
+import './styles/main.scss';
 
 function App() {
   return (
@@ -22,32 +25,52 @@ function App() {
         <Routes>
           <Route path="/" element={<Accommodations />} />
           <Route path="/accommodations" element={<Accommodations />} />
-          <Route
-            path="/accommodations/:id"
-            element={<AccommodationDetails />}
-          />
+          <Route path="/accommodations/:id" element={<AccommodationDetails />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/my-bookings" element={<MyBookings />} />
+          {/* ✅ Використовуємо ProtectedRoute як обгортку для елемента */}
+          <Route path="/my-bookings" element={
+            <ProtectedRoute>
+              <MyBookings />
+            </ProtectedRoute>
+          } />
+          <Route path="/profile" element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          } />
+          <Route path="/telegram-notifications" element={
+            <ProtectedRoute>
+              <TelegramNotifications />
+            </ProtectedRoute>
+          } />
 
           {/* Маршрути для адміністратора, захищені ProtectedRoute */}
-          <Route
-            // ✅ Виправлення: Змінюємо requiredRole на "MANAGER"
-            path="/admin"
-            element={<ProtectedRoute requiredRole="MANAGER" />}
-          >
-            <Route index element={<AdminDashboard />} />
-            <Route path="accommodations" element={<AdminAccommodations />} />
-            <Route
-              path="accommodations/new"
-              element={<CreateAccommodation />}
-            />
-            <Route
-              path="accommodations/edit/:id"
-              element={<AdminEditAccommodation />}
-            />
-            <Route path="bookings" element={<AdminBookings />} />
-          </Route>
+          <Route path="/admin" element={
+            <ProtectedRoute requiredRole="MANAGER">
+              <AdminDashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/accommodations" element={
+            <ProtectedRoute requiredRole="MANAGER">
+              <AdminAccommodations />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/accommodations/new" element={
+            <ProtectedRoute requiredRole="MANAGER">
+              <CreateAccommodation />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/accommodations/edit/:id" element={
+            <ProtectedRoute requiredRole="MANAGER">
+              <AdminEditAccommodation />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/bookings" element={
+            <ProtectedRoute requiredRole="MANAGER">
+              <AdminBookings />
+            </ProtectedRoute>
+          } />
         </Routes>
       </main>
       <Footer />

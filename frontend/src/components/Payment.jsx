@@ -2,17 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useSelector } from 'react-redux'; // Імпортуємо useSelector для доступу до стану Redux
+import { useSelector } from 'react-redux';
+import Notification from './Notification';
 
-// URL для бекенду.
-const BASE_URL = 'http://localhost:8080/api/v1';
+const BASE_URL = 'http://localhost:8080';
 
 const Payment = () => {
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
   const { bookingId } = useParams();
-  const { isAuthenticated, token } = useSelector((state) => state.auth); // Отримуємо токен з Redux
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
 
   const [bookingDetails, setBookingDetails] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -21,7 +21,7 @@ const Payment = () => {
   const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
-    if (!isAuthenticated || !token) {
+    if (!isAuthenticated) {
       navigate('/login');
       return;
     }
@@ -29,7 +29,7 @@ const Payment = () => {
     const fetchBookingDetails = async () => {
       try {
         setLoading(true);
-        // Робимо реальний запит до бекенду, щоб отримати деталі бронювання
+        const token = user.token;
         const response = await axios.get(`${BASE_URL}/bookings/${bookingId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -43,11 +43,12 @@ const Payment = () => {
       }
     };
     fetchBookingDetails();
-  }, [bookingId, isAuthenticated, token, navigate]);
+  }, [bookingId, isAuthenticated, user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setProcessing(true);
+    setPaymentError(null);
 
     if (!stripe || !elements || !bookingDetails) {
       setProcessing(false);
@@ -55,7 +56,7 @@ const Payment = () => {
     }
 
     try {
-      // Крок 1: Відправляємо запит на бекенд для створення PaymentIntent
+      const token = user.token;
       const response = await axios.post(
         `${BASE_URL}/payments/create`,
         { bookingId },
@@ -66,8 +67,7 @@ const Payment = () => {
         }
       );
       const { clientSecret } = response.data;
-      
-      // Крок 2: Підтвердження оплати з клієнтської сторони
+
       const cardElement = elements.getElement(CardElement);
       const { paymentIntent, error } = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
@@ -88,32 +88,37 @@ const Payment = () => {
     }
   };
 
-  if (loading) return <div>Завантаження...</div>;
-  if (error) return <div>Помилка: {error}</div>;
+  if (loading) return <p className="text-center mt-5">Завантаження...</p>;
 
   return (
-    <div className="container mt-4">
-      <h2>Оплата бронювання</h2>
-      {bookingDetails && (
-        <div className="alert alert-info">
-          Помешкання: <strong>{bookingDetails.accommodationName}</strong>,
-          Сума: <strong>{bookingDetails.totalAmount} $</strong>
-        </div>
-      )}
+    <div className="container page">
+      <div className="row">
+        <div className="col-md-6 offset-md-3 col-xs-12 auth-form-container"> {/* ✅ Використовуємо наш стиль для форми */}
+          <h2 className="auth-title">Оплата бронювання</h2>
+          {error && <Notification message={error} type="error" />}
 
-      <form onSubmit={handleSubmit}>
-        <div className="form-group mb-3">
-          <label>Дані картки</label>
-          <CardElement className="form-control" />
+          {bookingDetails && (
+            <div className="alert alert-info">
+              Помешкання: <strong>{bookingDetails.accommodationName}</strong>,
+              Сума: <strong>{bookingDetails.totalAmount} $</strong>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit}>
+            <div className="form-group mb-3">
+              <label>Дані картки</label>
+              <CardElement className="form-control" />
+            </div>
+            {paymentError && <Notification message={paymentError} type="error" />}
+            <button
+              className="btn btn-success btn-block mt-4"
+              disabled={!stripe || processing}
+            >
+              {processing ? 'Обробка...' : 'Сплатити'}
+            </button>
+          </form>
         </div>
-        {paymentError && <div className="alert alert-danger">{paymentError}</div>}
-        <button
-          className="btn btn-success"
-          disabled={!stripe || processing}
-        >
-          {processing ? 'Обробка...' : 'Сплатити'}
-        </button>
-      </form>
+      </div>
     </div>
   );
 };
