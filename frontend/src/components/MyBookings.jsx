@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import axios from 'axios'; // Імпортуємо axios для запитів
 import { useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 
+// Моковані дані для розробки. Цей код було видалено, оскільки тепер ми використовуємо реальний бекенд.
+
 const MyBookings = () => {
   const navigate = useNavigate();
+  // Тепер отримуємо token з Redux стану, а не з localStorage напряму
   const { user, isAuthenticated, token } = useSelector((state) => state.auth);
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -21,7 +24,7 @@ const MyBookings = () => {
       try {
         setLoading(true);
         // Робимо реальний запит до API з використанням токена
-        const response = await axios.get('http://localhost:8080/bookings/my', {
+        const response = await axios.get('http://localhost:8080/api/v1/bookings/my', {
           headers: {
             'Authorization': `Bearer ${token}`,
           },

@@ -1,332 +1,325 @@
-describe("Повні E2E сценарії для застосунку оренди помешкань", () => {
-  beforeEach(() => {
-    cy.intercept("GET", "**/accommodations*", {
-      statusCode: 200,
-      body: {
-        content: [
-          {
-            id: 1,
-            location: "Київ",
-            size: "30 m²",
-            dailyRate: 100,
-            picture: "https://placehold.co/600x400",
-            type: "APARTMENT"
-          },
-          {
-            id: 2,
-            location: "Львів",
-            size: "50 m²",
-            dailyRate: 150,
-            picture: "https://placehold.co/600x400",
-            type: "APARTMENT"
-          },
-        ],
-        totalPages: 1,
-        totalElements: 2
-      },
-    }).as("getAccommodations");
+// cypress/e2e/e2e.cy.jsx
 
-    cy.visit("http://localhost:5173/");
+describe('Повні E2E сценарії для застосунку оренди помешкань', () => {
+
+  // Використовуємо beforeEach для очищення стану та переходу на головну сторінку
+  beforeEach(() => {
+    cy.visit('http://localhost:5173/');
+    // Очищаємо localStorage, щоб почати з чистого листа для кожного тесту
     cy.clearLocalStorage();
-    cy.wait("@getAccommodations");
   });
 
   // ==================== Тестування реєстрації ====================
-  it("повинен успішно зареєструвати нового користувача та перенаправити на вхід", () => {
-
-    cy.intercept("POST", "**/auth/registration", {
+  it('повинен успішно зареєструвати нового користувача та автоматично увійти в систему', () => {
+    // Імітуємо успішну реєстрацію
+    cy.intercept('POST', '**/api/v1/auth/registration', {
       statusCode: 201,
-      body: { message: "Користувача успішно зареєстровано" },
-    }).as("registerRequest");
+      body: {
+        message: 'Користувача успішно зареєстровано'
+      },
+    }).as('registerRequest');
 
-    cy.get("a.nav-link").contains("Реєстрація").should("be.visible").click();
-    cy.url().should("include", "/register");
+    // Імітуємо успішний вхід після реєстрації
+    cy.intercept('POST', '**/api/v1/auth/login', {
+      statusCode: 200,
+      body: {
+        user: { username: 'testuser', email: 'test@example.com' },
+        token: 'mock-jwt-token',
+      },
+    }).as('loginRequest');
 
-    cy.get('input[placeholder="Ім\'я"]').type("Test");
-    cy.get('input[placeholder="Прізвище"]').type("User");
-    cy.get('input[placeholder="Електронна пошта"]').type("test@example.com");
-    cy.get('input[placeholder="Пароль"]').type("password123");
-    cy.get('input[placeholder="Повторіть пароль"]').type("password123");
+    // Натискаємо "Реєстрація" в навігації
+    cy.get('a.nav-link').contains('Реєстрація').click();
+    cy.url().should('include', '/register');
 
+    // Заповнюємо форму реєстрації
+    cy.get('input[placeholder="Ім\'я користувача"]').type('testuser');
+    cy.get('input[placeholder="Електронна пошта"]').type('test@example.com');
+    cy.get('input[placeholder="Пароль"]').type('password123');
+
+    // Відправляємо форму
     cy.get('button[type="submit"]').click();
 
-    cy.wait("@registerRequest");
+    // Перевіряємо, що запит на реєстрацію був відправлений
+    cy.wait('@registerRequest');
+    cy.wait('@loginRequest');
 
-    cy.url().should("include", "/login");
-    cy.contains("Вже маєте акаунт?").should("be.visible");
+    // Перевіряємо, що ми були перенаправлені на головну сторінку після успішної реєстрації
+    cy.url().should('eq', 'http://localhost:5173/');
+
+    // Перевіряємо, що UI оновився для аутентифікованого користувача
+    cy.get('a.nav-link').contains('Профіль').should('be.visible');
+    cy.get('button').contains('Вихід').should('be.visible');
   });
 
   // ==================== Тестування входу та виходу ====================
-  it("повинен успішно увійти та вийти з системи", () => {
-    cy.intercept("POST", "**/auth/login", {
+  it('повинен успішно увійти та вийти з системи', () => {
+    // Імітуємо успішний вхід
+    cy.intercept('POST', '**/api/v1/auth/login', {
       statusCode: 200,
       body: {
-        user: { username: "testuser", email: "test@example.com", role: "USER" },
-        token: "mock-jwt-token",
+        user: { username: 'testuser', email: 'test@example.com' },
+        token: 'mock-jwt-token',
       },
-    }).as("loginRequest");
+    }).as('loginRequest');
 
-    cy.get("a.nav-link").contains("Увійти").should("be.visible").click();
-    cy.url().should("include", "/login");
+    // Переходимо на сторінку входу
+    cy.get('a.nav-link').contains('Вхід').click();
+    cy.url().should('include', '/login');
 
-    cy.get('input[placeholder="Електронна пошта"]').type("test@example.com");
-    cy.get('input[placeholder="Пароль"]').type("password123");
+    // Заповнюємо форму входу
+    cy.get('input[placeholder="Електронна пошта"]').type('test@example.com');
+    cy.get('input[placeholder="Пароль"]').type('password123');
     cy.get('button[type="submit"]').click();
 
-    cy.url().should("eq", "http://localhost:5173/");
-    cy.get("a.nav-link").contains("Вийти").should("be.visible");
+    // Перевіряємо, що ми були перенаправлені на головну сторінку
+    cy.url().should('eq', 'http://localhost:5173/');
+    cy.get('button').contains('Вихід').should('be.visible');
 
-    cy.get("a.nav-link").contains("Вийти").click();
+    // Виходимо з системи
+    cy.get('button').contains('Вихід').click();
 
-    cy.url().should("include", "/login");
-    cy.get("a.nav-link").contains("Увійти").should("be.visible");
-    cy.get("a.nav-link").contains("Реєстрація").should("be.visible");
+    // Перевіряємо, що ми були перенаправлені на сторінку входу і UI оновився
+    cy.url().should('include', '/login');
+    cy.get('a.nav-link').contains('Вхід').should('be.visible');
+    cy.get('a.nav-link').contains('Реєстрація').should('be.visible');
   });
 
   // ==================== Тестування бронювання помешкання ====================
-  it("повинен дозволити аутентифікованому користувачу забронювати помешкання", () => {
-    cy.intercept("POST", "**/auth/login", {
+  it('повинен дозволити аутентифікованому користувачу забронювати помешкання', () => {
+    // Логін перед тестуванням бронювання
+    cy.intercept('POST', '**/api/v1/auth/login', {
       statusCode: 200,
       body: {
-        user: { username: "testuser", email: "test@example.com", role: "USER" },
-        token: "mock-jwt-token",
+        user: { username: 'testuser', email: 'test@example.com' },
+        token: 'mock-jwt-token',
       },
     });
 
-    cy.intercept("GET", "**/accommodations/1", {
+    // Мокуємо дані помешкань
+    cy.intercept('GET', '**/api/v1/accommodations', {
+      statusCode: 200,
+      body: [
+        { id: 1, name: 'Квартира 1', description: 'Тестовий опис' },
+      ],
+    }).as('getAccommodations');
+
+    // Мокуємо деталі одного помешкання
+    cy.intercept('GET', '**/api/v1/accommodations/1', {
       statusCode: 200,
       body: {
         id: 1,
-        location: "Київ",
-        description: "Тестовий опис",
-        dailyRate: 100,
-        size: "30 m²",
-        type: "APARTMENT"
+        name: 'Квартира 1',
+        description: 'Тестовий опис',
+        pricePerNight: 100,
+        address: 'Тестова адреса',
+        rating: 4.5,
       },
-    }).as("getAccommodationDetails");
+    }).as('getAccommodationDetails');
 
-    cy.intercept("POST", "**/bookings", {
+    // Мокуємо успішний запит на бронювання
+    cy.intercept('POST', '**/api/v1/bookings', {
       statusCode: 201,
-      body: { id: 101, message: "Бронювання успішне" },
-    }).as("createBooking");
+      body: { id: 101, message: 'Бронювання успішне' },
+    }).as('createBooking');
 
-    cy.get("a.nav-link").contains("Увійти").should("be.visible").click();
-    cy.url().should("include", "/login");
-    cy.get('input[placeholder="Електронна пошта"]').type("test@example.com");
-    cy.get('input[placeholder="Пароль"]').type("password123");
+    // Спочатку входимо в систему
+    cy.visit('http://localhost:5173/login');
+    cy.get('input[placeholder="Електронна пошта"]').type('test@example.com');
+    cy.get('input[placeholder="Пароль"]').type('password123');
     cy.get('button[type="submit"]').click();
-    cy.url().should("eq", "http://localhost:5173/");
-    cy.wait("@getAccommodations");
 
-    cy.get(".card-body .btn").contains("Переглянути").first().should("be.visible").click();
-    cy.url().should("include", "/accommodations/1");
-    cy.wait("@getAccommodationDetails");
+    // Переходимо на сторінку помешкань
+    cy.get('a.nav-link').contains('Помешкання').click();
+    cy.wait('@getAccommodations');
 
-    cy.get('input[type="date"]').eq(0).type("2025-10-20");
-    cy.get('input[type="date"]').eq(1).type("2025-10-25");
-    cy.get("button").contains("Забронювати").click();
+    // Переходимо на сторінку деталей першого помешкання
+    cy.get('.card-body .btn').contains('Детальніше').click();
+    cy.url().should('include', '/accommodations/1');
+    cy.wait('@getAccommodationDetails');
 
-    cy.wait("@createBooking");
-    // ✅ Коректний URL після успішного бронювання
-    cy.url().should("include", "/my-bookings");
+    // Заповнюємо форму бронювання
+    cy.get('input[type="date"]').eq(0).type('2025-10-20');
+    cy.get('input[type="date"]').eq(1).type('2025-10-25');
+    cy.get('button').contains('Забронювати').click();
+
+    // Перевіряємо, що запит на бронювання був відправлений
+    cy.wait('@createBooking');
+
+    // Після бронювання ми повинні бути перенаправлені на сторінку оплати
+    cy.url().should('include', '/payment/101');
   });
 
   // ==================== Тестування сторінки "Мої бронювання" ====================
-  it("повинен відображати бронювання для аутентифікованого користувача", () => {
-    cy.intercept("POST", "**/auth/login", {
+  it('повинен відображати бронювання для аутентифікованого користувача', () => {
+    // Логін перед перевіркою бронювань
+    cy.intercept('POST', '**/api/v1/auth/login', {
       statusCode: 200,
       body: {
-        user: { username: "testuser", email: "test@example.com", role: "USER" },
-        token: "mock-jwt-token",
+        user: { username: 'testuser', email: 'test@example.com' },
+        token: 'mock-jwt-token',
       },
     });
 
-    cy.intercept("GET", "**/bookings/my", {
+    // Мокуємо запит на отримання бронювань користувача
+    cy.intercept('GET', '**/api/v1/bookings/my', {
       statusCode: 200,
       body: [
         {
           id: 101,
-          accommodationName: "Затишна квартира",
-          checkInDate: "2025-08-20",
-          checkOutDate: "2025-08-25",
+          accommodationName: 'Затишна квартира',
+          checkInDate: '2025-08-20',
+          checkOutDate: '2025-08-25',
           totalAmount: 250,
           isPaid: false,
         },
         {
           id: 102,
-          accommodationName: "Котедж в горах",
-          checkInDate: "2025-09-10",
-          checkOutDate: "2025-09-15",
+          accommodationName: 'Котедж в горах',
+          checkInDate: '2025-09-10',
+          checkOutDate: '2025-09-15',
           totalAmount: 400,
           isPaid: true,
         },
       ],
-    }).as("getBookings");
+    }).as('getBookings');
 
-    cy.get("a.nav-link").contains("Увійти").should("be.visible").click();
-    cy.url().should("include", "/login");
-    cy.get('input[placeholder="Електронна пошта"]').type("test@example.com");
-    cy.get('input[placeholder="Пароль"]').type("password123");
+    // Спочатку входимо в систему
+    cy.visit('http://localhost:5173/login');
+    cy.get('input[placeholder="Електронна пошта"]').type('test@example.com');
+    cy.get('input[placeholder="Пароль"]').type('password123');
     cy.get('button[type="submit"]').click();
-    cy.url().should("eq", "http://localhost:5173/");
-    cy.wait("@getAccommodations");
 
-    cy.get("a.nav-link").contains("Мої бронювання").should("be.visible").click();
-    cy.url().should("include", "/my-bookings");
-    cy.wait("@getBookings");
+    // Переходимо на сторінку "Мої бронювання"
+    cy.get('a.nav-link').contains('Мої бронювання').click();
+    cy.url().should('include', '/bookings/my');
+    cy.wait('@getBookings');
 
-    cy.contains("Затишна квартира").should("be.visible");
-    cy.contains("Котедж в горах").should("be.visible");
+    // Перевіряємо, що бронювання відображаються
+    cy.contains('Затишна квартира').should('be.visible');
+    cy.contains('Котедж в горах').should('be.visible');
+    cy.contains('Оплатити').should('be.visible');
+    cy.contains('Оплачено').should('be.visible');
   });
 
-  // ==================== Тестування редагування профілю ====================
-  it("повинен дозволити аутентифікованому користувачу редагувати профіль", () => {
-    cy.intercept("POST", "**/auth/login", {
+  // ==================== НОВІ ТЕСТИ ====================
+
+  it('повинен дозволити аутентифікованому користувачу редагувати профіль', () => {
+    // Імітуємо успішний вхід
+    cy.intercept('POST', '**/api/v1/auth/login', {
       statusCode: 200,
       body: {
-        user: { username: "testuser", email: "test@example.com", role: "USER" },
-        token: "mock-jwt-token",
+        user: { username: 'testuser', email: 'test@example.com' },
+        token: 'mock-jwt-token',
       },
     });
 
-    cy.intercept("GET", "**/users/me", {
+    // Імітуємо отримання даних профілю
+    cy.intercept('GET', '**/api/v1/users/me', {
       statusCode: 200,
       body: {
-        email: "test@example.com",
-        firstName: "Test",
-        lastName: "User",
+        username: 'testuser',
+        email: 'test@example.com',
+        firstName: '',
+        lastName: '',
       },
-    }).as("fetchProfile");
+    }).as('fetchProfile');
 
-    cy.intercept("PUT", "**/users/me", {
+    // Імітуємо успішне оновлення профілю
+    cy.intercept('PUT', '**/api/v1/users/me', {
       statusCode: 200,
       body: {
-        email: "newemail@example.com",
-        firstName: "New",
-        lastName: "User",
+        username: 'newusername',
+        email: 'newemail@example.com',
       },
-    }).as("updateProfile");
+    }).as('updateProfile');
 
-    cy.get("a.nav-link").contains("Увійти").should("be.visible").click();
-    cy.url().should("include", "/login");
-    cy.get('input[placeholder="Електронна пошта"]').type("test@example.com");
-    cy.get('input[placeholder="Пароль"]').type("password123");
+    // Входимо в систему
+    cy.visit('http://localhost:5173/login');
+    cy.get('input[placeholder="Електронна пошта"]').type('test@example.com');
+    cy.get('input[placeholder="Пароль"]').type('password123');
     cy.get('button[type="submit"]').click();
-    cy.url().should("eq", "http://localhost:5173/");
-    cy.wait("@getAccommodations");
 
-    cy.get("a.nav-link").contains("Профіль").should("be.visible").click();
-    cy.url().should("include", "/profile");
-    cy.wait("@fetchProfile");
+    // Переходимо на сторінку профілю
+    cy.get('a.nav-link').contains('Профіль').click();
+    cy.url().should('include', '/profile');
+    cy.wait('@fetchProfile');
 
-    cy.get("button")
-      .contains("Редагувати профіль")
-      .should("be.visible")
-      .click();
+    // Натискаємо "Редагувати профіль"
+    cy.get('button').contains('Редагувати профіль').click();
 
-    cy.get('input[placeholder="Електронна пошта"]')
-      .clear()
-      .type("newemail@example.com");
-    cy.get('input[placeholder="Ім\'я"]').clear().type("New");
-    cy.get('input[placeholder="Прізвище"]').clear().type("User");
+    // Змінюємо дані в полях
+    cy.get('input[placeholder="Ім\'я користувача"]').clear().type('newusername');
+    cy.get('input[placeholder="Електронна пошта"]').clear().type('newemail@example.com');
 
-    cy.get("button").contains("Зберегти зміни").click();
-    cy.wait("@updateProfile");
-    cy.contains("Профіль успішно оновлено!").should("be.visible");
+    // Зберігаємо зміни
+    cy.get('button').contains('Зберегти зміни').click();
+    cy.wait('@updateProfile');
+
+    // Перевіряємо, що з'явилося повідомлення про успіх
+    cy.contains('Профіль успішно оновлено!').should('be.visible');
+    
+    // Перевіряємо, що профіль більше не в режимі редагування
+    cy.get('button').contains('Редагувати профіль').should('be.visible');
   });
 
-  // ==================== Тестування пошуку ====================
-  it("повинен дозволяти користувачу шукати помешкання", () => {
-    cy.intercept("GET", "**/accommodations?*", (req) => {
-      if (req.query.location === "Київ") {
-        req.reply({
-          statusCode: 200,
-          body: {
-            content: [
-              { id: 1, location: "Київ", dailyRate: 100, type: "APARTMENT" },
-            ],
-            totalPages: 1,
-            totalElements: 1
-          },
-        });
-      }
-    }).as("searchAccommodations");
-
-    cy.get('input[placeholder="Місто (через кому)"]')
-      .should("be.visible")
-      .type("Київ");
-
-    cy.wait("@searchAccommodations");
-    cy.contains("Київ").should("be.visible");
-  });
-
-  // ==================== Тестування помилок ====================
-  it("повинен показати помилку при невдалому вході", () => {
-    cy.intercept("POST", "**/auth/login", {
+  it('повинен показати помилку при невдалому вході', () => {
+    // Імітуємо невдалий вхід
+    cy.intercept('POST', '**/api/v1/auth/login', {
       statusCode: 401,
-      body: { message: "Неправильний логін або пароль" },
-    }).as("failedLogin");
+      body: {
+        message: 'Неправильний логін або пароль'
+      },
+    }).as('failedLogin');
 
-    cy.get("a.nav-link").contains("Увійти").should("be.visible").click();
-    cy.url().should("include", "/login");
+    // Переходимо на сторінку входу
+    cy.get('a.nav-link').contains('Вхід').click();
+    cy.url().should('include', '/login');
 
-    cy.get('input[placeholder="Електронна пошта"]').type("wrong@example.com");
-    cy.get('input[placeholder="Пароль"]').type("wrongpassword");
+    // Заповнюємо форму некоректними даними
+    cy.get('input[placeholder="Електронна пошта"]').type('wrong@example.com');
+    cy.get('input[placeholder="Пароль"]').type('wrongpassword');
     cy.get('button[type="submit"]').click();
 
-    cy.wait("@failedLogin");
+    // Чекаємо на запит з помилкою
+    cy.wait('@failedLogin');
 
-    cy.url().should("include", "/login");
-    cy.contains("Неправильний логін або пароль").should("be.visible");
+    // Перевіряємо, що ми залишилися на сторінці входу і відображається повідомлення про помилку
+    cy.url().should('include', '/login');
+    cy.contains('Неправильний логін або пароль').should('be.visible');
   });
 
-  // ==================== Тестування неаутентифікованого доступу ====================
-  it("повинен перенаправити на сторінку входу при спробі забронювати без аутентифікації", () => {
-    cy.intercept("GET", "**/accommodations/1", {
+  it('повинен перенаправити на сторінку входу при спробі забронювати без аутентифікації', () => {
+    // Очищаємо localStorage, щоб гарантувати, що токен відсутній
+    cy.clearLocalStorage();
+    cy.visit('http://localhost:5173/'); // Переходимо на головну сторінку для скидання стану
+
+    // Мокуємо дані помешкань
+    cy.intercept('GET', '**/api/v1/accommodations/1', {
       statusCode: 200,
       body: {
         id: 1,
-        location: "Київ",
-        description: "Тестовий опис",
-        dailyRate: 100,
-        size: "30 m²",
-        type: "APARTMENT"
+        name: 'Квартира 1',
+        description: 'Тестовий опис',
+        pricePerNight: 100,
+        address: 'Тестова адреса',
+        rating: 4.5,
       },
-    }).as("getAccommodationDetails");
+    }).as('getAccommodationDetails');
 
-    cy.visit("http://localhost:5173/accommodations/1");
-    cy.wait("@getAccommodationDetails");
+    // Переходимо на сторінку деталей помешкання без аутентифікації
+    cy.visit('http://localhost:5173/accommodations/1');
+    cy.wait('@getAccommodationDetails');
 
-    cy.get('input[type="date"]').eq(0).type("2025-10-20");
-    cy.get('input[type="date"]').eq(1).type("2025-10-25");
-    cy.get("button").contains("Забронювати").click();
+    // Заповнюємо форму бронювання, щоб пройти валідацію
+    cy.get('input[type="date"]').eq(0).type('2025-10-20');
+    cy.get('input[type="date"]').eq(1).type('2025-10-25');
 
-    cy.url().should("include", "/login");
-    cy.contains("Увійти").should("be.visible");
-  });
+    // Натискаємо кнопку бронювання
+    cy.get('button').contains('Забронювати').click();
 
-  // ==================== Тестування адмін-панелі ====================
-  it("повинен дозволяти адміну доступ до адмін-панелі", () => {
-    cy.intercept("POST", "**/auth/login", {
-      statusCode: 200,
-      body: {
-        user: {
-          email: "admin@example.com",
-          role: "MANAGER",
-        },
-        token: "mock-admin-jwt-token",
-      },
-    });
-
-    cy.get("a.nav-link").contains("Увійти").should("be.visible").click();
-    cy.url().should("include", "/login");
-    cy.get('input[placeholder="Електронна пошта"]').type("admin@example.com");
-    cy.get('input[placeholder="Пароль"]').type("password123");
-    cy.get('button[type="submit"]').click();
-    cy.url().should("eq", "http://localhost:5173/");
-
-    cy.get("a.nav-link").contains("Адмін-панель").should("be.visible").click();
-    cy.url().should("include", "/admin");
-    cy.contains("Адмін-панель").should("be.visible");
+    // Оновлена перевірка: тепер явно чекаємо, поки URL зміниться на сторінку входу
+    cy.url().should('include', '/login');
+    cy.get('h1').contains('Вхід').should('be.visible');
   });
 });

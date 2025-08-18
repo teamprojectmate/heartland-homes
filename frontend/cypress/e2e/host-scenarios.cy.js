@@ -1,224 +1,108 @@
-// cypress/e2e/host-scenarios.cy.js
+// host-scenarios.cy.js
+import authService from '../../src/api/authService';
 
-import authService from "../../src/api/authService";
-
-describe("Сценарії для орендодавців", () => {
+describe('Сценарії для орендодавців', () => {
+  // Допоміжна функція для входу в систему як орендодавець
   const loginHostUser = () => {
-    cy.request("POST", "**/auth/login", {
-      email: "host@test.com",
-      password: "password",
-    }).then((response) => {
-      window.localStorage.setItem("user", JSON.stringify(response.body));
+    // Використовуємо реальний authService для входу
+    authService.login('host@test.com', 'password').then((response) => {
+      // Зберігаємо токен в локальне сховище, як це робить застосунок
+      localStorage.setItem('user', JSON.stringify(response));
     });
-    cy.visit("/");
+    // Просто переходимо на головну сторінку, оскільки токен вже встановлено
+    cy.visit('/');
   };
 
   beforeEach(() => {
-    cy.clearLocalStorage();
+    // Очищаємо локальне сховище перед кожним тестом, щоб не було конфліктів
+    localStorage.clear();
+    // Заходимо в систему перед кожним тестом
     loginHostUser();
   });
 
-  // ==================== Тест реєстрації орендодавця ====================
-  it("повинен дозволити новому користувачу зареєструватися, отримати роль орендодавця та додати помешкання", () => {
-    const newFirstName = "New";
-    const newLastName = "Host";
-    const newEmail = `newhostuser_${Cypress._.random(0, 1e6)}@test.com`;
-    const newPassword = "newpassword";
-    const newRepeatPassword = "newpassword";
-
-    cy.visit("/register");
-
-    cy.intercept("POST", "**/auth/registration", {
-      statusCode: 201,
-      body: { message: "Користувача успішно зареєстровано" },
-    }).as("registerHost");
-
-    cy.get('input[placeholder="Ім\'я"]').type(newFirstName);
-    cy.get('input[placeholder="Прізвище"]').type(newLastName);
-    cy.get('input[placeholder="Електронна пошта"]').type(newEmail);
-    cy.get('input[placeholder="Пароль"]').type(newPassword);
-    cy.get('input[placeholder="Повторіть пароль"]').type(newRepeatPassword);
-    cy.get('button[type="submit"]').click();
-
-    cy.wait("@registerHost");
-
-    cy.url().should("include", "/login");
+  // Новий тест: перевіряємо, що новий користувач може зареєструватися та додати помешкання
+  it('повинен дозволити новому користувачу зареєструватися, увійти та додати помешкання', () => {
+    const newUsername = 'newhostuser';
+    const newEmail = `newhostuser_${Cypress._.random(0, 1e6)}@test.com`; // Генеруємо унікальний email
+    const newPassword = 'newpassword';
     
-    cy.intercept("POST", "**/auth/login", {
-      statusCode: 200,
-      body: {
-        user: { firstName: newFirstName, lastName: newLastName, email: newEmail, role: "MANAGER" },
-        token: "mock-new-host-jwt-token",
-      },
-    }).as("loginNewHost");
-
+    // Переходимо на сторінку реєстрації
+    cy.visit('/register');
+    
+    // Заповнюємо та відправляємо форму реєстрації
+    cy.get('input[placeholder="Ім\'я користувача"]').type(newUsername);
     cy.get('input[placeholder="Електронна пошта"]').type(newEmail);
     cy.get('input[placeholder="Пароль"]').type(newPassword);
     cy.get('button[type="submit"]').click();
-
-    cy.wait("@loginNewHost");
-
-    cy.url().should("not.include", "/login");
     
-    cy.get("a.nav-link").contains("Додати помешкання").should("be.visible").click();
-    cy.url().should("include", "/accommodations/new");
-    cy.get("h2").contains("Створити нове помешкання").should("be.visible");
+    // Перевіряємо, що нас перенаправило на головну сторінку або сторінку з помешканнями
+    cy.url().should('not.include', '/register');
+    
+    // Переходимо на сторінку додавання помешкання
+    cy.visit('/accommodations/add');
 
-    // ✅ Виправлення: Оновлюємо заповнення форми для відповідності новим полям
-    cy.get('input[placeholder="Місцезнаходження (напр. Вулиця Незалежності, 10)"]').type("Вулиця Нова, 5");
-    cy.get('input[placeholder="Місто"]').type("Київ");
-    cy.get('input[placeholder="Розмір (напр. \'50 м²\')"]').type("70 м²");
-    cy.get('textarea[placeholder="Зручності (перерахуйте через кому: Wi-Fi, Парковка,...) "]').type("Wi-Fi, Парковка");
-    cy.get('input[placeholder="Ціна за добу"]').type("75");
-    cy.get('input[placeholder="Доступна кількість"]').type("5");
-    cy.get('input[placeholder="URL зображення"]').type("https://placehold.co/600x400");
-    cy.get('select').select("APARTMENT");
-
-    // ✅ Виправлення: Оновлюємо мок-дані для відповідності новій схемі
-    cy.intercept("POST", "**/accommodations", {
-      statusCode: 201,
-      body: {
-        id: 999,
-        location: "Вулиця Нова, 5",
-        city: "Київ",
-        dailyRate: 75,
-        type: "APARTMENT"
-      },
-    }).as("addAccommodation");
-
+    // Заповнюємо форму для нового помешкання
+    cy.get('input[placeholder="Назва помешкання"]').type('Квартира нового хоста');
+    cy.get('textarea[placeholder="Опис помешкання"]').type('Квартира від новозареєстрованого хоста.');
+    cy.get('input[placeholder="Адреса"]').type('Вулиця Нова, 5');
+    cy.get('input[placeholder="Ціна за ніч"]').type('75');
     cy.get('button[type="submit"]').click();
-
-    cy.wait("@addAccommodation");
     
-    cy.url().should("include", "/accommodations/my");
-    cy.contains("Вулиця Нова, 5").should("be.visible");
+    // Перевіряємо, що нове помешкання з'явилося у списку
+    cy.url().should('include', '/accommodations/my');
+    cy.contains('Квартира нового хоста');
   });
 
-  // ==================== Тест додавання помешкання ====================
-  it("повинен дозволити аутентифікованому користувачу додати нове помешкання", () => {
-    // ✅ Виправлення: Оновлюємо мок-дані для відповідності новій схемі
-    cy.intercept("POST", "**/accommodations", {
-      statusCode: 201,
-      body: {
-        id: 998,
-        location: "Вулиця Тестова, 123",
-        city: "Львів",
-        dailyRate: 55,
-        type: "APARTMENT"
-      },
-    }).as("addAccommodation");
+  it('повинен дозволити аутентифікованому користувачу додати нове помешкання', () => {
+    // Переходимо на сторінку додавання помешкання
+    cy.visit('/accommodations/add');
 
-    cy.get("a.nav-link").contains("Додати помешкання").should("be.visible").click();
-    cy.url().should("include", "/accommodations/new");
-    
-    // ✅ Виправлення: Оновлюємо заповнення форми для відповідності новим полям
-    cy.get('input[placeholder="Місцезнаходження (напр. Вулиця Незалежності, 10)"]').type("Вулиця Тестова, 123");
-    cy.get('input[placeholder="Місто"]').type("Львів");
-    cy.get('input[placeholder="Розмір (напр. \'50 м²\')"]').type("70 м²");
-    cy.get('textarea[placeholder="Зручності (перерахуйте через кому: Wi-Fi, Парковка,...) "]').type("Wi-Fi");
-    cy.get('input[placeholder="Ціна за добу"]').type("55");
-    cy.get('input[placeholder="Доступна кількість"]').type("3");
-    cy.get('input[placeholder="URL зображення"]').type("https://placehold.co/600x400");
-    cy.get('select').select("APARTMENT");
+    // Заповнюємо форму для нового помешкання
+    cy.get('input[placeholder="Назва помешкання"]').type('Тестова квартира 2');
+    cy.get('textarea[placeholder="Опис помешкання"]').type('Затишна квартира для тестування.');
+    cy.get('input[placeholder="Адреса"]').type('Вулиця Тестова, 123');
+    cy.get('input[placeholder="Ціна за ніч"]').type('55');
 
+    // Натискаємо кнопку "Додати помешкання"
     cy.get('button[type="submit"]').click();
 
-    cy.wait("@addAccommodation");
-
-    cy.url().should("include", "/accommodations/my");
-    cy.contains("Вулиця Тестова, 123").should("be.visible");
+    // Перевіряємо, що нас перенаправило на сторінку з усіма помешканнями
+    // і що нове помешкання з'явилося у списку.
+    // Припускаємо, що після додавання користувач переходить на /accommodations/my
+    cy.url().should('include', '/accommodations/my');
+    cy.contains('Тестова квартира 2');
   });
 
-  // ==================== Тест редагування помешкання ====================
-  it("повинен дозволити орендодавцю редагувати власне помешкання", () => {
-    const accommodationId = 101;
+  it('повинен дозволити орендодавцю редагувати власне помешкання', () => {
+    // Переходимо на сторінку з власними помешканнями
+    cy.visit('/accommodations/my');
 
-    // ✅ Виправлення: Оновлюємо мок-дані для відповідності новій схемі
-    cy.intercept("GET", "**/ccommodations/my*", {
-      statusCode: 200,
-      body: {
-        content: [{
-          id: accommodationId,
-          location: "Вулиця Тестова, 123",
-          city: "Київ",
-          dailyRate: 55,
-          type: "APARTMENT",
-          size: "70 m²",
-          amenities: ["Wi-Fi", "Парковка"],
-          images: "https://placehold.co/600x400"
-        }],
-        totalPages: 1,
-        totalElements: 1
-      },
-    }).as("getMyAccommodations");
+    // Знаходимо помешкання і натискаємо кнопку "Редагувати"
+    // Припускаємо, що кожне помешкання має кнопку "Редагувати"
+    cy.contains('Тестова квартира 1').parents('.card').find('button').contains('Редагувати').click();
 
-    // ✅ Виправлення: Оновлюємо мок-дані для відповідності новій схемі
-    cy.intercept("PUT", `**/accommodations/${accommodationId}`, {
-      statusCode: 200,
-      body: {
-        id: accommodationId,
-        location: "Вулиця Тестова, 123",
-        city: "Київ",
-        dailyRate: 60,
-        type: "APARTMENT"
-      },
-    }).as("updateAccommodation");
+    // Переходимо на сторінку редагування та змінюємо дані
+    cy.url().should('include', '/accommodations/edit/');
+    cy.get('input[placeholder="Ціна за ніч"]').clear().type('60');
 
-    cy.visit("/accommodations/my");
-    cy.wait("@getMyAccommodations");
-
-    cy.contains("Вулиця Тестова, 123")
-      .parents(".card")
-      .find("button")
-      .contains("Редагувати")
-      .click();
-
-    cy.url().should("include", `/accommodations/edit/${accommodationId}`);
-    
-    // ✅ Виправлення: Оновлюємо селектори для відповідності новій формі
-    cy.get('input[placeholder="Ціна за добу"]').clear().type("60");
-
+    // Зберігаємо зміни
     cy.get('button[type="submit"]').click();
 
-    cy.wait("@updateAccommodation");
-
-    cy.url().should("include", "/accommodations/my");
-    cy.contains("Вулиця Тестова, 123").should("be.visible");
+    // Перевіряємо, що нас перенаправило назад і що зміни застосовані
+    cy.url().should('include', '/accommodations/my');
+    cy.contains('Тестова квартира 1');
+    cy.contains('Ціна: 60 $');
   });
 
-  // ==================== Тест видалення помешкання ====================
-  it("повинен дозволити орендодавцю видалити власне помешкання", () => {
-    const accommodationId = 101;
+  it('повинен дозволити орендодавцю видалити власне помешкання', () => {
+    // Переходимо на сторінку з власними помешканнями
+    cy.visit('/accommodations/my');
 
-    cy.intercept("GET", "**/accommodations/my*", {
-      statusCode: 200,
-      body: {
-        content: [{
-          id: accommodationId,
-          location: "Вулиця Тестова, 123",
-          dailyRate: 55,
-          type: "APARTMENT",
-          name: "Тестова квартира 1"
-        }],
-        totalPages: 1,
-        totalElements: 1
-      },
-    }).as("getMyAccommodations");
+    // Знаходимо помешкання і натискаємо кнопку "Видалити"
+    // Припускаємо, що кожне помешкання має кнопку "Видалити"
+    cy.contains('Тестова квартира 1').parents('.card').find('button').contains('Видалити').click();
 
-    cy.intercept("DELETE", `**/accommodations/${accommodationId}`, {
-      statusCode: 204,
-    }).as("deleteAccommodation");
-
-    cy.visit("/accommodations/my");
-    cy.wait("@getMyAccommodations");
-
-    cy.contains("Вулиця Тестова, 123")
-      .parents(".card")
-      .find("button")
-      .contains("Видалити")
-      .click();
-
-    cy.wait("@deleteAccommodation");
-    cy.contains("Вулиця Тестова, 123").should("not.exist");
+    // Перевіряємо, що помешкання більше не відображається у списку
+    cy.contains('Тестова квартира 1').should('not.exist');
   });
 });

@@ -1,41 +1,40 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import Notification from "./Notification";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = 'http://localhost:8080/api/v1';
 
 const CreateAccommodation = () => {
   const navigate = useNavigate();
+  // Отримуємо об'єкт користувача, включаючи токен та роль, з Redux-стану
   const { user } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
-    type: "APARTMENT",
-    location: "",
-    city: "",
-    size: "",
-    amenities: "",
-    dailyRate: "",
-    availability: "",
-    images: "",
+    name: '',
+    description: '',
+    address: '',
+    pricePerNight: '',
+    rating: 0,
+    imageUrl: '' // Цей URL може бути опціональним
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    if (!user || user.role !== "MANAGER") {
-      navigate("/");
+    // Перевірка, чи користувач є адміністратором
+    if (!user || user.role !== 'ADMIN') {
+      navigate('/');
     }
   }, [user, navigate]);
 
-  const { type, location, city, size, amenities, dailyRate, availability, images } =
-    formData;
+  const { name, description, address, pricePerNight, rating, imageUrl } = formData;
 
   const onChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [e.target.name]: e.target.value
     });
   };
 
@@ -43,88 +42,44 @@ const CreateAccommodation = () => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-
-    const amenitiesArray = amenities.split(",").map((item) => item.trim());
+    setSuccess(false);
 
     try {
       const token = user.token;
       await axios.post(
         `${BASE_URL}/accommodations`,
-        {
-          type,
-          location,
-          city,
-          size,
-          amenities: amenitiesArray,
-          dailyRate,
-          availability,
-          images: images,
-        },
+        formData,
         {
           headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
+            'Authorization': `Bearer ${token}`
+          }
+        }
       );
+      setSuccess(true);
       setLoading(false);
-      navigate("/admin/accommodations");
+      // Перенаправляємо назад на адмін-панель після успішного створення
+      navigate('/admin/accommodations');
     } catch (err) {
-      setError(err.response?.data?.message || "Помилка створення помешкання");
+      setError(err.response?.data?.message || 'Помилка створення помешкання');
       setLoading(false);
     }
   };
 
   return (
-    <div className="container page">
+    <div className="container mt-4">
+      <h2 className="text-xs-center">Створити нове помешкання</h2>
       <div className="row">
-        <div className="col-md-6 offset-md-3 col-xs-12 auth-form-container">
-          <h2 className="auth-title">Створити нове помешкання</h2>
-          {error && <Notification message={error} type="error" />}
+        <div className="col-md-6 offset-md-3 col-xs-12">
+          {error && <div className="alert alert-danger">{error}</div>}
+          {success && <div className="alert alert-success">Помешкання успішно створено!</div>}
           <form onSubmit={handleSubmit}>
             <fieldset className="form-group">
-              <label>Тип житла</label>
-              <select
-                className="form-control form-control-lg"
-                name="type"
-                value={type}
-                onChange={onChange}
-                required
-              >
-                <option value="HOUSE">HOUSE</option>
-                <option value="APARTMENT">APARTMENT</option>
-                <option value="CONDO">CONDO</option>
-                <option value="VACATION_HOME">VACATION_HOME</option>
-              </select>
-            </fieldset>
-            <fieldset className="form-group">
               <input
                 className="form-control form-control-lg"
                 type="text"
-                placeholder="Місцезнаходження (напр. Вулиця Незалежності, 10)"
-                name="location"
-                value={location}
-                onChange={onChange}
-                required
-              />
-            </fieldset>
-            <fieldset className="form-group">
-              <input
-                className="form-control form-control-lg"
-                type="text"
-                placeholder="Місто"
-                name="city"
-                value={city}
-                onChange={onChange}
-                required
-              />
-            </fieldset>
-            <fieldset className="form-group">
-              <input
-                className="form-control form-control-lg"
-                type="text"
-                placeholder="Розмір (напр. '50 м²')"
-                name="size"
-                value={size}
+                placeholder="Назва"
+                name="name"
+                value={name}
                 onChange={onChange}
                 required
               />
@@ -132,10 +87,21 @@ const CreateAccommodation = () => {
             <fieldset className="form-group">
               <textarea
                 className="form-control form-control-lg"
-                rows="3"
-                placeholder="Зручності (перерахуйте через кому: Wi-Fi, Парковка,...)"
-                name="amenities"
-                value={amenities}
+                rows="5"
+                placeholder="Опис"
+                name="description"
+                value={description}
+                onChange={onChange}
+                required
+              />
+            </fieldset>
+            <fieldset className="form-group">
+              <input
+                className="form-control form-control-lg"
+                type="text"
+                placeholder="Адреса"
+                name="address"
+                value={address}
                 onChange={onChange}
                 required
               />
@@ -144,9 +110,9 @@ const CreateAccommodation = () => {
               <input
                 className="form-control form-control-lg"
                 type="number"
-                placeholder="Ціна за добу"
-                name="dailyRate"
-                value={dailyRate}
+                placeholder="Ціна за ніч"
+                name="pricePerNight"
+                value={pricePerNight}
                 onChange={onChange}
                 required
                 min="0"
@@ -156,12 +122,12 @@ const CreateAccommodation = () => {
               <input
                 className="form-control form-control-lg"
                 type="number"
-                placeholder="Доступна кількість"
-                name="availability"
-                value={availability}
+                placeholder="Рейтинг (від 0 до 5)"
+                name="rating"
+                value={rating}
                 onChange={onChange}
-                required
                 min="0"
+                max="5"
               />
             </fieldset>
             <fieldset className="form-group">
@@ -169,17 +135,17 @@ const CreateAccommodation = () => {
                 className="form-control form-control-lg"
                 type="text"
                 placeholder="URL зображення"
-                name="images"
-                value={images}
+                name="imageUrl"
+                value={imageUrl}
                 onChange={onChange}
               />
             </fieldset>
             <button
-              className="btn btn-lg btn-primary pull-xs-right mt-4"
+              className="btn btn-lg btn-success pull-xs-right"
               type="submit"
               disabled={loading}
             >
-              {loading ? "Завантаження..." : "Створити"}
+              {loading ? 'Завантаження...' : 'Створити'}
             </button>
           </form>
         </div>

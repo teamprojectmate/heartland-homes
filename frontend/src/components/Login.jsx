@@ -13,6 +13,7 @@ const Login = () => {
   const { isAuthenticated, loading, error } = useSelector((state) => state.auth);
 
   useEffect(() => {
+    // Якщо користувач вже аутентифікований, перенаправляємо його на головну сторінку
     if (isAuthenticated) {
       navigate('/');
     }
@@ -20,7 +21,9 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Відправляємо дані на бекенд для аутентифікації
     const resultAction = await dispatch(login({ email, password }));
+    // Якщо вхід успішний, перенаправляємо
     if (login.fulfilled.match(resultAction)) {
       navigate('/');
     }
@@ -29,8 +32,8 @@ const Login = () => {
   return (
     <div className="container page">
       <div className="row">
-        <div className="col-md-6 offset-md-3 col-xs-12 auth-form-container"> 
-          <h1 className="auth-title">Вхід</h1> 
+        <div className="col-md-6 offset-md-3 col-xs-12">
+          <h1 className="text-xs-center">Вхід</h1>
           <p className="text-xs-center">
             <a href="/register">Потрібен акаунт?</a>
           </p>

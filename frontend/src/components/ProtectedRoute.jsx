@@ -1,19 +1,27 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 
-const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, loading } = useSelector((state) => state.auth);
+const ProtectedRoute = ({ requiredRole }) => {
+  const { user, isAuthenticated, loading } = useSelector((state) => state.auth);
 
+  // Поки дані завантажуються, можна показати порожню сторінку або завантажувач
   if (loading) {
-    return null; // Або індикатор завантаження
+    return null; // або <p>Завантаження...</p>
   }
 
+  // Перевіряємо, чи користувач аутентифікований
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" />;
   }
 
-  return children;
+  // Якщо потрібна роль вказана, перевіряємо, чи користувач її має
+  if (requiredRole && user.role !== requiredRole) {
+    return <Navigate to="/" />;
+  }
+
+  // Якщо всі перевірки пройдені, відображаємо дочірні маршрути
+  return <Outlet />;
 };
 
 export default ProtectedRoute;
