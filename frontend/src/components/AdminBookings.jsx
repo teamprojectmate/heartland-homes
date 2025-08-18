@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../api/axios";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Notification from "./Notification";
-
-const BASE_URL = "http://localhost:8080";
+import "../styles/components/_admin.scss";
 
 const AdminBookings = () => {
   const navigate = useNavigate();
@@ -23,12 +22,12 @@ const AdminBookings = () => {
     const fetchAllBookings = async () => {
       try {
         const token = user.token;
-        const response = await axios.get(`${BASE_URL}/bookings`, {
+        const response = await axios.get("/bookings", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        setBookings(response.data.content);
+        setBookings(response.data);
       } catch (err) {
         setError(err.response?.data?.message || err.message);
       } finally {
@@ -41,7 +40,7 @@ const AdminBookings = () => {
   const handleCancelBooking = async (id) => {
     try {
       const token = user.token;
-      await axios.delete(`${BASE_URL}/bookings/${id}`, {
+      await axios.delete(`/bookings/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -55,7 +54,7 @@ const AdminBookings = () => {
 
   if (loading) {
     return (
-      <div className="container admin-page-container text-center">
+      <div className="container admin-page-container text-center"> {/* ✅ Змінено app-container на container */}
         <h1 className="section-heading">Усі бронювання (Адмін-панель)</h1>
         <p>Завантаження...</p>
       </div>
@@ -63,9 +62,9 @@ const AdminBookings = () => {
   }
 
   return (
-    <div className="container admin-page-container">
+    <div className="container admin-page-container"> {/* ✅ Змінено app-container на container */}
       <h1 className="section-heading text-center">Усі бронювання (Адмін-панель)</h1>
-      {error && <Notification message={error} type="error" />}
+      {error && <Notification message={error} type="danger" />}
 
       {bookings.length > 0 ? (
         <table className="admin-table">
@@ -93,7 +92,7 @@ const AdminBookings = () => {
                 <td>
                   <button
                     onClick={() => setConfirmCancelId(booking.id)}
-                    className="btn btn-sm btn-delete btn-action"
+                    className="btn-danger btn-sm btn-action"
                   >
                     Скасувати
                   </button>
@@ -103,38 +102,35 @@ const AdminBookings = () => {
           </tbody>
         </table>
       ) : (
-        <div className="alert alert-info text-center">
+        <div className="alert-info text-center">
           Бронювань ще немає.
         </div>
       )}
 
-      {/* Модальне вікно для підтвердження скасування */}
       {confirmCancelId && (
-        <div className="modal d-block" tabIndex="-1" role="dialog">
-          <div className="modal-dialog" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Підтвердження скасування</h5>
-              </div>
-              <div className="modal-body">
-                <p>Ви впевнені, що хочете скасувати це бронювання?</p>
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={() => setConfirmCancelId(null)}
-                >
-                  Ні, повернутися
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-danger"
-                  onClick={() => handleCancelBooking(confirmCancelId)}
-                >
-                  Так, скасувати
-                </button>
-              </div>
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title">Підтвердження скасування</h5>
+            </div>
+            <div className="modal-body">
+              <p>Ви впевнені, що хочете скасувати це бронювання?</p>
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() => setConfirmCancelId(null)}
+              >
+                Ні, повернутися
+              </button>
+              <button
+                type="button"
+                className="btn-danger"
+                onClick={() => handleCancelBooking(confirmCancelId)}
+              >
+                Так, скасувати
+              </button>
             </div>
           </div>
         </div>

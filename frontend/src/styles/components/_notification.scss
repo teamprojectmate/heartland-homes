@@ -1,24 +1,29 @@
-// src/styles/components/_notification.scss
-@use "sass:color";
+// src/styles/components/_notifications.scss
+
 @use "../abstract/variables" as *;
 
-.alert {
+.notification {
   padding: 1rem 1.5rem;
-  border-radius: 8px;
+  border-radius: $radius;
   border: none;
   font-weight: 600;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: $box-shadow-md;
   transition: all 0.5s ease-in-out;
 }
 
-.alert-success {
+.notification-success {
   background-color: $success-color;
-  color: #fff;
+  color: $white-color;
 }
 
-.alert-danger {
+.notification-danger {
   background-color: $danger-color;
-  color: #fff;
+  color: $white-color;
+}
+
+.notification-info {
+  background-color: #17a2b8;
+  color: $white-color;
 }
 
 .fixed-bottom-right {

@@ -1,4 +1,9 @@
+// src/components/SearchForm.jsx
+
 import React, { useState } from 'react';
+import "../styles/components/_hero.scss"; // ✅ Імпортуємо стилі для hero-секції
+import "../styles/components/_forms.scss"; // ✅ Імпортуємо стилі для форм
+import "../styles/components/_buttons.scss"; // ✅ Імпортуємо стилі для кнопок
 
 const SearchForm = ({ onSearch }) => {
   const [destination, setDestination] = useState('');
@@ -55,7 +60,7 @@ const SearchForm = ({ onSearch }) => {
           onChange={(e) => setGuests(parseInt(e.target.value))}
         />
       </div>
-      <button className="btn btn-primary search-btn" type="submit">
+      <button className="btn-primary" type="submit">
         Шукати
       </button>
     </form>

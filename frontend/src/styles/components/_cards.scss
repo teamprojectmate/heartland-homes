@@ -1,22 +1,53 @@
 // src/styles/components/_cards.scss
-@use "sass:color";
+
 @use "../abstract/variables" as *;
+@use "sass:math";
 
 .card-custom {
-  border: none;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  background: $white-color;
+  border-radius: $radius;
+  box-shadow: $box-shadow-card;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    transform: translateY(-4px);
+    box-shadow: $box-shadow-card-hover;
   }
 }
 
 .card-img-top-custom {
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
+  width: 100%;
   height: 200px;
   object-fit: cover;
+  border-top-left-radius: $radius;
+  border-top-right-radius: $radius;
+}
+
+.card-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.card-text {
+  font-size: 1rem;
+  color: $muted-color;
+  margin-bottom: 1rem;
+}
+
+.card-price {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: $primary-color;
+  margin-top: auto;
 }

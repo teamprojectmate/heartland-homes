@@ -26,21 +26,21 @@ const AccommodationDetails = () => {
   }, [id]);
 
   if (loading) return <p className="text-center mt-5">Завантаження...</p>;
-  if (error) return <p className="alert alert-danger mt-5">{error}</p>;
+  if (error) return <p className="alert-info mt-5 text-center">{error}</p>;
   if (!accommodation) return <p className="text-center mt-5">Помешкання не знайдено.</p>;
 
   const images = [
     {
-      original: accommodation.picture,
-      thumbnail: accommodation.picture,
+      original: accommodation.mainPhotoUrl,
+      thumbnail: accommodation.mainPhotoUrl,
       originalAlt: accommodation.location,
     },
   ];
 
   return (
-    <div className="container mt-4 page">
-      <div className="row">
-        <div className="col-md-8">
+    <div className="container mt-4"> // ✅ Змінено
+      <div className="row"> // ✅ Змінено
+        <div className="col-md-8"> // ✅ Змінено
           <div className="accommodation-details-container mb-4">
             <ImageGallery items={images} showPlayButton={false} />
             <h1 className="details-heading mt-4">{accommodation.location}</h1>
@@ -63,9 +63,9 @@ const AccommodationDetails = () => {
             />
           </div>
         </div>
-        <div className="col-md-4">
-          <div className="card booking-card">
-            <div className="card-body">
+        <div className="col-md-4"> // ✅ Змінено
+          <div className="booking-card">
+            <div>
               <h5 className="booking-title">Забронювати</h5>
               <p>Ціна: **{accommodation.dailyRate}$** на добу</p>
               <BookingForm accommodationId={accommodation.id} dailyRate={accommodation.dailyRate} />

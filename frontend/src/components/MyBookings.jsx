@@ -1,17 +1,21 @@
+// src/components/MyBookings.jsx
+
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
+import Notification from './Notification';
+import "../styles/components/_cards.scss";
+import "../styles/layout/_main-layout.scss";
 
 const MyBookings = () => {
   const navigate = useNavigate();
-  const { user, isAuthenticated, token } = useSelector((state) => state.auth);
+  const { isAuthenticated, token } = useSelector((state) => state.auth);
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Перевіряємо, чи користувач автентифікований і чи є токен
     if (!isAuthenticated || !token) {
       navigate('/login');
       return;
@@ -20,7 +24,6 @@ const MyBookings = () => {
     const fetchBookings = async () => {
       try {
         setLoading(true);
-        // Робимо реальний запит до API з використанням токена
         const response = await axios.get('http://localhost:8080/bookings/my', {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -28,7 +31,6 @@ const MyBookings = () => {
         });
         setBookings(response.data);
       } catch (err) {
-        // Додаємо більш детальну обробку помилок
         setError(err.response?.data?.message || err.message || 'Не вдалося отримати бронювання');
       } finally {
         setLoading(false);
@@ -36,28 +38,15 @@ const MyBookings = () => {
     };
     
     fetchBookings();
-  }, [isAuthenticated, navigate, token]); // Додали token до залежностей useEffect
+  }, [isAuthenticated, navigate, token]);
 
   if (loading) {
     return (
       <div className="container page">
-        <h1 className="text-xs-center">Мої бронювання</h1>
+        <h1 className="text-center">Мої бронювання</h1>
         <div className="row">
-          <div className="col-md-8 offset-md-2 col-xs-12">
-            <p className="text-xs-center">Завантаження...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="container page">
-        <h1 className="text-xs-center">Мої бронювання</h1>
-        <div className="row">
-          <div className="col-md-8 offset-md-2 col-xs-12">
-            <p className="text-xs-center text-danger">Помилка: {error}</p>
+          <div className="col">
+            <p className="text-center">Завантаження...</p>
           </div>
         </div>
       </div>
@@ -66,20 +55,21 @@ const MyBookings = () => {
 
   return (
     <div className="container page">
-      <h1 className="text-xs-center">Мої бронювання</h1>
+      <h1 className="text-center">Мої бронювання</h1>
       <div className="row">
-        <div className="col-md-8 offset-md-2 col-xs-12">
+        <div className="col">
+          {error && <Notification message={error} type="danger" />}
           {bookings.length > 0 ? (
             bookings.map((booking) => (
-              <div key={booking.id} className="card my-3">
-                <div className="card-block">
+              <div key={booking.id} className="card card-custom my-3">
+                <div className="card-body">
                   <h4 className="card-title">{booking.accommodationName}</h4>
                   <p className="card-text">
                     Дати: {new Date(booking.checkInDate).toLocaleDateString()} - {new Date(booking.checkOutDate).toLocaleDateString()}
                   </p>
                   <p className="card-text">Сума: {booking.totalAmount} $</p>
                   {!booking.isPaid ? (
-                    <Link to={`/payment/${booking.id}`} className="btn btn-outline-success">
+                    <Link to={`/payment/${booking.id}`} className="btn-primary">
                       Оплатити
                     </Link>
                   ) : (
@@ -89,7 +79,7 @@ const MyBookings = () => {
               </div>
             ))
           ) : (
-            <p className="text-xs-center">У вас поки що немає бронювань.</p>
+            <p className="text-center">У вас поки що немає бронювань.</p>
           )}
         </div>
       </div>

@@ -1,9 +1,14 @@
+// src/components/Payment.jsx
+
 import React, { useState, useEffect } from 'react';
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import Notification from './Notification';
+import "../styles/layout/_main-layout.scss"; // ✅ Імпортуємо стилі для розмітки
+import "../styles/components/_forms.scss"; // ✅ Імпортуємо стилі для форм
+import "../styles/components/_buttons.scss"; // ✅ Імпортуємо стилі для кнопок
 
 const BASE_URL = 'http://localhost:8080';
 
@@ -93,25 +98,25 @@ const Payment = () => {
   return (
     <div className="container page">
       <div className="row">
-        <div className="col-md-6 offset-md-3 col-xs-12 auth-form-container"> {/* ✅ Використовуємо наш стиль для форми */}
+        <div className="col auth-form-container">
           <h2 className="auth-title">Оплата бронювання</h2>
-          {error && <Notification message={error} type="error" />}
+          {error && <Notification message={error} type="danger" />}
 
           {bookingDetails && (
-            <div className="alert alert-info">
+            <div className="notification-info">
               Помешкання: <strong>{bookingDetails.accommodationName}</strong>,
               Сума: <strong>{bookingDetails.totalAmount} $</strong>
             </div>
           )}
 
           <form onSubmit={handleSubmit}>
-            <div className="form-group mb-3">
+            <div className="form-group form-group-spacing"> {/* ✅ Виправлено */}
               <label>Дані картки</label>
               <CardElement className="form-control" />
             </div>
-            {paymentError && <Notification message={paymentError} type="error" />}
+            {paymentError && <Notification message={paymentError} type="danger" />}
             <button
-              className="btn btn-success btn-block mt-4"
+              className="btn btn-primary btn-full-width" // ✅ Виправлено
               disabled={!stripe || processing}
             >
               {processing ? 'Обробка...' : 'Сплатити'}

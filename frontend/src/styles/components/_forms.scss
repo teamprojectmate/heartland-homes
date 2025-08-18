@@ -1,41 +1,60 @@
 // src/styles/components/_forms.scss
 @use "sass:color";
 @use "../abstract/variables" as *;
+@use "../abstract/mixins" as *;
 
-.auth-form-container {
-  max-width: 500px;
-  margin: 2rem auto;
-  padding: 2rem;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+  min-width: 0; // щоб у flex/grid не ламався
 }
 
-.auth-title {
-  text-align: center;
-  margin-bottom: 1.5rem;
-  font-weight: 600;
+.form-group { margin-bottom: $spacer-sm; }
+
+.form-label, label {
+  display: block;
+  margin-bottom: .5rem;
+  font-weight: 700;
   color: $heading-color;
+  font-size: .95rem;
 }
 
 .form-control {
-  border-radius: $border-radius;
+  width: 100%;
+  appearance: none;
+  background: #f8fafc;
   border: 1px solid $border-color;
-  padding: 0.5rem 1rem;
-  box-shadow: none;
-  
-  &:focus {
-    border-color: color.adjust($primary-color, $lightness: -10%);
-    box-shadow: 0 0 0 0.2rem rgba($primary-color, 0.25);
-  }
+  border-radius: $radius;
+  padding: .85rem 1rem;
+  color: $text-color;
+  transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
+
+  &:hover { border-color: color.adjust($border-color, $lightness: -8%); }
+  &:focus { outline: none; background: $white-color; border-color: $primary-color; box-shadow: $box-shadow-focus; }
+  &:disabled { background: #eef2f6; color: $muted-color; cursor: not-allowed; }
 }
 
-.btn-primary {
-  background-color: $primary-color;
-  border-color: $primary-color;
-  
-  &:hover {
-      background-color: color.adjust($primary-color, $lightness: -10%);
-      border-color: color.adjust($primary-color, $lightness: -10%);
-  }
+.form-check-group { display: flex; gap: 1.5rem; }
+
+.form-check {
+  display: inline-flex; align-items: center; gap: .5rem;
+  .form-check-input { width: 18px; height: 18px; }
+  .form-check-label { font-weight: 600; color: $text-color; }
+}
+
+.profile-form {
+  background: $white-color;
+  padding: 2rem;
+  border-radius: $radius;
+  box-shadow: $box-shadow-card;
+  max-width: 420px;
+  margin-inline: auto;
+}
+
+// Група кнопок у формах
+.button-group {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
 }

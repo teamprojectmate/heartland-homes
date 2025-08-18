@@ -1,12 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { login } from '../store/slices/authSlice';
+// src/components/Login.jsx
+
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, Link } from "react-router-dom";
+import { login } from "../store/slices/authSlice";
+import Notification from "./Notification";
+import "../styles/layout/_main-layout.scss";
+import "../styles/components/_forms.scss";
+import "../styles/components/_buttons.scss";
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -14,59 +19,49 @@ const Login = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/');
+      navigate("/");
     }
   }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const resultAction = await dispatch(login({ email, password }));
-    if (login.fulfilled.match(resultAction)) {
-      navigate('/');
-    }
+    await dispatch(login({ email, password }));
   };
 
   return (
     <div className="container page">
       <div className="row">
-        <div className="col-md-6 offset-md-3 col-xs-12 auth-form-container"> 
-          <h1 className="auth-title">Вхід</h1> 
-          <p className="text-xs-center">
-            <a href="/register">Потрібен акаунт?</a>
+        <div className="col-md-6 offset-md-3 auth-form-container"> {/* ✅ Виправлено */}
+          <h1 className="auth-title">Вхід</h1>
+          <p className="text-center">
+            <Link to="/register">Потрібен акаунт?</Link>
           </p>
-
+          {error && <Notification message={error} type="danger" />}
           <form onSubmit={handleSubmit}>
-            <fieldset className="form-group">
+            <div className="form-group">
               <input
-                className="form-control form-control-lg"
+                className="form-control"
                 type="email"
                 placeholder="Електронна пошта"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                required
               />
-            </fieldset>
-            <fieldset className="form-group">
+            </div>
+            <div className="form-group">
               <input
-                className="form-control form-control-lg"
+                className="form-control"
                 type="password"
                 placeholder="Пароль"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                required
               />
-            </fieldset>
-            {error && (
-              <div className="alert alert-danger">
-                {error}
-              </div>
-            )}
+            </div>
             <button
-              className="btn btn-lg btn-primary pull-xs-right"
+              className="btn-primary"
               type="submit"
               disabled={loading}
             >
-              {loading ? 'Завантаження...' : 'Увійти'}
+              {loading ? "Завантаження..." : "Увійти"}
             </button>
           </form>
         </div>

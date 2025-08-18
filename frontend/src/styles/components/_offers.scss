@@ -1,67 +1,42 @@
-// src/styles/components/_offers.scss
-@use "sass:color";
 @use "../abstract/variables" as *;
 
 .offers-section {
-  padding: 4rem 0;
+  padding: 3rem 0 2rem;
+  text-align: center;
 }
 
 .section-heading {
   font-size: 2rem;
-  font-weight: 700;
-  color: #333;
-  margin-bottom: 1rem;
+  font-weight: 800;
+  margin-bottom: .5rem;
+  color: $heading-color;
 }
 
 .section-subheading {
   font-size: 1rem;
-  color: #6c757d;
+  color: $muted-color;
   margin-bottom: 2rem;
 }
 
-.card-custom {
-  border: none;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-  height: 100%;
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  }
+.offers-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 1.25rem;
 }
 
-.card-img-top-custom {
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
-  object-fit: cover;
+.offer-card {
+  grid-column: span 4;           /* 3 в ряд на десктопі */
+  display: flex;
+  flex-direction: column;
+
+  @media (max-width: $breakpoint-lg) { grid-column: span 6; } /* 2 в ряд */
+  @media (max-width: $breakpoint-md) { grid-column: span 12; } /* 1 в ряд */
+}
+
+.offer-image {
+  width: 100%;
   height: 200px;
-}
-
-.card-body {
-  padding: 1.5rem;
-}
-
-.card-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: $heading-color;
-}
-
-.card-text {
-  font-size: 1rem;
-  color: #555;
-}
-
-.btn-primary {
-  background-color: $primary-color;
-  border-color: $primary-color;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
-  
-  &:hover {
-      background-color: color.adjust($primary-color, $lightness: -10%);
-      border-color: color.adjust($primary-color, $lightness: -10%);
-  }
+  object-fit: cover;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
 }

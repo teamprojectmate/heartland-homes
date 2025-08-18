@@ -1,0 +1,20 @@
+// src/styles/components/_profile.scss
+@use "sass:color";
+@use "../abstract/variables" as *;
+@use "../abstract/mixins" as *;
+
+.profile-card {
+  background: $white-color;
+  border-radius: $radius;
+  box-shadow: $box-shadow-card;
+  padding: 24px 24px 28px;
+}
+
+.profile-form {
+  background: $white-color;
+  border: 1px solid transparent; // щоб точно не було “системних” рамок
+  border-radius: $radius;
+  padding: 16px;
+  box-shadow: none;
+}
+

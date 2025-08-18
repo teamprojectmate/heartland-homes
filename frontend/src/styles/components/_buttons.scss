@@ -1,0 +1,117 @@
+// src/styles/components/_buttons.scss
+@use "../abstract/variables" as *;
+@use "../abstract/mixins" as *;
+
+/* ===== БАЗА ===== */
+.btn {
+  --btn-bg: #f5f7f9;
+  --btn-fg: #222;
+  --btn-bd: transparent;
+  --btn-shadow: 0 2px 8px rgba(16,24,40,.10);
+  --btn-shadow-active: 0 1px 4px rgba(16,24,40,.14);
+
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+
+  min-height: 44px;
+  padding: .65rem 1.1rem;
+  border-radius: $radius;
+  border: 1px solid var(--btn-bd);
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  font-weight: 800;
+  letter-spacing: .2px;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+
+  box-shadow: var(--btn-shadow);
+  transition:
+    transform .08s ease,
+    box-shadow .15s ease,
+    filter .15s ease,
+    background-color .15s ease,
+    color .15s ease,
+    border-color .15s ease;
+
+  &:hover { filter: brightness(.97); }
+  &:active { transform: translateY(1px); box-shadow: var(--btn-shadow-active); }
+  &:focus-visible { outline: none; box-shadow: var(--btn-shadow), $box-shadow-focus; }
+  &:disabled,
+  &[aria-disabled="true"] { opacity: .6; cursor: not-allowed; pointer-events: none; }
+}
+
+/* світліший текст на насиченому фоні */
+.btn-primary {
+  @extend .btn;
+  --btn-bg: #0f766e;    /* $primary-color */
+  --btn-fg: #f8fafc; 
+  --btn-bd: #0f766e;
+
+  &:hover { filter: none; background: #0b5f59; } /* $primary-600 */
+}
+
+.btn-secondary {
+  @extend .btn;
+  --btn-bg: #e9eef3;
+  --btn-fg: #6b7280; 
+  --btn-bd: #d7dde3;
+
+  &:hover { filter: none; background: #e4eaef; }
+}
+
+.btn-outline {
+  @extend .btn;
+  --btn-bg: transparent;
+  --btn-fg: #475569;    /* світліший за $heading-color */
+  --btn-bd: $border-color;
+  box-shadow: none;
+
+  &:hover { background: #f6f8fa; }
+}
+
+.btn-ghost {
+  @extend .btn;
+  --btn-bg: transparent;
+  --btn-fg: #14b8a6;    /* світліший відтінок primary для тексту */
+  --btn-bd: transparent;
+  box-shadow: none;
+
+  &:hover { background: rgba(15,118,110,.08); } /* primary 8% */
+}
+
+.btn-success {
+  @extend .btn;
+  --btn-bg: $success-color;
+  --btn-fg: #f8fafc;    /* світліший текст */
+  --btn-bd: $success-color;
+
+  &:hover { filter: brightness(.96); }
+}
+
+.btn-danger {
+  @extend .btn;
+  --btn-bg: $danger-color;
+  --btn-fg: #fff8f8;    /* трохи “легший” за чисто білий */
+  --btn-bd: $danger-color;
+
+  &:hover { filter: brightness(.96); }
+}
+
+/* ===== РОЗМІРИ ===== */
+.btn-lg { min-height: 52px; padding: .85rem 1.35rem; font-size: 1.05rem; }
+.btn-sm { min-height: 36px; padding: .45rem .8rem;   font-size: .92rem;  }
+
+/* ===== ФОРМА ===== */
+.btn-pill { border-radius: 999px; }
+
+/* ===== ІКОНКОВІ ===== */
+.btn-icon {
+  @extend .btn;
+  width: 44px; min-width: 44px; padding: 0;
+}
+
+.btn-solid { @extend .btn-primary; }

@@ -1,7 +1,97 @@
 // src/styles/abstract/_mixins.scss
+@use "../abstract/variables" as *;
 
-// Міксин для тіней
+// -----------------------------
+// Breakpoints / media helper
+// -----------------------------
+@mixin media($bp) {
+  @if $bp == sm {
+    @media (min-width: $breakpoint-sm) { @content; }
+  } @else if $bp == md {
+    @media (min-width: $breakpoint-md) { @content; }
+  } @else if $bp == lg {
+    @media (min-width: $breakpoint-lg) { @content; }
+  } @else if $bp == xl {
+    @media (min-width: $breakpoint-xl) { @content; }
+  } @else {
+    // fallback → md
+    @media (min-width: $breakpoint-md) { @content; }
+  }
+}
+
+// -----------------------------
+// Shadows
+// -----------------------------
+@mixin card-shadow {
+  box-shadow: $box-shadow-card;
+}
+
+@mixin card-shadow-hover {
+  box-shadow: $box-shadow-card-hover;
+}
+
 @mixin card-shadows($shadow) {
   box-shadow: $shadow;
-  transition: all 0.3s ease;
+}
+
+// -----------------------------
+// Typography helpers
+// -----------------------------
+@mixin heading($size: 1.5rem, $weight: 700, $color: $heading-color) {
+  font-size: $size;
+  font-weight: $weight;
+  color: $color;
+  line-height: 1.2;
+}
+
+// -----------------------------
+// Layout helpers
+// -----------------------------
+@mixin make-col($size, $gap: 1rem) {
+  // N equal columns in a row
+  $w: calc((100% / #{$size}) - #{$gap});
+  flex: 0 0 $w;
+  max-width: $w;
+}
+
+@mixin flex-center($direction: row) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: center;
+  align-items: center;
+}
+
+// Screen-reader only (keep icon visible)
+@mixin sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// -----------------------------
+// Link underline indicator
+// -----------------------------
+@mixin underline($color: $primary-color, $thickness: 3px, $radius: 99px, $offset: 10px) {
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -#{$offset};
+    height: $thickness;
+    background: transparent;
+    border-radius: $radius;
+    transform: scaleX(0);
+    transition: transform .2s ease, background-color .2s ease;
+  }
+
+  &:hover::after,
+  &.active::after {
+    background: $color;
+    transform: scaleX(1);
+  }
 }

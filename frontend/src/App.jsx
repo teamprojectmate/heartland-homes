@@ -19,9 +19,9 @@ import './styles/main.scss';
 
 function App() {
   return (
-    <div className="d-flex flex-column min-vh-100">
+    <div className="main-layout">
       <Header />
-      <main className="flex-grow-1">
+      <main className="main-content">
         <Routes>
           <Route path="/" element={<Accommodations />} />
           <Route path="/accommodations" element={<Accommodations />} />

@@ -1,4 +1,7 @@
+// src/components/Notification.jsx
+
 import React, { useEffect, useState } from "react";
+import "../styles/components/_notification.scss";
 
 const Notification = ({ message, type, duration = 3000 }) => {
   const [isVisible, setIsVisible] = useState(true);
@@ -13,10 +16,10 @@ const Notification = ({ message, type, duration = 3000 }) => {
 
   if (!isVisible) return null;
 
-  const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+  const notificationClass = type === 'success' ? 'notification-success' : 'notification-danger';
 
   return (
-    <div className={`alert ${alertClass} fixed-bottom-right`}>
+    <div className={`notification ${notificationClass} fixed-bottom-right`}>
       {message}
     </div>
   );

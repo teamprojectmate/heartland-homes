@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axios from "../api/axios";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import Notification from "./Notification";
-
-const BASE_URL = "http://localhost:8080";
+import "../styles/components/_admin.scss";
 
 const AdminAccommodations = () => {
   const navigate = useNavigate();
@@ -23,12 +22,12 @@ const AdminAccommodations = () => {
     const fetchAccommodations = async () => {
       try {
         const token = user.token;
-        const response = await axios.get(`${BASE_URL}/accommodations`, {
+        const response = await axios.get("/accommodations", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        setAccommodations(response.data.content);
+        setAccommodations(response.data);
       } catch (err) {
         setError(err.response?.data?.message || err.message);
       } finally {
@@ -42,7 +41,7 @@ const AdminAccommodations = () => {
   const handleDelete = async (id) => {
     try {
       const token = user.token;
-      await axios.delete(`${BASE_URL}/accommodations/${id}`, {
+      await axios.delete(`/accommodations/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -59,24 +58,24 @@ const AdminAccommodations = () => {
   }
 
   return (
-    <div className="container admin-page-container">
+    <div className="app-container admin-page-container"> {/* ✅ Замінено "container" */}
       <h2 className="section-heading text-center">Керування помешканнями</h2>
       <div className="text-right mb-3">
-        <Link to="/admin/accommodations/new" className="btn btn-primary">
+        <Link to="/admin/accommodations/new" className="btn-primary">
           Додати нове помешкання
         </Link>
       </div>
 
-      {error && <Notification message={error} type="error" />}
+      {error && <Notification message={error} type="danger" />}
 
-      <div className="row">
+      <div className="app-row"> {/* ✅ Замінено "row" */}
         {accommodations.length > 0 ? (
           accommodations.map((accommodation) => (
-            <div key={accommodation.id} className="col-md-4 mb-4">
-              <div className="card card-custom">
+            <div key={accommodation.id} className="app-col-md-4 mb-4"> {/* ✅ Замінено "col-md-4" */}
+              <div className="card-custom">
                 <img
-                  src={accommodation.picture}
-                  className="card-img-top card-img-top-custom"
+                  src={accommodation.mainPhotoUrl}
+                  className="card-img-top-custom"
                   alt={accommodation.location}
                 />
                 <div className="card-body">
@@ -87,13 +86,13 @@ const AdminAccommodations = () => {
                   </p>
                   <Link
                     to={`/admin/accommodations/edit/${accommodation.id}`}
-                    className="btn btn-primary btn-sm btn-action"
+                    className="btn-primary"
                   >
                     Редагувати
                   </Link>
                   <button
                     onClick={() => setConfirmDeleteId(accommodation.id)}
-                    className="btn btn-danger btn-sm ml-2 btn-action"
+                    className="btn-danger ml-2"
                   >
                     Видалити
                   </button>
@@ -102,8 +101,8 @@ const AdminAccommodations = () => {
             </div>
           ))
         ) : (
-          <div className="col-md-12">
-            <div className="alert alert-info text-center">
+          <div className="app-col-md-12"> {/* ✅ Замінено "col-md-12" */}
+            <div className="alert-info text-center">
               Помешкань ще немає.
             </div>
           </div>
@@ -111,31 +110,29 @@ const AdminAccommodations = () => {
       </div>
 
       {confirmDeleteId && (
-        <div className="modal d-block" tabIndex="-1" role="dialog">
-          <div className="modal-dialog" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Підтвердження видалення</h5>
-              </div>
-              <div className="modal-body">
-                <p>Ви впевнені, що хочете видалити це помешкання?</p>
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={() => setConfirmDeleteId(null)}
-                >
-                  Скасувати
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-danger"
-                  onClick={() => handleDelete(confirmDeleteId)}
-                >
-                  Видалити
-                </button>
-              </div>
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title">Підтвердження видалення</h5>
+            </div>
+            <div className="modal-body">
+              <p>Ви впевнені, що хочете видалити це помешкання?</p>
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() => setConfirmDeleteId(null)}
+              >
+                Скасувати
+              </button>
+              <button
+                type="button"
+                className="btn-danger"
+                onClick={() => handleDelete(confirmDeleteId)}
+              >
+                Видалити
+              </button>
             </div>
           </div>
         </div>

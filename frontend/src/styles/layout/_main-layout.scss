@@ -1,14 +1,58 @@
-// src/styles/layout/_main-layout.scss
-
 @use "../abstract/variables" as *;
+@use "../abstract/mixins" as *;
+@use "sass:math";
 
-.page-wrapper {
-  display: flex;
-  flex-direction: column;
+:root {
+  /* зручні розміри шрифтів */
+  --fs-h1: clamp(1.75rem, 1.2rem + 2vw, 2.5rem);
+  --fs-h2: clamp(1.35rem, 1.1rem + 1.2vw, 1.875rem);
+  --fs-body: 1rem;
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; }
+
+body {
+  background: $background-color;
+  color: $text-color;
+  font-family: $font-family-base;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.main-layout {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
   min-height: 100vh;
 }
 
-.main-content {
-  flex-grow: 1;
-  padding: $spacer 0;
+.main-content { padding: $spacer 0; }
+
+.container {
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: $spacer;
+
+  @include media(sm) { max-width: $max-width-sm; }
+  @include media(md) { max-width: $max-width-md; }
+  @include media(lg) { max-width: $max-width-lg; }
+  @include media(xl) { max-width: $max-width-2xl; }
 }
+
+/* простенька сітка */
+.row {
+  display: flex; flex-wrap: wrap;
+  margin: 0 math.div($spacer, -2);
+}
+.col { flex: 1 0 0%; padding: 0 math.div($spacer, 2); }
+
+.col-md-4 { @include media(md){ flex: 0 0 33.333%; max-width: 33.333%; } }
+.col-md-6 { @include media(md){ flex: 0 0 50%;     max-width: 50%; } }
+.offset-md-3 { @include media(md){ margin-left: 25%; } }
+
+/* утиліти */
+.mt-4{ margin-top: $spacer-lg; } .mb-4{ margin-bottom: $spacer-lg; }
+.text-center{ text-align: center; } .text-end{ text-align: end; }

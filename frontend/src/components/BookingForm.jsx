@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createBooking } from "../store/slices/bookingsSlice";
+import Notification from "./Notification";
+import "../styles/components/_booking-form.scss";
 
 const BookingForm = ({ accommodationId, dailyRate }) => {
   const [checkInDate, setCheckInDate] = useState("");
@@ -34,7 +36,6 @@ const BookingForm = ({ accommodationId, dailyRate }) => {
 
     const resultAction = await dispatch(createBooking(bookingData));
     if (createBooking.fulfilled.match(resultAction)) {
-      // Додайте перенаправлення або повідомлення про успіх
       alert("Бронювання успішне!");
     } else if (createBooking.rejected.match(resultAction)) {
       setError(resultAction.payload);
@@ -42,7 +43,7 @@ const BookingForm = ({ accommodationId, dailyRate }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="booking-form">
       <div className="form-group">
         <label htmlFor="check-in-date">Дата заїзду</label>
         <input
@@ -53,7 +54,7 @@ const BookingForm = ({ accommodationId, dailyRate }) => {
           onChange={(e) => setCheckInDate(e.target.value)}
         />
       </div>
-      <div className="form-group mt-3">
+      <div className="form-group form-group-spacing"> {/* ✅ Виправлено */}
         <label htmlFor="check-out-date">Дата виїзду</label>
         <input
           type="date"
@@ -63,10 +64,10 @@ const BookingForm = ({ accommodationId, dailyRate }) => {
           onChange={(e) => setCheckOutDate(e.target.value)}
         />
       </div>
-      {error && <div className="alert alert-danger mt-3">{error}</div>}
+      {error && <Notification message={error} type="danger" />}
       <button
         type="submit"
-        className="btn btn-primary btn-lg btn-block mt-4"
+        className="btn-primary"
         disabled={loading}
       >
         {loading ? "Бронювання..." : "Забронювати"}

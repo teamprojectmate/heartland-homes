@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axios from "../api/axios";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import Notification from "./Notification";
-
-const BASE_URL = "http://localhost:8080";
+import "../styles/components/_admin.scss";
 
 const AdminEditAccommodation = () => {
   const navigate = useNavigate();
@@ -18,7 +17,7 @@ const AdminEditAccommodation = () => {
     amenities: "",
     dailyRate: "",
     availability: "",
-    picture: "",
+    mainPhotoUrl: "",
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -32,7 +31,7 @@ const AdminEditAccommodation = () => {
 
     const fetchAccommodation = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}/accommodations/${id}`);
+        const response = await axios.get(`/accommodations/${id}`);
         const data = response.data;
         setFormData({
           type: data.type,
@@ -41,7 +40,7 @@ const AdminEditAccommodation = () => {
           amenities: data.amenities.join(", "),
           dailyRate: data.dailyRate,
           availability: data.availability,
-          picture: data.picture || "",
+          mainPhotoUrl: data.mainPhotoUrl || "",
         });
         setLoading(false);
       } catch (err) {
@@ -59,7 +58,7 @@ const AdminEditAccommodation = () => {
     amenities,
     dailyRate,
     availability,
-    picture,
+    mainPhotoUrl,
   } = formData;
 
   const onChange = (e) => {
@@ -79,7 +78,7 @@ const AdminEditAccommodation = () => {
     try {
       const token = user.token;
       await axios.put(
-        `${BASE_URL}/accommodations/${id}`,
+        `/accommodations/${id}`,
         {
           type,
           location,
@@ -87,7 +86,7 @@ const AdminEditAccommodation = () => {
           amenities: amenitiesArray,
           dailyRate,
           availability,
-          picture,
+          mainPhotoUrl,
         },
         {
           headers: {
@@ -108,7 +107,7 @@ const AdminEditAccommodation = () => {
     setError(null);
     try {
       const token = user.token;
-      await axios.delete(`${BASE_URL}/accommodations/${id}`, {
+      await axios.delete(`/accommodations/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -126,16 +125,16 @@ const AdminEditAccommodation = () => {
   }
 
   return (
-    <div className="container page">
-      <div className="row">
-        <div className="col-md-6 offset-md-3 col-xs-12 auth-form-container">
+    <div className="container page"> {/* ✅ Виправлено */}
+      <div className="row"> {/* ✅ Виправлено */}
+        <div className="col-md-6 offset-md-3 auth-form-container"> {/* ✅ Виправлено */}
           <h2 className="auth-title">Редагувати помешкання</h2>
-          {error && <Notification message={error} type="error" />}
+          {error && <Notification message={error} type="danger" />}
           <form onSubmit={handleSubmit}>
             <fieldset className="form-group">
               <label>Тип житла</label>
               <select
-                className="form-control form-control-lg"
+                className="form-control"
                 name="type"
                 value={type}
                 onChange={onChange}
@@ -149,7 +148,7 @@ const AdminEditAccommodation = () => {
             </fieldset>
             <fieldset className="form-group">
               <input
-                className="form-control form-control-lg"
+                className="form-control"
                 type="text"
                 placeholder="Місцезнаходження"
                 name="location"
@@ -160,7 +159,7 @@ const AdminEditAccommodation = () => {
             </fieldset>
             <fieldset className="form-group">
               <input
-                className="form-control form-control-lg"
+                className="form-control"
                 type="text"
                 placeholder="Розмір (напр. '50 м²')"
                 name="size"
@@ -171,7 +170,7 @@ const AdminEditAccommodation = () => {
             </fieldset>
             <fieldset className="form-group">
               <textarea
-                className="form-control form-control-lg"
+                className="form-control"
                 rows="3"
                 placeholder="Зручності (перерахуйте через кому: Wi-Fi, Парковка,...)"
                 name="amenities"
@@ -182,7 +181,7 @@ const AdminEditAccommodation = () => {
             </fieldset>
             <fieldset className="form-group">
               <input
-                className="form-control form-control-lg"
+                className="form-control"
                 type="number"
                 placeholder="Ціна за добу"
                 name="dailyRate"
@@ -194,7 +193,7 @@ const AdminEditAccommodation = () => {
             </fieldset>
             <fieldset className="form-group">
               <input
-                className="form-control form-control-lg"
+                className="form-control"
                 type="number"
                 placeholder="Доступна кількість"
                 name="availability"
@@ -206,18 +205,18 @@ const AdminEditAccommodation = () => {
             </fieldset>
             <fieldset className="form-group">
               <input
-                className="form-control form-control-lg"
+                className="form-control"
                 type="text"
                 placeholder="URL зображення"
-                name="picture"
-                value={picture}
+                name="mainPhotoUrl"
+                value={mainPhotoUrl}
                 onChange={onChange}
               />
             </fieldset>
 
-            <div className="d-flex justify-content-between mt-4">
+            <div className="form-buttons-group mt-4"> {/* ✅ Виправлено */}
               <button
-                className="btn btn-lg btn-danger"
+                className="btn-danger"
                 type="button"
                 onClick={() => setConfirmDelete(true)}
                 disabled={loading}
@@ -225,7 +224,7 @@ const AdminEditAccommodation = () => {
                 Видалити
               </button>
               <button
-                className="btn btn-lg btn-primary"
+                className="btn-primary"
                 type="submit"
                 disabled={loading}
               >
@@ -235,31 +234,29 @@ const AdminEditAccommodation = () => {
           </form>
 
           {confirmDelete && (
-            <div className="modal d-block" tabIndex="-1" role="dialog">
-              <div className="modal-dialog" role="document">
-                <div className="modal-content">
-                  <div className="modal-header">
-                    <h5 className="modal-title">Підтвердження видалення</h5>
-                  </div>
-                  <div className="modal-body">
-                    <p>Ви впевнені, що хочете видалити це помешкання?</p>
-                  </div>
-                  <div className="modal-footer">
-                    <button
-                      type="button"
-                      className="btn btn-secondary"
-                      onClick={() => setConfirmDelete(false)}
-                    >
-                      Скасувати
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-danger"
-                      onClick={handleDelete}
-                    >
-                      Видалити
-                    </button>
-                  </div>
+            <div className="modal-overlay">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">Підтвердження видалення</h5>
+                </div>
+                <div className="modal-body">
+                  <p>Ви впевнені, що хочете видалити це помешкання?</p>
+                </div>
+                <div className="modal-footer">
+                  <button
+                    type="button"
+                    className="btn-secondary"
+                    onClick={() => setConfirmDelete(false)}
+                  >
+                    Скасувати
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-danger"
+                    onClick={handleDelete}
+                  >
+                    Видалити
+                  </button>
                 </div>
               </div>
             </div>

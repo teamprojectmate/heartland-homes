@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axios from "../api/axios";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Notification from "./Notification";
-
-const BASE_URL = "http://localhost:8080";
+import "../styles/components/_forms.scss";
+import "../styles/components/_admin.scss";
 
 const CreateAccommodation = () => {
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ const CreateAccommodation = () => {
     amenities: "",
     dailyRate: "",
     availability: "",
-    images: "",
+    mainPhotoUrl: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -29,14 +29,10 @@ const CreateAccommodation = () => {
     }
   }, [user, navigate]);
 
-  const { type, location, city, size, amenities, dailyRate, availability, images } =
-    formData;
+  const { type, location, city, size, amenities, dailyRate, availability, mainPhotoUrl } = formData;
 
   const onChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
@@ -49,7 +45,7 @@ const CreateAccommodation = () => {
     try {
       const token = user.token;
       await axios.post(
-        `${BASE_URL}/accommodations`,
+        "/accommodations",
         {
           type,
           location,
@@ -58,13 +54,13 @@ const CreateAccommodation = () => {
           amenities: amenitiesArray,
           dailyRate,
           availability,
-          images: images,
+          mainPhotoUrl,
         },
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
       setLoading(false);
       navigate("/admin/accommodations");
@@ -77,14 +73,14 @@ const CreateAccommodation = () => {
   return (
     <div className="container page">
       <div className="row">
-        <div className="col-md-6 offset-md-3 col-xs-12 auth-form-container">
+        <div className="col-md-6 offset-md-3 auth-form-container">
           <h2 className="auth-title">Створити нове помешкання</h2>
-          {error && <Notification message={error} type="error" />}
+          {error && <Notification message={error} type="danger" />}
           <form onSubmit={handleSubmit}>
             <fieldset className="form-group">
               <label>Тип житла</label>
               <select
-                className="form-control form-control-lg"
+                className="form-control"
                 name="type"
                 value={type}
                 onChange={onChange}
@@ -98,9 +94,9 @@ const CreateAccommodation = () => {
             </fieldset>
             <fieldset className="form-group">
               <input
-                className="form-control form-control-lg"
+                className="form-control"
                 type="text"
-                placeholder="Місцезнаходження (напр. Вулиця Незалежності, 10)"
+                placeholder="Місцезнаходження"
                 name="location"
                 value={location}
                 onChange={onChange}
@@ -109,7 +105,7 @@ const CreateAccommodation = () => {
             </fieldset>
             <fieldset className="form-group">
               <input
-                className="form-control form-control-lg"
+                className="form-control"
                 type="text"
                 placeholder="Місто"
                 name="city"
@@ -120,7 +116,7 @@ const CreateAccommodation = () => {
             </fieldset>
             <fieldset className="form-group">
               <input
-                className="form-control form-control-lg"
+                className="form-control"
                 type="text"
                 placeholder="Розмір (напр. '50 м²')"
                 name="size"
@@ -131,7 +127,7 @@ const CreateAccommodation = () => {
             </fieldset>
             <fieldset className="form-group">
               <textarea
-                className="form-control form-control-lg"
+                className="form-control"
                 rows="3"
                 placeholder="Зручності (перерахуйте через кому: Wi-Fi, Парковка,...)"
                 name="amenities"
@@ -142,7 +138,7 @@ const CreateAccommodation = () => {
             </fieldset>
             <fieldset className="form-group">
               <input
-                className="form-control form-control-lg"
+                className="form-control"
                 type="number"
                 placeholder="Ціна за добу"
                 name="dailyRate"
@@ -154,7 +150,7 @@ const CreateAccommodation = () => {
             </fieldset>
             <fieldset className="form-group">
               <input
-                className="form-control form-control-lg"
+                className="form-control"
                 type="number"
                 placeholder="Доступна кількість"
                 name="availability"
@@ -166,16 +162,17 @@ const CreateAccommodation = () => {
             </fieldset>
             <fieldset className="form-group">
               <input
-                className="form-control form-control-lg"
+                className="form-control"
                 type="text"
                 placeholder="URL зображення"
-                name="images"
-                value={images}
+                name="mainPhotoUrl"
+                value={mainPhotoUrl}
                 onChange={onChange}
               />
             </fieldset>
+
             <button
-              className="btn btn-lg btn-primary pull-xs-right mt-4"
+              className="btn-primary btn-full-width"
               type="submit"
               disabled={loading}
             >

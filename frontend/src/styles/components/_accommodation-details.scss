@@ -1,14 +1,15 @@
 // src/styles/components/_accommodation-details.scss
 @use "sass:color";
 @use "../abstract/variables" as *;
+@use "../abstract/mixins" as *;
 
 .location-map-container {
   height: 500px;
   width: 100%;
   margin-top: 1rem;
-  border-radius: 8px;
+  border-radius: $radius;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: $box-shadow-md;
 
   .leaflet-container {
     height: 100%;
@@ -17,17 +18,17 @@
 }
 
 .accommodation-details-container {
-  background-color: #fff;
+  background-color: $white-color;
   padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: $radius;
+  box-shadow: $box-shadow-md;
 }
 
 .details-heading {
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
-  color: $heading-color;
+  color: $text-color;
 }
 
 .details-subheading {
@@ -49,8 +50,8 @@
 
 .booking-card {
   border: none;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: $radius;
+  box-shadow: $box-shadow-md;
   padding: 1.5rem;
 }
 

@@ -3,14 +3,14 @@ import { Link } from "react-router-dom";
 
 const AccommodationList = ({ accommodations }) => {
   return (
-    <div className="row">
+    <div className="row"> {/* ✅ Змінено app-row на row */}
       {accommodations.length > 0 ? (
         accommodations.map((accommodation) => (
-          <div key={accommodation.id} className="col-md-4 mb-4">
-            <div className="card card-custom">
+          <div key={accommodation.id} className="col-md-4 mb-4"> {/* ✅ Змінено app-col-md-4 на col-md-4 */}
+            <div className="card-custom">
               <img
-                src={accommodation.picture}
-                className="card-img-top card-img-top-custom"
+                src={accommodation.mainPhotoUrl}
+                className="card-img-top-custom"
                 alt={accommodation.location}
               />
               <div className="card-body">
@@ -21,7 +21,7 @@ const AccommodationList = ({ accommodations }) => {
                 </p>
                 <Link
                   to={`/accommodations/${accommodation.id}`}
-                  className="btn btn-primary"
+                  className="btn-primary"
                 >
                   Переглянути
                 </Link>

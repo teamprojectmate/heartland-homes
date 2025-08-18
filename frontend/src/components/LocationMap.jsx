@@ -3,6 +3,7 @@ import React from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import "../styles/components/_location-map.scss"; // ✅ Імпортуємо стилі
 
 delete L.Icon.Default.prototype._getIconUrl;
 
@@ -20,7 +21,7 @@ const LocationMap = ({ location, latitude, longitude }) => {
   const position = [latitude, longitude];
 
   return (
-    <div className="location-map-container">
+    <div className="location-map-container"> {/* ✅ Додаємо клас */}
       <MapContainer center={position} zoom={13} scrollWheelZoom={false}>
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

@@ -1,43 +1,68 @@
 // src/styles/components/_filters.scss
-@use "sass:color";
+@use "sass:math";
 @use "../abstract/variables" as *;
+@use "../abstract/mixins" as *;
 
-.filters-container {
-  border: none;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+.filters-section {
+  padding: 3rem 0;
+}
+
+.filters-box {
+  background-color: $white-color;
   padding: 1.5rem;
-  background-color: #fff;
-  margin-bottom: 2rem;
+  border-radius: $radius;
+  box-shadow: $box-shadow-form;
 }
 
-.filter-heading {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 1.5rem;
+.filters-heading {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: $heading-color;
 }
 
-.form-control {
-  border-radius: 4px;
-  border: 1px solid $border-color;
-  padding: 0.75rem 1rem;
-  font-size: 0.9rem;
+/* CSS Grid без Bootstrap */
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 1rem;
 
-  &:focus {
-    border-color: $primary-color;
-    box-shadow: 0 0 0 0.2rem rgba($primary-color, 0.25);
+  /* розмітка:  | city(6) | type(6) | priceFrom(3) | priceTo(3) | sort(6) | */
+  > .filter-item:nth-child(1) { grid-column: span 6; }
+  > .filter-item:nth-child(2) { grid-column: span 6; }
+  > .filter-item:nth-child(3) { grid-column: span 3; }
+  > .filter-item:nth-child(4) { grid-column: span 3; }
+  > .filter-item:nth-child(5) { grid-column: span 6; }
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+    > .filter-item { grid-column: auto; }
   }
 }
 
-.form-check-input {
-  &:checked {
-    background-color: $primary-color;
-    border-color: $primary-color;
+.filter-item {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+.filter-item--end {
+  align-items: end;
+
+  @media (max-width: $breakpoint-md) {
+    align-items: start;
   }
 }
 
-.form-check-label {
-  font-size: 0.95rem;
-  color: #555;
-  margin-left: 0.5rem;
+.form-check-group {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.form-check {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
 }

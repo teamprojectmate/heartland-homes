@@ -1,7 +1,13 @@
+// src/components/Register.jsx
+
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { register } from "../store/slices/authSlice";
+import Notification from "./Notification";
+import "../styles/layout/_main-layout.scss";
+import "../styles/components/_forms.scss";
+import "../styles/components/_buttons.scss";
 
 const Register = () => {
   const [firstName, setFirstName] = useState("");
@@ -40,65 +46,65 @@ const Register = () => {
   return (
     <div className="container page">
       <div className="row">
-        <div className="col-md-6 offset-md-3 col-xs-12 auth-form-container">
+        <div className="col-md-6 offset-md-3 auth-form-container"> {/* ✅ Виправлено */}
           <h1 className="auth-title">Реєстрація</h1>
-          <p className="text-xs-center">
-            <a href="/login">Вже маєте акаунт?</a>
+          <p className="text-center">
+            <Link to="/login">Вже маєте акаунт?</Link> 
           </p>
-          {error && <div className="alert alert-danger">{error}</div>}
+          {error && <Notification message={error} type="danger" />}
           <form onSubmit={handleSubmit}>
-            <fieldset className="form-group">
+            <div className="form-group">
               <input
-                className="form-control form-control-lg"
+                className="form-control"
                 type="text"
                 placeholder="Ім'я"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 required
               />
-            </fieldset>
-            <fieldset className="form-group">
+            </div>
+            <div className="form-group">
               <input
-                className="form-control form-control-lg"
+                className="form-control"
                 type="text"
                 placeholder="Прізвище"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 required
               />
-            </fieldset>
-            <fieldset className="form-group">
+            </div>
+            <div className="form-group">
               <input
-                className="form-control form-control-lg"
+                className="form-control"
                 type="email"
                 placeholder="Електронна пошта"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
-            </fieldset>
-            <fieldset className="form-group">
+            </div>
+            <div className="form-group">
               <input
-                className="form-control form-control-lg"
+                className="form-control"
                 type="password"
                 placeholder="Пароль"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
-            </fieldset>
-            <fieldset className="form-group">
+            </div>
+            <div className="form-group">
               <input
-                className="form-control form-control-lg"
+                className="form-control"
                 type="password"
                 placeholder="Повторіть пароль"
                 value={repeatPassword}
                 onChange={(e) => setRepeatPassword(e.target.value)}
                 required
               />
-            </fieldset>
+            </div>
             <button
-              className="btn btn-lg btn-primary pull-xs-right"
+              className="btn-primary"
               type="submit"
               disabled={loading}
             >
