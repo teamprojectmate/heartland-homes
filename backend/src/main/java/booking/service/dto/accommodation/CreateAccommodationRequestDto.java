@@ -32,9 +32,5 @@ public class CreateAccommodationRequestDto {
     private BigDecimal dailyRate;
 
     @NotNull
-    @Positive
-    private Integer availability;
-
-    @NotNull
     private String image;
 }

@@ -22,9 +22,6 @@ databaseChangeLog:
                   name: daily_rate
                   valueNumeric: 2500.00
               - column:
-                  name: availability
-                  valueNumeric: 5
-              - column:
                   name: image
                   value: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c"
               - column:
@@ -49,9 +46,6 @@ databaseChangeLog:
               - column:
                   name: daily_rate
                   valueNumeric: 1800.00
-              - column:
-                  name: availability
-                  valueNumeric: 3
               - column:
                   name: image
                   value: "https://images.unsplash.com/photo-1597099817305-5fdc8d0a08d1"
@@ -78,9 +72,6 @@ databaseChangeLog:
                   name: daily_rate
                   valueNumeric: 3200.00
               - column:
-                  name: availability
-                  valueNumeric: 2
-              - column:
                   name: image
                   value: "https://images.unsplash.com/photo-1600585154526-990dced4db0d"
               - column:
@@ -105,9 +96,6 @@ databaseChangeLog:
               - column:
                   name: daily_rate
                   valueNumeric: 2100.00
-              - column:
-                  name: availability
-                  valueNumeric: 4
               - column:
                   name: image
                   value: "https://images.unsplash.com/photo-1599423300746-b62533397364"

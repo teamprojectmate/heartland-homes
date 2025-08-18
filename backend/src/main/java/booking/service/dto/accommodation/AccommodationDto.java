@@ -16,6 +16,5 @@ public class AccommodationDto {
     private String size;
     private List<String> amenities;
     private BigDecimal dailyRate;
-    private Integer availability;
     private String image;
 }

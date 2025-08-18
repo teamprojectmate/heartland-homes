@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: insert-users-data
+      id: 05-insert-users-data
       author: yaroslav-pryshchepa
       changes:
         - insert:
@@ -8,7 +8,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: email
-                  value: admin@carsharing.com
+                  value: admin@booking.com
               - column:
                   name: password
                   value: $2a$10$h8dDGRJgqV3hKf48EZbng.NndGRLAWJmA2xciRnlIAd1G3pfPumNi
@@ -26,7 +26,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: email
-                  value: john.doe@carsharing.com
+                  value: john.doe@booking.com
               - column:
                   name: password
                   value: $2a$10$h8dDGRJgqV3hKf48EZbng.NndGRLAWJmA2xciRnlIAd1G3pfPumNi
@@ -44,7 +44,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: email
-                  value: jane.smith@carsharing.com
+                  value: jane.smith@booking.com
               - column:
                   name: password
                   value: $2a$10$h8dDGRJgqV3hKf48EZbng.NndGRLAWJmA2xciRnlIAd1G3pfPumNi
