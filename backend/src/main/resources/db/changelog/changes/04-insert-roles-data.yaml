@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: insert-roles-data
+      id: 04-insert-roles-data
       author: yaroslav-pryshchepa
       changes:
         - insert:

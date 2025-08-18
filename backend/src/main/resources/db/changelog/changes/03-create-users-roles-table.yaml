@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: create-users-roles-table
+      id: 03-create-users-roles-table
       author: yaroslav-pryshchepa
       changes:
         - createTable:

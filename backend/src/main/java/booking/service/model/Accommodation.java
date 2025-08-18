@@ -57,9 +57,6 @@ public class Accommodation {
     private BigDecimal dailyRate;
 
     @Column(nullable = false)
-    private Integer availability;
-
-    @Column(nullable = false)
     private String image;
 
     @Column(nullable = false)
