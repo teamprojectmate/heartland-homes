@@ -20,11 +20,11 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("""
            SELECT CASE WHEN COUNT(b) > 0 THEN true ELSE false END
            FROM Booking b
-           WHERE b.accommodationId = :accommodationId
+           WHERE b.accommodation.id = :accommodationId
              AND b.status <> 'CANCELED'
              AND b.checkInDate < :checkOutDate
              AND b.checkOutDate > :checkInDate
-           """)
+           \s""")
     boolean existsByAccommodationIdAndDateOverlap(
             @Param("accommodationId") Long accommodationId,
             @Param("checkInDate") LocalDate checkInDate,
@@ -32,18 +32,18 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     );
 
     @Query("""
-           SELECT CASE WHEN COUNT(b) > 0 THEN true ELSE false END
-           FROM Booking b
-           WHERE b.accommodationId = :accommodationId
-             AND b.id <> :excludeId
-             AND b.status <> 'CANCELED'
-             AND b.checkInDate < :checkOutDate
-             AND b.checkOutDate > :checkInDate
-           """)
-    boolean existsByAccommodationIdAndDateOverlapExceptId(
+         SELECT CASE WHEN COUNT(b) > 0 THEN true ELSE false END
+         FROM Booking b
+         WHERE b.accommodation.id = :accommodationId
+            AND b.id <> :bookingId
+            AND b.status <> 'CANCELED'
+            AND b.checkInDate < :checkOutDate
+            AND b.checkOutDate > :checkInDate
+          \s""")
+    boolean existsByAccommodationIdAndDateOverlapExcludingBooking(
             @Param("accommodationId") Long accommodationId,
             @Param("checkInDate") LocalDate checkInDate,
             @Param("checkOutDate") LocalDate checkOutDate,
-            @Param("excludeId") Long excludeId
+            @Param("bookingId") Long bookingId
     );
 }

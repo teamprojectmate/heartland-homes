@@ -14,6 +14,7 @@ import booking.service.repository.user.UserRepository;
 import booking.service.service.BookingService;
 import booking.service.service.NotificationService;
 import jakarta.persistence.EntityNotFoundException;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,19 +33,10 @@ public class BookingServiceImpl implements BookingService {
     private final BookingMapper bookingMapper;
     private final NotificationService notificationService;
 
-    private User getCurrentUser(Authentication authentication) {
-        return (User) authentication.getPrincipal();
-    }
-
-    private boolean isManager(User user) {
-        return user.getRoles().stream()
-                .anyMatch(role -> role.getName() == RoleName.MANAGER);
-    }
-
     @Override
     @Transactional
     public BookingDto create(CreateBookingRequestDto requestDto, Authentication authentication) {
-        User currentUser = getCurrentUser(authentication);
+        validateBookingDates(requestDto.getCheckInDate(), requestDto.getCheckOutDate());
 
         Accommodation accommodation = accommodationRepository.findById(
                         requestDto.getAccommodationId())
@@ -59,9 +51,24 @@ public class BookingServiceImpl implements BookingService {
             throw new IllegalStateException("Accommodation is already booked for these dates.");
         }
 
+        User currentUser = (User) authentication.getPrincipal();
+        User bookingUser;
+        if (isManager(currentUser)) {
+            bookingUser = userRepository.findById(requestDto.getUserId())
+                    .orElseThrow(() -> new EntityNotFoundException(
+                            "User not found with id: " + requestDto.getUserId()));
+        } else {
+            if (requestDto.getUserId() != null
+                    && !requestDto.getUserId().equals(currentUser.getId())) {
+                throw new AccessDeniedException(
+                        "You are not allowed to create bookings for other users.");
+            }
+            bookingUser = currentUser;
+        }
+
         Booking booking = bookingMapper.toEntity(requestDto)
                 .setAccommodation(accommodation)
-                .setUser(currentUser)
+                .setUser(bookingUser)
                 .setStatus(BookingStatus.PENDING);
 
         bookingRepository.save(booking);
@@ -72,7 +79,7 @@ public class BookingServiceImpl implements BookingService {
                         + "Житло: %s (%s)\n"
                         + "Дата заїзду: %s\n"
                         + "Дата виїзду: %s",
-                currentUser.getEmail(),
+                bookingUser.getEmail(),
                 accommodation.getLocation(),
                 accommodation.getCity(),
                 booking.getCheckInDate(),
@@ -86,7 +93,7 @@ public class BookingServiceImpl implements BookingService {
     @Transactional(readOnly = true)
     public Page<BookingDto> findByUserAndStatus(Long userId, BookingStatus status,
             Authentication authentication, Pageable pageable) {
-        User currentUser = getCurrentUser(authentication);
+        User currentUser = (User) authentication.getPrincipal();
         boolean isManager = isManager(currentUser);
 
         if (!isManager && userId != null && !userId.equals(currentUser.getId())) {
@@ -116,7 +123,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional(readOnly = true)
     public Page<BookingDto> findMyBookings(Pageable pageable, Authentication authentication) {
-        User currentUser = getCurrentUser(authentication);
+        User currentUser = (User) authentication.getPrincipal();
         return bookingRepository.findByUserId(currentUser.getId(), pageable)
                 .map(bookingMapper::toDto);
     }
@@ -124,7 +131,8 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional(readOnly = true)
     public BookingDto findById(Long id, Authentication authentication) {
-        User currentUser = getCurrentUser(authentication);
+        User currentUser = (User) authentication.getPrincipal();
+        ;
         boolean isManager = isManager(currentUser);
 
         Booking booking = bookingRepository.findById(id)
@@ -139,11 +147,55 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public BookingDto update(Long id, CreateBookingRequestDto requestDto) {
+    public BookingDto update(Long id, CreateBookingRequestDto requestDto,
+            Authentication authentication) {
+        validateBookingDates(requestDto.getCheckInDate(), requestDto.getCheckOutDate());
+
         Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Booking not found with id: " + id));
 
-        bookingMapper.updateBookingFromDto(requestDto, booking);
+        User currentUser = (User) authentication.getPrincipal();
+
+        if (isManager(currentUser)) {
+            bookingMapper.updateBookingFromDto(requestDto, booking);
+
+            Accommodation accommodation = accommodationRepository.findById(
+                            requestDto.getAccommodationId())
+                    .orElseThrow(() -> new EntityNotFoundException("Accommodation not found"));
+            User user = userRepository.findById(requestDto.getUserId())
+                    .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+            booking.setAccommodation(accommodation);
+            booking.setUser(user);
+
+        } else {
+            if (!booking.getUser().getId().equals(currentUser.getId())) {
+                throw new AccessDeniedException("You can update only your own bookings");
+            }
+            if (!booking.getAccommodation().getId().equals(requestDto.getAccommodationId())) {
+                throw new AccessDeniedException("You cannot change accommodation");
+            }
+            if (!booking.getUser().getId().equals(requestDto.getUserId())) {
+                throw new AccessDeniedException("You cannot change user");
+            }
+            if (requestDto.getStatus() != null && !requestDto.getStatus()
+                    .equals(booking.getStatus())) {
+                throw new AccessDeniedException("You cannot change booking status");
+            }
+            booking.setCheckInDate(requestDto.getCheckInDate());
+            booking.setCheckOutDate(requestDto.getCheckOutDate());
+        }
+
+        boolean overlaps = bookingRepository.existsByAccommodationIdAndDateOverlapExcludingBooking(
+                booking.getAccommodation().getId(),
+                requestDto.getCheckInDate(),
+                requestDto.getCheckOutDate(),
+                booking.getId()
+        );
+
+        if (overlaps) {
+            throw new IllegalStateException("Accommodation is already booked for these dates.");
+        }
 
         bookingRepository.save(booking);
 
@@ -153,7 +205,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public void cancel(Long id, Authentication authentication) {
-        User currentUser = getCurrentUser(authentication);
+        User currentUser = (User) authentication.getPrincipal();
         boolean isManager = isManager(currentUser);
 
         Booking booking = bookingRepository.findById(id)
@@ -182,5 +234,22 @@ public class BookingServiceImpl implements BookingService {
                 booking.getCheckInDate(),
                 booking.getCheckOutDate()
         ));
+    }
+
+    private boolean isManager(User user) {
+        return user.getRoles().stream()
+                .anyMatch(role -> role.getName() == RoleName.MANAGER);
+    }
+
+    private void validateBookingDates(LocalDate checkInDate, LocalDate checkOutDate) {
+        LocalDate today = LocalDate.now();
+
+        if (checkInDate.isBefore(today)) {
+            throw new IllegalArgumentException("Check-in date must be today or in the future.");
+        }
+
+        if (!checkInDate.isBefore(checkOutDate)) {
+            throw new IllegalArgumentException("Check-in date must be before check-out date.");
+        }
     }
 }

@@ -11,8 +11,12 @@ import org.mapstruct.MappingTarget;
 @Mapper(config = MapperConfig.class)
 public interface BookingMapper {
 
+    @Mapping(source = "accommodation.id", target = "accommodationId")
+    @Mapping(source = "user.id", target = "userId")
     BookingDto toDto(Booking booking);
 
+    @Mapping(target = "accommodation", ignore = true)
+    @Mapping(target = "user", ignore = true)
     Booking toEntity(CreateBookingRequestDto requestDto);
 
     @Mapping(target = "id", ignore = true)
