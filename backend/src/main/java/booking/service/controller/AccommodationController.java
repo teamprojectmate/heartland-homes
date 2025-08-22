@@ -39,7 +39,6 @@ public class AccommodationController {
         return accommodationService.save(requestDto);
     }
 
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'MANAGER')")
     @GetMapping
     @Operation(summary = "Get a list of accommodations",
             description = "Get a page of available accommodations")
@@ -47,7 +46,6 @@ public class AccommodationController {
         return accommodationService.findAll(pageable);
     }
 
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'MANAGER')")
     @GetMapping("/{id}")
     @Operation(summary = "Get accommodation's detailed information",
             description = "Get detailed accommodation info by selected id")
@@ -71,7 +69,6 @@ public class AccommodationController {
         accommodationService.deleteById(id);
     }
 
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'MANAGER')")
     @GetMapping("/search")
     @Operation(summary = "Search accommodations",
             description = "Search accommodations by selected parameters with pagination")
