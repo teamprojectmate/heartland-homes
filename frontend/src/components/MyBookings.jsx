@@ -1,54 +1,66 @@
-// src/components/MyBookings.jsx
-
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import Notification from './Notification';
-import "../styles/components/_cards.scss";
-import "../styles/layout/_main-layout.scss";
+import { fetchMyBookings } from '../store/slices/bookingsSlice';
+import { createPaymentIntent, resetPayment } from '../store/slices/paymentsSlice';
+import axios from '../api/axios';
+
+import '../styles/components/_cards.scss';
+import '../styles/layout/_main-layout.scss';
 
 const MyBookings = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, token } = useSelector((state) => state.auth);
-  const [bookings, setBookings] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const dispatch = useDispatch();
+
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const { bookings, status, error } = useSelector((state) => state.bookings);
+  const { status: paymentStatus, error: paymentError } = useSelector(
+    (state) => state.payments
+  );
 
   useEffect(() => {
-    if (!isAuthenticated || !token) {
+    if (!isAuthenticated) {
       navigate('/login');
       return;
     }
+    dispatch(fetchMyBookings());
+  }, [isAuthenticated, navigate, dispatch]);
 
-    const fetchBookings = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get('http://localhost:8080/bookings/my', {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-        setBookings(response.data);
-      } catch (err) {
-        setError(err.response?.data?.message || err.message || 'Не вдалося отримати бронювання');
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchBookings();
-  }, [isAuthenticated, navigate, token]);
+  // Хендлер для кнопки "Оплатити"
+  const handlePay = async (bookingId) => {
+    dispatch(resetPayment());
+    const resultAction = await dispatch(createPaymentIntent(bookingId));
+    if (createPaymentIntent.fulfilled.match(resultAction)) {
+      navigate(`/payment/${bookingId}`);
+    }
+  };
 
-  if (loading) {
+  // Хендлер для "Завантажити чек"
+  const handleDownloadReceipt = async (bookingId) => {
+    try {
+      const response = await axios.get(`/payments/receipt/${bookingId}`, {
+        headers: { Authorization: `Bearer ${user.token}` },
+        responseType: 'blob' // ⚡️ PDF або інший файл
+      });
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `receipt-${bookingId}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err) {
+      alert(err.response?.data?.message || err.message || 'Не вдалося завантажити чек.');
+    }
+  };
+
+  if (status === 'loading') {
     return (
       <div className="container page">
         <h1 className="text-center">Мої бронювання</h1>
-        <div className="row">
-          <div className="col">
-            <p className="text-center">Завантаження...</p>
-          </div>
-        </div>
+        <p className="text-center">Завантаження...</p>
       </div>
     );
   }
@@ -56,24 +68,37 @@ const MyBookings = () => {
   return (
     <div className="container page">
       <h1 className="text-center">Мої бронювання</h1>
+      {error && <Notification message={error} type="danger" />}
+      {paymentError && <Notification message={paymentError} type="danger" />}
+
       <div className="row">
         <div className="col">
-          {error && <Notification message={error} type="danger" />}
           {bookings.length > 0 ? (
             bookings.map((booking) => (
               <div key={booking.id} className="card card-custom my-3">
                 <div className="card-body">
                   <h4 className="card-title">{booking.accommodationName}</h4>
                   <p className="card-text">
-                    Дати: {new Date(booking.checkInDate).toLocaleDateString()} - {new Date(booking.checkOutDate).toLocaleDateString()}
+                    Дати: {new Date(booking.checkInDate).toLocaleDateString()} –{' '}
+                    {new Date(booking.checkOutDate).toLocaleDateString()}
                   </p>
                   <p className="card-text">Сума: {booking.totalAmount} $</p>
+
                   {!booking.isPaid ? (
-                    <Link to={`/payment/${booking.id}`} className="btn-primary">
-                      Оплатити
-                    </Link>
+                    <button
+                      onClick={() => handlePay(booking.id)}
+                      className="btn-primary"
+                      disabled={paymentStatus === 'processing'}
+                    >
+                      {paymentStatus === 'processing' ? 'Обробка...' : 'Оплатити'}
+                    </button>
                   ) : (
-                    <span className="text-success">Оплачено</span>
+                    <button
+                      onClick={() => handleDownloadReceipt(booking.id)}
+                      className="btn-secondary"
+                    >
+                      Завантажити чек
+                    </button>
                   )}
                 </div>
               </div>

@@ -1,20 +1,22 @@
 // src/styles/components/_cards.scss
 
-@use "../abstract/variables" as *;
-@use "sass:math";
+@use '../abstract/variables' as *;
+@use 'sass:math';
 
 .card-custom {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   background: $white-color;
   border-radius: $radius;
   box-shadow: $box-shadow-card;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 
   &:hover {
-    transform: translateY(-4px);
     box-shadow: $box-shadow-card-hover;
+    transform: translateY(-4px);
   }
 }
 
@@ -27,27 +29,32 @@
 }
 
 .card-body {
-  padding: 1.5rem;
   display: flex;
-  flex-direction: column;
   flex-grow: 1;
+  flex-direction: column;
+  padding: 1.5rem;
+
+  /* 🔑 робимо так, щоб кнопка завжди була притиснута вниз */
+  .btn {
+    margin-top: auto;
+  }
 }
 
 .card-title {
+  margin-bottom: 0.5rem;
   font-size: 1.25rem;
   font-weight: 600;
-  margin-bottom: 0.5rem;
 }
 
 .card-text {
+  margin-bottom: 1rem;
   font-size: 1rem;
   color: $muted-color;
-  margin-bottom: 1rem;
 }
 
 .card-price {
+  margin-top: auto;
   font-size: 1.5rem;
   font-weight: 700;
   color: $primary-color;
-  margin-top: auto;
 }

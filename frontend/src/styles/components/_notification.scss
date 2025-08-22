@@ -1,46 +1,47 @@
 // src/styles/components/_notifications.scss
 
-@use "../abstract/variables" as *;
+@use '../abstract/variables' as *;
 
 .notification {
   padding: 1rem 1.5rem;
-  border-radius: $radius;
-  border: none;
   font-weight: 600;
+  border: none;
+  border-radius: $radius;
   box-shadow: $box-shadow-md;
   transition: all 0.5s ease-in-out;
 }
 
 .notification-success {
-  background-color: $success-color;
   color: $white-color;
+  background-color: $success-color;
 }
 
 .notification-danger {
-  background-color: $danger-color;
   color: $white-color;
+  background-color: $danger-color;
 }
 
 .notification-info {
-  background-color: #17a2b8;
   color: $white-color;
+  background-color: #17a2b8;
 }
 
 .fixed-bottom-right {
   position: fixed;
-  bottom: 20px;
   right: 20px;
+  bottom: 20px;
   z-index: 1050;
-  animation: slideIn 0.5s forwards;
+  animation: slide-in 0.5s forwards;
 }
 
-@keyframes slideIn {
+@keyframes slide-in {
   from {
-    transform: translateX(100%);
     opacity: 0;
+    transform: translateX(100%);
   }
+
   to {
-    transform: translateX(0);
     opacity: 1;
+    transform: translateX(0);
   }
 }

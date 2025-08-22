@@ -1,40 +1,35 @@
-// src/components/Map.jsx
-
 import React from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import "../styles/components/_map.scss";
+import '../styles/components/_map.scss';
 
-// Для коректного відображення іконок маркерів
+// Виправлення іконок Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
-
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
   iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png'
 });
 
-const Map = ({ accommodations }) => {
-  if (!accommodations || accommodations.length === 0) {
-    return null;
-  }
+const Map = ({ accommodations = [] }) => {
+  if (!accommodations.length) return null;
 
-  // Використовуємо координати першого помешкання як центр карти
-  const defaultPosition = [accommodations[0].latitude, accommodations[0].longitude];
+  const defaultPosition = [
+    accommodations[0]?.latitude || 50.45,
+    accommodations[0]?.longitude || 30.52
+  ];
 
   return (
     <div className="map-container">
-      <MapContainer center={defaultPosition} zoom={13}>
+      <MapContainer center={defaultPosition} zoom={13} scrollWheelZoom>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>'
         />
-        {accommodations.map((acc) => (
-          <Marker key={acc.id} position={[acc.latitude, acc.longitude]}>
-            <Popup>
-              {acc.title}
-            </Popup>
+        {accommodations.map(({ id, latitude, longitude, title }) => (
+          <Marker key={id} position={[latitude, longitude]}>
+            <Popup>{title}</Popup>
           </Marker>
         ))}
       </MapContainer>

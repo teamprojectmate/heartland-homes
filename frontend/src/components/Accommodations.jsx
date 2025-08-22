@@ -1,45 +1,52 @@
-import React, { useEffect, useState } from "react";
-import axios from "../api/axios";
-import AccommodationList from "../components/AccommodationList";
-import Notification from "../components/Notification";
-import SearchForm from "../components/SearchForm";
-import Offers from "../components/Offers";
-import AccommodationFilters from "../components/AccommodationFilters";
+import React, { useEffect, useState } from 'react';
+import axios from '../api/axios';
+import AccommodationList from '../components/AccommodationList';
+import Notification from '../components/Notification';
+import SearchForm from '../components/SearchForm';
+import Offers from '../components/Offers';
+import AccommodationFilters from '../components/AccommodationFilters';
 
 const Accommodations = () => {
   const [accommodations, setAccommodations] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // 🔹 Фільтри
   const [cities, setCities] = useState([]);
   const [types, setTypes] = useState([]);
-  const [minDailyRate, setMinDailyRate] = useState("");
-  const [maxDailyRate, setMaxDailyRate] = useState("");
-  const [sortBy, setSortBy] = useState("");
+  const [sizes, setSizes] = useState([]);
+  const [minDailyRate, setMinDailyRate] = useState('');
+  const [maxDailyRate, setMaxDailyRate] = useState('');
 
-  const fetchAccommodations = async (params = {}) => {
+  // 🔹 Запит на бекенд
+  const fetchAccommodations = async () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.get("/accommodations", { params });
-      setAccommodations(response.data);
+
+      const response = await axios.get('/accommodations/search', {
+        params: {
+          city: cities,
+          type: types,
+          size: sizes,
+          minDailyRate: minDailyRate || undefined,
+          maxDailyRate: maxDailyRate || undefined
+        }
+      });
+
+      setAccommodations(response.data || []);
     } catch (err) {
-      setError("Не вдалося завантажити помешкання.");
+      setError(err.response?.data?.message || 'Не вдалося завантажити помешкання.');
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchAccommodations({
-      cities: cities.join(","),
-      types: types.join(","),
-      minDailyRate,
-      maxDailyRate,
-      sortBy,
-    });
-  }, [cities, types, minDailyRate, maxDailyRate, sortBy]);
+    fetchAccommodations();
+  }, [cities, types, sizes, minDailyRate, maxDailyRate]);
 
+  // 🔹 Обробка пошуку з SearchForm
   const handleSearch = ({ destination }) => {
     if (destination) {
       setCities([destination]);
@@ -48,53 +55,48 @@ const Accommodations = () => {
     }
   };
 
-  const handleCityChange = (e) => {
-    setCities(e.target.value.split(",").map((city) => city.trim()).filter(Boolean));
-  };
-
-  const handleTypeChange = (e) => {
-    const { value, checked } = e.target;
-    if (checked) {
-      setTypes([...types, value]);
-    } else {
-      setTypes(types.filter((type) => type !== value));
-    }
-  };
-
   return (
     <div>
+      {/* Hero */}
       <div className="hero-section">
-        <div className="container"> {/* ✅ Змінено app-container на container */}
+        <div className="container">
           <h1 className="hero-title">Знайдіть помешкання для наступної подорожі</h1>
-          <p className="hero-subtitle">Знахoдьте пропозиції готелів, приватних помешкань та багато іншого...</p>
+          <p className="hero-subtitle">
+            Знахoдьте пропозиції готелів, приватних помешкань та багато іншого...
+          </p>
           <SearchForm onSearch={handleSearch} />
         </div>
       </div>
 
-      <div className="container mt-4"> {/* ✅ Змінено app-container на container */}
+      {/* Content */}
+      <div className="container mt-4">
         <Offers />
         <h2 className="section-heading mt-5">Доступні помешкання</h2>
+
+        {/* 🔹 Фільтри */}
         <AccommodationFilters
           cities={cities}
           types={types}
+          sizes={sizes}
           minDailyRate={minDailyRate}
           maxDailyRate={maxDailyRate}
-          sortBy={sortBy}
-          handleCityChange={handleCityChange}
-          handleTypeChange={handleTypeChange}
+          setCities={setCities}
+          setTypes={setTypes}
+          setSizes={setSizes}
           setMinDailyRate={setMinDailyRate}
           setMaxDailyRate={setMaxDailyRate}
-          setSortBy={setSortBy}
         />
+
+        {/* 🔹 Результати */}
         {loading && <p className="text-center">Завантаження...</p>}
         {error && <Notification message={error} type="danger" />}
-        {!loading && !error && (
-          accommodations.length > 0 ? (
+        {!loading &&
+          !error &&
+          (accommodations.length > 0 ? (
             <AccommodationList accommodations={accommodations} />
           ) : (
             <p className="text-center">Помешкань за вашим запитом не знайдено.</p>
-          )
-        )}
+          ))}
       </div>
     </div>
   );

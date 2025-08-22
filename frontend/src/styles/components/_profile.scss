@@ -1,20 +1,87 @@
-// src/styles/components/_profile.scss
-@use "sass:color";
-@use "../abstract/variables" as *;
-@use "../abstract/mixins" as *;
+/* src/styles/components/_profile.scss */
+@use '../abstract/variables' as *;
 
 .profile-card {
+  max-width: 600px;
+  padding: 2rem;
+  margin: 0 auto;
+  text-align: center;
   background: $white-color;
   border-radius: $radius;
   box-shadow: $box-shadow-card;
-  padding: 24px 24px 28px;
 }
 
-.profile-form {
-  background: $white-color;
-  border: 1px solid transparent; // щоб точно не було “системних” рамок
-  border-radius: $radius;
-  padding: 16px;
-  box-shadow: none;
+.auth-title {
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: $heading-color;
+  text-align: center;
 }
 
+.profile-avatar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.profile-photo {
+  width: 140px;
+  height: 140px;
+  margin-bottom: 0.75rem;
+  object-fit: cover;
+  border-radius: 50%;
+  box-shadow: $box-shadow-md;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: $box-shadow-lg;
+    transform: scale(1.05);
+  }
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  text-align: left;
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+
+    label {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: $text-color;
+    }
+
+    input {
+      padding: 0.7rem 1rem;
+      font-size: 1rem;
+      border: 1px solid $border-color;
+      border-radius: $radius;
+      transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+
+      &:focus {
+        outline: none;
+        border-color: $primary-color;
+        box-shadow: $box-shadow-focus;
+      }
+    }
+  }
+
+  button {
+    align-self: center;
+    padding: 0.8rem 1.6rem;
+    margin-top: 1rem;
+    font-size: 1rem;
+    border-radius: $radius;
+  }
+}

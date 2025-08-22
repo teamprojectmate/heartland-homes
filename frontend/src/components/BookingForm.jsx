@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { createBooking } from "../store/slices/bookingsSlice";
-import Notification from "./Notification";
-import "../styles/components/_booking-form.scss";
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { createBooking } from '../store/slices/bookingsSlice';
+import Notification from './Notification';
+import '../styles/components/_booking-form.scss';
 
 const BookingForm = ({ accommodationId, dailyRate }) => {
-  const [checkInDate, setCheckInDate] = useState("");
-  const [checkOutDate, setCheckOutDate] = useState("");
+  const [checkInDate, setCheckInDate] = useState('');
+  const [checkOutDate, setCheckOutDate] = useState('');
   const [error, setError] = useState(null);
 
   const dispatch = useDispatch();
@@ -18,12 +18,12 @@ const BookingForm = ({ accommodationId, dailyRate }) => {
     setError(null);
 
     if (!isAuthenticated) {
-      setError("Будь ласка, увійдіть, щоб забронювати помешкання.");
+      setError('Будь ласка, увійдіть, щоб забронювати помешкання.');
       return;
     }
 
     if (!checkInDate || !checkOutDate) {
-      setError("Будь ласка, виберіть дати заїзду та виїзду.");
+      setError('Будь ласка, виберіть дати заїзду та виїзду.');
       return;
     }
 
@@ -31,12 +31,12 @@ const BookingForm = ({ accommodationId, dailyRate }) => {
       accommodationId,
       checkInDate,
       checkOutDate,
-      dailyRate,
+      dailyRate
     };
 
     const resultAction = await dispatch(createBooking(bookingData));
     if (createBooking.fulfilled.match(resultAction)) {
-      alert("Бронювання успішне!");
+      alert('Бронювання успішне!');
     } else if (createBooking.rejected.match(resultAction)) {
       setError(resultAction.payload);
     }
@@ -54,7 +54,9 @@ const BookingForm = ({ accommodationId, dailyRate }) => {
           onChange={(e) => setCheckInDate(e.target.value)}
         />
       </div>
-      <div className="form-group form-group-spacing"> {/* ✅ Виправлено */}
+      <div className="form-group form-group-spacing">
+        {' '}
+        {/* ✅ Виправлено */}
         <label htmlFor="check-out-date">Дата виїзду</label>
         <input
           type="date"
@@ -65,12 +67,8 @@ const BookingForm = ({ accommodationId, dailyRate }) => {
         />
       </div>
       {error && <Notification message={error} type="danger" />}
-      <button
-        type="submit"
-        className="btn-primary"
-        disabled={loading}
-      >
-        {loading ? "Бронювання..." : "Забронювати"}
+      <button type="submit" className="btn-primary" disabled={loading}>
+        {loading ? 'Бронювання...' : 'Забронювати'}
       </button>
     </form>
   );
