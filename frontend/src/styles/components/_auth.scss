@@ -1,5 +1,6 @@
 @use '../abstract/variables' as *;
 @use '../abstract/mixins' as *;
+@use 'sass:color';
 
 .auth-layout {
   display: grid;
@@ -27,14 +28,13 @@
     text-align: center;
   }
 
-  .form-subtitle {
-    margin-bottom: 1.5rem;
-    font-size: 1rem;
-    text-align: center;
+   .form-subtitle a {
+    font-weight: 600;
+    color: $primary-color; // 🟢
+    text-decoration: none;
 
-    a {
-      font-weight: 600;
-      color: #0071c2;
+    &:hover {
+      text-decoration: underline;
     }
   }
 
@@ -72,19 +72,19 @@
     }
   }
 
-  button {
-    height: 48px; // 🔑 однаково з input
+    button {
+    height: 48px;
     font-size: 1rem;
     font-weight: 600;
-    color: white;
+    color: $white-color;
     cursor: pointer;
-    background: #0071c2;
+    background: $primary-color; // 🟢 зелений
     border: none;
     border-radius: 8px;
-    transition: background 0.2s;
+    transition: background 0.2s ease;
 
     &:hover {
-      background: #005f99;
+      background: color.scale($primary-color, $lightness: -10%);
     }
   }
 }
@@ -125,5 +125,23 @@ footer {
 
   p {
     margin: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .auth-layout {
+    grid-template-columns: 1fr; // ✅ одна колонка
+    margin: 1.5rem auto;
+    gap: 1.5rem;
+    padding: 0 1rem;
+  }
+
+  .auth-card {
+    padding: 1.5rem;
+  }
+
+  .auth-side {
+    padding: 1.5rem;
+    border-radius: 8px;
   }
 }
