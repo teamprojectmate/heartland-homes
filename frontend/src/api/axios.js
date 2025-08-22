@@ -1,27 +1,26 @@
-// src/api/axios.js
 import axios from 'axios';
-import { store } from '../store/store'; // ✅ Виправлений шлях
+import qs from 'qs'; // 👉 потрібно встановити: npm install qs
+import store from '../store/store';
 
 const instance = axios.create({
   baseURL: 'http://localhost:8080',
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  paramsSerializer: (params) =>
+    qs.stringify(params, { arrayFormat: 'repeat' }) 
+    // => type=HOUSE&type=APARTMENT&size=1
 });
 
 instance.interceptors.request.use(
   (config) => {
     const state = store.getState();
-    const token = state.auth.token;
+    const token = state.auth?.token;
 
     if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
+      config.headers.Authorization = `Bearer ${token}`;
     }
+
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 export default instance;

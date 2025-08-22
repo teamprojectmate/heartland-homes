@@ -1,110 +1,139 @@
 // src/components/AccommodationFilters.jsx
-
-import React from "react";
-import "../styles/components/_filters.scss";
-import "../styles/components/_forms.scss";
-import "../styles/layout/_main-layout.scss";
+import React from 'react';
+import { Filter, RotateCcw } from 'lucide-react';
+import '../styles/components/_forms.scss';
+import '../styles/components/_buttons.scss';
+import '../styles/components/_filters.scss';
 
 const AccommodationFilters = ({
-  cities = [],
-  types = [],
-  minDailyRate = "",
-  maxDailyRate = "",
-  sortBy = "",
-  handleCityChange,
-  handleTypeChange,
+  cities, // тепер тут буде [city] або []
+  types,
+  sizes,
+  minDailyRate,
+  maxDailyRate,
+  setCities,
+  setTypes,
+  setSizes,
   setMinDailyRate,
   setMaxDailyRate,
-  setSortBy,
+  onApplyFilters,
+  onResetFilters
 }) => {
+  // 🔹 Обробка міста (одне місто)
+  const handleCityChange = (e) => {
+    const value = e.target.value.trim();
+    setCities(value ? [value] : []); // ✅ зберігаємо як масив лише для сумісності з батьківським компонентом
+  };
+
+  // 🔹 Обробка чекбоксів типів житла
+  const handleTypeChange = (e) => {
+    const { value, checked } = e.target;
+    if (checked) {
+      setTypes([...types, value]);
+    } else {
+      setTypes(types.filter((type) => type !== value));
+    }
+  };
+
+  // 🔹 Обробка розміру
+  const handleSizeChange = (e) => {
+    setSizes(
+      e.target.value
+        .split(',')
+        .map((size) => size.trim())
+        .filter(Boolean)
+    );
+  };
+
   return (
     <section className="filters-section">
-      <div className="container">
-        <div className="filters-box">
-          <h5 className="filters-heading">Фільтри та сортування</h5>
+      <div className="filters-box">
+        <h4 className="filters-heading">Фільтри та сортування</h4>
 
-          <div className="filters-grid">
-            {/* Місто */}
-            <div className="filter-item">
-              <label htmlFor="city">Місто (через кому)</label>
-              <input
-                id="city"
-                type="text"
-                className="form-control"
-                placeholder="Місто"
-                value={cities.join(",")}
-                onChange={handleCityChange}
-              />
-            </div>
+        {/* Сітка фільтрів */}
+        <div className="filters-grid">
+          {/* Місто */}
+          <div className="filter-item">
+            <label>Місто</label>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Київ"
+              value={cities[0] || ''} // ✅ беремо перший елемент або пусто
+              onChange={handleCityChange}
+            />
+          </div>
 
-            {/* Тип житла */}
-            <div className="filter-item">
-              <label>Тип житла</label>
-              <div className="form-check-group">
-                <label className="form-check">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    value="HOUSE"
-                    checked={types.includes("HOUSE")}
-                    onChange={handleTypeChange}
-                  />
-                  <span className="form-check-label">Будинок</span>
-                </label>
-                <label className="form-check">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    value="APARTMENT"
-                    checked={types.includes("APARTMENT")}
-                    onChange={handleTypeChange}
-                  />
-                  <span className="form-check-label">Квартира</span>
-                </label>
-              </div>
-            </div>
-
-            {/* Ціна від */}
-            <div className="filter-item">
-              <label htmlFor="priceFrom">Ціна від</label>
-              <input
-                id="priceFrom"
-                type="number"
-                className="form-control"
-                placeholder="Ціна"
-                value={minDailyRate}
-                onChange={(e) => setMinDailyRate(e.target.value)}
-              />
-            </div>
-
-            {/* Ціна до */}
-            <div className="filter-item">
-              <label htmlFor="priceTo">Ціна до</label>
-              <input
-                id="priceTo"
-                type="number"
-                className="form-control"
-                placeholder="Ціна"
-                value={maxDailyRate}
-                onChange={(e) => setMaxDailyRate(e.target.value)}
-              />
-            </div>
-
-            {/* Сортування */}
-            <div className="filter-item filter-item--end">
-              <label htmlFor="sortBy">Сортувати за:</label>
-              <select
-                id="sortBy"
-                className="form-control"
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-              >
-                <option value="">Без сортування</option>
-                <option value="dailyRate_asc">За ціною (зростання)</option>
-                <option value="dailyRate_desc">За ціною (спадання)</option>
-              </select>
+          {/* Тип житла */}
+          <div className="filter-item">
+            <label>Тип житла</label>
+            <div className="form-check-group">
+              <label className="form-check">
+                <input
+                  type="checkbox"
+                  value="HOUSE"
+                  checked={types.includes('HOUSE')}
+                  onChange={handleTypeChange}
+                />
+                Будинок
+              </label>
+              <label className="form-check">
+                <input
+                  type="checkbox"
+                  value="APARTMENT"
+                  checked={types.includes('APARTMENT')}
+                  onChange={handleTypeChange}
+                />
+                Квартира
+              </label>
             </div>
           </div>
+
+          {/* Розмір */}
+          <div className="filter-item">
+            <label>Розмір</label>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Напр. 2 кімнати"
+              value={sizes.join(', ')}
+              onChange={handleSizeChange}
+            />
+          </div>
+
+          {/* Ціна від */}
+          <div className="filter-item">
+            <label>Ціна від</label>
+            <input
+              type="number"
+              className="form-control"
+              placeholder="Від"
+              value={minDailyRate}
+              onChange={(e) => setMinDailyRate(e.target.value)}
+            />
+          </div>
+
+          {/* Ціна до */}
+          <div className="filter-item">
+            <label>Ціна до</label>
+            <input
+              type="number"
+              className="form-control"
+              placeholder="До"
+              value={maxDailyRate}
+              onChange={(e) => setMaxDailyRate(e.target.value)}
+            />
+          </div>
+        </div>
+
+        {/* ✅ Футер з кнопками */}
+        <div className="filters-actions">
+          <button className="btn-primary btn-with-icon" onClick={onApplyFilters}>
+            <Filter size={18} /> Застосувати
+          </button>
+          <button className="btn-outline btn-with-icon" onClick={onResetFilters}>
+            <RotateCcw size={18} /> Скинути
+          </button>
         </div>
       </div>
     </section>

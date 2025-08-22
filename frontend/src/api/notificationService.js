@@ -8,15 +8,15 @@ const sendTelegramMessage = async (message, token) => {
     { message },
     {
       headers: {
-        'Authorization': `Bearer ${token}`,
-      },
+        Authorization: `Bearer ${token}`
+      }
     }
   );
   return response.data;
 };
 
 const notificationService = {
-  sendTelegramMessage,
+  sendTelegramMessage
 };
 
 export default notificationService;

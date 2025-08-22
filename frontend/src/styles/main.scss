@@ -1,32 +1,42 @@
 // src/styles/main.scss
 
 // 1) abstract
-@use "./abstract/variables";
-@use "./abstract/mixins";
+@use './abstract/variables';
+@use './abstract/mixins';
 
 // 2) layout
-@use "./layout/main-layout";
+@use './layout/main-layout';
 
 // 3) components
-@use "./components/header";
-@use "./components/footer";
-@use "./components/cards";
-@use "./components/forms";
-@use "./components/hero";
-@use "./components/admin";
-@use "./components/offers";
-@use "./components/notification";
-@use "./components/accommodation-details";
-@use "./components/admin-dashboard";
-@use "./components/profile";
-@use "./components/filters";
-@use "./components/booking-form";
-@use "./components/location-map";
-@use "./components/map";
-@use "./components/buttons";
+@use './components/header';
+@use './components/footer';
+@use './components/cards';
+@use './components/forms';
+@use './components/hero';
+@use './components/admin';
+@use './components/offers';
+@use './components/notification';
+@use './components/accommodation-details';
+@use './components/admin-dashboard';
+@use './components/profile';
+@use './components/filters';
+@use './components/booking-form';
+@use './components/location-map';
+@use './components/map';
+@use './components/buttons';
+@use './components/auth';
 
 // 4) пакетні стилі — імпортуємо як пакет, без шляху до node_modules
-@use "../../node_modules/react-image-gallery/styles/scss/image-gallery.scss";
+@use '../../node_modules/react-image-gallery/styles/scss/image-gallery';
 
-*, *::before, *::after { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body #root {
+  padding: 0;
+  margin: 0;
+}

@@ -1,125 +1,109 @@
-// src/components/Payment.jsx
-
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Notification from './Notification';
-import "../styles/layout/_main-layout.scss"; // ✅ Імпортуємо стилі для розмітки
-import "../styles/components/_forms.scss"; // ✅ Імпортуємо стилі для форм
-import "../styles/components/_buttons.scss"; // ✅ Імпортуємо стилі для кнопок
+import { fetchBookingById } from '../store/slices/bookingsSlice';
+import { createPaymentIntent, resetPayment } from '../store/slices/paymentsSlice';
 
-const BASE_URL = 'http://localhost:8080';
+import '../styles/layout/_main-layout.scss';
+import '../styles/components/_forms.scss';
+import '../styles/components/_buttons.scss';
 
 const Payment = () => {
   const stripe = useStripe();
   const elements = useElements();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const { bookingId } = useParams();
-  const { isAuthenticated, user } = useSelector((state) => state.auth);
 
-  const [bookingDetails, setBookingDetails] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [paymentError, setPaymentError] = useState(null);
-  const [processing, setProcessing] = useState(false);
+  const { isAuthenticated } = useSelector((state) => state.auth);
+  const {
+    currentBooking,
+    status: bookingStatus,
+    error: bookingError
+  } = useSelector((state) => state.bookings);
+  const {
+    clientSecret,
+    status: paymentStatus,
+    error: paymentError
+  } = useSelector((state) => state.payments);
 
+  const [stripeError, setStripeError] = useState(null);
+
+  // Завантаження деталей бронювання
   useEffect(() => {
     if (!isAuthenticated) {
       navigate('/login');
       return;
     }
+    dispatch(fetchBookingById(bookingId));
+  }, [isAuthenticated, bookingId, dispatch, navigate]);
 
-    const fetchBookingDetails = async () => {
-      try {
-        setLoading(true);
-        const token = user.token;
-        const response = await axios.get(`${BASE_URL}/bookings/${bookingId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setBookingDetails(response.data);
-      } catch (err) {
-        setError(err.response?.data?.message || err.message || 'Не вдалося отримати деталі бронювання.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchBookingDetails();
-  }, [bookingId, isAuthenticated, user, navigate]);
+  // Якщо оплата завершена успішно → редірект
+  useEffect(() => {
+    if (paymentStatus === 'succeeded') {
+      dispatch(resetPayment());
+      navigate('/bookings/my');
+    }
+  }, [paymentStatus, dispatch, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setProcessing(true);
-    setPaymentError(null);
+    setStripeError(null);
 
-    if (!stripe || !elements || !bookingDetails) {
-      setProcessing(false);
-      return;
-    }
+    if (!stripe || !elements || !currentBooking) return;
 
-    try {
-      const token = user.token;
-      const response = await axios.post(
-        `${BASE_URL}/payments/create`,
-        { bookingId },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const { clientSecret } = response.data;
+    // 1. Отримати clientSecret від бекенду
+    const resultAction = await dispatch(createPaymentIntent(bookingId));
 
+    if (createPaymentIntent.fulfilled.match(resultAction)) {
+      const { clientSecret } = resultAction.payload;
+
+      // 2. Підтвердити оплату через Stripe
       const cardElement = elements.getElement(CardElement);
-      const { paymentIntent, error } = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: {
-          card: cardElement,
-        },
+      const { error } = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: { card: cardElement }
       });
 
       if (error) {
-        setPaymentError(error.message);
-        setProcessing(false);
-      } else {
-        console.log('Payment successful:', paymentIntent);
-        navigate('/bookings/my');
+        setStripeError(error.message);
       }
-    } catch (err) {
-      setPaymentError(err.response?.data?.message || err.message || 'Помилка при обробці платежу.');
-      setProcessing(false);
     }
   };
 
-  if (loading) return <p className="text-center mt-5">Завантаження...</p>;
+  if (bookingStatus === 'loading') {
+    return <p className="text-center mt-5">Завантаження...</p>;
+  }
 
   return (
     <div className="container page">
       <div className="row">
         <div className="col auth-form-container">
           <h2 className="auth-title">Оплата бронювання</h2>
-          {error && <Notification message={error} type="danger" />}
+          {bookingError && <Notification message={bookingError} type="danger" />}
 
-          {bookingDetails && (
+          {currentBooking && (
             <div className="notification-info">
-              Помешкання: <strong>{bookingDetails.accommodationName}</strong>,
-              Сума: <strong>{bookingDetails.totalAmount} $</strong>
+              Помешкання: <strong>{currentBooking.accommodationName}</strong>, Сума:{' '}
+              <strong>{currentBooking.totalAmount} $</strong>
             </div>
           )}
 
           <form onSubmit={handleSubmit}>
-            <div className="form-group form-group-spacing"> {/* ✅ Виправлено */}
+            <div className="form-group form-group-spacing">
               <label>Дані картки</label>
               <CardElement className="form-control" />
             </div>
+
+            {stripeError && <Notification message={stripeError} type="danger" />}
             {paymentError && <Notification message={paymentError} type="danger" />}
+
             <button
-              className="btn btn-primary btn-full-width" // ✅ Виправлено
-              disabled={!stripe || processing}
+              className="btn btn-primary btn-full-width"
+              disabled={!stripe || paymentStatus === 'processing'}
             >
-              {processing ? 'Обробка...' : 'Сплатити'}
+              {paymentStatus === 'processing' ? 'Обробка...' : 'Сплатити'}
             </button>
           </form>
         </div>

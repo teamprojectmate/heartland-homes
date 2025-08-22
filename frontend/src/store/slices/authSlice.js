@@ -1,65 +1,61 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from '../../api/axios';
 
-const BASE_URL = "http://localhost:8080";
-
-export const login = createAsyncThunk(
-  "auth/login",
-  async (credentials, { rejectWithValue }) => {
-    try {
-      const response = await axios.post(`${BASE_URL}/auth/login`, credentials);
-      if (response.data && response.data.token) {
-        localStorage.setItem("user", JSON.stringify(response.data));
-        return response.data;
-      } else {
-        return rejectWithValue({
-          message: "Токен не був отриманий від сервера.",
-        });
-      }
-    } catch (error) {
-      console.error("Login error:", error.response.data);
-      return rejectWithValue(error.response.data);
-    }
-  },
-);
-
-export const register = createAsyncThunk(
-  "auth/register",
-  async (userData, { rejectWithValue }) => {
-    try {
-      const response = await axios.post(
-        `${BASE_URL}/auth/registration`,
-        userData,
-      );
-      //  Після успішної реєстрації просто повертаємо відповідь.
-      // Користувач буде перенаправлений на сторінку входу.
-      return response.data;
-    } catch (error) {
-      console.error("Registration error:", error.response.data);
-      return rejectWithValue(error.response.data);
-    }
-  },
-);
-
-const savedUser = localStorage.getItem("user");
+const savedUser = localStorage.getItem('user');
 const initialState = {
   user: savedUser ? JSON.parse(savedUser) : null,
   isAuthenticated: !!savedUser,
   token: savedUser ? JSON.parse(savedUser).token : null,
   loading: false,
-  error: null,
+  error: null
 };
 
+export const login = createAsyncThunk(
+  'auth/login',
+  async (credentials, { rejectWithValue }) => {
+    try {
+      const response = await axios.post('/auth/login', credentials);
+      if (response.data && response.data.token) {
+        localStorage.setItem('user', JSON.stringify(response.data));
+        return response.data;
+      } else {
+        return rejectWithValue({ message: 'Токен не був отриманий від сервера.' });
+      }
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { message: 'Помилка логіну' });
+    }
+  }
+);
+
+export const register = createAsyncThunk(
+  'auth/register',
+  async (userData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post('/auth/registration', userData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { message: 'Помилка реєстрації' });
+    }
+  }
+);
+
 const authSlice = createSlice({
-  name: "auth",
+  name: 'auth',
   initialState,
   reducers: {
     logout: (state) => {
-      localStorage.removeItem("user");
+      localStorage.removeItem('user');
       state.user = null;
       state.isAuthenticated = false;
       state.token = null;
     },
+    updateUser: (state, action) => {
+      state.user = {
+        ...state.user,
+        ...action.payload
+      };
+      localStorage.setItem('user', JSON.stringify(state.user));
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -78,26 +74,23 @@ const authSlice = createSlice({
         state.error =
           action.payload?.message ||
           action.error.message ||
-          "Неправильний логін або пароль";
+          'Неправильний логін або пароль';
       })
       .addCase(register.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      // Після успішної реєстрації ми не входимо автоматично
-      .addCase(register.fulfilled, (state, action) => {
+      .addCase(register.fulfilled, (state) => {
         state.loading = false;
         state.error = null;
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;
         state.error =
-          action.payload?.message ||
-          action.error.message ||
-          "Помилка реєстрації";
+          action.payload?.message || action.error.message || 'Помилка реєстрації';
       });
-  },
+  }
 });
 
-export const { logout } = authSlice.actions;
+export const { logout, updateUser } = authSlice.actions;
 export default authSlice.reducer;

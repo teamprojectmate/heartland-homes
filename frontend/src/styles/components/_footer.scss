@@ -1,76 +1,93 @@
 // src/styles/components/_footer.scss
 
-@use "sass:color";
-@use "../abstract/variables" as *;
-@use "../abstract/mixins" as *;
+@use 'sass:color';
+@use '../abstract/variables' as *;
+@use '../abstract/mixins' as *;
 
 .main-footer {
-  background-color: $primary-600;
+  padding: 2.5rem 0;
+  font-size: 1rem;
+  line-height: 1.6;
   color: $white-color;
-  padding: 2rem 0;
+  background-color: $primary-600;
 }
 
 .footer-links {
-  // ✅ Змінимо display, щоб краще працювало на мобільних
   display: flex;
-  flex-direction: column; // ✅ Додамо для мобільних
-  align-items: center; // ✅ Центруємо
-  gap: $spacer; // ✅ Замінимо margin на gap для кращої гнучкості
-  margin-bottom: $spacer; // ✅ Залишаємо відступ
+  flex-direction: column;
+  gap: $spacer;
+  align-items: center;
+  margin-bottom: $spacer;
 }
 
 @media (min-width: $breakpoint-md) {
   .footer-links {
-    flex-direction: row; // ✅ Повертаємо display: flex у рядок на великих екранах
-    justify-content: space-around;
+    flex-direction: row;
     align-items: flex-start;
+    justify-content: space-around;
   }
 }
 
 .footer-column {
-  text-align: center; // ✅ Центруємо текст
   flex: 1;
-  width: 100%; // ✅ Додаємо ширину для коректного відображення на мобільних
+  width: 100%;
+  max-width: 260px;
+  text-align: center;
+}
+
+@media (max-width: $breakpoint-xs) {
+  .main-footer {
+    padding: 2rem 0;
+  }
+
+  .footer-links {
+    gap: 1rem;
+  }
 }
 
 @media (min-width: $breakpoint-md) {
   .footer-column {
-    text-align: left; // ✅ Повертаємо вирівнювання ліворуч на великих екранах
+    text-align: left;
   }
 }
 
 .footer-heading {
-  font-size: 1rem;
-  font-weight: 600;
   margin-bottom: 1rem;
+  font-size: 1.2rem;
+  font-weight: 700;
 }
 
 .list-unstyled {
-  list-style: none;
   padding: 0;
   margin: 0;
+  list-style: none;
 }
 
 .footer-link {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 1.05rem;
   color: $white-color;
-  opacity: 0.8;
   text-decoration: none;
+  opacity: 0.85;
   transition: opacity 0.3s ease;
 
   &:hover {
+    text-decoration: underline;
     opacity: 1;
   }
 }
 
 .footer-copyright {
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding-top: 1.5rem;
   width: 100%;
+  padding-top: 1.5rem;
+  margin-top: 1.5rem;
   text-align: center;
+  border-top: 1px solid rgb(255 255 255 / 12%);
 }
 
 .footer-text {
-  font-size: 0.8rem;
-  opacity: 0.6;
   margin: 0;
+  font-size: 1rem;
+  opacity: 0.7;
 }
