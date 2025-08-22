@@ -6,7 +6,7 @@ import '../styles/components/_buttons.scss';
 import '../styles/components/_filters.scss';
 
 const AccommodationFilters = ({
-  cities,
+  cities, // тепер тут буде [city] або []
   types,
   sizes,
   minDailyRate,
@@ -19,14 +19,10 @@ const AccommodationFilters = ({
   onApplyFilters,
   onResetFilters
 }) => {
-  // 🔹 Обробка міста
+  // 🔹 Обробка міста (одне місто)
   const handleCityChange = (e) => {
-    setCities(
-      e.target.value
-        .split(',')
-        .map((city) => city.trim())
-        .filter(Boolean)
-    );
+    const value = e.target.value.trim();
+    setCities(value ? [value] : []); // ✅ зберігаємо як масив лише для сумісності з батьківським компонентом
   };
 
   // 🔹 Обробка чекбоксів типів житла
@@ -58,12 +54,12 @@ const AccommodationFilters = ({
         <div className="filters-grid">
           {/* Місто */}
           <div className="filter-item">
-            <label>Місто (через кому)</label>
+            <label>Місто</label>
             <input
               type="text"
               className="form-control"
-              placeholder="Київ, Львів"
-              value={cities.join(', ')}
+              placeholder="Київ"
+              value={cities[0] || ''} // ✅ беремо перший елемент або пусто
               onChange={handleCityChange}
             />
           </div>

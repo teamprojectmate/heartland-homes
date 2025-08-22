@@ -1,3 +1,4 @@
+// src/components/SearchForm.jsx
 import React, { useState } from 'react';
 import '../styles/components/_hero.scss';
 import '../styles/components/_forms.scss';
@@ -12,11 +13,22 @@ const SearchForm = ({ onSearch }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSearch({ destination, checkInDate, checkOutDate, adults, children });
+
+    // 🔹 Очищаємо від пробілів (щоб не було %20 у кінці)
+    const cleanDestination = destination.trim();
+
+    onSearch({
+      destination: cleanDestination,
+      checkInDate,
+      checkOutDate,
+      adults,
+      children
+    });
   };
 
   return (
     <form onSubmit={handleSubmit} className="search-form-container">
+      {/* Місто */}
       <div className="search-input-group">
         <label htmlFor="destination-input">Куди ви вирушаєте?</label>
         <input

@@ -1,11 +1,14 @@
 import axios from 'axios';
+import qs from 'qs'; // 👉 потрібно встановити: npm install qs
 import store from '../store/store';
 
 const instance = axios.create({
-  baseURL: 'http://localhost:8080'
+  baseURL: 'http://localhost:8080',
+  paramsSerializer: (params) =>
+    qs.stringify(params, { arrayFormat: 'repeat' }) 
+    // => type=HOUSE&type=APARTMENT&size=1
 });
 
-// додаємо токен з redux у headers
 instance.interceptors.request.use(
   (config) => {
     const state = store.getState();

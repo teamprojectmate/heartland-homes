@@ -1,3 +1,4 @@
+// src/pages/Accommodations.jsx
 import React, { useEffect, useState } from 'react';
 import axios from '../api/axios';
 import AccommodationList from '../components/AccommodationList';
@@ -12,7 +13,7 @@ const Accommodations = () => {
   const [error, setError] = useState(null);
 
   // 🔹 Фільтри
-  const [cities, setCities] = useState([]);
+  const [city, setCity] = useState(''); 
   const [types, setTypes] = useState([]);
   const [sizes, setSizes] = useState([]);
   const [minDailyRate, setMinDailyRate] = useState('');
@@ -26,12 +27,12 @@ const Accommodations = () => {
 
       const response = await axios.get('/accommodations/search', {
         params: {
-          city: cities,
+          city: city || undefined,
           type: types,
           size: sizes,
           minDailyRate: minDailyRate || undefined,
-          maxDailyRate: maxDailyRate || undefined
-        }
+          maxDailyRate: maxDailyRate || undefined,
+        },
       });
 
       setAccommodations(response.data || []);
@@ -44,14 +45,14 @@ const Accommodations = () => {
 
   useEffect(() => {
     fetchAccommodations();
-  }, [cities, types, sizes, minDailyRate, maxDailyRate]);
+  }, [city, types, sizes, minDailyRate, maxDailyRate]);
 
   // 🔹 Обробка пошуку з SearchForm
   const handleSearch = ({ destination }) => {
     if (destination) {
-      setCities([destination]);
+      setCity(destination.trim()); // ✅ обрізаємо пробіли
     } else {
-      setCities([]);
+      setCity('');
     }
   };
 
@@ -75,12 +76,12 @@ const Accommodations = () => {
 
         {/* 🔹 Фільтри */}
         <AccommodationFilters
-          cities={cities}
+          cities={city ? [city] : []} // ✅ для UI віддаємо масив
           types={types}
           sizes={sizes}
           minDailyRate={minDailyRate}
           maxDailyRate={maxDailyRate}
-          setCities={setCities}
+          setCities={(arr) => setCity(arr[0] || '')} // ✅ назад у рядок
           setTypes={setTypes}
           setSizes={setSizes}
           setMinDailyRate={setMinDailyRate}
@@ -90,13 +91,13 @@ const Accommodations = () => {
         {/* 🔹 Результати */}
         {loading && <p className="text-center">Завантаження...</p>}
         {error && <Notification message={error} type="danger" />}
-        {!loading &&
-          !error &&
-          (accommodations.length > 0 ? (
+        {!loading && !error && (
+          accommodations.length > 0 ? (
             <AccommodationList accommodations={accommodations} />
           ) : (
             <p className="text-center">Помешкань за вашим запитом не знайдено.</p>
-          ))}
+          )
+        )}
       </div>
     </div>
   );
