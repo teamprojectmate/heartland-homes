@@ -91,7 +91,7 @@ const AccommodationFilters = ({
 
           {/* Розмір */}
           <div className="filter-item">
-            <label>Розмір</label>
+            <label>Кількість кімнат</label>
             <input
               type="text"
               className="form-control"

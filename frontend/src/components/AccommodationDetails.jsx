@@ -48,7 +48,7 @@ const AccommodationDetails = () => {
                 <strong>Тип:</strong> {accommodation.type}
               </li>
               <li>
-                <strong>Розмір:</strong> {accommodation.size}
+                <strong>Кількість кімнат:</strong> {accommodation.size}
               </li>
               <li>
                 <strong>Ціна:</strong> {accommodation.dailyRate}$ / доба
