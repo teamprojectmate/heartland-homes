@@ -1,186 +1,114 @@
-import React, { useState, useEffect } from "react";
-import axios from "../api/axios";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import Notification from "./Notification";
-import "../styles/components/_forms.scss";
-import "../styles/components/_admin.scss";
+// src/components/CreateAccommodation.jsx
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from '../api/axios';
+import { useSelector } from 'react-redux';
+import Notification from './Notification';
 
 const CreateAccommodation = () => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
-    type: "APARTMENT",
-    location: "",
-    city: "",
-    size: "",
-    amenities: "",
-    dailyRate: "",
-    availability: "",
-    mainPhotoUrl: "",
+    type: 'HOUSE',
+    location: '',
+    size: '',
+    amenities: [],
+    dailyRate: '',
+    availability: '',
+    picture: ''
   });
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    if (!user || user.role !== "MANAGER") {
-      navigate("/");
-    }
-  }, [user, navigate]);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
-  const { type, location, city, size, amenities, dailyRate, availability, mainPhotoUrl } = formData;
-
-  const onChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleAmenitiesChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      amenities: e.target.value.split(',').map((a) => a.trim())
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError(null);
-
-    const amenitiesArray = amenities.split(",").map((item) => item.trim());
-
     try {
-      const token = user.token;
-      await axios.post(
-        "/accommodations",
-        {
-          type,
-          location,
-          city,
-          size,
-          amenities: amenitiesArray,
-          dailyRate,
-          availability,
-          mainPhotoUrl,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setLoading(false);
-      navigate("/admin/accommodations");
+      await axios.post('/accommodations', formData, {
+        headers: { Authorization: `Bearer ${user.token}` }
+      });
+      navigate('/admin/accommodations');
     } catch (err) {
-      setError(err.response?.data?.message || "Помилка створення помешкання");
-      setLoading(false);
+      setError(err.response?.data?.message || 'Помилка при створенні');
     }
   };
 
   return (
     <div className="container page">
-      <div className="row">
-        <div className="col-md-6 offset-md-3 auth-form-container">
-          <h2 className="auth-title">Створити нове помешкання</h2>
-          {error && <Notification message={error} type="danger" />}
-          <form onSubmit={handleSubmit}>
-            <fieldset className="form-group">
-              <label>Тип житла</label>
-              <select
-                className="form-control"
-                name="type"
-                value={type}
-                onChange={onChange}
-                required
-              >
-                <option value="HOUSE">HOUSE</option>
-                <option value="APARTMENT">APARTMENT</option>
-                <option value="CONDO">CONDO</option>
-                <option value="VACATION_HOME">VACATION_HOME</option>
-              </select>
-            </fieldset>
-            <fieldset className="form-group">
-              <input
-                className="form-control"
-                type="text"
-                placeholder="Місцезнаходження"
-                name="location"
-                value={location}
-                onChange={onChange}
-                required
-              />
-            </fieldset>
-            <fieldset className="form-group">
-              <input
-                className="form-control"
-                type="text"
-                placeholder="Місто"
-                name="city"
-                value={city}
-                onChange={onChange}
-                required
-              />
-            </fieldset>
-            <fieldset className="form-group">
-              <input
-                className="form-control"
-                type="text"
-                placeholder="Розмір (напр. '50 м²')"
-                name="size"
-                value={size}
-                onChange={onChange}
-                required
-              />
-            </fieldset>
-            <fieldset className="form-group">
-              <textarea
-                className="form-control"
-                rows="3"
-                placeholder="Зручності (перерахуйте через кому: Wi-Fi, Парковка,...)"
-                name="amenities"
-                value={amenities}
-                onChange={onChange}
-                required
-              />
-            </fieldset>
-            <fieldset className="form-group">
-              <input
-                className="form-control"
-                type="number"
-                placeholder="Ціна за добу"
-                name="dailyRate"
-                value={dailyRate}
-                onChange={onChange}
-                required
-                min="0"
-              />
-            </fieldset>
-            <fieldset className="form-group">
-              <input
-                className="form-control"
-                type="number"
-                placeholder="Доступна кількість"
-                name="availability"
-                value={availability}
-                onChange={onChange}
-                required
-                min="0"
-              />
-            </fieldset>
-            <fieldset className="form-group">
-              <input
-                className="form-control"
-                type="text"
-                placeholder="URL зображення"
-                name="mainPhotoUrl"
-                value={mainPhotoUrl}
-                onChange={onChange}
-              />
-            </fieldset>
-
-            <button
-              className="btn-primary btn-full-width"
-              type="submit"
-              disabled={loading}
-            >
-              {loading ? "Завантаження..." : "Створити"}
-            </button>
-          </form>
+      <h1 className="text-center">Створити помешкання</h1>
+      {error && <Notification message={error} type="danger" />}
+      <form onSubmit={handleSubmit} className="form">
+        <div className="form-group">
+          <label>Тип</label>
+          <select name="type" value={formData.type} onChange={handleChange}>
+            <option value="HOUSE">Будинок</option>
+            <option value="APARTMENT">Квартира</option>
+            <option value="CONDO">Кондо</option>
+            <option value="VACATION_HOME">Дім для відпочинку</option>
+          </select>
         </div>
-      </div>
+        <div className="form-group">
+          <label>Локація</label>
+          <input
+            type="text"
+            name="location"
+            value={formData.location}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="form-group">
+          <label>Розмір</label>
+          <input type="text" name="size" value={formData.size} onChange={handleChange} />
+        </div>
+        <div className="form-group">
+          <label>Зручності (через кому)</label>
+          <input type="text" onChange={handleAmenitiesChange} />
+        </div>
+        <div className="form-group">
+          <label>Ціна за добу</label>
+          <input
+            type="number"
+            name="dailyRate"
+            value={formData.dailyRate}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="form-group">
+          <label>Кількість доступних</label>
+          <input
+            type="number"
+            name="availability"
+            value={formData.availability}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="form-group">
+          <label>URL зображення</label>
+          <input
+            type="text"
+            name="picture"
+            value={formData.picture}
+            onChange={handleChange}
+          />
+        </div>
+        <button type="submit" className="btn-primary">
+          Створити
+        </button>
+      </form>
     </div>
   );
 };

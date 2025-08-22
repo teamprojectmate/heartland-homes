@@ -1,8 +1,8 @@
 // src/styles/components/_admin.scss
 
-@use "sass:color";
-@use "../abstract/variables" as *;
-@use "../abstract/mixins" as *;
+@use 'sass:color';
+@use '../abstract/variables' as *;
+@use '../abstract/mixins' as *;
 
 .admin-table {
   width: 100%;
@@ -18,9 +18,9 @@
 }
 
 .admin-table th {
-  background-color: $background-color;
   font-weight: 600;
   color: $text-color;
+  background-color: $background-color;
 }
 
 .btn-action {
@@ -28,7 +28,7 @@
 }
 
 .admin-page-container {
+  min-height: 100vh;
   padding: 2rem;
   background-color: $background-color;
-  min-height: 100vh;
 }

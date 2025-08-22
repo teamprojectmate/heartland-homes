@@ -1,73 +1,74 @@
-// src/styles/components/_hero.scss
-
-@use "../abstract/variables" as *;
-@use "sass:math";
+@use '../abstract/variables' as *;
+@use 'sass:math';
 
 .hero-section {
-  background-color: $primary-600;
-  color: $white-color;
   padding: 80px 0;
+  color: $white-color;
   text-align: center;
+  background-color: $primary-600;
 }
 
 .hero-heading {
+  margin-bottom: 0.5rem;
   font-size: 2.5rem;
   font-weight: 700;
-  margin-bottom: 0.5rem;
 }
 
 .hero-subheading {
+  margin-bottom: 2rem;
   font-size: 1.25rem;
   opacity: 0.8;
-  margin-bottom: 2rem;
 }
 
+/* ---- ONE definition only ---- */
 .search-form-container {
   display: flex;
   flex-wrap: wrap;
+  gap: $spacer-sm;
   align-items: flex-end;
-  background-color: $white-color;
-  padding: 1.5rem; // ✅ Збільшуємо відступи
-  border-radius: $radius; // ✅ Округлення
-  box-shadow: $box-shadow-form; // ✅ Додаємо тінь
-  color: $text-color;
   justify-content: space-between;
-  gap: $spacer-sm; // ✅ Змінюємо gap
-  
+  padding: 1.5rem;
+  color: $text-color;
+  background-color: $white-color;
+  border-radius: $radius;
+  box-shadow: $box-shadow-form;
+
   @media (max-width: $breakpoint-md) {
     flex-direction: column;
     align-items: stretch;
   }
+
+  /* кнопка в герої */
+  .btn-primary {
+    height: 48px;
+    padding-inline: 1.25rem;
+  }
 }
 
 .search-input-group {
-  flex: 1;
   display: flex;
+  flex: 1;
   flex-direction: column;
 
   label {
-    font-size: 0.8rem;
-    font-weight: 600;
     margin-bottom: 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 700;
     color: $muted-color;
   }
 }
 
 .date-inputs {
   display: flex;
-  align-items: center;
   gap: 0.5rem;
+  align-items: center;
 
   input {
     flex: 1;
   }
 }
 
-.search-form-container {
-  gap: $spacer-sm;
-  .btn-primary { height: 48px; padding-inline: 1.25rem; }
+.date-inputs span {
+  font-weight: 700;
+  opacity: 0.6;
 }
-
-.search-input-group label { color: $muted-color; font-weight: 700; }
-.date-inputs span { opacity: .6; font-weight: 700; }
-

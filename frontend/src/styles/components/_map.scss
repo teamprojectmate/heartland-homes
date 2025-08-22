@@ -1,17 +1,17 @@
 // src/styles/components/_map.scss
-@use "../abstract/variables" as *;
-@use "../abstract/mixins" as *;
+@use '../abstract/variables' as *;
+@use '../abstract/mixins' as *;
 
 .map-container {
-  height: 500px;
   width: 100%;
-  border-radius: $radius;
+  height: 500px;
   overflow: hidden;
+  border-radius: $radius;
   box-shadow: $box-shadow-md;
 
   .leaflet-container {
-    height: 100%;
     width: 100%;
+    height: 100%;
     border-radius: $radius;
   }
 }

@@ -1,60 +1,47 @@
-import React, { useEffect, useState } from "react";
-import axios from "../api/axios";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import Notification from "./Notification";
-import "../styles/components/_admin.scss";
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import Notification from './Notification';
+import {
+  fetchBookings,
+  deleteBooking,
+  updateBooking
+} from '../store/slices/bookingsSlice';
+import '../styles/components/_admin.scss';
 
 const AdminBookings = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const [bookings, setBookings] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { bookings, status, error } = useSelector((state) => state.bookings);
+
   const [confirmCancelId, setConfirmCancelId] = useState(null);
 
   useEffect(() => {
-    if (!user || user.role !== "MANAGER") {
-      navigate("/");
+    if (!user || user.role !== 'MANAGER') {
+      navigate('/');
       return;
     }
+    dispatch(fetchBookings());
+  }, [user, navigate, dispatch]);
 
-    const fetchAllBookings = async () => {
-      try {
-        const token = user.token;
-        const response = await axios.get("/bookings", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setBookings(response.data);
-      } catch (err) {
-        setError(err.response?.data?.message || err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchAllBookings();
-  }, [user, navigate]);
-
-  const handleCancelBooking = async (id) => {
-    try {
-      const token = user.token;
-      await axios.delete(`/bookings/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setBookings(bookings.filter((booking) => booking.id !== id));
-      setConfirmCancelId(null);
-    } catch (err) {
-      setError(err.response?.data?.message || "Помилка скасування бронювання");
-    }
+  const handleCancelBooking = (id) => {
+    dispatch(deleteBooking(id));
+    setConfirmCancelId(null);
   };
 
-  if (loading) {
+  const handleMarkAsPaid = (booking) => {
+    dispatch(
+      updateBooking({
+        id: booking.id,
+        bookingData: { ...booking, isPaid: true }
+      })
+    );
+  };
+
+  if (status === 'loading') {
     return (
-      <div className="container admin-page-container text-center"> {/* ✅ Змінено app-container на container */}
+      <div className="container admin-page-container text-center">
         <h1 className="section-heading">Усі бронювання (Адмін-панель)</h1>
         <p>Завантаження...</p>
       </div>
@@ -62,10 +49,9 @@ const AdminBookings = () => {
   }
 
   return (
-    <div className="container admin-page-container"> {/* ✅ Змінено app-container на container */}
+    <div className="container admin-page-container">
       <h1 className="section-heading text-center">Усі бронювання (Адмін-панель)</h1>
       {error && <Notification message={error} type="danger" />}
-
       {bookings.length > 0 ? (
         <table className="admin-table">
           <thead>
@@ -75,6 +61,7 @@ const AdminBookings = () => {
               <th>Користувач</th>
               <th>Дати</th>
               <th>Сума</th>
+              <th>Оплата</th>
               <th>Дії</th>
             </tr>
           </thead>
@@ -85,10 +72,22 @@ const AdminBookings = () => {
                 <td>{booking.accommodationName}</td>
                 <td>{booking.userName}</td>
                 <td>
-                  {new Date(booking.checkInDate).toLocaleDateString()} -{" "}
+                  {new Date(booking.checkInDate).toLocaleDateString()} –{' '}
                   {new Date(booking.checkOutDate).toLocaleDateString()}
                 </td>
                 <td>{booking.totalAmount}$</td>
+                <td>
+                  {booking.isPaid ? (
+                    <span className="text-success">Оплачено</span>
+                  ) : (
+                    <button
+                      onClick={() => handleMarkAsPaid(booking)}
+                      className="btn-primary btn-sm"
+                    >
+                      Позначити як оплачене
+                    </button>
+                  )}
+                </td>
                 <td>
                   <button
                     onClick={() => setConfirmCancelId(booking.id)}
@@ -102,11 +101,8 @@ const AdminBookings = () => {
           </tbody>
         </table>
       ) : (
-        <div className="alert-info text-center">
-          Бронювань ще немає.
-        </div>
+        <div className="alert-info text-center">Бронювань ще немає.</div>
       )}
-
       {confirmCancelId && (
         <div className="modal-overlay">
           <div className="modal-content">

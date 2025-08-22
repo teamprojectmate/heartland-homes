@@ -1,0 +1,28 @@
+@use '../../abstract/variables' as *;
+@use '../../abstract/mixins' as *;
+
+.burger {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 10px;
+  background: $white-color;
+  border: 1px solid $border-color;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgb(16 24 40 / 6%);
+
+  @include media(md) {
+    display: none;
+  }
+
+  span {
+    width: 22px;
+    height: 2px;
+    background: $heading-color;
+    border-radius: 2px;
+  }
+
+  &:hover {
+    filter: brightness(0.98);
+  }
+}

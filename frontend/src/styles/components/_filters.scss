@@ -1,68 +1,147 @@
-// src/styles/components/_filters.scss
-@use "sass:math";
-@use "../abstract/variables" as *;
-@use "../abstract/mixins" as *;
-
+@use 'sass:math';
+@use '../abstract/variables' as *;
+@use '../abstract/mixins' as *;
 
 .filters-section {
   padding: 3rem 0;
 }
 
 .filters-box {
-  background-color: $white-color;
+  display: flex;
+  flex-direction: column;
+  gap: $spacer-sm;
   padding: 1.5rem;
+  background-color: $surface-color;
   border-radius: $radius;
   box-shadow: $box-shadow-form;
 }
 
 .filters-heading {
+  margin-bottom: 0.5rem;
   font-size: 1.25rem;
   font-weight: 700;
-  margin-bottom: 1rem;
   color: $heading-color;
 }
 
-/* CSS Grid без Bootstrap */
+/* Сітка */
 .filters-grid {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: 1rem;
 
-  /* розмітка:  | city(6) | type(6) | priceFrom(3) | priceTo(3) | sort(6) | */
-  > .filter-item:nth-child(1) { grid-column: span 6; }
-  > .filter-item:nth-child(2) { grid-column: span 6; }
-  > .filter-item:nth-child(3) { grid-column: span 3; }
-  > .filter-item:nth-child(4) { grid-column: span 3; }
-  > .filter-item:nth-child(5) { grid-column: span 6; }
+  > .filter-item:nth-child(1) {
+    grid-column: span 6;
+  }
+
+  > .filter-item:nth-child(2) {
+    grid-column: span 6;
+  }
+
+  > .filter-item:nth-child(3) {
+    grid-column: span 4;
+  }
+
+  > .filter-item:nth-child(4) {
+    grid-column: span 4;
+  }
+
+  > .filter-item:nth-child(5) {
+    grid-column: span 4;
+  }
 
   @media (max-width: $breakpoint-md) {
     grid-template-columns: 1fr;
-    > .filter-item { grid-column: auto; }
+
+    > .filter-item {
+      grid-column: auto;
+    }
   }
 }
 
 .filter-item {
   display: flex;
   flex-direction: column;
-  gap: .5rem;
-}
-
-.filter-item--end {
-  align-items: end;
-
-  @media (max-width: $breakpoint-md) {
-    align-items: start;
-  }
+  gap: 0.5rem;
 }
 
 .form-check-group {
   display: flex;
-  gap: 1rem;
   flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .form-check {
   display: inline-flex;
+  gap: 0.5rem;
   align-items: center;
-  gap: .5rem;
+  cursor: pointer;
+}
+
+/* Кнопки */
+.filters-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  padding-top: 1rem;
+  margin-top: auto;
+  border-top: 1px solid $border-color;
+
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+    align-items: stretch;
+
+    button {
+      width: 100%;
+    }
+  }
+}
+
+.btn-with-icon {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease-in-out;
+
+  &:hover {
+    background-color: $primary-600;
+    box-shadow: $box-shadow-card-hover;
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    background-color: $primary-700;
+    transform: scale(0.97);
+  }
+}
+
+/* 🔹 Інпути */
+.form-control {
+  height: $control-height-md;
+  padding: 0 0.75rem;
+  border: 1px solid $border-color;
+  border-radius: $radius;
+  transition: all 0.25s ease-in-out;
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: $box-shadow-focus;
+  }
+}
+
+/* 🔹 Чекбокси */
+.form-check input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.15);
+  }
+
+  &:checked {
+    accent-color: $primary-color;
+  }
 }

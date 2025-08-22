@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import axios from "../api/axios";
-import ImageGallery from "react-image-gallery";
-import BookingForm from "../components/BookingForm";
-import LocationMap from "../components/LocationMap";
+// src/pages/AccommodationDetails.jsx
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import axios from '../api/axios';
+import BookingForm from '../components/BookingForm';
+import LocationMap from '../components/LocationMap';
 
 const AccommodationDetails = () => {
   const { id } = useParams();
@@ -16,8 +16,8 @@ const AccommodationDetails = () => {
       try {
         const response = await axios.get(`/accommodations/${id}`);
         setAccommodation(response.data);
-      } catch (err) {
-        setError("Не вдалося завантажити деталі помешкання.");
+      } catch {
+        setError('Не вдалося завантажити деталі помешкання.');
       } finally {
         setLoading(false);
       }
@@ -26,50 +26,63 @@ const AccommodationDetails = () => {
   }, [id]);
 
   if (loading) return <p className="text-center mt-5">Завантаження...</p>;
-  if (error) return <p className="alert-info mt-5 text-center">{error}</p>;
+  if (error) return <p className="alert alert-danger mt-5 text-center">{error}</p>;
   if (!accommodation) return <p className="text-center mt-5">Помешкання не знайдено.</p>;
 
-  const images = [
-    {
-      original: accommodation.mainPhotoUrl,
-      thumbnail: accommodation.mainPhotoUrl,
-      originalAlt: accommodation.location,
-    },
-  ];
-
   return (
-    <div className="container mt-4"> // ✅ Змінено
-      <div className="row"> // ✅ Змінено
-        <div className="col-md-8"> // ✅ Змінено
-          <div className="accommodation-details-container mb-4">
-            <ImageGallery items={images} showPlayButton={false} />
-            <h1 className="details-heading mt-4">{accommodation.location}</h1>
-            <p className="details-subheading">{accommodation.description}</p>
+    <div className="container mt-4">
+      <div className="row">
+        {/* Інформація про помешкання */}
+        <div className="col-md-8">
+          <div className="card card-custom p-3">
+            <img
+              src={accommodation.picture}
+              alt={accommodation.location}
+              className="card-img-top card-img-top-custom mb-3"
+            />
+            <h1>{accommodation.location}</h1>
             <hr />
-            <h4>Деталі</h4>
-            <ul className="details-list">
-              <li>**Розмір:** {accommodation.size}</li>
-              <li>**Ціна:** {accommodation.dailyRate}$ на добу</li>
-              <li>**Опис:** {accommodation.description}</li>
+            <h4>Характеристики</h4>
+            <ul>
+              <li>
+                <strong>Тип:</strong> {accommodation.type}
+              </li>
+              <li>
+                <strong>Розмір:</strong> {accommodation.size}
+              </li>
+              <li>
+                <strong>Ціна:</strong> {accommodation.dailyRate}$ / доба
+              </li>
+              <li>
+                <strong>Доступність:</strong> {accommodation.availability} од.
+              </li>
+              <li>
+                <strong>Зручності:</strong>{' '}
+                {accommodation.amenities && accommodation.amenities.length > 0
+                  ? accommodation.amenities.join(', ')
+                  : 'немає даних'}
+              </li>
             </ul>
           </div>
 
-          <div className="mt-5">
-            <h4 className="mt-5">Розташування на карті</h4>
-            <LocationMap
-              location={accommodation.location}
-              latitude={accommodation.latitude}
-              longitude={accommodation.longitude}
-            />
+          {/* Карта */}
+          <div className="mt-4">
+            <h4>Розташування</h4>
+            <LocationMap location={accommodation.location} />
           </div>
         </div>
-        <div className="col-md-4"> // ✅ Змінено
-          <div className="booking-card">
-            <div>
-              <h5 className="booking-title">Забронювати</h5>
-              <p>Ціна: **{accommodation.dailyRate}$** на добу</p>
-              <BookingForm accommodationId={accommodation.id} dailyRate={accommodation.dailyRate} />
-            </div>
+
+        {/* Форма бронювання */}
+        <div className="col-md-4">
+          <div className="card card-custom p-3">
+            <h5>Забронювати</h5>
+            <p>
+              Ціна: <strong>{accommodation.dailyRate}$</strong> / доба
+            </p>
+            <BookingForm
+              accommodationId={accommodation.id}
+              dailyRate={accommodation.dailyRate}
+            />
           </div>
         </div>
       </div>

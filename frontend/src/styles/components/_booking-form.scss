@@ -1,13 +1,13 @@
 // src/styles/components/_booking-form.scss
-@use "../abstract/variables" as *;
-@use "../abstract/mixins" as *;
+@use '../abstract/variables' as *;
+@use '../abstract/mixins' as *;
 
 .booking-form {
   padding-top: 1rem;
 
   .form-group {
     margin-bottom: 1rem;
-    
+
     label {
       display: block;
       margin-bottom: 0.5rem;

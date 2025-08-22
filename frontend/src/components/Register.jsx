@@ -1,117 +1,59 @@
-// src/components/Register.jsx
-
-import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { register } from "../store/slices/authSlice";
-import Notification from "./Notification";
-import "../styles/layout/_main-layout.scss";
-import "../styles/components/_forms.scss";
-import "../styles/components/_buttons.scss";
+import { Link } from 'react-router-dom';
+import { FaUser, FaEnvelope, FaLock, FaHome } from 'react-icons/fa';
+import '../styles/components/_auth.scss';
 
 const Register = () => {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [repeatPassword, setRepeatPassword] = useState("");
-
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
-  const { isAuthenticated, loading, error } = useSelector((state) => state.auth);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate("/");
-    }
-  }, [isAuthenticated, navigate]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (password !== repeatPassword) {
-      alert("Паролі не збігаються!");
-      return;
-    }
-
-    const resultAction = await dispatch(
-      register({ firstName, lastName, email, password, repeatPassword }),
-    );
-    if (register.fulfilled.match(resultAction)) {
-      navigate("/login");
-    }
-  };
-
   return (
-    <div className="container page">
-      <div className="row">
-        <div className="col-md-6 offset-md-3 auth-form-container"> {/* ✅ Виправлено */}
-          <h1 className="auth-title">Реєстрація</h1>
-          <p className="text-center">
-            <Link to="/login">Вже маєте акаунт?</Link> 
-          </p>
-          {error && <Notification message={error} type="danger" />}
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <input
-                className="form-control"
-                type="text"
-                placeholder="Ім'я"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <input
-                className="form-control"
-                type="text"
-                placeholder="Прізвище"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <input
-                className="form-control"
-                type="email"
-                placeholder="Електронна пошта"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <input
-                className="form-control"
-                type="password"
-                placeholder="Пароль"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <input
-                className="form-control"
-                type="password"
-                placeholder="Повторіть пароль"
-                value={repeatPassword}
-                onChange={(e) => setRepeatPassword(e.target.value)}
-                required
-              />
-            </div>
-            <button
-              className="btn-primary"
-              type="submit"
-              disabled={loading}
-            >
-              {loading ? "Завантаження..." : "Зареєструватися"}
-            </button>
-          </form>
-        </div>
+    <div className="auth-layout">
+      {/* Ліва частина — форма */}
+      <div className="auth-card">
+        <h2 className="auth-title">Реєстрація</h2>
+        <p className="form-subtitle">
+          Вже маєте акаунт? <Link to="/login">Увійти</Link>
+        </p>
+
+        <form>
+          <div className="form-group with-icon">
+            <FaUser className="input-icon" />
+            <input type="text" className="form-control" placeholder="Ім'я" />
+          </div>
+
+          <div className="form-group with-icon">
+            <FaUser className="input-icon" />
+            <input type="text" className="form-control" placeholder="Прізвище" />
+          </div>
+
+          <div className="form-group with-icon">
+            <FaEnvelope className="input-icon" />
+            <input type="email" className="form-control" placeholder="Електронна пошта" />
+          </div>
+
+          <div className="form-group with-icon">
+            <FaLock className="input-icon" />
+            <input type="password" className="form-control" placeholder="Пароль" />
+          </div>
+
+          <div className="form-group with-icon">
+            <FaLock className="input-icon" />
+            <input
+              type="password"
+              className="form-control"
+              placeholder="Повторіть пароль"
+            />
+          </div>
+
+          <button type="submit">Зареєструватися</button>
+        </form>
+      </div>
+
+      {/* Права частина */}
+      <div className="auth-side">
+        <FaHome className="auth-icon" />
+        <h2 className="auth-title">Приєднуйтесь до Heartland Homes 🏡</h2>
+        <p className="auth-subtitle">
+          Знаходьте ідеальні будинки для відпочинку чи подорожей разом із{' '}
+          <strong>Heartland Homes</strong>.
+        </p>
       </div>
     </div>
   );

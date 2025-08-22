@@ -1,4 +1,4 @@
-@use "../abstract/variables" as *;
+@use '../abstract/variables' as *;
 
 .offers-section {
   padding: 3rem 0 2rem;
@@ -6,16 +6,16 @@
 }
 
 .section-heading {
+  margin-bottom: 0.5rem;
   font-size: 2rem;
   font-weight: 800;
-  margin-bottom: .5rem;
   color: $heading-color;
 }
 
 .section-subheading {
+  margin-bottom: 2rem;
   font-size: 1rem;
   color: $muted-color;
-  margin-bottom: 2rem;
 }
 
 .offers-grid {
@@ -25,12 +25,17 @@
 }
 
 .offer-card {
-  grid-column: span 4;           /* 3 в ряд на десктопі */
   display: flex;
   flex-direction: column;
+  grid-column: span 4; /* 3 в ряд на десктопі */
 
-  @media (max-width: $breakpoint-lg) { grid-column: span 6; } /* 2 в ряд */
-  @media (max-width: $breakpoint-md) { grid-column: span 12; } /* 1 в ряд */
+  @media (max-width: $breakpoint-lg) {
+    grid-column: span 6;
+  } /* 2 в ряд */
+
+  @media (max-width: $breakpoint-md) {
+    grid-column: span 12;
+  } /* 1 в ряд */
 }
 
 .offer-image {

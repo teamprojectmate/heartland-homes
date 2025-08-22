@@ -1,117 +1,203 @@
-// src/styles/components/_buttons.scss
-@use "../abstract/variables" as *;
-@use "../abstract/mixins" as *;
+@use '../abstract/variables' as *;
 
-/* ===== БАЗА ===== */
+/* ───────── core ───────── */
 .btn {
   --btn-bg: #f5f7f9;
   --btn-fg: #222;
   --btn-bd: transparent;
-  --btn-shadow: 0 2px 8px rgba(16,24,40,.10);
-  --btn-shadow-active: 0 1px 4px rgba(16,24,40,.14);
+  --btn-shadow: 0 6px 16px rgb(16 24 40 / 10%);
+  --btn-shadow-active: 0 3px 8px rgb(16 24 40 / 14%);
 
-  appearance: none;
   display: inline-flex;
+  gap: 0.5rem;
   align-items: center;
   justify-content: center;
-  gap: .5rem;
-
-  min-height: 44px;
-  padding: .65rem 1.1rem;
-  border-radius: $radius;
-  border: 1px solid var(--btn-bd);
-  background: var(--btn-bg);
-  color: var(--btn-fg);
+  min-height: clamp(#{$control-height-sm}, 5.5vw, 48px);
+  padding: 0.68rem 1.1rem;
+  font-size: clamp(0.95rem, 0.9rem + 0.2vw, 1rem);
   font-weight: 800;
-  letter-spacing: .2px;
   line-height: 1;
+  color: var(--btn-fg);
+  letter-spacing: 0.2px;
   text-decoration: none;
+  appearance: none;
   cursor: pointer;
-
+  background: var(--btn-bg);
+  border: 1px solid var(--btn-bd);
+  border-radius: $radius;
   box-shadow: var(--btn-shadow);
   transition:
-    transform .08s ease,
-    box-shadow .15s ease,
-    filter .15s ease,
-    background-color .15s ease,
-    color .15s ease,
-    border-color .15s ease;
+    transform 0.08s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease,
+    filter 0.15s ease;
 
-  &:hover { filter: brightness(.97); }
-  &:active { transform: translateY(1px); box-shadow: var(--btn-shadow-active); }
-  &:focus-visible { outline: none; box-shadow: var(--btn-shadow), $box-shadow-focus; }
+  &:hover {
+    filter: brightness(0.98);
+  }
+
+  &:active {
+    box-shadow: var(--btn-shadow-active);
+    transform: translateY(1px);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--btn-shadow), $box-shadow-focus;
+  }
+
   &:disabled,
-  &[aria-disabled="true"] { opacity: .6; cursor: not-allowed; pointer-events: none; }
+  &[aria-disabled='true'] {
+    pointer-events: none;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
 }
 
-/* світліший текст на насиченому фоні */
+/* ✅ Винесено активні стани */
+.btn-primary.active,
+.btn-secondary.active {
+  box-shadow: 0 0 0 3px rgba($primary-color, 0.3);
+  filter: brightness(1.05);
+}
+
+/* ───────── variants ───────── */
 .btn-primary {
   @extend .btn;
-  --btn-bg: #0f766e;    /* $primary-color */
-  --btn-fg: #f8fafc; 
-  --btn-bd: #0f766e;
 
-  &:hover { filter: none; background: #0b5f59; } /* $primary-600 */
+  --btn-bg: linear-gradient(180deg, #10877e 0%, #0f766e 100%);
+  --btn-fg: #f8fafc;
+  --btn-bd: #0f766e;
+  --btn-shadow: 0 6px 18px rgb(16 118 110 / 20%);
+
+  &:hover {
+    filter: none;
+
+    --btn-bg: linear-gradient(180deg, #0f7f76 0%, #0b5f59 100%);
+  }
 }
 
 .btn-secondary {
   @extend .btn;
+
   --btn-bg: #e9eef3;
-  --btn-fg: #6b7280; 
+  --btn-fg: #6b7280;
   --btn-bd: #d7dde3;
 
-  &:hover { filter: none; background: #e4eaef; }
+  &:hover {
+    background: #e4eaef;
+    filter: none;
+  }
 }
 
 .btn-outline {
   @extend .btn;
+
   --btn-bg: transparent;
-  --btn-fg: #475569;    /* світліший за $heading-color */
+  --btn-fg: #475569;
   --btn-bd: $border-color;
+
   box-shadow: none;
 
-  &:hover { background: #f6f8fa; }
+  &:hover {
+    background: #f6f8fa;
+  }
 }
 
 .btn-ghost {
   @extend .btn;
+
   --btn-bg: transparent;
-  --btn-fg: #14b8a6;    /* світліший відтінок primary для тексту */
+  --btn-fg: #14b8a6;
   --btn-bd: transparent;
+
   box-shadow: none;
 
-  &:hover { background: rgba(15,118,110,.08); } /* primary 8% */
+  &:hover {
+    background: rgb(15 118 110 / 8%);
+  }
 }
 
 .btn-success {
   @extend .btn;
+
   --btn-bg: $success-color;
-  --btn-fg: #f8fafc;    /* світліший текст */
+  --btn-fg: #f8fafc;
   --btn-bd: $success-color;
 
-  &:hover { filter: brightness(.96); }
+  &:hover {
+    filter: brightness(0.96);
+  }
 }
 
 .btn-danger {
   @extend .btn;
+
   --btn-bg: $danger-color;
-  --btn-fg: #fff8f8;    /* трохи “легший” за чисто білий */
+  --btn-fg: #fff8f8;
   --btn-bd: $danger-color;
 
-  &:hover { filter: brightness(.96); }
+  &:hover {
+    filter: brightness(0.96);
+  }
 }
 
-/* ===== РОЗМІРИ ===== */
-.btn-lg { min-height: 52px; padding: .85rem 1.35rem; font-size: 1.05rem; }
-.btn-sm { min-height: 36px; padding: .45rem .8rem;   font-size: .92rem;  }
+/* ───────── sizes ───────── */
+.btn-sm {
+  min-height: clamp(36px, 5vw, 40px);
+  padding: 0.45rem 0.75rem;
+  font-size: 0.92rem;
+}
 
-/* ===== ФОРМА ===== */
-.btn-pill { border-radius: 999px; }
+.btn-lg {
+  min-height: clamp(48px, 6vw, 56px);
+  padding: 0.9rem 1.35rem;
+  font-size: 1.05rem;
+}
 
-/* ===== ІКОНКОВІ ===== */
+.btn-pill {
+  border-radius: 999px;
+}
+
+.btn-chip {
+  @extend .btn;
+
+  --btn-bg: #f0f4f5;
+  --btn-fg: $primary-color;
+  --btn-bd: #dbe7e6;
+
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
+  box-shadow: 0 4px 10px rgb(15 118 110 / 10%);
+
+  &:hover {
+    background: #e8f0ef;
+  }
+}
+
 .btn-icon {
   @extend .btn;
-  width: 44px; min-width: 44px; padding: 0;
+
+  width: 44px;
+  min-width: 44px;
+  padding: 0;
 }
 
-.btn-solid { @extend .btn-primary; }
+.btn-solid {
+  @extend .btn-primary;
+}
+
+/* ───────── media ───────── */
+@media (prefers-reduced-motion: reduce) {
+  .btn {
+    transition: none !important;
+  }
+}
+
+@media (max-width: $breakpoint-xs) {
+  .btn {
+    box-shadow: 0 4px 10px rgb(16 24 40 / 10%);
+  }
+}
