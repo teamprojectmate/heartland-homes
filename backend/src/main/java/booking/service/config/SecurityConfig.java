@@ -53,21 +53,26 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .cors(cors -> {
-                })
+                .cors(cors -> {})
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
                         .requestMatchers("/auth/**", "/error", "/swagger-ui/**", "/v3/api-docs/**",
                                 "/payments/success", "/payments/cancel")
                         .permitAll()
+
+                        .requestMatchers(HttpMethod.GET, "/accommodations/**").permitAll()
+
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception ->
-                        exception.authenticationEntryPoint((request, response, authException) ->
-                                response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                                        authException.getMessage())
-                        )
+                        exception.authenticationEntryPoint((request, response, authException) -> {
+                            System.out.println("❌ 401 Unauthorized: " + request.getRequestURI()
+                                    + " - " + authException.getMessage());
+                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+                                    authException.getMessage());
+                        })
                 )
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
