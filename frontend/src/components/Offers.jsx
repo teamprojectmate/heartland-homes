@@ -32,32 +32,28 @@ const offers = [
   }
 ];
 
-const Offers = () => {
-  return (
-    <section className="offers-section">
-      <div className="container">
-        <h2 className="section-heading">Пропозиції</h2>
-        <p className="section-subheading">
-          Акції, знижки та спеціальні пропозиції для вас
-        </p>
+const Offers = () => (
+  <section className="offers-section">
+    <div className="container">
+      <h2 className="section-heading">Пропозиції</h2>
+      <p className="section-subheading">Акції, знижки та спеціальні пропозиції для вас</p>
 
-        <div className="offers-grid">
-          {offers.map(({ id, title, description, image, link }) => (
-            <article key={id} className="offer-card card-custom">
-              <img className="offer-image" src={image} alt={title} loading="lazy" />
-              <div className="card-body">
-                <h5 className="card-title">{title}</h5>
-                <p className="card-text">{description}</p>
-                <Link to={link} className="btn-primary mt-auto">
-                  Дізнатися більше
-                </Link>
-              </div>
-            </article>
-          ))}
-        </div>
+      <div className="offers-grid">
+        {offers.map(({ id, title, description, image, link }) => (
+          <article key={id} className="offer-card card-custom">
+            <img className="offer-image" src={image} alt={title} loading="lazy" />
+            <div className="card-body">
+              <h5 className="card-title">{title}</h5>
+              <p className="card-text">{description}</p>
+              <Link to={link} className="btn-primary mt-auto">
+                Дізнатися більше
+              </Link>
+            </div>
+          </article>
+        ))}
       </div>
-    </section>
-  );
-};
+    </div>
+  </section>
+);
 
 export default Offers;

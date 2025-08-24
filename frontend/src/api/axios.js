@@ -4,9 +4,8 @@ import store from '../store/store';
 
 const instance = axios.create({
   baseURL: 'http://localhost:8080',
-  paramsSerializer: (params) =>
-    qs.stringify(params, { arrayFormat: 'repeat' }) 
-    // => type=HOUSE&type=APARTMENT&size=1
+  paramsSerializer: (params) => qs.stringify(params, { arrayFormat: 'repeat' })
+  // => type=HOUSE&type=APARTMENT&size=1
 });
 
 instance.interceptors.request.use(

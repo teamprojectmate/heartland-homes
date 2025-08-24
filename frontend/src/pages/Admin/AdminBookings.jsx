@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import Notification from './Notification';
+import Notification from '../../components/Notification';
 import {
   fetchBookings,
   deleteBooking,
   updateBooking
-} from '../store/slices/bookingsSlice';
-import '../styles/components/_admin.scss';
+} from '../../store/slices/bookingsSlice';
+import '../../styles/components/_admin.scss';
 
 const AdminBookings = () => {
   const navigate = useNavigate();
@@ -25,8 +25,9 @@ const AdminBookings = () => {
     dispatch(fetchBookings());
   }, [user, navigate, dispatch]);
 
-  const handleCancelBooking = (id) => {
-    dispatch(deleteBooking(id));
+  const handleCancelBooking = async (id) => {
+    await dispatch(deleteBooking(id));
+    dispatch(fetchBookings()); // 🔄 оновлюємо після видалення
     setConfirmCancelId(null);
   };
 
@@ -34,7 +35,7 @@ const AdminBookings = () => {
     dispatch(
       updateBooking({
         id: booking.id,
-        bookingData: { ...booking, isPaid: true }
+        bookingData: { ...booking, status: 'PAID' }
       })
     );
   };
@@ -57,11 +58,10 @@ const AdminBookings = () => {
           <thead>
             <tr>
               <th>ID</th>
-              <th>Помешкання</th>
-              <th>Користувач</th>
+              <th>Помешкання ID</th>
+              <th>Користувач ID</th>
               <th>Дати</th>
-              <th>Сума</th>
-              <th>Оплата</th>
+              <th>Статус</th>
               <th>Дії</th>
             </tr>
           </thead>
@@ -69,26 +69,24 @@ const AdminBookings = () => {
             {bookings.map((booking) => (
               <tr key={booking.id}>
                 <td>{booking.id}</td>
-                <td>{booking.accommodationName}</td>
-                <td>{booking.userName}</td>
+                <td>{booking.accommodationId}</td>
+                <td>{booking.userId}</td>
                 <td>
                   {new Date(booking.checkInDate).toLocaleDateString()} –{' '}
                   {new Date(booking.checkOutDate).toLocaleDateString()}
                 </td>
-                <td>{booking.totalAmount}$</td>
+                <td>{booking.status}</td>
                 <td>
-                  {booking.isPaid ? (
-                    <span className="text-success">Оплачено</span>
-                  ) : (
+                  {booking.status !== 'PAID' ? (
                     <button
                       onClick={() => handleMarkAsPaid(booking)}
                       className="btn-primary btn-sm"
                     >
                       Позначити як оплачене
                     </button>
+                  ) : (
+                    <span className="text-success">Оплачено</span>
                   )}
-                </td>
-                <td>
                   <button
                     onClick={() => setConfirmCancelId(booking.id)}
                     className="btn-danger btn-sm btn-action"
@@ -103,15 +101,12 @@ const AdminBookings = () => {
       ) : (
         <div className="alert-info text-center">Бронювань ще немає.</div>
       )}
+
       {confirmCancelId && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title">Підтвердження скасування</h5>
-            </div>
-            <div className="modal-body">
-              <p>Ви впевнені, що хочете скасувати це бронювання?</p>
-            </div>
+            <h5 className="modal-title">Підтвердження скасування</h5>
+            <p>Ви впевнені, що хочете скасувати це бронювання?</p>
             <div className="modal-footer">
               <button
                 type="button"

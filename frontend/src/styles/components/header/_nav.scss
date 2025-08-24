@@ -8,7 +8,17 @@
 
   @include media(md) {
     display: flex;
+    gap: 2rem; // відстань між пунктами
+    align-items: center;
   }
+}
+
+ul {
+  display: flex;
+  gap: 1.5rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
 }
 
 .nav-list {

@@ -21,15 +21,20 @@ const Map = ({ accommodations = [] }) => {
   ];
 
   return (
-    <div className="map-container">
-      <MapContainer center={defaultPosition} zoom={13} scrollWheelZoom>
+    <div className="map-container" style={{ height: '400px' }}>
+      <MapContainer
+        center={defaultPosition}
+        zoom={12}
+        scrollWheelZoom
+        style={{ height: '100%', width: '100%' }}
+      >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>'
         />
-        {accommodations.map(({ id, latitude, longitude, title }) => (
-          <Marker key={id} position={[latitude, longitude]}>
-            <Popup>{title}</Popup>
+        {accommodations.map(({ id, latitude, longitude, location, city }) => (
+          <Marker key={id} position={[latitude || 50.45, longitude || 30.52]}>
+            <Popup>{`${location}, ${city}`}</Popup>
           </Marker>
         ))}
       </MapContainer>

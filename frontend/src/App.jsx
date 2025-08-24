@@ -1,20 +1,32 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import Login from './components/Login';
-import Register from './components/Register';
-import Accommodations from './components/Accommodations';
-import AccommodationDetails from './components/AccommodationDetails';
-import MyBookings from './components/MyBookings';
-import AdminDashboard from './components/AdminDashboard';
-import AdminAccommodations from './components/AdminAccommodations';
-import CreateAccommodation from './components/CreateAccommodation';
-import AdminEditAccommodation from './components/AdminEditAccommodation';
-import AdminBookings from './components/AdminBookings';
-import ProtectedRoute from './components/ProtectedRoute';
-import Profile from './components/Profile';
-import TelegramNotifications from './components/TelegramNotifications';
+
+// 🔹 Спільні компоненти
+import Header from './components/Header.jsx';
+import Footer from './components/Footer.jsx';
+import TelegramNotifications from './components/TelegramNotifications.jsx';
+
+// 🔹 Auth
+import ProtectedRoute from './pages/Auth/ProtectedRoute.jsx';
+import Login from './pages/Auth/Login.jsx';
+import Register from './pages/Auth/Register.jsx';
+
+// 🔹 Accommodations
+import Accommodations from './pages/Accommodations/Accommodations.jsx';
+import AccommodationDetails from './pages/Accommodations/AccommodationDetails.jsx';
+
+// 🔹 User
+import Profile from './pages/User/Profile.jsx';
+import MyBookings from './pages/User/MyBookings.jsx';
+import Payment from './pages/User/Payment.jsx';
+
+// 🔹 Admin
+import AdminDashboard from './pages/Admin/AdminDashboard.jsx';
+import AdminAccommodations from './pages/Admin/AdminAccommodations.jsx';
+import CreateAccommodation from './pages/Accommodations/CreateAccommodation.jsx';
+import AdminEditAccommodation from './pages/Admin/AdminEditAccommodation.jsx';
+import AdminBookings from './pages/Admin/AdminBookings.jsx';
+
 import './styles/main.scss';
 
 function App() {
@@ -23,12 +35,14 @@ function App() {
       <Header />
       <main className="main-content">
         <Routes>
+          {/* Public routes */}
           <Route path="/" element={<Accommodations />} />
           <Route path="/accommodations" element={<Accommodations />} />
           <Route path="/accommodations/:id" element={<AccommodationDetails />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
+          {/* User routes */}
           <Route
             path="/my-bookings"
             element={
@@ -46,6 +60,14 @@ function App() {
             }
           />
           <Route
+            path="/payment"
+            element={
+              <ProtectedRoute>
+                <Payment />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/telegram-notifications"
             element={
               <ProtectedRoute>
@@ -54,7 +76,7 @@ function App() {
             }
           />
 
-          {/* Admin */}
+          {/* Admin routes */}
           <Route
             path="/admin"
             element={

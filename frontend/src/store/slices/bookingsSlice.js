@@ -1,28 +1,19 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from '../../api/axios';
+import api from '../../api/axios';
 
 const initialState = {
   bookings: [],
   currentBooking: null,
-  status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
+  status: 'idle',
   error: null,
-  paymentStatus: 'idle' // 'idle' | 'processing' | 'succeeded' | 'failed'
+  paymentStatus: 'idle'
 };
 
-// 📌 Створення нового бронювання
 export const createBooking = createAsyncThunk(
   'bookings/createBooking',
-  async (bookingData, { rejectWithValue, getState }) => {
+  async (bookingData, { rejectWithValue }) => {
     try {
-      const {
-        auth: { user }
-      } = getState();
-      if (!user || !user.token) {
-        return rejectWithValue('Користувач не авторизований.');
-      }
-      const response = await axios.post('/bookings', bookingData, {
-        headers: { Authorization: `Bearer ${user.token}` }
-      });
+      const response = await api.post('/bookings', bookingData);
       return response.data;
     } catch (err) {
       return rejectWithValue(
@@ -32,17 +23,11 @@ export const createBooking = createAsyncThunk(
   }
 );
 
-// 📌 Отримати бронювання поточного користувача
 export const fetchMyBookings = createAsyncThunk(
   'bookings/fetchMyBookings',
-  async (_, { rejectWithValue, getState }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const {
-        auth: { user }
-      } = getState();
-      const response = await axios.get('/bookings/my', {
-        headers: { Authorization: `Bearer ${user.token}` }
-      });
+      const response = await api.get('/bookings/my');
       return response.data;
     } catch (err) {
       return rejectWithValue(
@@ -52,18 +37,11 @@ export const fetchMyBookings = createAsyncThunk(
   }
 );
 
-// 📌 Отримати всі бронювання (адмін/менеджер)
 export const fetchBookings = createAsyncThunk(
   'bookings/fetchBookings',
-  async (queryParams = {}, { rejectWithValue, getState }) => {
+  async (params = {}, { rejectWithValue }) => {
     try {
-      const {
-        auth: { user }
-      } = getState();
-      const response = await axios.get('/bookings', {
-        params: queryParams,
-        headers: { Authorization: `Bearer ${user.token}` }
-      });
+      const response = await api.get('/bookings', { params });
       return response.data;
     } catch (err) {
       return rejectWithValue(
@@ -73,17 +51,11 @@ export const fetchBookings = createAsyncThunk(
   }
 );
 
-// 📌 Отримати одне бронювання за ID
 export const fetchBookingById = createAsyncThunk(
   'bookings/fetchBookingById',
-  async (id, { rejectWithValue, getState }) => {
+  async (id, { rejectWithValue }) => {
     try {
-      const {
-        auth: { user }
-      } = getState();
-      const response = await axios.get(`/bookings/${id}`, {
-        headers: { Authorization: `Bearer ${user.token}` }
-      });
+      const response = await api.get(`/bookings/${id}`);
       return response.data;
     } catch (err) {
       return rejectWithValue(
@@ -93,17 +65,11 @@ export const fetchBookingById = createAsyncThunk(
   }
 );
 
-// 📌 Оновити бронювання
 export const updateBooking = createAsyncThunk(
   'bookings/updateBooking',
-  async ({ id, bookingData }, { rejectWithValue, getState }) => {
+  async ({ id, bookingData }, { rejectWithValue }) => {
     try {
-      const {
-        auth: { user }
-      } = getState();
-      const response = await axios.put(`/bookings/${id}`, bookingData, {
-        headers: { Authorization: `Bearer ${user.token}` }
-      });
+      const response = await api.put(`/bookings/${id}`, bookingData);
       return response.data;
     } catch (err) {
       return rejectWithValue(
@@ -113,17 +79,11 @@ export const updateBooking = createAsyncThunk(
   }
 );
 
-// 📌 Видалити (скасувати) бронювання
 export const deleteBooking = createAsyncThunk(
   'bookings/deleteBooking',
-  async (id, { rejectWithValue, getState }) => {
+  async (id, { rejectWithValue }) => {
     try {
-      const {
-        auth: { user }
-      } = getState();
-      await axios.delete(`/bookings/${id}`, {
-        headers: { Authorization: `Bearer ${user.token}` }
-      });
+      await api.delete(`/bookings/${id}`);
       return id;
     } catch (err) {
       return rejectWithValue(
@@ -133,22 +93,12 @@ export const deleteBooking = createAsyncThunk(
   }
 );
 
-// 📌 Оплата бронювання
 export const payBooking = createAsyncThunk(
   'bookings/payBooking',
-  async (bookingId, { rejectWithValue, getState }) => {
+  async (bookingId, { rejectWithValue }) => {
     try {
-      const {
-        auth: { user }
-      } = getState();
-      const response = await axios.post(
-        '/payments/create',
-        { bookingId },
-        {
-          headers: { Authorization: `Bearer ${user.token}` }
-        }
-      );
-      return response.data; // { clientSecret }
+      const response = await api.post('/payments/create', { bookingId });
+      return response.data;
     } catch (err) {
       return rejectWithValue(
         err.response?.data?.message || 'Не вдалося ініціювати оплату.'
@@ -170,74 +120,26 @@ const bookingsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // ---- CREATE ----
-      .addCase(createBooking.pending, (state) => {
-        state.status = 'loading';
-      })
       .addCase(createBooking.fulfilled, (state, action) => {
-        state.status = 'succeeded';
         state.bookings.push(action.payload);
-        state.error = null;
-      })
-      .addCase(createBooking.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.payload;
-      })
-
-      // ---- FETCH MY BOOKINGS ----
-      .addCase(fetchMyBookings.pending, (state) => {
-        state.status = 'loading';
       })
       .addCase(fetchMyBookings.fulfilled, (state, action) => {
-        state.status = 'succeeded';
         state.bookings = action.payload;
-      })
-      .addCase(fetchMyBookings.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.payload;
-      })
-
-      // ---- FETCH ALL BOOKINGS ----
-      .addCase(fetchBookings.pending, (state) => {
-        state.status = 'loading';
       })
       .addCase(fetchBookings.fulfilled, (state, action) => {
-        state.status = 'succeeded';
         state.bookings = action.payload;
       })
-      .addCase(fetchBookings.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.payload;
-      })
-
-      // ---- FETCH BOOKING BY ID ----
-      .addCase(fetchBookingById.pending, (state) => {
-        state.status = 'loading';
-      })
       .addCase(fetchBookingById.fulfilled, (state, action) => {
-        state.status = 'succeeded';
         state.currentBooking = action.payload;
       })
-      .addCase(fetchBookingById.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.payload;
-      })
-
-      // ---- UPDATE ----
       .addCase(updateBooking.fulfilled, (state, action) => {
-        state.status = 'succeeded';
         const idx = state.bookings.findIndex((b) => b.id === action.payload.id);
         if (idx !== -1) state.bookings[idx] = action.payload;
         state.currentBooking = action.payload;
       })
-
-      // ---- DELETE ----
       .addCase(deleteBooking.fulfilled, (state, action) => {
-        state.status = 'succeeded';
         state.bookings = state.bookings.filter((b) => b.id !== action.payload);
       })
-
-      // ---- PAY ----
       .addCase(payBooking.pending, (state) => {
         state.paymentStatus = 'processing';
       })

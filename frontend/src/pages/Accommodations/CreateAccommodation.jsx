@@ -1,9 +1,8 @@
-// src/components/CreateAccommodation.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from '../api/axios';
 import { useSelector } from 'react-redux';
-import Notification from './Notification';
+import Notification from '../../components/Notification';
+import { createAccommodation } from '../../api/accommodations/accommodationService';
 
 const CreateAccommodation = () => {
   const navigate = useNavigate();
@@ -12,11 +11,11 @@ const CreateAccommodation = () => {
   const [formData, setFormData] = useState({
     type: 'HOUSE',
     location: '',
+    city: '',
     size: '',
     amenities: [],
     dailyRate: '',
-    availability: '',
-    picture: ''
+    image: ''
   });
   const [error, setError] = useState(null);
 
@@ -38,9 +37,7 @@ const CreateAccommodation = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('/accommodations', formData, {
-        headers: { Authorization: `Bearer ${user.token}` }
-      });
+      await createAccommodation(formData, user.token);
       navigate('/admin/accommodations');
     } catch (err) {
       setError(err.response?.data?.message || 'Помилка при створенні');
@@ -71,6 +68,10 @@ const CreateAccommodation = () => {
           />
         </div>
         <div className="form-group">
+          <label>Місто</label>
+          <input type="text" name="city" value={formData.city} onChange={handleChange} />
+        </div>
+        <div className="form-group">
           <label>Розмір</label>
           <input type="text" name="size" value={formData.size} onChange={handleChange} />
         </div>
@@ -88,20 +89,11 @@ const CreateAccommodation = () => {
           />
         </div>
         <div className="form-group">
-          <label>Кількість доступних</label>
-          <input
-            type="number"
-            name="availability"
-            value={formData.availability}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="form-group">
           <label>URL зображення</label>
           <input
             type="text"
-            name="picture"
-            value={formData.picture}
+            name="image"
+            value={formData.image}
             onChange={handleChange}
           />
         </div>

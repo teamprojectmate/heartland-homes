@@ -1,28 +1,18 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from '../../api/axios';
+import api from '../../api/axios';
 
 const initialState = {
   clientSecret: null,
-  status: 'idle', // 'idle' | 'processing' | 'succeeded' | 'failed'
+  status: 'idle',
   error: null
 };
 
-// 📌 Ініціювати оплату (отримати clientSecret від бекенду)
 export const createPaymentIntent = createAsyncThunk(
   'payments/createPaymentIntent',
-  async (bookingId, { rejectWithValue, getState }) => {
+  async (bookingId, { rejectWithValue }) => {
     try {
-      const {
-        auth: { user }
-      } = getState();
-
-      const response = await axios.post(
-        '/payments/create',
-        { bookingId },
-        { headers: { Authorization: `Bearer ${user.token}` } }
-      );
-
-      return response.data; // { clientSecret }
+      const response = await api.post('/payments/create', { bookingId });
+      return response.data;
     } catch (err) {
       return rejectWithValue(
         err.response?.data?.message || 'Не вдалося ініціювати оплату.'
@@ -45,7 +35,6 @@ const paymentsSlice = createSlice({
     builder
       .addCase(createPaymentIntent.pending, (state) => {
         state.status = 'processing';
-        state.error = null;
       })
       .addCase(createPaymentIntent.fulfilled, (state, action) => {
         state.status = 'succeeded';
