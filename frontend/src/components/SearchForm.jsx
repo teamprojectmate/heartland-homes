@@ -1,8 +1,16 @@
-// src/components/SearchForm.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import '../styles/components/_hero.scss';
 import '../styles/components/_forms.scss';
 import '../styles/components/_buttons.scss';
+
+// debounce утиліта
+const debounce = (fn, delay) => {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => fn(...args), delay);
+  };
+};
 
 const SearchForm = ({ onSearch }) => {
   const [destination, setDestination] = useState('');
@@ -11,12 +19,30 @@ const SearchForm = ({ onSearch }) => {
   const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);
 
+  // 🔹 debounce для пошуку
+  const debouncedSearch = useCallback(
+    debounce((value) => {
+      const cleanDestination = value.trim();
+      onSearch({
+        destination: cleanDestination,
+        checkInDate,
+        checkOutDate,
+        adults,
+        children
+      });
+    }, 500),
+    [checkInDate, checkOutDate, adults, children, onSearch]
+  );
+
+  useEffect(() => {
+    if (destination) {
+      debouncedSearch(destination);
+    }
+  }, [destination, debouncedSearch]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // 🔹 Очищаємо від пробілів (щоб не було %20 у кінці)
     const cleanDestination = destination.trim();
-
     onSearch({
       destination: cleanDestination,
       checkInDate,

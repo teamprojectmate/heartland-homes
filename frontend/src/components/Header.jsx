@@ -2,6 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../store/slices/authSlice';
+
+// іконки
+import {
+  FaHome,
+  FaUser,
+  FaSignOutAlt,
+  FaSignInAlt,
+  FaClipboardList,
+  FaUserPlus
+} from 'react-icons/fa';
+
 import '../styles/components/_header.scss';
 import '../styles/components/_buttons.scss';
 
@@ -42,51 +53,35 @@ const Header = () => {
           <nav className="nav-desktop" aria-label="Головна навігація">
             <ul>
               <li>
-                <NavLink
-                  to="/"
-                  end
-                  className={({ isActive }) =>
-                    `drawer-link ${isActive ? 'active' : ''}`
-                  }
-                >
-                  Головна
+                <NavLink to="/" end className="nav-link">
+                  <FaHome className="nav-icon" /> Головна
                 </NavLink>
               </li>
               <li>
-                <NavLink
-                  to="/my-bookings"
-                  className={({ isActive }) =>
-                    `drawer-link ${isActive ? 'active' : ''}`
-                  }
-                >
-                  Мої бронювання
+                <NavLink to="/my-bookings" className="nav-link">
+                  <FaClipboardList className="nav-icon" /> Мої бронювання
                 </NavLink>
               </li>
               <li>
-                <NavLink
-                  to="/profile"
-                  className={({ isActive }) =>
-                    `drawer-link ${isActive ? 'active' : ''}`
-                  }
-                >
-                  Профіль
+                <NavLink to="/profile" className="nav-link">
+                  <FaUser className="nav-icon" /> Профіль
                 </NavLink>
               </li>
             </ul>
 
             {isAuthenticated ? (
-              <div className="drawer-logout">
-                <button className="btn-chip" onClick={handleLogout}>
-                  Вийти
+              <div className="nav-actions">
+                <button className="btn-chip logout" onClick={handleLogout}>
+                  <FaSignOutAlt className="nav-icon" /> Вийти
                 </button>
               </div>
             ) : (
-              <div className="auth-actions">
-                <NavLink to="/login" className="btn-sm btn-primary">
-                  Увійти
+              <div className="nav-actions">
+                <NavLink to="/login" className="btn-chip primary">
+                  <FaSignInAlt className="nav-icon" /> Увійти
                 </NavLink>
-                <NavLink to="/register" className="btn-sm btn-secondary">
-                  Реєстрація
+                <NavLink to="/register" className="btn-chip secondary">
+                  <FaUserPlus className="nav-icon" /> Реєстрація
                 </NavLink>
               </div>
             )}
@@ -108,46 +103,62 @@ const Header = () => {
       </header>
 
       {/* Drawer */}
-      <div id="mobile-drawer" className={`drawer ${open ? 'open' : ''}`} role="dialog" aria-modal="true" aria-label="Мобільне меню">
-  <div className={`drawer-content ${open ? 'open' : ''}`}>
-    <button
-      className="drawer-close"
-      aria-label="Закрити меню"
-      onClick={() => setOpen(false)}
-    />
+      <div
+        id="mobile-drawer"
+        className={`drawer ${open ? 'open' : ''}`}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Мобільне меню"
+      >
+        <div className={`drawer-content ${open ? 'open' : ''}`}>
+          <button
+            className="drawer-close"
+            aria-label="Закрити меню"
+            onClick={() => setOpen(false)}
+          />
 
-    <ul className="drawer-nav" role="navigation">
-      <li>
-        <NavLink onClick={closeOnNavigate} to="/" end className={({ isActive }) => isActive ? 'active' : undefined}>
-          Головна
-        </NavLink>
-      </li>
-      <li>
-        <NavLink onClick={closeOnNavigate} to="/my-bookings" className={({ isActive }) => isActive ? 'active' : undefined}>
-          Мої бронювання
-        </NavLink>
-      </li>
-      <li>
-        <NavLink onClick={closeOnNavigate} to="/profile" className={({ isActive }) => isActive ? 'active' : undefined}>
-          Профіль
-        </NavLink>
-      </li>
-    </ul>
+          <ul className="drawer-nav" role="navigation">
+            <li>
+              <NavLink onClick={closeOnNavigate} to="/" end>
+                <FaHome className="nav-icon" /> Головна
+              </NavLink>
+            </li>
+            <li>
+              <NavLink onClick={closeOnNavigate} to="/my-bookings">
+                <FaClipboardList className="nav-icon" /> Мої бронювання
+              </NavLink>
+            </li>
+            <li>
+              <NavLink onClick={closeOnNavigate} to="/profile">
+                <FaUser className="nav-icon" /> Профіль
+              </NavLink>
+            </li>
+          </ul>
 
-    {isAuthenticated ? (
-      <div className="drawer-actions">
-        <button className="btn-primary block" onClick={handleLogout}>Вийти</button>
+          {isAuthenticated ? (
+            <div className="drawer-actions">
+              <button className="btn-primary" onClick={handleLogout}>
+                <FaSignOutAlt className="nav-icon" /> Вийти
+              </button>
+            </div>
+          ) : (
+            <div className="drawer-actions">
+              <NavLink onClick={closeOnNavigate} to="/login" className="btn-primary">
+                <FaSignInAlt className="nav-icon" /> Увійти
+              </NavLink>
+              <NavLink onClick={closeOnNavigate} to="/register" className="btn-secondary">
+                <FaUserPlus className="nav-icon" /> Реєстрація
+              </NavLink>
+            </div>
+          )}
+        </div>
+
+        <button
+          className="drawer-backdrop"
+          onClick={() => setOpen(false)}
+          aria-label="Закрити меню"
+        />
       </div>
-    ) : (
-      <div className="drawer-actions">
-        <NavLink onClick={closeOnNavigate} to="/login" className="btn-primary block">Увійти</NavLink>
-        <NavLink onClick={closeOnNavigate} to="/register" className="btn-secondary block">Реєстрація</NavLink>
-      </div>
-    )}
-  </div>
-
-  <button className="drawer-backdrop" onClick={() => setOpen(false)} aria-label="Закрити меню" />
-</div>
     </>
   );
 };

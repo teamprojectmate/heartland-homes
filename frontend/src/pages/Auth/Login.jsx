@@ -1,34 +1,36 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { FaEnvelope, FaLock, FaHome } from 'react-icons/fa';
-import { login } from '../store/slices/authSlice';
-import '../styles/components/_auth.scss';
+import { login } from '../../store/slices/authSlice';
+import '../../styles/components/_auth.scss';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
+  const [formData, setFormData] = useState({ email: '', password: '' });
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+
   const { isAuthenticated, loading, error } = useSelector((s) => s.auth);
+
+  const handleChange = (e) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('👉 Відправляю логін:', { email, password }); // DEBUG
-    dispatch(login({ email, password }));
+    dispatch(login(formData));
   };
 
-  // Якщо залогінився → редірект
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/');
+      // 🔹 Якщо користувача редіректнули сюди з ProtectedRoute
+      const redirectPath = location.state?.from?.pathname || '/';
+      navigate(redirectPath, { replace: true });
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, location]);
 
   return (
     <div className="auth-layout">
-      {/* Ліва частина — форма */}
       <div className="auth-card">
         <h2 className="auth-title">Вхід</h2>
         <p className="form-subtitle">
@@ -40,10 +42,11 @@ const Login = () => {
             <FaEnvelope className="input-icon" />
             <input
               type="email"
+              name="email"
               className="form-control"
               placeholder="Електронна пошта"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={formData.email}
+              onChange={handleChange}
               required
             />
           </div>
@@ -52,10 +55,11 @@ const Login = () => {
             <FaLock className="input-icon" />
             <input
               type="password"
+              name="password"
               className="form-control"
               placeholder="Пароль"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={formData.password}
+              onChange={handleChange}
               required
             />
           </div>
@@ -68,10 +72,9 @@ const Login = () => {
         </form>
       </div>
 
-      {/* Права частина */}
       <div className="auth-side">
         <FaHome className="auth-icon" />
-        <h2 className="auth-title">Ласкаво просимо назад 👋</h2>
+        <h2 className="auth-title">Ласкаво просимо 👋</h2>
         <p className="auth-subtitle">
           Увійдіть, щоб забронювати свій наступний будинок мрії з{' '}
           <strong>Heartland Homes</strong>.

@@ -20,7 +20,10 @@ const Notification = ({ message, type = 'success', duration = 3000 }) => {
       role="alert"
       aria-live="assertive"
     >
-      {message}
+      <span>{message}</span>
+      <button className="close-btn" onClick={() => setVisible(false)}>
+        ×
+      </button>
     </div>
   );
 };

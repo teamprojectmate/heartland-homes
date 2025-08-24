@@ -28,7 +28,7 @@
     text-align: center;
   }
 
-   .form-subtitle a {
+  .form-subtitle a {
     font-weight: 600;
     color: $primary-color; // 🟢
     text-decoration: none;
@@ -72,7 +72,7 @@
     }
   }
 
-    button {
+  button {
     height: 48px;
     font-size: 1rem;
     font-weight: 600;
@@ -128,12 +128,12 @@ footer {
   }
 }
 
-@media (max-width: 768px) {
+@media (width <= 768px) {
   .auth-layout {
     grid-template-columns: 1fr; // ✅ одна колонка
-    margin: 1.5rem auto;
     gap: 1.5rem;
     padding: 0 1rem;
+    margin: 1.5rem auto;
   }
 
   .auth-card {

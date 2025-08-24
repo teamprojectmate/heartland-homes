@@ -1,12 +1,12 @@
 // src/components/AccommodationFilters.jsx
 import React from 'react';
 import { Filter, RotateCcw } from 'lucide-react';
-import '../styles/components/_forms.scss';
-import '../styles/components/_buttons.scss';
-import '../styles/components/_filters.scss';
+import '../../styles/components/_forms.scss';
+import '../../styles/components/_buttons.scss';
+import '../../styles/components/_filters.scss';
 
 const AccommodationFilters = ({
-  cities, // тепер тут буде [city] або []
+  cities,
   types,
   sizes,
   minDailyRate,
@@ -58,7 +58,7 @@ const AccommodationFilters = ({
             <input
               type="text"
               className="form-control"
-              placeholder="Київ"
+              placeholder="Наприклад Київ"
               value={cities[0] || ''} // ✅ беремо перший елемент або пусто
               onChange={handleCityChange}
             />
@@ -95,7 +95,7 @@ const AccommodationFilters = ({
             <input
               type="text"
               className="form-control"
-              placeholder="Напр. 2 кімнати"
+              placeholder="Наприклад 2 кімнати"
               value={sizes.join(', ')}
               onChange={handleSizeChange}
             />
