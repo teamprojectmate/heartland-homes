@@ -19,7 +19,7 @@ services:
       mysqldb:
         condition: service_healthy
     build: .
-    image: accommodation-booking-service:3.4
+    image: accommodation-booking-service:3.5
     restart: on-failure
     env_file:
       - .env

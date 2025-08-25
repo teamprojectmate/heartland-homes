@@ -16,6 +16,8 @@ import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -51,6 +53,7 @@ public class Accommodation {
             joinColumns = @JoinColumn(name = "accommodation_id")
     )
     @Column(name = "amenity", nullable = false)
+    @Fetch(FetchMode.SUBSELECT)
     private List<String> amenities;
 
     @Column(name = "daily_rate", nullable = false, precision = 10, scale = 2)

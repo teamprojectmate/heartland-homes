@@ -1,7 +1,6 @@
 package booking.service.config;
 
 import booking.service.security.JwtAuthenticationFilter;
-import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -53,7 +52,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .cors(cors -> {})
+                .cors(cors -> {
+                })
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
@@ -65,14 +65,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/accommodations/**").permitAll()
 
                         .anyRequest().authenticated()
-                )
-                .exceptionHandling(exception ->
-                        exception.authenticationEntryPoint((request, response, authException) -> {
-                            System.out.println("❌ 401 Unauthorized: " + request.getRequestURI()
-                                    + " - " + authException.getMessage());
-                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                                    authException.getMessage());
-                        })
                 )
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
