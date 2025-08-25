@@ -1,4 +1,3 @@
-// src/store/slices/userSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../api/axios';
 
@@ -13,9 +12,12 @@ const initialState = {
 // ----- Fetch Profile -----
 export const fetchProfile = createAsyncThunk(
   'user/fetchProfile',
-  async (_, { rejectWithValue }) => {
+  async (_, { getState, rejectWithValue }) => {
     try {
-      const response = await api.get('/users/me');
+      const { token } = getState().auth; // 🔑 беремо токен
+      const response = await api.get('/users/me', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       return response.data;
     } catch (err) {
       return rejectWithValue(
@@ -28,9 +30,12 @@ export const fetchProfile = createAsyncThunk(
 // ----- Update Profile -----
 export const updateProfile = createAsyncThunk(
   'user/updateProfile',
-  async (userData, { rejectWithValue }) => {
+  async (userData, { getState, rejectWithValue }) => {
     try {
-      const response = await api.put('/users/me', userData);
+      const { token } = getState().auth;
+      const response = await api.put('/users/me', userData, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       return response.data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || 'Не вдалося оновити профіль');
@@ -41,9 +46,16 @@ export const updateProfile = createAsyncThunk(
 // ----- Update User Role (Admin/Manager) -----
 export const updateUserRole = createAsyncThunk(
   'user/updateUserRole',
-  async ({ id, role }, { rejectWithValue }) => {
+  async ({ id, role }, { getState, rejectWithValue }) => {
     try {
-      const response = await api.put(`/users/${id}/role`, { role });
+      const { token } = getState().auth;
+      const response = await api.put(
+        `/users/${id}/role`,
+        { role },
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
       return response.data;
     } catch (err) {
       return rejectWithValue(

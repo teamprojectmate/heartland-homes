@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import '../styles/components/_notification.scss';
+import '../styles/components/_notifications.scss';
 
 const Notification = ({ message, type = 'success', duration = 3000 }) => {
   const [visible, setVisible] = useState(true);
@@ -9,16 +9,16 @@ const Notification = ({ message, type = 'success', duration = 3000 }) => {
     return () => clearTimeout(timer);
   }, [duration]);
 
-  if (!visible) return null;
+  if (!visible || !message) return null;
 
-  const notificationClass =
-    type === 'success' ? 'notification-success' : 'notification-danger';
+  const notificationClass = `notification notification-${type}`;
 
   return (
     <div
-      className={`notification ${notificationClass} fixed-bottom-right`}
+      className={`${notificationClass} fixed-bottom-right`}
       role="alert"
       aria-live="assertive"
+      aria-atomic="true"
     >
       <span>{message}</span>
       <button className="close-btn" onClick={() => setVisible(false)}>

@@ -7,19 +7,26 @@ export const loadAccommodations = createAsyncThunk(
   async (_, { getState, rejectWithValue }) => {
     try {
       const state = getState().accommodations;
-      const response = await api.post('/accommodations/search', {
+
+      const requestBody = {
         searchParameters: {
-          city: state.filters.city ? [state.filters.city] : [],
-          type: state.filters.types,
-          size: state.filters.sizes,
-          minDailyRate: state.filters.minDailyRate || 0,
-          maxDailyRate: state.filters.maxDailyRate || 0
+          city: state.filters.city || [],
+          type: state.filters.types || [],
+          size: state.filters.sizes || [],
+          minDailyRate: state.filters.minDailyRate
+            ? Number(state.filters.minDailyRate)
+            : null,
+          maxDailyRate: state.filters.maxDailyRate
+            ? Number(state.filters.maxDailyRate)
+            : null
         },
         pageable: {
           page: state.page,
           size: state.size
         }
-      });
+      };
+
+      const response = await api.post('/accommodations/search', requestBody);
       return response.data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || 'Помилка при завантаженні');
@@ -66,11 +73,11 @@ const accommodationsSlice = createSlice({
     loading: false,
     error: null,
     filters: {
-      city: '',
-      types: [],
-      sizes: [],
-      minDailyRate: '',
-      maxDailyRate: ''
+      city: [], // ✅ масив
+      types: [], // ✅ масив
+      sizes: [], // ✅ масив
+      minDailyRate: null,
+      maxDailyRate: null
     },
     adminMode: false
   },
@@ -81,11 +88,11 @@ const accommodationsSlice = createSlice({
     },
     resetFilters(state) {
       state.filters = {
-        city: '',
+        city: [],
         types: [],
         sizes: [],
-        minDailyRate: '',
-        maxDailyRate: ''
+        minDailyRate: null,
+        maxDailyRate: null
       };
       state.page = 0;
     },
