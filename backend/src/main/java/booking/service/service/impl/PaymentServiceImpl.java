@@ -142,11 +142,11 @@ public class PaymentServiceImpl implements PaymentService {
             String message = String.format("""
                             ✅ Новий платіж виконано!
                             
-                            💳 Amount: %s$
-                            👤 User ID: %s
-                            📦 Booking ID: %s
-                            🧾 Payment Type: %s
-                            🔁 Session ID: %s
+                            💳 Сума: %s грн
+                            👤 ID користувача: %s
+                            📦 ID житла: %s
+                            🧾 Тип оплати: %s
+                            🔁 ID сесії: %s
                             """,
                     payment.getAmountToPay(),
                     payment.getBooking().getUser().getId(),
