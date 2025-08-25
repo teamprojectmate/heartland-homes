@@ -30,7 +30,7 @@ const Accommodations = () => {
     dispatch(setPage(0)); // скидати на першу сторінку
   };
 
-  // 🔹 застосувати фільтри (по суті, просто скидаємо сторінку)
+  // 🔹 застосувати фільтри
   const handleApplyFilters = () => {
     dispatch(setPage(0));
   };
@@ -61,13 +61,13 @@ const Accommodations = () => {
 
         <AccommodationFilters
           cities={filters.city || []}
-          types={filters.type || []}
-          sizes={filters.size || []}
+          types={filters.types || []}
+          sizes={filters.sizes || []}
           minDailyRate={filters.minDailyRate || ''}
           maxDailyRate={filters.maxDailyRate || ''}
           setCities={(arr) => dispatch(setFilters({ city: arr }))}
-          setTypes={(val) => dispatch(setFilters({ type: val }))}
-          setSizes={(val) => dispatch(setFilters({ size: val }))}
+          setTypes={(val) => dispatch(setFilters({ types: val }))}
+          setSizes={(val) => dispatch(setFilters({ sizes: val }))}
           setMinDailyRate={(val) =>
             dispatch(setFilters({ minDailyRate: val ? Number(val) : null }))
           }

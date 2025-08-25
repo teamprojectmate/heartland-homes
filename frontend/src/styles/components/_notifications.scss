@@ -1,14 +1,30 @@
-// src/styles/components/_notifications.scss
-
 @use '../abstract/variables' as *;
 
 .notification {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 280px;
+  max-width: 400px;
   padding: 1rem 1.5rem;
   font-weight: 600;
-  border: none;
   border-radius: $radius;
   box-shadow: $box-shadow-md;
-  transition: all 0.5s ease-in-out;
+  transition: all 0.3s ease-in-out;
+
+  .close-btn {
+    margin-left: 1rem;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: inherit;
+    cursor: pointer;
+    background: none;
+    border: none;
+
+    &:hover {
+      opacity: 0.7;
+    }
+  }
 }
 
 .notification-success {
@@ -26,12 +42,17 @@
   background-color: #17a2b8;
 }
 
+.notification-warning {
+  color: $white-color;
+  background-color: #ffc107;
+}
+
 .fixed-bottom-right {
   position: fixed;
   right: 20px;
   bottom: 20px;
   z-index: 1050;
-  animation: slide-in 0.5s forwards;
+  animation: slide-in 0.3s ease-out forwards;
 }
 
 @keyframes slide-in {
