@@ -23,7 +23,7 @@ databaseChangeLog:
                   valueNumeric: 2500.00
               - column:
                   name: image
-                  value: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c"
+                  value: "https://www.dropbox.com/scl/fi/rbh8v6jjkhd3txxyhrfhg/photo1.jpg?rlkey=a4lrfbg4pz7zef6fv8jhcq12e&st=w0pq32wx&dl=0"
               - column:
                   name: is_deleted
                   valueNumeric: 0
@@ -48,7 +48,7 @@ databaseChangeLog:
                   valueNumeric: 1800.00
               - column:
                   name: image
-                  value: "https://images.unsplash.com/photo-1597099817305-5fdc8d0a08d1"
+                  value: "https://www.dropbox.com/scl/fi/72shzge7jjptym0m4lqpb/photo2.jpg?rlkey=6fq88kcxwwysv0epfj25oxs92&st=3iloeccy&dl=0"
               - column:
                   name: is_deleted
                   valueNumeric: 0
@@ -73,7 +73,7 @@ databaseChangeLog:
                   valueNumeric: 3200.00
               - column:
                   name: image
-                  value: "https://images.unsplash.com/photo-1600585154526-990dced4db0d"
+                  value: "https://www.dropbox.com/scl/fi/kp6w4a02drpbembtsxd7l/photo3.jpg?rlkey=dsnglnv4gejqkza4hvu7zmrt7&st=irkh4lf4&dl=0"
               - column:
                   name: is_deleted
                   valueNumeric: 0
@@ -98,7 +98,7 @@ databaseChangeLog:
                   valueNumeric: 2100.00
               - column:
                   name: image
-                  value: "https://images.unsplash.com/photo-1599423300746-b62533397364"
+                  value: "https://www.dropbox.com/scl/fi/nq2hgr5sn16je0yaepr7w/photo4.jpeg?rlkey=03ug8ay3t233tk3zmbd5nfm5q&st=3hjd1al5&dl=0"
               - column:
                   name: is_deleted
                   valueNumeric: 0
