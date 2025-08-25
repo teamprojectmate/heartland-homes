@@ -2,6 +2,7 @@ package booking.service.service.impl;
 
 import booking.service.dto.booking.BookingDto;
 import booking.service.dto.booking.CreateBookingRequestDto;
+import booking.service.exception.UnpaidPaymentException;
 import booking.service.mapper.BookingMapper;
 import booking.service.model.Accommodation;
 import booking.service.model.Booking;
@@ -10,6 +11,7 @@ import booking.service.model.RoleName;
 import booking.service.model.User;
 import booking.service.repository.accommodation.AccommodationRepository;
 import booking.service.repository.booking.BookingRepository;
+import booking.service.repository.payment.PaymentRepository;
 import booking.service.repository.user.UserRepository;
 import booking.service.service.BookingService;
 import booking.service.service.NotificationService;
@@ -30,6 +32,7 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final AccommodationRepository accommodationRepository;
     private final UserRepository userRepository;
+    private final PaymentRepository paymentRepository;
     private final BookingMapper bookingMapper;
     private final NotificationService notificationService;
 
@@ -64,6 +67,12 @@ public class BookingServiceImpl implements BookingService {
                         "You are not allowed to create bookings for other users.");
             }
             bookingUser = currentUser;
+        }
+
+        if (paymentRepository.existsUnpaidPaymentsByUserId(bookingUser.getId())) {
+            throw new UnpaidPaymentException(
+                    "Cannot create new booking. You have unpaid payments. "
+                            + "Please complete your pending payments first.");
         }
 
         Booking booking = bookingMapper.toEntity(requestDto)

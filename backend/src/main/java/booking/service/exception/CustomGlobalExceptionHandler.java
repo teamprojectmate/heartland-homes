@@ -1,6 +1,5 @@
 package booking.service.exception;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -183,17 +182,21 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(UnpaidPaymentException.class)
+    public ResponseEntity<Object> handleUnpaidPaymentException(
+            UnpaidPaymentException ex) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("error", "Payment Required");
+        body.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.PAYMENT_REQUIRED);
+    }
+
     private String getErrorMessage(ObjectError e) {
         if (e instanceof FieldError fieldError) {
             return fieldError.getField() + " " + fieldError.getDefaultMessage();
         }
         return e.getDefaultMessage();
-    }
-
-    private String extractFieldNameFromPath(List<JsonMappingException.Reference> path) {
-        if (path != null && !path.isEmpty()) {
-            return path.get(path.size() - 1).getFieldName();
-        }
-        return "unknown";
     }
 }
