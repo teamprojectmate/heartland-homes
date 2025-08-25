@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import Notification from './Notification';
-import { fetchBookingById } from '../store/slices/bookingsSlice';
-import { createPaymentIntent, resetPayment } from '../store/slices/paymentsSlice';
+import Notification from '../../components/Notification';
+import { fetchBookingById } from '../../store/slices/bookingsSlice';
+import { createPaymentIntent, resetPayment } from '../../store/slices/paymentsSlice';
 
-import '../styles/layout/_main-layout.scss';
-import '../styles/components/_forms.scss';
-import '../styles/components/_buttons.scss';
+import '../../styles/layout/_main-layout.scss';
+import '../../styles/components/_forms.scss';
+import '../../styles/components/_buttons.scss';
 
 const Payment = () => {
   const stripe = useStripe();
@@ -23,15 +23,12 @@ const Payment = () => {
     status: bookingStatus,
     error: bookingError
   } = useSelector((state) => state.bookings);
-  const {
-    clientSecret,
-    status: paymentStatus,
-    error: paymentError
-  } = useSelector((state) => state.payments);
+  const { status: paymentStatus, error: paymentError } = useSelector(
+    (state) => state.payments
+  );
 
   const [stripeError, setStripeError] = useState(null);
 
-  // Завантаження деталей бронювання
   useEffect(() => {
     if (!isAuthenticated) {
       navigate('/login');
@@ -40,11 +37,10 @@ const Payment = () => {
     dispatch(fetchBookingById(bookingId));
   }, [isAuthenticated, bookingId, dispatch, navigate]);
 
-  // Якщо оплата завершена успішно → редірект
   useEffect(() => {
     if (paymentStatus === 'succeeded') {
       dispatch(resetPayment());
-      navigate('/bookings/my');
+      navigate('/my-bookings');
     }
   }, [paymentStatus, dispatch, navigate]);
 
@@ -54,21 +50,17 @@ const Payment = () => {
 
     if (!stripe || !elements || !currentBooking) return;
 
-    // 1. Отримати clientSecret від бекенду
     const resultAction = await dispatch(createPaymentIntent(bookingId));
 
     if (createPaymentIntent.fulfilled.match(resultAction)) {
       const { clientSecret } = resultAction.payload;
 
-      // 2. Підтвердити оплату через Stripe
       const cardElement = elements.getElement(CardElement);
       const { error } = await stripe.confirmCardPayment(clientSecret, {
         payment_method: { card: cardElement }
       });
 
-      if (error) {
-        setStripeError(error.message);
-      }
+      if (error) setStripeError(error.message);
     }
   };
 
@@ -85,8 +77,12 @@ const Payment = () => {
 
           {currentBooking && (
             <div className="notification-info">
-              Помешкання: <strong>{currentBooking.accommodationName}</strong>, Сума:{' '}
-              <strong>{currentBooking.totalAmount} $</strong>
+              ID помешкання: <strong>{currentBooking.accommodationId}</strong>
+              <br />
+              Дати: {new Date(currentBooking.checkInDate).toLocaleDateString()} –{' '}
+              {new Date(currentBooking.checkOutDate).toLocaleDateString()}
+              <br />
+              Статус: <strong>{currentBooking.status}</strong>
             </div>
           )}
 

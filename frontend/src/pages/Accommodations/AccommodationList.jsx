@@ -1,4 +1,3 @@
-// src/components/AccommodationList.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -12,10 +11,9 @@ const AccommodationList = ({ accommodations }) => {
       {accommodations.map((acc) => (
         <div key={acc.id} className="col-md-4 mb-4">
           <div className="card card-custom h-100">
-            {/* 🔹 Картинка */}
-            {acc.picture ? (
+            {acc.image ? (
               <img
-                src={acc.picture}
+                src={acc.image}
                 alt={acc.location}
                 className="card-img-top card-img-top-custom"
               />
@@ -25,21 +23,16 @@ const AccommodationList = ({ accommodations }) => {
 
             <div className="card-body d-flex flex-column">
               <h5 className="card-title">{acc.location}</h5>
-              <p className="text-muted">{acc.type}</p>
-              <p>
-                <strong>Ціна:</strong> {acc.dailyRate}$ / доба
+              <p className="text-muted">
+                {acc.city} • {acc.type}
               </p>
               <p>
-                <strong>Доступність:</strong>{' '}
-                {acc.availability > 0
-                  ? `${acc.availability} доступно`
-                  : 'Немає в наявності'}
+                <strong>Ціна:</strong> {acc.dailyRate}$ / доба
               </p>
               <p>
                 <strong>Розмір:</strong> {acc.size}
               </p>
 
-              {/* 🔹 Кнопка "Детальніше" */}
               <div className="mt-auto">
                 <Link to={`/accommodations/${acc.id}`} className="btn-primary w-100">
                   Детальніше

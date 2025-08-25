@@ -1,9 +1,11 @@
-// src/components/AdminEditAccommodation.jsx
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from '../api/axios';
 import { useSelector } from 'react-redux';
-import Notification from './Notification';
+import Notification from '../../components/Notification';
+import {
+  getAccommodationById,
+  updateAccommodation
+} from '../../api/accommodations/accommodationService.js';
 
 const AdminEditAccommodation = () => {
   const { id } = useParams();
@@ -13,20 +15,20 @@ const AdminEditAccommodation = () => {
   const [formData, setFormData] = useState({
     type: 'HOUSE',
     location: '',
+    city: '',
     size: '',
     amenities: [],
     dailyRate: '',
-    availability: '',
-    picture: ''
+    image: ''
   });
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchAccommodation = async () => {
       try {
-        const response = await axios.get(`/accommodations/${id}`);
-        setFormData(response.data);
-      } catch (err) {
+        const data = await getAccommodationById(id);
+        setFormData(data);
+      } catch {
         setError('Не вдалося завантажити дані помешкання');
       }
     };
@@ -51,9 +53,7 @@ const AdminEditAccommodation = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`/accommodations/${id}`, formData, {
-        headers: { Authorization: `Bearer ${user.token}` }
-      });
+      await updateAccommodation(id, formData, user.token);
       navigate('/admin/accommodations');
     } catch (err) {
       setError(err.response?.data?.message || 'Помилка при оновленні');
@@ -84,6 +84,10 @@ const AdminEditAccommodation = () => {
           />
         </div>
         <div className="form-group">
+          <label>Місто</label>
+          <input type="text" name="city" value={formData.city} onChange={handleChange} />
+        </div>
+        <div className="form-group">
           <label>Розмір</label>
           <input type="text" name="size" value={formData.size} onChange={handleChange} />
         </div>
@@ -105,20 +109,11 @@ const AdminEditAccommodation = () => {
           />
         </div>
         <div className="form-group">
-          <label>Кількість доступних</label>
-          <input
-            type="number"
-            name="availability"
-            value={formData.availability}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="form-group">
           <label>URL зображення</label>
           <input
             type="text"
-            name="picture"
-            value={formData.picture}
+            name="image"
+            value={formData.image}
             onChange={handleChange}
           />
         </div>

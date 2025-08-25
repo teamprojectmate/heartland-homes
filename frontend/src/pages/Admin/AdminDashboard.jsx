@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-import '../styles/components/_admin.scss';
+import '../../styles/components/_admin.scss';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -15,15 +15,9 @@ const AdminDashboard = () => {
 
   return (
     <div className="container page mt-4">
-      {' '}
-      {/* ✅ Виправлено */}
       <h1 className="text-center auth-title">Панель адміністратора</h1>
       <div className="row mt-4">
-        {' '}
-        {/* ✅ Виправлено */}
         <div className="col-md-6 offset-md-3">
-          {' '}
-          {/* ✅ Виправлено */}
           <div className="admin-card">
             <div className="admin-card-body">
               <h5 className="admin-card-title">Управління</h5>

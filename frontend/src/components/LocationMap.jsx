@@ -12,23 +12,26 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png'
 });
 
-const LocationMap = ({ location, latitude, longitude }) => {
-  if (!latitude || !longitude) {
-    return <p className="text-muted">Карта недоступна для цього помешкання.</p>;
-  }
-
-  const position = [latitude, longitude];
+const LocationMap = ({ location, city, latitude, longitude }) => {
+  const position = latitude && longitude ? [latitude, longitude] : [50.45, 30.52]; // fallback Київ
 
   return (
-    <div className="location-map-container">
-      <MapContainer center={position} zoom={13} scrollWheelZoom={false}>
+    <div className="location-map-container" style={{ height: '300px' }}>
+      <MapContainer
+        center={position}
+        zoom={13}
+        scrollWheelZoom={false}
+        style={{ height: '100%', width: '100%' }}
+      >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
         />
-        <Marker position={position}>
-          <Popup>{location || 'Помешкання'}</Popup>
-        </Marker>
+        {latitude && longitude && (
+          <Marker position={position}>
+            <Popup>{`${location}, ${city}`}</Popup>
+          </Marker>
+        )}
       </MapContainer>
     </div>
   );

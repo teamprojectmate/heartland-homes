@@ -1,12 +1,11 @@
-// src/components/AccommodationFilters.jsx
 import React from 'react';
 import { Filter, RotateCcw } from 'lucide-react';
-import '../styles/components/_forms.scss';
-import '../styles/components/_buttons.scss';
-import '../styles/components/_filters.scss';
+import '../../styles/components/_forms.scss';
+import '../../styles/components/_buttons.scss';
+import '../../styles/components/_filters.scss';
 
 const AccommodationFilters = ({
-  cities, // тепер тут буде [city] або []
+  cities,
   types,
   sizes,
   minDailyRate,
@@ -22,7 +21,7 @@ const AccommodationFilters = ({
   // 🔹 Обробка міста (одне місто)
   const handleCityChange = (e) => {
     const value = e.target.value.trim();
-    setCities(value ? [value] : []); // ✅ зберігаємо як масив лише для сумісності з батьківським компонентом
+    setCities(value ? [value] : []);
   };
 
   // 🔹 Обробка чекбоксів типів житла
@@ -35,7 +34,7 @@ const AccommodationFilters = ({
     }
   };
 
-  // 🔹 Обробка розміру
+  // 🔹 Обробка розміру (масив)
   const handleSizeChange = (e) => {
     setSizes(
       e.target.value
@@ -50,7 +49,6 @@ const AccommodationFilters = ({
       <div className="filters-box">
         <h4 className="filters-heading">Фільтри та сортування</h4>
 
-        {/* Сітка фільтрів */}
         <div className="filters-grid">
           {/* Місто */}
           <div className="filter-item">
@@ -58,8 +56,8 @@ const AccommodationFilters = ({
             <input
               type="text"
               className="form-control"
-              placeholder="Київ"
-              value={cities[0] || ''} // ✅ беремо перший елемент або пусто
+              placeholder="Наприклад Київ"
+              value={cities[0] || ''}
               onChange={handleCityChange}
             />
           </div>
@@ -86,16 +84,34 @@ const AccommodationFilters = ({
                 />
                 Квартира
               </label>
+              <label className="form-check">
+                <input
+                  type="checkbox"
+                  value="CONDO"
+                  checked={types.includes('CONDO')}
+                  onChange={handleTypeChange}
+                />
+                Кондо
+              </label>
+              <label className="form-check">
+                <input
+                  type="checkbox"
+                  value="VACATION_HOME"
+                  checked={types.includes('VACATION_HOME')}
+                  onChange={handleTypeChange}
+                />
+                Дім для відпочинку
+              </label>
             </div>
           </div>
 
           {/* Розмір */}
           <div className="filter-item">
-            <label>Розмір</label>
+            <label>Кількість кімнат</label>
             <input
               type="text"
               className="form-control"
-              placeholder="Напр. 2 кімнати"
+              placeholder="Наприклад 2 Bedroom, 3 Bedroom"
               value={sizes.join(', ')}
               onChange={handleSizeChange}
             />
@@ -126,7 +142,7 @@ const AccommodationFilters = ({
           </div>
         </div>
 
-        {/* ✅ Футер з кнопками */}
+        {/* Кнопки */}
         <div className="filters-actions">
           <button className="btn-primary btn-with-icon" onClick={onApplyFilters}>
             <Filter size={18} /> Застосувати

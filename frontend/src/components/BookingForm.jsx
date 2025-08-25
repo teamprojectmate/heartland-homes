@@ -4,14 +4,14 @@ import { createBooking } from '../store/slices/bookingsSlice';
 import Notification from './Notification';
 import '../styles/components/_booking-form.scss';
 
-const BookingForm = ({ accommodationId, dailyRate }) => {
+const BookingForm = ({ accommodationId }) => {
   const [checkInDate, setCheckInDate] = useState('');
   const [checkOutDate, setCheckOutDate] = useState('');
   const [error, setError] = useState(null);
 
   const dispatch = useDispatch();
   const { loading } = useSelector((state) => state.bookings);
-  const { isAuthenticated } = useSelector((state) => state.auth);
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,9 +29,10 @@ const BookingForm = ({ accommodationId, dailyRate }) => {
 
     const bookingData = {
       accommodationId,
+      userId: user?.id, // ✅ згідно DTO
       checkInDate,
       checkOutDate,
-      dailyRate
+      status: 'PENDING'
     };
 
     const resultAction = await dispatch(createBooking(bookingData));
@@ -55,8 +56,6 @@ const BookingForm = ({ accommodationId, dailyRate }) => {
         />
       </div>
       <div className="form-group form-group-spacing">
-        {' '}
-        {/* ✅ Виправлено */}
         <label htmlFor="check-out-date">Дата виїзду</label>
         <input
           type="date"

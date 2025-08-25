@@ -1,9 +1,8 @@
-// src/pages/AccommodationDetails.jsx
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from '../api/axios';
-import BookingForm from '../components/BookingForm';
-import LocationMap from '../components/LocationMap';
+import BookingForm from '../../components/BookingForm';
+import LocationMap from '../../components/LocationMap';
+import { getAccommodationById } from '../../api/accommodations/accommodationService';
 
 const AccommodationDetails = () => {
   const { id } = useParams();
@@ -14,8 +13,8 @@ const AccommodationDetails = () => {
   useEffect(() => {
     const fetchAccommodation = async () => {
       try {
-        const response = await axios.get(`/accommodations/${id}`);
-        setAccommodation(response.data);
+        const data = await getAccommodationById(id);
+        setAccommodation(data);
       } catch {
         setError('Не вдалося завантажити деталі помешкання.');
       } finally {
@@ -32,11 +31,10 @@ const AccommodationDetails = () => {
   return (
     <div className="container mt-4">
       <div className="row">
-        {/* Інформація про помешкання */}
         <div className="col-md-8">
           <div className="card card-custom p-3">
             <img
-              src={accommodation.picture}
+              src={accommodation.image}
               alt={accommodation.location}
               className="card-img-top card-img-top-custom mb-3"
             />
@@ -48,13 +46,10 @@ const AccommodationDetails = () => {
                 <strong>Тип:</strong> {accommodation.type}
               </li>
               <li>
-                <strong>Розмір:</strong> {accommodation.size}
+                <strong>Кількість кімнат:</strong> {accommodation.size}
               </li>
               <li>
                 <strong>Ціна:</strong> {accommodation.dailyRate}$ / доба
-              </li>
-              <li>
-                <strong>Доступність:</strong> {accommodation.availability} од.
               </li>
               <li>
                 <strong>Зручності:</strong>{' '}
@@ -65,14 +60,12 @@ const AccommodationDetails = () => {
             </ul>
           </div>
 
-          {/* Карта */}
           <div className="mt-4">
             <h4>Розташування</h4>
             <LocationMap location={accommodation.location} />
           </div>
         </div>
 
-        {/* Форма бронювання */}
         <div className="col-md-4">
           <div className="card card-custom p-3">
             <h5>Забронювати</h5>
