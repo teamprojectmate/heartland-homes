@@ -1,40 +1,30 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { fetchAccommodations } from '../../api/accommodations/accommodationService';
 import api from '../../api/axios';
 
-// 🔹 Завантаження житла (для користувачів із фільтрами)
+// 🔹 Завантаження житла (користувач)
 export const loadAccommodations = createAsyncThunk(
   'accommodations/load',
   async (_, { getState, rejectWithValue }) => {
     try {
       const state = getState().accommodations;
-
-      const requestBody = {
-        searchParameters: {
-          city: state.filters.city || [],
-          type: state.filters.types || [],
-          size: state.filters.sizes || [],
-          minDailyRate: state.filters.minDailyRate
-            ? Number(state.filters.minDailyRate)
-            : null,
-          maxDailyRate: state.filters.maxDailyRate
-            ? Number(state.filters.maxDailyRate)
-            : null
-        },
-        pageable: {
-          page: state.page,
-          size: state.size
-        }
-      };
-
-      const response = await api.post('/accommodations/search', requestBody);
-      return response.data;
+      const data = await fetchAccommodations({
+        city: state.filters.city,
+        type: state.filters.type,
+        size: state.filters.size,
+        minDailyRate: state.filters.minDailyRate,
+        maxDailyRate: state.filters.maxDailyRate,
+        page: state.page,
+        sizePage: state.size
+      });
+      return data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || 'Помилка при завантаженні');
     }
   }
 );
 
-// 🔹 Завантаження житла (для адміна)
+// 🔹 Завантаження житла (адмін)
 export const loadAdminAccommodations = createAsyncThunk(
   'accommodations/loadAdmin',
   async ({ page = 0, size = 20 }, { rejectWithValue }) => {
@@ -73,11 +63,11 @@ const accommodationsSlice = createSlice({
     loading: false,
     error: null,
     filters: {
-      city: [], // ✅ масив
-      types: [], // ✅ масив
-      sizes: [], // ✅ масив
-      minDailyRate: null,
-      maxDailyRate: null
+      city: [],
+      type: [],
+      size: [],
+      minDailyRate: 0,
+      maxDailyRate: 10000
     },
     adminMode: false
   },
@@ -89,10 +79,10 @@ const accommodationsSlice = createSlice({
     resetFilters(state) {
       state.filters = {
         city: [],
-        types: [],
-        sizes: [],
-        minDailyRate: null,
-        maxDailyRate: null
+        type: [],
+        size: [],
+        minDailyRate: 0,
+        maxDailyRate: 10000
       };
       state.page = 0;
     },

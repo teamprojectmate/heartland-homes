@@ -1,3 +1,4 @@
+// src/pages/Admin/AdminBookings.jsx
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -7,13 +8,17 @@ import {
   deleteBooking,
   updateBooking
 } from '../../store/slices/bookingsSlice';
+import Pagination from '../../components/Pagination';
+import { getStatusLabel } from '../../utils/statusLabels';
 import '../../styles/components/_admin.scss';
 
 const AdminBookings = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const { bookings, status, error } = useSelector((state) => state.bookings);
+  const { bookings, status, error, page, totalPages } = useSelector(
+    (state) => state.bookings
+  );
 
   const [confirmCancelId, setConfirmCancelId] = useState(null);
 
@@ -22,12 +27,12 @@ const AdminBookings = () => {
       navigate('/');
       return;
     }
-    dispatch(fetchBookings());
+    dispatch(fetchBookings({ page: 0, size: 10 }));
   }, [user, navigate, dispatch]);
 
   const handleCancelBooking = async (id) => {
     await dispatch(deleteBooking(id));
-    dispatch(fetchBookings()); // 🔄 оновлюємо після видалення
+    dispatch(fetchBookings({ page, size: 10 }));
     setConfirmCancelId(null);
   };
 
@@ -38,6 +43,10 @@ const AdminBookings = () => {
         bookingData: { ...booking, status: 'PAID' }
       })
     );
+  };
+
+  const handlePageChange = (newPage) => {
+    dispatch(fetchBookings({ page: newPage, size: 10 }));
   };
 
   if (status === 'loading') {
@@ -53,51 +62,67 @@ const AdminBookings = () => {
     <div className="container admin-page-container">
       <h1 className="section-heading text-center">Усі бронювання (Адмін-панель)</h1>
       {error && <Notification message={error} type="danger" />}
-      {bookings.length > 0 ? (
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Помешкання ID</th>
-              <th>Користувач ID</th>
-              <th>Дати</th>
-              <th>Статус</th>
-              <th>Дії</th>
-            </tr>
-          </thead>
-          <tbody>
-            {bookings.map((booking) => (
-              <tr key={booking.id}>
-                <td>{booking.id}</td>
-                <td>{booking.accommodationId}</td>
-                <td>{booking.userId}</td>
-                <td>
-                  {new Date(booking.checkInDate).toLocaleDateString()} –{' '}
-                  {new Date(booking.checkOutDate).toLocaleDateString()}
-                </td>
-                <td>{booking.status}</td>
-                <td>
-                  {booking.status !== 'PAID' ? (
-                    <button
-                      onClick={() => handleMarkAsPaid(booking)}
-                      className="btn-primary btn-sm"
-                    >
-                      Позначити як оплачене
-                    </button>
-                  ) : (
-                    <span className="text-success">Оплачено</span>
-                  )}
-                  <button
-                    onClick={() => setConfirmCancelId(booking.id)}
-                    className="btn-danger btn-sm btn-action"
-                  >
-                    Скасувати
-                  </button>
-                </td>
+
+      {bookings && bookings.length > 0 ? (
+        <>
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Помешкання ID</th>
+                <th>Користувач ID</th>
+                <th>Дати</th>
+                <th>Статус</th>
+                <th>Дії</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {bookings.map((booking) => {
+                const label = getStatusLabel(booking.status);
+                return (
+                  <tr key={booking.id}>
+                    <td>{booking.id}</td>
+                    <td>{booking.accommodationId}</td>
+                    <td>{booking.userId}</td>
+                    <td>
+                      {new Date(booking.checkInDate).toLocaleDateString()} –{' '}
+                      {new Date(booking.checkOutDate).toLocaleDateString()}
+                    </td>
+                    <td>
+                      <span className={`badge ${label.className}`}>{label.text}</span>
+                    </td>
+                    <td>
+                      {booking.status !== 'PAID' ? (
+                        <button
+                          onClick={() => handleMarkAsPaid(booking)}
+                          className="btn-primary btn-sm"
+                        >
+                          Позначити як оплачене
+                        </button>
+                      ) : (
+                        <span className="text-success">Оплачено</span>
+                      )}
+                      <button
+                        onClick={() => setConfirmCancelId(booking.id)}
+                        className="btn-danger btn-sm btn-action"
+                      >
+                        Скасувати
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+
+          {totalPages > 1 && (
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          )}
+        </>
       ) : (
         <div className="alert-info text-center">Бронювань ще немає.</div>
       )}

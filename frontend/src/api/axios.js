@@ -1,11 +1,14 @@
+// src/api/axios.js
 import axios from 'axios';
-import qs from 'qs'; // 👉 потрібно встановити: npm install qs
+import qs from 'qs';
 import store from '../store/store';
 
 const instance = axios.create({
   baseURL: 'http://localhost:8080',
-  paramsSerializer: (params) => qs.stringify(params, { arrayFormat: 'repeat' })
-  // => type=HOUSE&type=APARTMENT&size=1
+  paramsSerializer: (params) => {
+    // Вмикаємо опцію allowDots, щоб серіалізувати порожні об'єкти.
+    return qs.stringify(params, { arrayFormat: 'repeat', allowDots: true });
+  }
 });
 
 instance.interceptors.request.use(

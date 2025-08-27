@@ -1,7 +1,29 @@
-// src/styles/components/_cards.scss
-
 @use '../abstract/variables' as *;
 @use 'sass:math';
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+
+  @media (max-width: $breakpoint-sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card-img-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 200px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: $muted-color;
+  background: $background-light;
+  border-top-left-radius: $radius;
+  border-top-right-radius: $radius;
+}
 
 .card-custom {
   display: flex;
@@ -12,9 +34,11 @@
   box-shadow: $box-shadow-card;
   transition:
     transform 0.2s ease,
-    box-shadow 0.2s ease;
+    box-shadow 0.2s ease,
+    border 0.2s ease;
 
   &:hover {
+    border: 1px solid $primary-color;
     box-shadow: $box-shadow-card-hover;
     transform: translateY(-4px);
   }
@@ -26,6 +50,11 @@
   object-fit: cover;
   border-top-left-radius: $radius;
   border-top-right-radius: $radius;
+  transition: transform 0.3s ease;
+}
+
+.card-custom:hover .card-img-top-custom {
+  transform: scale(1.03);
 }
 
 .card-body {
@@ -34,7 +63,6 @@
   flex-direction: column;
   padding: 1.5rem;
 
-  /* 🔑 робимо так, щоб кнопка завжди була притиснута вниз */
   .btn {
     margin-top: auto;
   }
@@ -57,4 +85,49 @@
   font-size: 1.5rem;
   font-weight: 700;
   color: $primary-color;
+}
+
+.card-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.5rem 0 1rem;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: $white-color;
+  border-radius: $radius-sm;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  &.badge-type {
+    background-color: $primary-700;
+  }
+
+  &.badge-size {
+    background-color: $success-color;
+  }
+
+  &.badge-status {
+    &.pending {
+      background: $warning-color;
+    }
+
+    &.paid {
+      background: $success-color;
+    }
+
+    &.cancelled {
+      background: $danger-color;
+    }
+  }
 }

@@ -25,6 +25,7 @@
 @use './components/map';
 @use './components/buttons';
 @use './components/auth';
+@use './components/pagination';
 
 // 4) пакетні стилі — імпортуємо як пакет, без шляху до node_modules
 @use '../../node_modules/react-image-gallery/styles/scss/image-gallery';
@@ -33,10 +34,17 @@
 *::before,
 *::after {
   box-sizing: border-box;
+  padding: 0;
+  margin: 0;
 }
 
 html,
-body #root {
-  padding: 0;
-  margin: 0;
+body,
+#root {
+  height: 100%;
+  font-family: variables.$font-family-base;
+  font-size: variables.$font-size-base;
+  line-height: variables.$line-height-base;
+  color: variables.$text-color;
+  background-color: variables.$background-color;
 }

@@ -1,0 +1,49 @@
+@use '../abstract/mixins' as *;
+@use '../abstract/variables' as *;
+
+.pagination {
+  @include flex-center(row);
+
+  gap: $spacer-sm;
+  margin-top: $spacer-lg;
+
+  span {
+    font-size: $font-size-sm;
+    color: $text-color;
+  }
+
+  button {
+    padding: 0.5rem 1rem;
+    font-size: $font-size-sm;
+    color: $primary-color;
+    cursor: pointer;
+    background-color: transparent;
+    border: 1px solid $primary-color;
+    border-radius: $radius-sm;
+    transition:
+      background 0.2s ease,
+      color 0.2s ease;
+
+    &:hover:not(:disabled) {
+      color: $white-color;
+      background-color: $primary-color;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  }
+
+  // адаптивність
+  @include media(sm) {
+    span {
+      font-size: $font-size-md;
+    }
+
+    button {
+      padding: 0.6rem 1.2rem;
+      font-size: $font-size-md;
+    }
+  }
+}

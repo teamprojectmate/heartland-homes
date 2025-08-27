@@ -1,117 +1,123 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import '../styles/components/_hero.scss';
+// src/components/SearchForm.jsx
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  setFilters,
+  setPage,
+  loadAccommodations
+} from '../store/slices/accommodationsSlice';
 import '../styles/components/_forms.scss';
 import '../styles/components/_buttons.scss';
 
-// debounce утиліта
-const debounce = (fn, delay) => {
-  let timeout;
-  return (...args) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => fn(...args), delay);
+const SearchForm = () => {
+  const dispatch = useDispatch();
+  const { filters, page, size } = useSelector((state) => state.accommodations);
+
+  const [formData, setFormData] = useState({
+    city: filters.city[0] || '',
+    type: filters.type[0] || '',
+    size: filters.size[0] || '',
+    minDailyRate: filters.minDailyRate || 0,
+    maxDailyRate: filters.maxDailyRate || 10000,
+    page: page,
+    sizePage: size
+  });
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
   };
-};
-
-const SearchForm = ({ onSearch }) => {
-  const [destination, setDestination] = useState('');
-  const [checkInDate, setCheckInDate] = useState('');
-  const [checkOutDate, setCheckOutDate] = useState('');
-  const [adults, setAdults] = useState(1);
-  const [children, setChildren] = useState(0);
-
-  // 🔹 debounce для пошуку
-  const debouncedSearch = useCallback(
-    debounce((value) => {
-      const cleanDestination = value.trim();
-      onSearch({
-        destination: cleanDestination,
-        checkInDate,
-        checkOutDate,
-        adults,
-        children
-      });
-    }, 500),
-    [checkInDate, checkOutDate, adults, children, onSearch]
-  );
-
-  useEffect(() => {
-    if (destination) {
-      debouncedSearch(destination);
-    }
-  }, [destination, debouncedSearch]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const cleanDestination = destination.trim();
-    onSearch({
-      destination: cleanDestination,
-      checkInDate,
-      checkOutDate,
-      adults,
-      children
-    });
+
+    // 🔹 Зберігаємо фільтри у Redux
+    dispatch(
+      setFilters({
+        city: formData.city ? [formData.city] : [],
+        type: formData.type ? [formData.type] : [],
+        size: formData.size ? [formData.size] : [],
+        minDailyRate: Number(formData.minDailyRate),
+        maxDailyRate: Number(formData.maxDailyRate)
+      })
+    );
+
+    // 🔹 Скидаємо сторінку на 0
+    dispatch(setPage(0));
+
+    // 🔹 Завантажуємо дані
+    dispatch(loadAccommodations());
   };
 
   return (
     <form onSubmit={handleSubmit} className="search-form-container">
       {/* Місто */}
       <div className="search-input-group">
-        <label htmlFor="destination-input">Куди ви вирушаєте?</label>
+        <label htmlFor="city">Місто</label>
         <input
           type="text"
-          id="destination-input"
+          id="city"
+          name="city"
           className="form-control"
           placeholder="Наприклад, Київ"
-          value={destination}
-          onChange={(e) => setDestination(e.target.value)}
+          value={formData.city}
+          onChange={handleChange}
         />
       </div>
 
-      {/* Блок дат */}
-      <div className="search-input-group date-range-group">
-        <label>Дата заїзду - Дата виїзду</label>
-        <div className="date-range-inputs">
-          <input
-            type="date"
-            id="check-in-date"
-            className="form-control"
-            value={checkInDate}
-            onChange={(e) => setCheckInDate(e.target.value)}
-          />
-          <span className="date-separator">-</span>
-          <input
-            type="date"
-            id="check-out-date"
-            className="form-control"
-            value={checkOutDate}
-            onChange={(e) => setCheckOutDate(e.target.value)}
-          />
-        </div>
-      </div>
-
-      {/* Дорослі */}
+      {/* Тип */}
       <div className="search-input-group">
-        <label htmlFor="adults-count">Кількість дорослих</label>
+        <label htmlFor="type">Тип</label>
         <input
-          type="number"
-          id="adults-count"
+          type="text"
+          id="type"
+          name="type"
           className="form-control"
-          min="1"
-          value={adults}
-          onChange={(e) => setAdults(parseInt(e.target.value))}
+          placeholder="HOUSE, APARTMENT..."
+          value={formData.type}
+          onChange={handleChange}
         />
       </div>
 
-      {/* Діти */}
+      {/* Розмір */}
       <div className="search-input-group">
-        <label htmlFor="children-count">Кількість дітей</label>
+        <label htmlFor="size">Розмір</label>
+        <input
+          type="text"
+          id="size"
+          name="size"
+          className="form-control"
+          placeholder="Small, Medium..."
+          value={formData.size}
+          onChange={handleChange}
+        />
+      </div>
+
+      {/* Ціна від */}
+      <div className="search-input-group">
+        <label htmlFor="minDailyRate">Ціна від</label>
         <input
           type="number"
-          id="children-count"
+          id="minDailyRate"
+          name="minDailyRate"
           className="form-control"
-          min="0"
-          value={children}
-          onChange={(e) => setChildren(parseInt(e.target.value))}
+          value={formData.minDailyRate}
+          onChange={handleChange}
+        />
+      </div>
+
+      {/* Ціна до */}
+      <div className="search-input-group">
+        <label htmlFor="maxDailyRate">Ціна до</label>
+        <input
+          type="number"
+          id="maxDailyRate"
+          name="maxDailyRate"
+          className="form-control"
+          value={formData.maxDailyRate}
+          onChange={handleChange}
         />
       </div>
 

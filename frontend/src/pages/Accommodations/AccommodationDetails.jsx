@@ -1,8 +1,15 @@
+// src/pages/Accommodations/AccommodationDetails.jsx
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import BookingForm from '../../components/BookingForm';
 import LocationMap from '../../components/LocationMap';
 import { getAccommodationById } from '../../api/accommodations/accommodationService';
+
+// 🔹 утиліта для виправлення Dropbox URL
+const fixDropboxUrl = (url) => {
+  if (!url) return '';
+  return url.replace('dl=0', 'raw=1');
+};
 
 const AccommodationDetails = () => {
   const { id } = useParams();
@@ -33,11 +40,16 @@ const AccommodationDetails = () => {
       <div className="row">
         <div className="col-md-8">
           <div className="card card-custom p-3">
-            <img
-              src={accommodation.image}
-              alt={accommodation.location}
-              className="card-img-top card-img-top-custom mb-3"
-            />
+            {accommodation.image ? (
+              <img
+                src={fixDropboxUrl(accommodation.image)} // ✅ правильний URL
+                alt={accommodation.location}
+                className="card-img-top card-img-top-custom mb-3"
+              />
+            ) : (
+              <div className="card-img-placeholder mb-3">Без зображення</div>
+            )}
+
             <h1>{accommodation.location}</h1>
             <hr />
             <h4>Характеристики</h4>
@@ -49,7 +61,7 @@ const AccommodationDetails = () => {
                 <strong>Кількість кімнат:</strong> {accommodation.size}
               </li>
               <li>
-                <strong>Ціна:</strong> {accommodation.dailyRate}$ / доба
+                <strong>Ціна:</strong> {accommodation.dailyRate} грн / доба
               </li>
               <li>
                 <strong>Зручності:</strong>{' '}
@@ -70,7 +82,7 @@ const AccommodationDetails = () => {
           <div className="card card-custom p-3">
             <h5>Забронювати</h5>
             <p>
-              Ціна: <strong>{accommodation.dailyRate}$</strong> / доба
+              Ціна: <strong>{accommodation.dailyRate} грн</strong> / доба
             </p>
             <BookingForm
               accommodationId={accommodation.id}

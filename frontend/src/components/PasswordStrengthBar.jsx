@@ -1,3 +1,4 @@
+// src/components/PasswordStrengthBar.jsx
 import React from 'react';
 
 const PasswordStrengthBar = ({ password }) => {
