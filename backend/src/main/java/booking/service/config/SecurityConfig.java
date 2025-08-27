@@ -64,6 +64,8 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.GET, "/accommodations/**").permitAll()
 
+                        .requestMatchers(HttpMethod.POST, "/accommodations/search").permitAll()
+
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session ->
