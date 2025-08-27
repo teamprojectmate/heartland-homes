@@ -1,5 +1,7 @@
+// src/components/BookingForm.jsx
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { createBooking } from '../store/slices/bookingsSlice';
 import Notification from './Notification';
 import '../styles/components/_booking-form.scss';
@@ -10,7 +12,8 @@ const BookingForm = ({ accommodationId }) => {
   const [error, setError] = useState(null);
 
   const dispatch = useDispatch();
-  const { loading } = useSelector((state) => state.bookings);
+  const navigate = useNavigate();
+  const { status } = useSelector((state) => state.bookings);
   const { isAuthenticated, user } = useSelector((state) => state.auth);
 
   const handleSubmit = async (e) => {
@@ -29,15 +32,18 @@ const BookingForm = ({ accommodationId }) => {
 
     const bookingData = {
       accommodationId,
-      userId: user?.id, // ✅ згідно DTO
+      userId: user?.id,
       checkInDate,
       checkOutDate,
       status: 'PENDING'
     };
 
     const resultAction = await dispatch(createBooking(bookingData));
+
     if (createBooking.fulfilled.match(resultAction)) {
-      alert('Бронювання успішне!');
+      setTimeout(() => {
+        navigate('/my-bookings'); // ✅ редірект
+      }, 1000);
     } else if (createBooking.rejected.match(resultAction)) {
       setError(resultAction.payload);
     }
@@ -55,6 +61,7 @@ const BookingForm = ({ accommodationId }) => {
           onChange={(e) => setCheckInDate(e.target.value)}
         />
       </div>
+
       <div className="form-group form-group-spacing">
         <label htmlFor="check-out-date">Дата виїзду</label>
         <input
@@ -65,9 +72,11 @@ const BookingForm = ({ accommodationId }) => {
           onChange={(e) => setCheckOutDate(e.target.value)}
         />
       </div>
+
       {error && <Notification message={error} type="danger" />}
-      <button type="submit" className="btn-primary" disabled={loading}>
-        {loading ? 'Бронювання...' : 'Забронювати'}
+
+      <button type="submit" className="btn-primary" disabled={status === 'loading'}>
+        {status === 'loading' ? 'Бронювання...' : 'Забронювати'}
       </button>
     </form>
   );

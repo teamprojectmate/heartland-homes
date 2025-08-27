@@ -1,3 +1,4 @@
+// src/pages/Accommodations/AccommodationFilters.jsx
 import React from 'react';
 import { Filter, RotateCcw } from 'lucide-react';
 import '../../styles/components/_forms.scss';
@@ -6,13 +7,13 @@ import '../../styles/components/_filters.scss';
 
 const AccommodationFilters = ({
   cities,
-  types,
-  sizes,
+  type, // ✅ замінили
+  size, // ✅ замінили
   minDailyRate,
   maxDailyRate,
   setCities,
-  setTypes,
-  setSizes,
+  setType, // ✅ замінили
+  setSize, // ✅ замінили
   setMinDailyRate,
   setMaxDailyRate,
   onApplyFilters,
@@ -28,18 +29,18 @@ const AccommodationFilters = ({
   const handleTypeChange = (e) => {
     const { value, checked } = e.target;
     if (checked) {
-      setTypes([...types, value]);
+      setType([...type, value]);
     } else {
-      setTypes(types.filter((type) => type !== value));
+      setType(type.filter((t) => t !== value));
     }
   };
 
   // 🔹 Обробка розміру (масив)
   const handleSizeChange = (e) => {
-    setSizes(
+    setSize(
       e.target.value
         .split(',')
-        .map((size) => size.trim())
+        .map((s) => s.trim())
         .filter(Boolean)
     );
   };
@@ -70,7 +71,7 @@ const AccommodationFilters = ({
                 <input
                   type="checkbox"
                   value="HOUSE"
-                  checked={types.includes('HOUSE')}
+                  checked={type.includes('HOUSE')}
                   onChange={handleTypeChange}
                 />
                 Будинок
@@ -79,7 +80,7 @@ const AccommodationFilters = ({
                 <input
                   type="checkbox"
                   value="APARTMENT"
-                  checked={types.includes('APARTMENT')}
+                  checked={type.includes('APARTMENT')}
                   onChange={handleTypeChange}
                 />
                 Квартира
@@ -88,7 +89,7 @@ const AccommodationFilters = ({
                 <input
                   type="checkbox"
                   value="CONDO"
-                  checked={types.includes('CONDO')}
+                  checked={type.includes('CONDO')}
                   onChange={handleTypeChange}
                 />
                 Кондо
@@ -97,7 +98,7 @@ const AccommodationFilters = ({
                 <input
                   type="checkbox"
                   value="VACATION_HOME"
-                  checked={types.includes('VACATION_HOME')}
+                  checked={type.includes('VACATION_HOME')}
                   onChange={handleTypeChange}
                 />
                 Дім для відпочинку
@@ -112,18 +113,18 @@ const AccommodationFilters = ({
               type="text"
               className="form-control"
               placeholder="Наприклад 2 Bedroom, 3 Bedroom"
-              value={sizes.join(', ')}
+              value={size.join(', ')}
               onChange={handleSizeChange}
             />
           </div>
 
           {/* Ціна від */}
           <div className="filter-item">
-            <label>Ціна від</label>
+            <label>Ціна від (₴)</label>
             <input
               type="number"
               className="form-control"
-              placeholder="Від"
+              placeholder="Від, грн"
               value={minDailyRate}
               onChange={(e) => setMinDailyRate(e.target.value)}
             />
@@ -131,11 +132,11 @@ const AccommodationFilters = ({
 
           {/* Ціна до */}
           <div className="filter-item">
-            <label>Ціна до</label>
+            <label>Ціна до (₴)</label>
             <input
               type="number"
               className="form-control"
-              placeholder="До"
+              placeholder="До, грн"
               value={maxDailyRate}
               onChange={(e) => setMaxDailyRate(e.target.value)}
             />

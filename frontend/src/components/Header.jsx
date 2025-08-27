@@ -10,7 +10,8 @@ import {
   FaSignOutAlt,
   FaSignInAlt,
   FaClipboardList,
-  FaUserPlus
+  FaUserPlus,
+  FaCreditCard // ✅ для платежів
 } from 'react-icons/fa';
 
 import '../styles/components/_header.scss';
@@ -60,6 +61,11 @@ const Header = () => {
               <li>
                 <NavLink to="/my-bookings" className="nav-link">
                   <FaClipboardList className="nav-icon" /> Мої бронювання
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/my-payments" className="nav-link">
+                  <FaCreditCard className="nav-icon" /> Мої платежі {/* ✅ нова кнопка */}
                 </NavLink>
               </li>
               <li>
@@ -126,6 +132,11 @@ const Header = () => {
             <li>
               <NavLink onClick={closeOnNavigate} to="/my-bookings">
                 <FaClipboardList className="nav-icon" /> Мої бронювання
+              </NavLink>
+            </li>
+            <li>
+              <NavLink onClick={closeOnNavigate} to="/my-payments">
+                <FaCreditCard className="nav-icon" /> Мої платежі {/* ✅ нова кнопка */}
               </NavLink>
             </li>
             <li>

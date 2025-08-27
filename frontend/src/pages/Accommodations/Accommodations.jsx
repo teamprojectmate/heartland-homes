@@ -1,3 +1,4 @@
+// src/pages/Accommodations/Accommodations.jsx
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import AccommodationList from './AccommodationList';
@@ -19,26 +20,29 @@ const Accommodations = () => {
     (state) => state.accommodations
   );
 
-  // 🔹 завантаження даних при зміні фільтрів або сторінки
+  // 🔹 завантаження даних при зміні сторінки
   useEffect(() => {
     dispatch(loadAccommodations());
-  }, [dispatch, filters, page]);
+  }, [dispatch, page]);
 
   // 🔹 пошук по місту
   const handleSearch = ({ destination }) => {
     dispatch(setFilters({ city: destination?.trim() ? [destination.trim()] : [] }));
-    dispatch(setPage(0)); // скидати на першу сторінку
+    dispatch(setPage(0));
+    dispatch(loadAccommodations());
   };
 
   // 🔹 застосувати фільтри
   const handleApplyFilters = () => {
     dispatch(setPage(0));
+    dispatch(loadAccommodations());
   };
 
   // 🔹 скинути всі фільтри
   const handleResetFilters = () => {
     dispatch(resetFilters());
     dispatch(setPage(0));
+    dispatch(loadAccommodations());
   };
 
   return (
@@ -61,13 +65,13 @@ const Accommodations = () => {
 
         <AccommodationFilters
           cities={filters.city || []}
-          types={filters.types || []}
-          sizes={filters.sizes || []}
+          type={filters.type || []} // ✅ виправлено
+          size={filters.size || []} // ✅ виправлено
           minDailyRate={filters.minDailyRate || ''}
           maxDailyRate={filters.maxDailyRate || ''}
           setCities={(arr) => dispatch(setFilters({ city: arr }))}
-          setTypes={(val) => dispatch(setFilters({ types: val }))}
-          setSizes={(val) => dispatch(setFilters({ sizes: val }))}
+          setType={(val) => dispatch(setFilters({ type: val }))} // ✅ виправлено
+          setSize={(val) => dispatch(setFilters({ size: val }))} // ✅ виправлено
           setMinDailyRate={(val) =>
             dispatch(setFilters({ minDailyRate: val ? Number(val) : null }))
           }

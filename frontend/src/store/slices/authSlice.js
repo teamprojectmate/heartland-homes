@@ -1,11 +1,12 @@
-// src/store/slices/authSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../api/axios';
+import authService from '../../api/auth/authService';
 
 // ----- Initial State -----
 const savedAuth = localStorage.getItem('auth');
 const initialState = {
   token: savedAuth ? JSON.parse(savedAuth).token : null,
+  user: null, // ✅ юзер підтягнеться після /me
   isAuthenticated: !!savedAuth,
   loading: false,
   error: null
@@ -14,13 +15,20 @@ const initialState = {
 // ----- Login -----
 export const login = createAsyncThunk(
   'auth/login',
-  async ({ email, password }, { rejectWithValue }) => {
+  async ({ email, password }, { rejectWithValue, dispatch }) => {
     try {
-      const response = await api.post('/auth/login', { email, password });
-      if (response.data?.token) {
-        localStorage.setItem('auth', JSON.stringify({ token: response.data.token }));
-        return response.data.token;
+      const loginResponse = await authService.login(email, password);
+
+      if (loginResponse?.token) {
+        const token = loginResponse.token;
+        const user = await authService.getProfile(token);
+
+        const userData = { token, ...user };
+        localStorage.setItem('auth', JSON.stringify(userData));
+
+        return userData;
       }
+
       return rejectWithValue('Сервер не повернув токен');
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || 'Помилка логіну');
@@ -33,14 +41,13 @@ export const register = createAsyncThunk(
   'auth/register',
   async (formData, { rejectWithValue, dispatch }) => {
     try {
-      await api.post('/auth/registration', formData);
-      // після реєстрації одразу логін
+      await authService.register(formData);
+
+      // ⚡ одразу логін після реєстрації
       const result = await dispatch(
-        login({
-          email: formData.email,
-          password: formData.password
-        })
+        login({ email: formData.email, password: formData.password })
       ).unwrap();
+
       return result;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || 'Помилка реєстрації');
@@ -55,12 +62,12 @@ const authSlice = createSlice({
     logout: (state) => {
       localStorage.removeItem('auth');
       state.token = null;
+      state.user = null;
       state.isAuthenticated = false;
     }
   },
   extraReducers: (builder) => {
     builder
-      // ----- LOGIN -----
       .addCase(login.pending, (s) => {
         s.loading = true;
         s.error = null;
@@ -68,26 +75,17 @@ const authSlice = createSlice({
       .addCase(login.fulfilled, (s, { payload }) => {
         s.loading = false;
         s.isAuthenticated = true;
-        s.token = payload;
+        s.token = payload.token;
+        s.user = payload;
       })
       .addCase(login.rejected, (s, { payload }) => {
         s.loading = false;
         s.error = payload;
       })
-
-      // ----- REGISTER -----
-      .addCase(register.pending, (s) => {
-        s.loading = true;
-        s.error = null;
-      })
       .addCase(register.fulfilled, (s, { payload }) => {
-        s.loading = false;
         s.isAuthenticated = true;
-        s.token = payload;
-      })
-      .addCase(register.rejected, (s, { payload }) => {
-        s.loading = false;
-        s.error = payload;
+        s.token = payload.token;
+        s.user = payload;
       });
   }
 });

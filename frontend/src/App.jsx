@@ -1,124 +1,204 @@
-import React from 'react';
+// src/App.jsx
+import React, { Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
-// 🔹 Спільні компоненти
+// Спільні компоненти
 import Header from './components/Header.jsx';
 import Footer from './components/Footer.jsx';
-import TelegramNotifications from './components/TelegramNotifications.jsx';
+import Notification from './components/Notification.jsx';
+import PageWrapper from './components/PageWrapper.jsx';
 
-// 🔹 Auth
+// Auth
 import ProtectedRoute from './pages/Auth/ProtectedRoute.jsx';
 import Login from './pages/Auth/Login.jsx';
 import Register from './pages/Auth/Register.jsx';
 
-// 🔹 Accommodations
+// Accommodations
 import Accommodations from './pages/Accommodations/Accommodations.jsx';
 import AccommodationDetails from './pages/Accommodations/AccommodationDetails.jsx';
 
-// 🔹 User
-import Profile from './pages/User/Profile.jsx';
-import MyBookings from './pages/User/MyBookings.jsx';
-import Payment from './pages/User/Payment.jsx';
+// Lazy-loaded User/Admin
+const Profile = lazy(() => import('./pages/User/Profile.jsx'));
+const MyBookings = lazy(() => import('./pages/User/MyBookings.jsx'));
+const Payment = lazy(() => import('./pages/User/Payment.jsx'));
 
-// 🔹 Admin
-import AdminDashboard from './pages/Admin/AdminDashboard.jsx';
-import AdminAccommodations from './pages/Admin/AdminAccommodations.jsx';
-import CreateAccommodation from './pages/Accommodations/CreateAccommodation.jsx';
-import AdminEditAccommodation from './pages/Admin/AdminEditAccommodation.jsx';
-import AdminBookings from './pages/Admin/AdminBookings.jsx';
+const AdminDashboard = lazy(() => import('./pages/Admin/AdminDashboard.jsx'));
+const AdminAccommodations = lazy(() => import('./pages/Admin/AdminAccommodations.jsx'));
+const CreateAccommodation = lazy(
+  () => import('./pages/Accommodations/CreateAccommodation.jsx')
+);
+const AdminEditAccommodation = lazy(
+  () => import('./pages/Admin/AdminEditAccommodation.jsx')
+);
+const AdminBookings = lazy(() => import('./pages/Admin/AdminBookings.jsx'));
+
+// NotFound
+import NotFound from './pages/NotFound.jsx';
 
 import './styles/main.scss';
 
 function App() {
+  const { auth, user, bookings, accommodations, payments } = useSelector((s) => s);
+  const errors = [
+    auth.error,
+    user.error,
+    bookings.error,
+    accommodations.error,
+    payments.error
+  ].filter(Boolean);
+
   return (
     <div className="main-layout">
       <Header />
+
+      {/* глобальні повідомлення */}
+      {errors.map((err, idx) => (
+        <Notification key={idx} message={err} type="error" />
+      ))}
+
       <main className="main-content">
-        <Routes>
-          {/* Public routes */}
-          <Route path="/" element={<Accommodations />} />
-          <Route path="/accommodations" element={<Accommodations />} />
-          <Route path="/accommodations/:id" element={<AccommodationDetails />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+        <Suspense fallback={<p className="text-center mt-5">Завантаження...</p>}>
+          <Routes>
+            {/* Public routes */}
+            <Route
+              path="/"
+              element={
+                <PageWrapper title="Головна">
+                  <Accommodations />
+                </PageWrapper>
+              }
+            />
+            <Route
+              path="/accommodations"
+              element={
+                <PageWrapper title="Усі помешкання">
+                  <Accommodations />
+                </PageWrapper>
+              }
+            />
+            <Route
+              path="/accommodations/:id"
+              element={
+                <PageWrapper title="Деталі помешкання">
+                  <AccommodationDetails />
+                </PageWrapper>
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                <PageWrapper title="Вхід">
+                  <Login />
+                </PageWrapper>
+              }
+            />
+            <Route
+              path="/register"
+              element={
+                <PageWrapper title="Реєстрація">
+                  <Register />
+                </PageWrapper>
+              }
+            />
 
-          {/* User routes */}
-          <Route
-            path="/my-bookings"
-            element={
-              <ProtectedRoute>
-                <MyBookings />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/payment"
-            element={
-              <ProtectedRoute>
-                <Payment />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/telegram-notifications"
-            element={
-              <ProtectedRoute>
-                <TelegramNotifications />
-              </ProtectedRoute>
-            }
-          />
+            {/* User routes */}
+            <Route
+              path="/my-bookings"
+              element={
+                <ProtectedRoute>
+                  <PageWrapper title="Мої бронювання">
+                    <MyBookings />
+                  </PageWrapper>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <PageWrapper title="Мій профіль">
+                    <Profile />
+                  </PageWrapper>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/payment/:bookingId"
+              element={
+                <ProtectedRoute>
+                  <PageWrapper title="Оплата">
+                    <Payment />
+                  </PageWrapper>
+                </ProtectedRoute>
+              }
+            />
 
-          {/* Admin routes */}
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute requiredRole="MANAGER">
-                <AdminDashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/accommodations"
-            element={
-              <ProtectedRoute requiredRole="MANAGER">
-                <AdminAccommodations />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/accommodations/new"
-            element={
-              <ProtectedRoute requiredRole="MANAGER">
-                <CreateAccommodation />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/accommodations/edit/:id"
-            element={
-              <ProtectedRoute requiredRole="MANAGER">
-                <AdminEditAccommodation />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/bookings"
-            element={
-              <ProtectedRoute requiredRole="MANAGER">
-                <AdminBookings />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
+            {/* Admin routes */}
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute requiredRole="MANAGER">
+                  <PageWrapper title="Адмін-панель">
+                    <AdminDashboard />
+                  </PageWrapper>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/accommodations"
+              element={
+                <ProtectedRoute requiredRole="MANAGER">
+                  <PageWrapper title="Адмін: Помешкання">
+                    <AdminAccommodations />
+                  </PageWrapper>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/accommodations/new"
+              element={
+                <ProtectedRoute requiredRole="MANAGER">
+                  <PageWrapper title="Адмін: Нове помешкання">
+                    <CreateAccommodation />
+                  </PageWrapper>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/accommodations/edit/:id"
+              element={
+                <ProtectedRoute requiredRole="MANAGER">
+                  <PageWrapper title="Адмін: Редагування помешкання">
+                    <AdminEditAccommodation />
+                  </PageWrapper>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/bookings"
+              element={
+                <ProtectedRoute requiredRole="MANAGER">
+                  <PageWrapper title="Адмін: Бронювання">
+                    <AdminBookings />
+                  </PageWrapper>
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Catch-all */}
+            <Route
+              path="*"
+              element={
+                <PageWrapper title="Сторінку не знайдено">
+                  <NotFound />
+                </PageWrapper>
+              }
+            />
+          </Routes>
+        </Suspense>
       </main>
+
       <Footer />
     </div>
   );

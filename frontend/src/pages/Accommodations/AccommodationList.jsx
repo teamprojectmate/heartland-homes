@@ -1,5 +1,19 @@
+// src/pages/Accommodations/AccommodationList.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
+
+// ✅ Утиліта для виправлення Dropbox URL (отримуємо raw-зображення)
+const fixDropboxUrl = (url) => {
+  if (!url) return '';
+  return url.replace('dl=0', 'raw=1');
+};
+
+// ✅ Мапа статусів → кольори та тексти
+const statusLabels = {
+  PENDING: { text: 'Очікує', className: 'badge-pending' },
+  PAID: { text: 'Оплачено', className: 'badge-paid' },
+  CANCELLED: { text: 'Скасовано', className: 'badge-cancelled' }
+};
 
 const AccommodationList = ({ accommodations }) => {
   if (!accommodations || accommodations.length === 0) {
@@ -7,38 +21,42 @@ const AccommodationList = ({ accommodations }) => {
   }
 
   return (
-    <div className="row">
+    <div className="cards-grid">
       {accommodations.map((acc) => (
-        <div key={acc.id} className="col-md-4 mb-4">
-          <div className="card card-custom h-100">
-            {acc.image ? (
-              <img
-                src={acc.image}
-                alt={acc.location}
-                className="card-img-top card-img-top-custom"
-              />
-            ) : (
-              <div className="card-img-placeholder">Без зображення</div>
-            )}
+        <div key={acc.id} className="card-custom">
+          {acc.image ? (
+            <img
+              src={fixDropboxUrl(acc.image)}
+              alt={acc.location}
+              className="card-img-top-custom"
+            />
+          ) : (
+            <div className="card-img-placeholder">Без зображення</div>
+          )}
 
-            <div className="card-body d-flex flex-column">
-              <h5 className="card-title">{acc.location}</h5>
-              <p className="text-muted">
-                {acc.city} • {acc.type}
-              </p>
-              <p>
-                <strong>Ціна:</strong> {acc.dailyRate}$ / доба
-              </p>
-              <p>
-                <strong>Розмір:</strong> {acc.size}
-              </p>
+          <div className="card-body">
+            <h5 className="card-title">{acc.location}</h5>
 
-              <div className="mt-auto">
-                <Link to={`/accommodations/${acc.id}`} className="btn-primary w-100">
-                  Детальніше
-                </Link>
-              </div>
+            {/* 🏷️ бейджі */}
+            <div className="card-badges">
+              <span className="badge badge-type">{acc.type}</span>
+              <span className="badge badge-size">{acc.size}</span>
+
+              {/* 🔹 статус, якщо бекенд повернув */}
+              {acc.status && (
+                <span className={`badge ${statusLabels[acc.status]?.className || ''}`}>
+                  {statusLabels[acc.status]?.text || acc.status}
+                </span>
+              )}
             </div>
+
+            <p className="text-muted">{acc.city}</p>
+
+            <p className="card-price">{acc.dailyRate} грн / доба</p>
+
+            <Link to={`/accommodations/${acc.id}`} className="btn btn-primary w-100">
+              Детальніше
+            </Link>
           </div>
         </div>
       ))}
