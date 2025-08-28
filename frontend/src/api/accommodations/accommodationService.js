@@ -1,33 +1,49 @@
 // src/api/accommodations/accommodationService.js
 import api from '../axios';
 
+// 🔹 Отримати житло з фільтрами (пошук)
 export const fetchAccommodations = async (filters) => {
-  let params = {
-    city: filters.city?.length ? filters.city.map((c) => c.trim()) : undefined,
+  // Формуємо searchParameters
+  const searchParams = {
+    city: filters.city?.length ? filters.city.map((c) => c.trim()) : [],
     type: filters.type?.length
       ? filters.type.map((t) => t.trim().toUpperCase())
-      : undefined,
+      : [],
     size: filters.size?.length
       ? filters.size.map((s) => s.trim().toUpperCase())
-      : undefined,
-    minDailyRate: filters.minDailyRate || undefined,
-    maxDailyRate: filters.maxDailyRate || undefined,
-    page: filters.page ?? 0,
-    size: filters.sizePage ?? 10,
-    sort: filters.sort || []
+      : [],
+    minDailyRate:
+      filters.minDailyRate !== undefined ? Number(filters.minDailyRate) : null,
+    maxDailyRate:
+      filters.maxDailyRate !== undefined ? Number(filters.maxDailyRate) : null,
   };
 
-  // 🔹 Видаляємо пусті ключі
-  Object.keys(params).forEach((key) => {
-    if (params[key] === undefined || params[key] === null) {
-      delete params[key];
+  // 🔹 Видаляємо порожні ключі
+  Object.keys(searchParams).forEach((key) => {
+    if (
+      searchParams[key] === undefined ||
+      searchParams[key] === null ||
+      (Array.isArray(searchParams[key]) && searchParams[key].length === 0)
+    ) {
+      delete searchParams[key];
     }
   });
 
-  console.log('📤 Відправляю на бекенд (query params):', params);
+  // Формуємо body для POST
+  const body = {
+    searchParameters: searchParams,
+    pageable: {
+      page: filters.page ?? 0,
+      size: filters.sizePage ?? 10,
+      sort: filters.sort || [],
+    },
+  };
+
+  console.log('📤 Відправляю на бекенд (body):', JSON.stringify(body, null, 2));
 
   try {
-    const response = await api.get('/accommodations/search', { params });
+    const response = await api.post('/accommodations/search', body);
+    console.log('✅ Відповідь від бекенду:', response.data);
     return response.data;
   } catch (err) {
     console.error(
@@ -47,7 +63,7 @@ export const getAccommodationById = async (id) => {
 // 🔹 Створити житло
 export const createAccommodation = async (formData, token) => {
   const response = await api.post('/accommodations', formData, {
-    headers: { Authorization: `Bearer ${token}` }
+    headers: { Authorization: `Bearer ${token}` },
   });
   return response.data;
 };
@@ -55,7 +71,7 @@ export const createAccommodation = async (formData, token) => {
 // 🔹 Оновити житло
 export const updateAccommodation = async (id, formData, token) => {
   const response = await api.put(`/accommodations/${id}`, formData, {
-    headers: { Authorization: `Bearer ${token}` }
+    headers: { Authorization: `Bearer ${token}` },
   });
   return response.data;
 };
@@ -64,7 +80,7 @@ export const updateAccommodation = async (id, formData, token) => {
 export const fetchAdminAccommodations = async (token, page = 0, size = 10) => {
   const response = await api.get('/accommodations', {
     headers: { Authorization: `Bearer ${token}` },
-    params: { page, size }
+    params: { page, size },
   });
   return response.data;
 };
