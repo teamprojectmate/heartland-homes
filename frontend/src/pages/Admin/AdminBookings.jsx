@@ -1,4 +1,3 @@
-// src/pages/Admin/AdminBookings.jsx
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -9,7 +8,7 @@ import {
   updateBooking
 } from '../../store/slices/bookingsSlice';
 import Pagination from '../../components/Pagination';
-import { getStatusLabel } from '../../utils/statusLabels';
+import StatusBadge from '../../components/StatusBadge';
 import '../../styles/components/_admin.scss';
 
 const AdminBookings = () => {
@@ -31,7 +30,7 @@ const AdminBookings = () => {
   }, [user, navigate, dispatch]);
 
   const handleCancelBooking = async (id) => {
-    await dispatch(deleteBooking(id));
+    await dispatch(deleteBooking({ id }));
     dispatch(fetchBookings({ page, size: 10 }));
     setConfirmCancelId(null);
   };
@@ -77,41 +76,38 @@ const AdminBookings = () => {
               </tr>
             </thead>
             <tbody>
-              {bookings.map((booking) => {
-                const label = getStatusLabel(booking.status);
-                return (
-                  <tr key={booking.id}>
-                    <td>{booking.id}</td>
-                    <td>{booking.accommodationId}</td>
-                    <td>{booking.userId}</td>
-                    <td>
-                      {new Date(booking.checkInDate).toLocaleDateString()} –{' '}
-                      {new Date(booking.checkOutDate).toLocaleDateString()}
-                    </td>
-                    <td>
-                      <span className={`badge ${label.className}`}>{label.text}</span>
-                    </td>
-                    <td>
-                      {booking.status !== 'PAID' ? (
-                        <button
-                          onClick={() => handleMarkAsPaid(booking)}
-                          className="btn-primary btn-sm"
-                        >
-                          Позначити як оплачене
-                        </button>
-                      ) : (
-                        <span className="text-success">Оплачено</span>
-                      )}
+              {bookings.map((booking) => (
+                <tr key={booking.id}>
+                  <td>{booking.id}</td>
+                  <td>{booking.accommodationId}</td>
+                  <td>{booking.userId}</td>
+                  <td>
+                    {new Date(booking.checkInDate).toLocaleDateString()} –{' '}
+                    {new Date(booking.checkOutDate).toLocaleDateString()}
+                  </td>
+                  <td>
+                    <StatusBadge status={booking.status} />
+                  </td>
+                  <td>
+                    {booking.status !== 'PAID' ? (
                       <button
-                        onClick={() => setConfirmCancelId(booking.id)}
-                        className="btn-danger btn-sm btn-action"
+                        onClick={() => handleMarkAsPaid(booking)}
+                        className="btn-primary btn-sm"
                       >
-                        Скасувати
+                        Позначити як оплачене
                       </button>
-                    </td>
-                  </tr>
-                );
-              })}
+                    ) : (
+                      <span className="text-success">Оплачено</span>
+                    )}
+                    <button
+                      onClick={() => setConfirmCancelId(booking.id)}
+                      className="btn-danger btn-sm btn-action"
+                    >
+                      Скасувати
+                    </button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
 

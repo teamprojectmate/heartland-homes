@@ -1,37 +1,41 @@
 // src/api/accommodations/accommodationService.js
 import api from '../axios';
 
-// 🔹 Пошук житла (користувач, з фільтрами та пагінацією)
 export const fetchAccommodations = async (filters) => {
-  const body = {
-    searchParameters: {
-      city: Array.isArray(filters.city)
-        ? filters.city
-        : filters.city
-          ? [filters.city]
-          : [],
-      type: Array.isArray(filters.type)
-        ? filters.type
-        : filters.type
-          ? [filters.type]
-          : [],
-      size: Array.isArray(filters.size)
-        ? filters.size
-        : filters.size
-          ? [filters.size]
-          : [],
-      minDailyRate: Number.isFinite(filters.minDailyRate) ? filters.minDailyRate : 0,
-      maxDailyRate: Number.isFinite(filters.maxDailyRate) ? filters.maxDailyRate : 10000
-    },
-    pageable: {
-      page: filters.page ?? 0,
-      size: filters.sizePage ?? 10,
-      sort: filters.sort || [] // бекенд сам відсортує, якщо пусто
-    }
+  let params = {
+    city: filters.city?.length ? filters.city.map((c) => c.trim()) : undefined,
+    type: filters.type?.length
+      ? filters.type.map((t) => t.trim().toUpperCase())
+      : undefined,
+    size: filters.size?.length
+      ? filters.size.map((s) => s.trim().toUpperCase())
+      : undefined,
+    minDailyRate: filters.minDailyRate || undefined,
+    maxDailyRate: filters.maxDailyRate || undefined,
+    page: filters.page ?? 0,
+    size: filters.sizePage ?? 10,
+    sort: filters.sort || []
   };
 
-  const response = await api.post('/accommodations/search', body);
-  return response.data;
+  // 🔹 Видаляємо пусті ключі
+  Object.keys(params).forEach((key) => {
+    if (params[key] === undefined || params[key] === null) {
+      delete params[key];
+    }
+  });
+
+  console.log('📤 Відправляю на бекенд (query params):', params);
+
+  try {
+    const response = await api.get('/accommodations/search', { params });
+    return response.data;
+  } catch (err) {
+    console.error(
+      '❌ Помилка при запиті /accommodations/search:',
+      err.response?.data || err.message
+    );
+    throw err;
+  }
 };
 
 // 🔹 Отримати деталі житла

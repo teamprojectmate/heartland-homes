@@ -1,4 +1,3 @@
-// src/components/BookingForm.jsx
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -42,7 +41,7 @@ const BookingForm = ({ accommodationId }) => {
 
     if (createBooking.fulfilled.match(resultAction)) {
       setTimeout(() => {
-        navigate('/my-bookings'); // ✅ редірект
+        navigate('/my-bookings');
       }, 1000);
     } else if (createBooking.rejected.match(resultAction)) {
       setError(resultAction.payload);

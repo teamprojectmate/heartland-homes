@@ -1,4 +1,3 @@
-// src/components/SearchForm.jsx
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -14,20 +13,22 @@ const SearchForm = () => {
   const { filters, page, size } = useSelector((state) => state.accommodations);
 
   const [formData, setFormData] = useState({
-    city: filters.city[0] || '',
-    type: filters.type[0] || '',
-    size: filters.size[0] || '',
-    minDailyRate: filters.minDailyRate || 0,
-    maxDailyRate: filters.maxDailyRate || 10000,
-    page: page,
+    city: filters.city.length > 0 ? filters.city[0] : '',
+    type: filters.type.length > 0 ? filters.type[0] : '',
+    size: filters.size.length > 0 ? filters.size[0] : '', // ✅ тільки перший елемент
+    minDailyRate: filters.minDailyRate ?? '',
+    maxDailyRate: filters.maxDailyRate ?? '',
+    page,
     sizePage: size
   });
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   const handleSubmit = (e) => {
@@ -38,16 +39,13 @@ const SearchForm = () => {
       setFilters({
         city: formData.city ? [formData.city] : [],
         type: formData.type ? [formData.type] : [],
-        size: formData.size ? [formData.size] : [],
-        minDailyRate: Number(formData.minDailyRate),
-        maxDailyRate: Number(formData.maxDailyRate)
+        size: formData.size ? [formData.size] : [], // ✅ завжди масив
+        minDailyRate: formData.minDailyRate ? Number(formData.minDailyRate) : undefined,
+        maxDailyRate: formData.maxDailyRate ? Number(formData.maxDailyRate) : undefined
       })
     );
 
-    // 🔹 Скидаємо сторінку на 0
     dispatch(setPage(0));
-
-    // 🔹 Завантажуємо дані
     dispatch(loadAccommodations());
   };
 
@@ -61,38 +59,45 @@ const SearchForm = () => {
           id="city"
           name="city"
           className="form-control"
-          placeholder="Наприклад, Київ"
+          placeholder="Наприклад, Kyiv"
           value={formData.city}
           onChange={handleChange}
         />
       </div>
 
-      {/* Тип */}
+      {/* Тип житла */}
       <div className="search-input-group">
         <label htmlFor="type">Тип</label>
-        <input
-          type="text"
+        <select
           id="type"
           name="type"
           className="form-control"
-          placeholder="HOUSE, APARTMENT..."
           value={formData.type}
           onChange={handleChange}
-        />
+        >
+          <option value="">Будь-який</option>
+          <option value="HOUSE">House</option>
+          <option value="APARTMENT">Apartment</option>
+          <option value="CONDO">Condo</option>
+          <option value="VACATION_HOME">Vacation Home</option>
+        </select>
       </div>
 
       {/* Розмір */}
       <div className="search-input-group">
         <label htmlFor="size">Розмір</label>
-        <input
-          type="text"
+        <select
           id="size"
           name="size"
           className="form-control"
-          placeholder="Small, Medium..."
-          value={formData.size}
+          value={formData.size} // ✅ рядок
           onChange={handleChange}
-        />
+        >
+          <option value="">Будь-який</option>
+          <option value="SMALL">Small</option>
+          <option value="MEDIUM">Medium</option>
+          <option value="LARGE">Large</option>
+        </select>
       </div>
 
       {/* Ціна від */}

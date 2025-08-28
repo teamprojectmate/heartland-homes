@@ -1,11 +1,10 @@
-// src/pages/User/MyBookings.jsx
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Notification from '../../components/Notification';
 import { fetchMyBookings } from '../../store/slices/bookingsSlice';
 import Pagination from '../../components/Pagination';
-import { getStatusLabel } from '../../utils/statusLabels';
+import StatusBadge from '../../components/StatusBadge';
 import '../../styles/components/_cards.scss';
 
 const MyBookings = () => {
@@ -47,26 +46,20 @@ const MyBookings = () => {
         <div className="col">
           {bookings.length > 0 ? (
             <>
-              {bookings.map((booking) => {
-                const label = getStatusLabel(booking.status);
-                return (
-                  <div key={booking.id} className="card card-custom my-3">
-                    <div className="card-body">
-                      <h4 className="card-title">
-                        Помешкання #{booking.accommodationId}
-                      </h4>
-                      <p className="card-text">
-                        Дати: {new Date(booking.checkInDate).toLocaleDateString()} –{' '}
-                        {new Date(booking.checkOutDate).toLocaleDateString()}
-                      </p>
-                      <p className="card-text">
-                        Статус:{' '}
-                        <span className={`badge ${label.className}`}>{label.text}</span>
-                      </p>
-                    </div>
+              {bookings.map((booking) => (
+                <div key={booking.id} className="card card-custom my-3">
+                  <div className="card-body">
+                    <h4 className="card-title">Помешкання #{booking.accommodationId}</h4>
+                    <p className="card-text">
+                      Дати: {new Date(booking.checkInDate).toLocaleDateString()} –{' '}
+                      {new Date(booking.checkOutDate).toLocaleDateString()}
+                    </p>
+                    <p className="card-text">
+                      Статус: <StatusBadge status={booking.status} />
+                    </p>
                   </div>
-                );
-              })}
+                </div>
+              ))}
 
               {totalPages > 1 && (
                 <Pagination
