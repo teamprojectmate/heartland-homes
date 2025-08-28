@@ -39,13 +39,19 @@ import NotFound from './pages/NotFound.jsx';
 import './styles/main.scss';
 
 function App() {
-  const { auth, user, bookings, accommodations, payments } = useSelector((s) => s);
+  // 🔹 Виправлено: тепер беремо слайси окремо, а не весь state
+  const auth = useSelector((state) => state.auth);
+  const user = useSelector((state) => state.user);
+  const bookings = useSelector((state) => state.bookings);
+  const accommodations = useSelector((state) => state.accommodations);
+  const payments = useSelector((state) => state.payments);
+
   const errors = [
-    auth.error,
-    user.error,
-    bookings.error,
-    accommodations.error,
-    payments.error
+    auth?.error,
+    user?.error,
+    bookings?.error,
+    accommodations?.error,
+    payments?.error
   ].filter(Boolean);
 
   return (

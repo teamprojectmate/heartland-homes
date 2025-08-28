@@ -1,4 +1,3 @@
-// src/store/slices/bookingsSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../api/axios';
 
@@ -17,11 +16,9 @@ const initialState = {
 // ----- Create booking -----
 export const createBooking = createAsyncThunk(
   'bookings/createBooking',
-  async ({ bookingData, token }, { rejectWithValue }) => {
+  async (bookingData, { rejectWithValue }) => {
     try {
-      const response = await api.post('/bookings', bookingData, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await api.post('/bookings', bookingData);
       return response.data;
     } catch (err) {
       return rejectWithValue(
@@ -34,12 +31,9 @@ export const createBooking = createAsyncThunk(
 // ----- Fetch current user's bookings (with pagination) -----
 export const fetchMyBookings = createAsyncThunk(
   'bookings/fetchMyBookings',
-  async ({ page = 0, size = 5, token }, { rejectWithValue }) => {
+  async ({ page = 0, size = 5 }, { rejectWithValue }) => {
     try {
-      const response = await api.get('/bookings/my', {
-        params: { page, size },
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await api.get('/bookings/my', { params: { page, size } });
       return response.data; // PageBookingDto
     } catch (err) {
       return rejectWithValue(
@@ -52,11 +46,10 @@ export const fetchMyBookings = createAsyncThunk(
 // ----- Fetch all bookings (admin) -----
 export const fetchBookings = createAsyncThunk(
   'bookings/fetchBookings',
-  async ({ page = 0, size = 10, user_id, status, token } = {}, { rejectWithValue }) => {
+  async ({ page = 0, size = 10, user_id, status } = {}, { rejectWithValue }) => {
     try {
       const response = await api.get('/bookings', {
-        params: { page, size, user_id, status },
-        headers: { Authorization: `Bearer ${token}` }
+        params: { page, size, user_id, status }
       });
       return response.data;
     } catch (err) {
@@ -70,11 +63,9 @@ export const fetchBookings = createAsyncThunk(
 // ----- Fetch booking by ID -----
 export const fetchBookingById = createAsyncThunk(
   'bookings/fetchBookingById',
-  async ({ id, token }, { rejectWithValue }) => {
+  async (id, { rejectWithValue }) => {
     try {
-      const response = await api.get(`/bookings/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await api.get(`/bookings/${id}`);
       return response.data;
     } catch (err) {
       return rejectWithValue(
@@ -87,11 +78,9 @@ export const fetchBookingById = createAsyncThunk(
 // ----- Update booking -----
 export const updateBooking = createAsyncThunk(
   'bookings/updateBooking',
-  async ({ id, bookingData, token }, { rejectWithValue }) => {
+  async ({ id, bookingData }, { rejectWithValue }) => {
     try {
-      const response = await api.put(`/bookings/${id}`, bookingData, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await api.put(`/bookings/${id}`, bookingData);
       return response.data;
     } catch (err) {
       return rejectWithValue(
@@ -104,11 +93,9 @@ export const updateBooking = createAsyncThunk(
 // ----- Delete booking -----
 export const deleteBooking = createAsyncThunk(
   'bookings/deleteBooking',
-  async ({ id, token }, { rejectWithValue }) => {
+  async (id, { rejectWithValue }) => {
     try {
-      await api.delete(`/bookings/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await api.delete(`/bookings/${id}`);
       return id;
     } catch (err) {
       return rejectWithValue(

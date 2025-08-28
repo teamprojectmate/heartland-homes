@@ -1,4 +1,3 @@
-// src/pages/Accommodations/AccommodationFilters.jsx
 import React from 'react';
 import { Filter, RotateCcw } from 'lucide-react';
 import '../../styles/components/_forms.scss';
@@ -7,19 +6,19 @@ import '../../styles/components/_filters.scss';
 
 const AccommodationFilters = ({
   cities,
-  type, // ✅ замінили
-  size, // ✅ замінили
+  type,
+  size,
   minDailyRate,
   maxDailyRate,
   setCities,
-  setType, // ✅ замінили
-  setSize, // ✅ замінили
+  setType,
+  setSize,
   setMinDailyRate,
   setMaxDailyRate,
   onApplyFilters,
   onResetFilters
 }) => {
-  // 🔹 Обробка міста (одне місто)
+  // 🔹 Обробка міста
   const handleCityChange = (e) => {
     const value = e.target.value.trim();
     setCities(value ? [value] : []);
@@ -35,14 +34,10 @@ const AccommodationFilters = ({
     }
   };
 
-  // 🔹 Обробка розміру (масив)
+  // 🔹 Обробка розміру (select → завжди масив)
   const handleSizeChange = (e) => {
-    setSize(
-      e.target.value
-        .split(',')
-        .map((s) => s.trim())
-        .filter(Boolean)
-    );
+    const value = e.target.value;
+    setSize(value ? [value] : []); // ✅ гарантуємо масив
   };
 
   return (
@@ -67,55 +62,36 @@ const AccommodationFilters = ({
           <div className="filter-item">
             <label>Тип житла</label>
             <div className="form-check-group">
-              <label className="form-check">
-                <input
-                  type="checkbox"
-                  value="HOUSE"
-                  checked={type.includes('HOUSE')}
-                  onChange={handleTypeChange}
-                />
-                Будинок
-              </label>
-              <label className="form-check">
-                <input
-                  type="checkbox"
-                  value="APARTMENT"
-                  checked={type.includes('APARTMENT')}
-                  onChange={handleTypeChange}
-                />
-                Квартира
-              </label>
-              <label className="form-check">
-                <input
-                  type="checkbox"
-                  value="CONDO"
-                  checked={type.includes('CONDO')}
-                  onChange={handleTypeChange}
-                />
-                Кондо
-              </label>
-              <label className="form-check">
-                <input
-                  type="checkbox"
-                  value="VACATION_HOME"
-                  checked={type.includes('VACATION_HOME')}
-                  onChange={handleTypeChange}
-                />
-                Дім для відпочинку
-              </label>
+              {['HOUSE', 'APARTMENT', 'CONDO', 'VACATION_HOME'].map((t) => (
+                <label className="form-check" key={t}>
+                  <input
+                    type="checkbox"
+                    value={t}
+                    checked={type.includes(t)}
+                    onChange={handleTypeChange}
+                  />
+                  {t === 'HOUSE' && 'Будинок'}
+                  {t === 'APARTMENT' && 'Квартира'}
+                  {t === 'CONDO' && 'Кондо'}
+                  {t === 'VACATION_HOME' && 'Дім для відпочинку'}
+                </label>
+              ))}
             </div>
           </div>
 
           {/* Розмір */}
           <div className="filter-item">
-            <label>Кількість кімнат</label>
-            <input
-              type="text"
+            <label>Розмір</label>
+            <select
               className="form-control"
-              placeholder="Наприклад 2 Bedroom, 3 Bedroom"
-              value={size.join(', ')}
+              value={size[0] || ''} // ✅ беремо перший елемент
               onChange={handleSizeChange}
-            />
+            >
+              <option value="">Будь-який</option>
+              <option value="SMALL">Маленький</option>
+              <option value="MEDIUM">Середній</option>
+              <option value="LARGE">Великий</option>
+            </select>
           </div>
 
           {/* Ціна від */}
@@ -125,7 +101,7 @@ const AccommodationFilters = ({
               type="number"
               className="form-control"
               placeholder="Від, грн"
-              value={minDailyRate}
+              value={minDailyRate || ''}
               onChange={(e) => setMinDailyRate(e.target.value)}
             />
           </div>
@@ -137,7 +113,7 @@ const AccommodationFilters = ({
               type="number"
               className="form-control"
               placeholder="До, грн"
-              value={maxDailyRate}
+              value={maxDailyRate || ''}
               onChange={(e) => setMaxDailyRate(e.target.value)}
             />
           </div>

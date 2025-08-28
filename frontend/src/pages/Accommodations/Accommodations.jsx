@@ -65,13 +65,13 @@ const Accommodations = () => {
 
         <AccommodationFilters
           cities={filters.city || []}
-          type={filters.type || []} // ✅ виправлено
-          size={filters.size || []} // ✅ виправлено
+          type={filters.type || []}
+          size={filters.size || ''}
           minDailyRate={filters.minDailyRate || ''}
           maxDailyRate={filters.maxDailyRate || ''}
-          setCities={(arr) => dispatch(setFilters({ city: arr }))}
-          setType={(val) => dispatch(setFilters({ type: val }))} // ✅ виправлено
-          setSize={(val) => dispatch(setFilters({ size: val }))} // ✅ виправлено
+          ssetCities={(arr) => dispatch(setFilters({ city: arr }))}
+          setType={(val) => dispatch(setFilters({ type: val ? [val] : [] }))}
+          setSize={(val) => dispatch(setFilters({ size: val ? [val] : [] }))}
           setMinDailyRate={(val) =>
             dispatch(setFilters({ minDailyRate: val ? Number(val) : null }))
           }
