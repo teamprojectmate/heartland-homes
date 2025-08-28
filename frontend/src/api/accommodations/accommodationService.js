@@ -1,48 +1,34 @@
 // src/api/accommodations/accommodationService.js
 import api from '../axios';
 
-// 🔹 Отримати житло з фільтрами (пошук)
 export const fetchAccommodations = async (filters) => {
-  // Формуємо searchParameters
-  const searchParams = {
-    city: filters.city?.length ? filters.city.map((c) => c.trim()) : [],
-    type: filters.type?.length
-      ? filters.type.map((t) => t.trim().toUpperCase())
-      : [],
-    size: filters.size?.length
-      ? filters.size.map((s) => s.trim().toUpperCase())
-      : [],
-    minDailyRate:
-      filters.minDailyRate !== undefined ? Number(filters.minDailyRate) : null,
-    maxDailyRate:
-      filters.maxDailyRate !== undefined ? Number(filters.maxDailyRate) : null,
+  const params = {
+    'searchParameters.city': filters.city?.length ? JSON.stringify(filters.city.map((c) => c.trim())) : undefined,
+    'searchParameters.type': filters.type?.length ? JSON.stringify(filters.type.map((t) => t.trim().toUpperCase())) : undefined,
+    'searchParameters.size': filters.size?.length ? JSON.stringify(filters.size.map((s) => s.trim().toUpperCase())) : undefined,
+    'searchParameters.minDailyRate': filters.minDailyRate ?? undefined,
+    'searchParameters.maxDailyRate': filters.maxDailyRate ?? undefined,
+
+    'pageable.page': filters.page ?? 0,
+    'pageable.size': filters.sizePage ?? 10,
+    'pageable.sort': filters.sort?.length ? JSON.stringify(filters.sort) : undefined
   };
 
-  // 🔹 Видаляємо порожні ключі
-  Object.keys(searchParams).forEach((key) => {
+  // 🔹 Видаляємо пусті ключі
+  Object.keys(params).forEach((key) => {
     if (
-      searchParams[key] === undefined ||
-      searchParams[key] === null ||
-      (Array.isArray(searchParams[key]) && searchParams[key].length === 0)
+      params[key] === undefined ||
+      params[key] === null ||
+      (Array.isArray(params[key]) && params[key].length === 0)
     ) {
-      delete searchParams[key];
+      delete params[key];
     }
   });
 
-  // Формуємо body для POST
-  const body = {
-    searchParameters: searchParams,
-    pageable: {
-      page: filters.page ?? 0,
-      size: filters.sizePage ?? 10,
-      sort: filters.sort || [],
-    },
-  };
-
-  console.log('📤 Відправляю на бекенд (body):', JSON.stringify(body, null, 2));
+  console.log('📤 Відправляю на бекенд (query params):', params);
 
   try {
-    const response = await api.post('/accommodations/search', body);
+    const response = await api.get('/accommodations/search', { params });
     console.log('✅ Відповідь від бекенду:', response.data);
     return response.data;
   } catch (err) {
