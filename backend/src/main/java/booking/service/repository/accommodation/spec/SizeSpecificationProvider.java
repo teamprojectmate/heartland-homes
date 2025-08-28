@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class SizeSpecificationProvider implements SpecificationProvider<Accommodation, String[]> {
 
-    private static final String SIZE = "size";
+    private static final String SIZE = "accommodationSize";
 
     @Override
     public String getKey() {

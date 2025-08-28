@@ -69,7 +69,7 @@ public class AccommodationController {
         accommodationService.deleteById(id);
     }
 
-    @PostMapping("/search")
+    @GetMapping("/search")
     @Operation(summary = "Search accommodations",
             description = "Search accommodations by selected parameters with pagination")
     public Page<AccommodationDto> search(

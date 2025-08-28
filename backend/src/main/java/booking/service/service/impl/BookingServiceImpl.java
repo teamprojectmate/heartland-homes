@@ -40,9 +40,8 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public BookingDto create(CreateBookingRequestDto requestDto, Authentication authentication) {
         validateBookingDates(requestDto.getCheckInDate(), requestDto.getCheckOutDate());
-
-        Accommodation accommodation = accommodationRepository.findById(
-                        requestDto.getAccommodationId())
+        Accommodation accommodation = accommodationRepository
+                .findById(requestDto.getAccommodationId())
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Accommodation not found with id: " + requestDto.getAccommodationId()));
 
@@ -54,20 +53,9 @@ public class BookingServiceImpl implements BookingService {
             throw new IllegalStateException("Accommodation is already booked for these dates.");
         }
 
-        User currentUser = (User) authentication.getPrincipal();
-        User bookingUser;
-        if (isManager(currentUser)) {
-            bookingUser = userRepository.findById(requestDto.getUserId())
-                    .orElseThrow(() -> new EntityNotFoundException(
-                            "User not found with id: " + requestDto.getUserId()));
-        } else {
-            if (requestDto.getUserId() != null
-                    && !requestDto.getUserId().equals(currentUser.getId())) {
-                throw new AccessDeniedException(
-                        "You are not allowed to create bookings for other users.");
-            }
-            bookingUser = currentUser;
-        }
+        User bookingUser = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "User not found with email: " + authentication.getName()));
 
         if (paymentRepository.existsUnpaidPaymentsByUserId(bookingUser.getId())) {
             throw new UnpaidPaymentException(
@@ -171,11 +159,8 @@ public class BookingServiceImpl implements BookingService {
             Accommodation accommodation = accommodationRepository.findById(
                             requestDto.getAccommodationId())
                     .orElseThrow(() -> new EntityNotFoundException("Accommodation not found"));
-            User user = userRepository.findById(requestDto.getUserId())
-                    .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
             booking.setAccommodation(accommodation);
-            booking.setUser(user);
 
         } else {
             if (!booking.getUser().getId().equals(currentUser.getId())) {
@@ -183,13 +168,6 @@ public class BookingServiceImpl implements BookingService {
             }
             if (!booking.getAccommodation().getId().equals(requestDto.getAccommodationId())) {
                 throw new AccessDeniedException("You cannot change accommodation");
-            }
-            if (!booking.getUser().getId().equals(requestDto.getUserId())) {
-                throw new AccessDeniedException("You cannot change user");
-            }
-            if (requestDto.getStatus() != null && !requestDto.getStatus()
-                    .equals(booking.getStatus())) {
-                throw new AccessDeniedException("You cannot change booking status");
             }
             booking.setCheckInDate(requestDto.getCheckInDate());
             booking.setCheckOutDate(requestDto.getCheckOutDate());

@@ -1,6 +1,5 @@
 package booking.service.dto.booking;
 
-import booking.service.model.BookingStatus;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -21,10 +20,4 @@ public class CreateBookingRequestDto {
 
     @NotNull
     private Long accommodationId;
-
-    @NotNull
-    private Long userId;
-
-    @NotNull
-    private BookingStatus status;
 }
