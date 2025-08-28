@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 
 public record AccommodationSearchParametersDto(
         String[] city,
-        String[] size,
+        String[] accommodationSize,
         AccommodationType[] type,
         BigDecimal minDailyRate,
         BigDecimal maxDailyRate

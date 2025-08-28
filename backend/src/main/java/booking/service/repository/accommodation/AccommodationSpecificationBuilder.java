@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 public class AccommodationSpecificationBuilder implements SpecificationBuilder<Accommodation> {
 
     private static final String CITY = "city";
-    private static final String SIZE = "size";
+    private static final String SIZE = "accommodationSize";
     private static final String TYPE = "type";
     private static final String DAILY_RATE = "dailyRate";
 
@@ -30,10 +30,11 @@ public class AccommodationSpecificationBuilder implements SpecificationBuilder<A
                     .getSpecification(searchParameters.city()));
         }
 
-        if (searchParameters.size() != null && searchParameters.size().length > 0) {
+        if (searchParameters.accommodationSize() != null
+                && searchParameters.accommodationSize().length > 0) {
             spec = spec.and(providerManager
                     .getSpecificationProvider(SIZE, String[].class)
-                    .getSpecification(searchParameters.size()));
+                    .getSpecification(searchParameters.accommodationSize()));
         }
 
         if (searchParameters.type() != null && searchParameters.type().length > 0) {
