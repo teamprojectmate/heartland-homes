@@ -1,3 +1,4 @@
+// src/store/slices/accommodationsSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { fetchAccommodations } from '../../api/accommodations/accommodationService';
 
@@ -7,22 +8,22 @@ export const loadAccommodations = createAsyncThunk(
     try {
       const state = getState().accommodations;
 
-      console.log('🔍 Виклик loadAccommodations з фільтрами:', state.filters);
+      console.log("🔍 Виклик loadAccommodations з фільтрами:", state.filters);
 
       const data = await fetchAccommodations({
         city: state.filters.city,
         type: state.filters.type,
-        size: state.filters.size,
+        size: state.filters.size, // завжди масив
         minDailyRate: state.filters.minDailyRate,
         maxDailyRate: state.filters.maxDailyRate,
         page: state.page,
         sizePage: state.size
       });
 
-      console.log('✅ Відповідь від бекенду:', data);
+      console.log("✅ Відповідь від бекенду:", data);
       return data;
     } catch (err) {
-      console.error('❌ Помилка у loadAccommodations:', err);
+      console.error("❌ Помилка у loadAccommodations:", err);
       return rejectWithValue(err.response?.data?.message || 'Помилка при завантаженні');
     }
   }
@@ -41,9 +42,9 @@ const accommodationsSlice = createSlice({
     filters: {
       city: [],
       type: [],
-      size: [],
-      minDailyRate: undefined,
-      maxDailyRate: undefined
+      size: [], // ✅ завжди масив
+      minDailyRate: null,
+      maxDailyRate: null
     },
     adminMode: false
   },
@@ -55,9 +56,9 @@ const accommodationsSlice = createSlice({
         ...state.filters,
         city: city ?? state.filters.city,
         type: type ?? state.filters.type,
-        size: Array.isArray(size) ? size : size ? [size] : [],
-        minDailyRate: minDailyRate !== undefined ? minDailyRate : undefined,
-        maxDailyRate: maxDailyRate !== undefined ? maxDailyRate : undefined
+        size: Array.isArray(size) ? size : size ? [size] : [], // ✅ гарантія масиву
+        minDailyRate: minDailyRate ?? state.filters.minDailyRate,
+        maxDailyRate: maxDailyRate ?? state.filters.maxDailyRate
       };
 
       state.page = 0;
@@ -66,9 +67,9 @@ const accommodationsSlice = createSlice({
       state.filters = {
         city: [],
         type: [],
-        size: [],
-        minDailyRate: undefined,
-        maxDailyRate: undefined
+        size: [], // ✅ повертаємо в масив
+        minDailyRate: null,
+        maxDailyRate: null
       };
       state.page = 0;
     },
