@@ -1,5 +1,4 @@
-// src/styles/components/_footer.scss
-
+/* src/styles/components/_footer.scss */
 @use 'sass:color';
 @use '../abstract/variables' as *;
 @use '../abstract/mixins' as *;
@@ -10,44 +9,52 @@
   line-height: 1.6;
   color: $white-color;
   background-color: $primary-600;
+
+  .footer-inner {
+    max-width: $max-width-2xl;
+    padding-inline: clamp(#{$container-pad-min}, 3vw, #{$container-pad-max});
+    margin: 0 auto;
+  }
 }
 
 .footer-links {
-  display: flex;
-  flex-direction: column;
-  gap: $spacer;
-  align-items: center;
-  margin-bottom: $spacer;
+  display: grid;
+  gap: 2rem;
+  margin-bottom: 2rem;
+
+  @include media(md) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include media(lg) {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
-@media (min-width: $breakpoint-md) {
-  .footer-links {
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: space-around;
-  }
+/* Ліві колонки */
+.footer-columns {
+  display: contents;
 }
 
 .footer-column {
-  flex: 1;
-  width: 100%;
-  max-width: 260px;
-  text-align: center;
-}
+  min-width: 200px;
+  max-width: 280px;
 
-@media (max-width: $breakpoint-xs) {
-  .main-footer {
-    padding: 2rem 0;
-  }
-
-  .footer-links {
-    gap: 1rem;
+  a {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
   }
 }
 
-@media (min-width: $breakpoint-md) {
-  .footer-column {
-    text-align: left;
+/* Контакти + соцмережі завжди внизу */
+.footer-extra {
+  display: grid;
+  grid-column: 1 / -1; // розтягнути на всю ширину
+  gap: 2rem;
+
+  @include media(md) {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -55,6 +62,7 @@
   margin-bottom: 1rem;
   font-size: 1.2rem;
   font-weight: 700;
+  color: $white-color;
 }
 
 .list-unstyled {
@@ -64,17 +72,93 @@
 }
 
 .footer-link {
-  display: block;
+  position: relative;
+  display: inline-block;
   margin-bottom: 0.4rem;
   font-size: 1.05rem;
   color: $white-color;
   text-decoration: none;
   opacity: 0.85;
-  transition: opacity 0.3s ease;
+  transition: all 0.3s ease;
 
   &:hover {
-    text-decoration: underline;
     opacity: 1;
+  }
+
+  &::after {
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0%;
+    height: 2px;
+    content: '';
+    background: $white-color;
+    transition: width 0.3s ease;
+  }
+
+  &:hover::after {
+    width: 100%;
+  }
+}
+
+.footer-contact a {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  font-size: 1rem;
+  color: $white-color;
+  text-decoration: none;
+  opacity: 0.9;
+  transition: all 0.3s ease;
+
+  svg {
+    flex-shrink: 0;
+    color: color.adjust($primary-color, $lightness: 15%);
+  }
+
+  &:hover {
+    color: color.adjust($primary-color, $lightness: 15%);
+    opacity: 1;
+    transform: translateX(3px);
+  }
+}
+
+.social-section {
+  text-align: center;
+
+  @include media(md) {
+    text-align: left;
+  }
+}
+
+.social-links {
+  display: flex;
+  gap: 0.8rem;
+  justify-content: center;
+  margin-top: 0.8rem;
+
+  @include media(md) {
+    justify-content: flex-start;
+  }
+
+  a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    color: $white-color;
+    background-color: rgba($white-color, 0.1);
+    border: 1px solid rgba($white-color, 0.2);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+
+    &:hover {
+      color: $primary-color;
+      background-color: $white-color;
+      box-shadow: $box-shadow-card-hover;
+      transform: translateY(-3px);
+    }
   }
 }
 
@@ -88,6 +172,6 @@
 
 .footer-text {
   margin: 0;
-  font-size: 1rem;
+  font-size: 0.95rem;
   opacity: 0.7;
 }

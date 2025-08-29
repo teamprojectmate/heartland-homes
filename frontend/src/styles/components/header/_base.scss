@@ -18,11 +18,14 @@ body.no-scroll {
     background: rgba($white-color, 0.72);
     backdrop-filter: saturate(180%) blur(10px);
   }
-}
 
-.header-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-block: 10px;
+  .header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: $max-width-2xl;
+    padding-block: 10px;
+    padding-inline: clamp(#{$container-pad-min}, 3vw, #{$container-pad-max});
+    margin: 0 auto;
+  }
 }

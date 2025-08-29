@@ -18,6 +18,17 @@ import Register from './pages/Auth/Register.jsx';
 import Accommodations from './pages/Accommodations/Accommodations.jsx';
 import AccommodationDetails from './pages/Accommodations/AccommodationDetails.jsx';
 
+// Info pages
+import FAQ from './pages/Info/FAQ.jsx';
+import Support from './pages/Info/Support.jsx';
+import About from './pages/Info/About.jsx';
+import OffersPage from './pages/Info/OffersPage.jsx';
+import Terms from './pages/Info/Terms.jsx';
+import Privacy from './pages/Info/Privacy.jsx';
+import Popular from './pages/Info/Popular.jsx';
+import Partners from './pages/Info/Partners.jsx';
+import Cookies from './pages/Info/Cookies.jsx';
+
 // Lazy-loaded User/Admin
 const Profile = lazy(() => import('./pages/User/Profile.jsx'));
 const MyBookings = lazy(() => import('./pages/User/MyBookings.jsx'));
@@ -189,6 +200,80 @@ function App() {
                     <AdminBookings />
                   </PageWrapper>
                 </ProtectedRoute>
+              }
+            />
+
+            {/* Info routes */}
+            <Route
+              path="/faq"
+              element={
+                <PageWrapper title="FAQ">
+                  <FAQ />
+                </PageWrapper>
+              }
+            />
+            <Route
+              path="/support"
+              element={
+                <PageWrapper title="Зв'язатися з нами">
+                  <Support />
+                </PageWrapper>
+              }
+            />
+            <Route
+              path="/about"
+              element={
+                <PageWrapper title="Про нас">
+                  <About />
+                </PageWrapper>
+              }
+            />
+            <Route
+              path="/offers"
+              element={
+                <PageWrapper title="Акції та знижки">
+                  <OffersPage />
+                </PageWrapper>
+              }
+            />
+            <Route
+              path="/popular"
+              element={
+                <PageWrapper title="Популярні напрямки">
+                  <Popular />
+                </PageWrapper>
+              }
+            />
+            <Route
+              path="/partners"
+              element={
+                <PageWrapper title="Партнери">
+                  <Partners />
+                </PageWrapper>
+              }
+            />
+            <Route
+              path="/terms"
+              element={
+                <PageWrapper title="Умови використання">
+                  <Terms />
+                </PageWrapper>
+              }
+            />
+            <Route
+              path="/privacy"
+              element={
+                <PageWrapper title="Політика конфіденційності">
+                  <Privacy />
+                </PageWrapper>
+              }
+            />
+            <Route
+              path="/cookies"
+              element={
+                <PageWrapper title="Файли Cookie">
+                  <Cookies />
+                </PageWrapper>
               }
             />
 

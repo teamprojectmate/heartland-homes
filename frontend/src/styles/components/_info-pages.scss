@@ -1,0 +1,231 @@
+@use '../abstract/variables' as *;
+@use '../abstract/mixins' as *;
+
+.info-page {
+  padding: 3rem 0 4rem;
+
+  .info-header {
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+    margin-bottom: 2rem;
+
+    .info-icon {
+      color: $primary-color;
+    }
+
+    .page-title {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: $heading-color;
+    }
+  }
+
+  .info-block {
+    display: grid;
+    gap: 1.5rem;
+    max-width: 900px;
+    margin-inline: auto;
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: $text-color;
+
+    p {
+      padding: 1.2rem 1.5rem;
+      background: $surface-color;
+      border-radius: $radius-lg;
+      box-shadow: $box-shadow-card;
+      transition: all 0.3s ease;
+
+      &:hover {
+        box-shadow: $box-shadow-card-hover;
+        transform: translateY(-4px);
+      }
+    }
+
+    ul.styled-list {
+      display: grid;
+      gap: 1.5rem;
+      padding: 0;
+      list-style: none;
+
+      @include media(md) {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      @include media(lg) {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      li {
+        padding: 1.2rem;
+        background: $surface-color;
+        border-radius: $radius-lg;
+        box-shadow: $box-shadow-card;
+        transition: all 0.3s ease;
+
+        &:hover {
+          box-shadow: $box-shadow-card-hover;
+          transform: translateY(-4px);
+        }
+      }
+    }
+  }
+
+  /* FAQ */
+  .faq-item {
+    padding: 1.2rem;
+    margin-bottom: 1.5rem;
+    background: $surface-color;
+    border-radius: $radius-md;
+    box-shadow: $box-shadow-card;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.3s ease;
+
+    &:hover {
+      box-shadow: $box-shadow-card-hover;
+      transform: translateY(-4px);
+    }
+
+    .faq-question {
+      margin-bottom: 0.4rem;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: $heading-color;
+    }
+
+    .faq-answer {
+      font-size: 1rem;
+      color: $muted-color;
+    }
+  }
+
+  /* Support */
+  .support-box {
+    padding: 1.2rem;
+    margin-top: 1.8rem;
+    background: $surface-color;
+    border-radius: $radius-md;
+    box-shadow: $box-shadow-card;
+
+    p {
+      display: flex;
+      gap: 0.6rem;
+      align-items: center;
+      margin-bottom: 0.5rem;
+      color: $text-color;
+    }
+
+    a {
+      font-weight: 500;
+      color: $primary-color;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+/* Lead text (About, Cookies, etc.) */
+.lead-text {
+  margin-bottom: 2rem;
+  font-size: 1.25rem;
+  line-height: 1.8;
+  color: $text-color;
+}
+
+/* Highlights (About page) */
+.about-highlights {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 2rem;
+
+  @include media(md) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.highlight-card {
+  padding: 1.5rem;
+  text-align: center;
+  background: $surface-color;
+  border-radius: $radius-lg;
+  box-shadow: $box-shadow-card;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: $box-shadow-card-hover;
+    transform: translateY(-5px);
+  }
+
+  .highlight-icon {
+    margin-bottom: 0.8rem;
+    font-size: 2rem;
+    color: $primary-color;
+  }
+
+  h3 {
+    margin-bottom: 0.5rem;
+    font-size: 1.3rem;
+    color: $heading-color;
+  }
+
+  p {
+    font-size: 1rem;
+    color: $muted-color;
+  }
+}
+
+/* Offers (Акції та знижки) */
+.offers-grid {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 2rem;
+
+  @include media(md) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include media(lg) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.offer-card {
+  padding: 1.5rem;
+  text-align: center;
+  background: $surface-color;
+  border-radius: $radius-lg;
+  box-shadow: $box-shadow-card;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: $box-shadow-card-hover;
+    transform: translateY(-5px);
+  }
+
+  .offer-icon {
+    margin-bottom: 1rem;
+    font-size: 2rem;
+    color: $primary-color;
+  }
+
+  h3 {
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: $heading-color;
+  }
+
+  p {
+    font-size: 1rem;
+    color: $muted-color;
+  }
+}
