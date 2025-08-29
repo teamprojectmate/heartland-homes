@@ -96,6 +96,41 @@ public class AccommodationUtil {
                 .setDailyRate(BigDecimal.valueOf(1800.00))
                 .setImage("http://img/2");
     }
+
+    public static CreateAccommodationRequestDto createAccommodationRequestDto2() {
+        return new CreateAccommodationRequestDto()
+                .setType(AccommodationType.APARTMENT)
+                .setLocation("Khreshchatyk 1")
+                .setCity("Kyiv")
+                .setSize("Large")
+                .setAmenities(List.of("WiFi", "TV"))
+                .setDailyRate(BigDecimal.valueOf(200))
+                .setImage("image.jpg");
+    }
+
+    public static Accommodation createAccommodation2(Long id) {
+        return new Accommodation()
+                .setId(id)
+                .setType(AccommodationType.APARTMENT)
+                .setLocation("Khreshchatyk 1")
+                .setCity("Kyiv")
+                .setSize("Large")
+                .setAmenities(List.of("WiFi", "TV"))
+                .setDailyRate(BigDecimal.valueOf(200))
+                .setImage("image.jpg");
+    }
+
+    public static AccommodationDto createAccommodationDto2(Long id) {
+        return new AccommodationDto()
+                .setId(id)
+                .setType(AccommodationType.APARTMENT)
+                .setLocation("Khreshchatyk 1")
+                .setCity("Kyiv")
+                .setSize("Large")
+                .setAmenities(List.of("WiFi", "TV"))
+                .setDailyRate(BigDecimal.valueOf(200))
+                .setImage("image.jpg");
+    }
 }
 
 

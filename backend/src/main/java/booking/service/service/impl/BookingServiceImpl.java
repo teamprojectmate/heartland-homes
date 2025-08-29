@@ -2,6 +2,7 @@ package booking.service.service.impl;
 
 import booking.service.dto.booking.BookingDto;
 import booking.service.dto.booking.CreateBookingRequestDto;
+import booking.service.exception.EntityNotFoundException;
 import booking.service.exception.UnpaidPaymentException;
 import booking.service.mapper.BookingMapper;
 import booking.service.model.Accommodation;
@@ -15,7 +16,6 @@ import booking.service.repository.payment.PaymentRepository;
 import booking.service.repository.user.UserRepository;
 import booking.service.service.BookingService;
 import booking.service.service.NotificationService;
-import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
