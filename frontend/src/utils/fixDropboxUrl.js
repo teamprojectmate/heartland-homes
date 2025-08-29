@@ -11,3 +11,4 @@ export const fixDropboxUrl = (url) => {
   // Якщо посилання вже має "raw=1" або інший формат, повертаємо без змін
   return url;
 };
+
