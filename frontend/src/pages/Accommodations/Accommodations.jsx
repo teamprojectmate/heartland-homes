@@ -27,7 +27,7 @@ const Accommodations = () => {
 
   // 🔹 пошук по місту
   const handleSearch = ({ destination }) => {
-    dispatch(setFilters({ city: destination?.trim() ? [destination.trim()] : [] }));
+    dispatch(setFilters({ city: destination?.trim() || null }));
     dispatch(setPage(0));
     dispatch(loadAccommodations());
   };
@@ -64,14 +64,14 @@ const Accommodations = () => {
         <h2 className="section-heading mt-5">Доступні помешкання</h2>
 
         <AccommodationFilters
-          cities={filters.city || []}
-          type={filters.type || []}
-          size={filters.size || ''}
+          city={filters.city || ''}
+          type={filters.type || ''}
+          size={filters.accommodationSize || ''}
           minDailyRate={filters.minDailyRate || ''}
           maxDailyRate={filters.maxDailyRate || ''}
-          ssetCities={(arr) => dispatch(setFilters({ city: arr }))}
-          setType={(val) => dispatch(setFilters({ type: val ? [val] : [] }))}
-          setSize={(val) => dispatch(setFilters({ size: val ? [val] : [] }))}
+          setCity={(val) => dispatch(setFilters({ city: val }))}
+          setType={(val) => dispatch(setFilters({ type: val }))}
+          setSize={(val) => dispatch(setFilters({ accommodationSize: val }))}
           setMinDailyRate={(val) =>
             dispatch(setFilters({ minDailyRate: val ? Number(val) : null }))
           }

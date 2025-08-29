@@ -26,6 +26,8 @@
 @use './components/buttons';
 @use './components/auth';
 @use './components/pagination';
+@use './components/modal';
+@use './components/info-pages';
 
 // 4) пакетні стилі — імпортуємо як пакет, без шляху до node_modules
 @use '../../node_modules/react-image-gallery/styles/scss/image-gallery';

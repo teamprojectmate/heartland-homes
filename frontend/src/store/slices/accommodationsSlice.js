@@ -8,22 +8,26 @@ export const loadAccommodations = createAsyncThunk(
     try {
       const state = getState().accommodations;
 
-      console.log("🔍 Виклик loadAccommodations з фільтрами:", state.filters);
+      console.log('🔍 Виклик loadAccommodations з фільтрами:', state.filters);
 
-      const data = await fetchAccommodations({
-        city: state.filters.city,
-        type: state.filters.type,
-        size: state.filters.size, // завжди масив
-        minDailyRate: state.filters.minDailyRate,
-        maxDailyRate: state.filters.maxDailyRate,
+      const filters = {
+        city: state.filters.city?.length ? state.filters.city : undefined,
+        type: state.filters.type?.length ? state.filters.type : undefined,
+        accommodationSize: state.filters.accommodationSize?.length
+          ? state.filters.accommodationSize
+          : undefined,
+        minDailyRate: state.filters.minDailyRate ?? undefined,
+        maxDailyRate: state.filters.maxDailyRate ?? undefined,
         page: state.page,
-        sizePage: state.size
-      });
+        size: state.size
+      };
 
-      console.log("✅ Відповідь від бекенду:", data);
+      const data = await fetchAccommodations(filters);
+
+      console.log('✅ Відповідь від бекенду:', data);
       return data;
     } catch (err) {
-      console.error("❌ Помилка у loadAccommodations:", err);
+      console.error('❌ Помилка у loadAccommodations:', err);
       return rejectWithValue(err.response?.data?.message || 'Помилка при завантаженні');
     }
   }
@@ -42,7 +46,7 @@ const accommodationsSlice = createSlice({
     filters: {
       city: [],
       type: [],
-      size: [], // ✅ завжди масив
+      accommodationSize: [],
       minDailyRate: null,
       maxDailyRate: null
     },
@@ -50,24 +54,17 @@ const accommodationsSlice = createSlice({
   },
   reducers: {
     setFilters(state, action) {
-      const { city, type, size, minDailyRate, maxDailyRate } = action.payload;
-
       state.filters = {
         ...state.filters,
-        city: city ?? state.filters.city,
-        type: type ?? state.filters.type,
-        size: Array.isArray(size) ? size : size ? [size] : [], // ✅ гарантія масиву
-        minDailyRate: minDailyRate ?? state.filters.minDailyRate,
-        maxDailyRate: maxDailyRate ?? state.filters.maxDailyRate
+        ...action.payload
       };
-
       state.page = 0;
     },
     resetFilters(state) {
       state.filters = {
         city: [],
         type: [],
-        size: [], // ✅ повертаємо в масив
+        accommodationSize: [],
         minDailyRate: null,
         maxDailyRate: null
       };

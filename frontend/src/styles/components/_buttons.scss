@@ -1,7 +1,7 @@
 @use '../abstract/variables' as *;
 
 /* ───────── core ───────── */
-.btn {
+%btn {
   --btn-bg: #f5f7f9;
   --btn-fg: #222;
   --btn-bd: transparent;
@@ -45,7 +45,7 @@
 
   &:focus-visible {
     outline: none;
-    box-shadow: var(--btn-shadow), $box-shadow-focus;
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.35);
   }
 
   &:disabled,
@@ -56,7 +56,11 @@
   }
 }
 
-/* ✅ Винесено активні стани */
+.btn {
+  @extend %btn;
+}
+
+/* ✅ Активні стани */
 .btn-primary.active,
 .btn-secondary.active {
   box-shadow: 0 0 0 3px rgba($primary-color, 0.3);
@@ -65,7 +69,7 @@
 
 /* ───────── variants ───────── */
 .btn-primary {
-  @extend .btn;
+  @extend %btn;
 
   --btn-bg: linear-gradient(180deg, #10877e 0%, #0f766e 100%);
   --btn-fg: #f8fafc;
@@ -80,7 +84,7 @@
 }
 
 .btn-secondary {
-  @extend .btn;
+  @extend %btn;
 
   --btn-bg: #e9eef3;
   --btn-fg: #6b7280;
@@ -93,7 +97,7 @@
 }
 
 .btn-outline {
-  @extend .btn;
+  @extend %btn;
 
   --btn-bg: transparent;
   --btn-fg: #475569;
@@ -107,7 +111,7 @@
 }
 
 .btn-ghost {
-  @extend .btn;
+  @extend %btn;
 
   --btn-bg: transparent;
   --btn-fg: #14b8a6;
@@ -121,7 +125,7 @@
 }
 
 .btn-success {
-  @extend .btn;
+  @extend %btn;
 
   --btn-bg: $success-color;
   --btn-fg: #f8fafc;
@@ -133,7 +137,7 @@
 }
 
 .btn-danger {
-  @extend .btn;
+  @extend %btn;
 
   --btn-bg: $danger-color;
   --btn-fg: #fff8f8;
@@ -162,7 +166,7 @@
 }
 
 .btn-chip {
-  @extend .btn;
+  @extend %btn;
 
   --btn-bg: #f0f4f5;
   --btn-fg: $primary-color;
@@ -178,7 +182,7 @@
 }
 
 .btn-icon {
-  @extend .btn;
+  @extend %btn;
 
   width: 44px;
   min-width: 44px;

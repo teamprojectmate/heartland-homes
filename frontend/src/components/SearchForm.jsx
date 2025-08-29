@@ -15,7 +15,8 @@ const SearchForm = () => {
   const [formData, setFormData] = useState({
     city: filters.city.length > 0 ? filters.city[0] : '',
     type: filters.type.length > 0 ? filters.type[0] : '',
-    size: filters.size.length > 0 ? filters.size[0] : '', // ✅ тільки перший елемент
+    accommodationSize:
+      filters.accommodationSize.length > 0 ? filters.accommodationSize[0] : '', // ✅
     minDailyRate: filters.minDailyRate ?? '',
     maxDailyRate: filters.maxDailyRate ?? '',
     page,
@@ -24,7 +25,6 @@ const SearchForm = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     setFormData((prev) => ({
       ...prev,
       [name]: value
@@ -34,12 +34,11 @@ const SearchForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // 🔹 Зберігаємо фільтри у Redux
     dispatch(
       setFilters({
         city: formData.city ? [formData.city] : [],
         type: formData.type ? [formData.type] : [],
-        size: formData.size ? [formData.size] : [], // ✅ завжди масив
+        accommodationSize: formData.accommodationSize ? [formData.accommodationSize] : [], // ✅
         minDailyRate: formData.minDailyRate ? Number(formData.minDailyRate) : undefined,
         maxDailyRate: formData.maxDailyRate ? Number(formData.maxDailyRate) : undefined
       })
@@ -85,12 +84,12 @@ const SearchForm = () => {
 
       {/* Розмір */}
       <div className="search-input-group">
-        <label htmlFor="size">Розмір</label>
+        <label htmlFor="accommodationSize">Розмір</label>
         <select
-          id="size"
-          name="size"
+          id="accommodationSize"
+          name="accommodationSize" // ✅
           className="form-control"
-          value={formData.size} // ✅ рядок
+          value={formData.accommodationSize} // ✅
           onChange={handleChange}
         >
           <option value="">Будь-який</option>

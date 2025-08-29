@@ -1,3 +1,4 @@
+// src/pages/Accommodations/AccommodationFilters.jsx
 import React from 'react';
 import { Filter, RotateCcw } from 'lucide-react';
 import '../../styles/components/_forms.scss';
@@ -5,12 +6,12 @@ import '../../styles/components/_buttons.scss';
 import '../../styles/components/_filters.scss';
 
 const AccommodationFilters = ({
-  cities,
+  city,
   type,
   size,
   minDailyRate,
   maxDailyRate,
-  setCities,
+  setCity,
   setType,
   setSize,
   setMinDailyRate,
@@ -18,26 +19,19 @@ const AccommodationFilters = ({
   onApplyFilters,
   onResetFilters
 }) => {
-  // 🔹 Обробка міста
+  // 🔹 Місто
   const handleCityChange = (e) => {
-    const value = e.target.value.trim();
-    setCities(value ? [value] : []);
+    setCity(e.target.value.trim() || null);
   };
 
-  // 🔹 Обробка чекбоксів типів житла
+  // 🔹 Тип житла (одне значення ENUM)
   const handleTypeChange = (e) => {
-    const { value, checked } = e.target;
-    if (checked) {
-      setType([...type, value]);
-    } else {
-      setType(type.filter((t) => t !== value));
-    }
+    setType(e.target.value || null);
   };
 
-  // 🔹 Обробка розміру (select → завжди масив)
+  // 🔹 Розмір (одне значення ENUM)
   const handleSizeChange = (e) => {
-    const value = e.target.value;
-    setSize(value ? [value] : []); // ✅ гарантуємо масив
+    setSize(e.target.value || null);
   };
 
   return (
@@ -53,7 +47,7 @@ const AccommodationFilters = ({
               type="text"
               className="form-control"
               placeholder="Наприклад Київ"
-              value={cities[0] || ''}
+              value={city || ''}
               onChange={handleCityChange}
             />
           </div>
@@ -61,22 +55,17 @@ const AccommodationFilters = ({
           {/* Тип житла */}
           <div className="filter-item">
             <label>Тип житла</label>
-            <div className="form-check-group">
-              {['HOUSE', 'APARTMENT', 'CONDO', 'VACATION_HOME'].map((t) => (
-                <label className="form-check" key={t}>
-                  <input
-                    type="checkbox"
-                    value={t}
-                    checked={type.includes(t)}
-                    onChange={handleTypeChange}
-                  />
-                  {t === 'HOUSE' && 'Будинок'}
-                  {t === 'APARTMENT' && 'Квартира'}
-                  {t === 'CONDO' && 'Кондо'}
-                  {t === 'VACATION_HOME' && 'Дім для відпочинку'}
-                </label>
-              ))}
-            </div>
+            <select
+              className="form-control"
+              value={type || ''}
+              onChange={handleTypeChange}
+            >
+              <option value="">Будь-який</option>
+              <option value="HOUSE">Будинок</option>
+              <option value="APARTMENT">Квартира</option>
+              <option value="CONDO">Кондо</option>
+              <option value="VACATION_HOME">Дім для відпочинку</option>
+            </select>
           </div>
 
           {/* Розмір */}
@@ -84,7 +73,7 @@ const AccommodationFilters = ({
             <label>Розмір</label>
             <select
               className="form-control"
-              value={size[0] || ''} // ✅ беремо перший елемент
+              value={size || ''}
               onChange={handleSizeChange}
             >
               <option value="">Будь-який</option>
@@ -101,8 +90,10 @@ const AccommodationFilters = ({
               type="number"
               className="form-control"
               placeholder="Від, грн"
-              value={minDailyRate || ''}
-              onChange={(e) => setMinDailyRate(e.target.value)}
+              value={minDailyRate ?? ''}
+              onChange={(e) =>
+                setMinDailyRate(e.target.value ? Number(e.target.value) : null)
+              }
             />
           </div>
 
@@ -113,8 +104,10 @@ const AccommodationFilters = ({
               type="number"
               className="form-control"
               placeholder="До, грн"
-              value={maxDailyRate || ''}
-              onChange={(e) => setMaxDailyRate(e.target.value)}
+              value={maxDailyRate ?? ''}
+              onChange={(e) =>
+                setMaxDailyRate(e.target.value ? Number(e.target.value) : null)
+              }
             />
           </div>
         </div>

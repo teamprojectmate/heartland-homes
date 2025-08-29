@@ -24,7 +24,9 @@ const AccommodationCard = ({ accommodation }) => {
 
         <div className="card-badges">
           <span className="badge badge-type">{accommodation.type}</span>
-          <span className="badge badge-size">{accommodation.size}</span>
+          <span className="badge badge-size">
+            {accommodation.accommodationSize || accommodation.size || '—'}
+          </span>
         </div>
 
         <p className="card-text">{accommodation.city}</p>
