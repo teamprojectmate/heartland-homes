@@ -1,4 +1,3 @@
-// src/pages/Accommodations/Accommodations.jsx
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import AccommodationList from './AccommodationList';
@@ -20,29 +19,21 @@ const Accommodations = () => {
     (state) => state.accommodations
   );
 
-  // 🔹 завантаження даних при зміні сторінки
+  // ✅ Об'єднуємо логіку завантаження в один useEffect
   useEffect(() => {
+    // Вантажимо дані, коли змінюються фільтри або сторінка
     dispatch(loadAccommodations());
-  }, [dispatch, page]);
+  }, [dispatch, filters, page]);
 
-  // 🔹 пошук по місту
-  const handleSearch = ({ destination }) => {
-    dispatch(setFilters({ city: destination?.trim() || null }));
-    dispatch(setPage(0));
-    dispatch(loadAccommodations());
-  };
-
-  // 🔹 застосувати фільтри
   const handleApplyFilters = () => {
+    // Просто скидаємо сторінку на 0, а useEffect сам завантажить дані
     dispatch(setPage(0));
-    dispatch(loadAccommodations());
   };
 
-  // 🔹 скинути всі фільтри
   const handleResetFilters = () => {
+    // Скидаємо фільтри, а useEffect сам завантажить дані
     dispatch(resetFilters());
     dispatch(setPage(0));
-    dispatch(loadAccommodations());
   };
 
   return (
@@ -54,7 +45,7 @@ const Accommodations = () => {
           <p className="hero-subtitle">
             Знаходьте пропозиції готелів, приватних помешкань та багато іншого...
           </p>
-          <SearchForm onSearch={handleSearch} />
+          <SearchForm onSearch={handleApplyFilters} />
         </div>
       </div>
 

@@ -27,6 +27,10 @@ const footerLinks = [
       { to: '/privacy', label: 'Політика конфіденційності' },
       { to: '/cookies', label: 'Файли Cookie' }
     ]
+  },
+  {
+    heading: 'Контакти',
+    isContact: true
   }
 ];
 
@@ -34,10 +38,39 @@ const Footer = () => (
   <footer className="main-footer" role="contentinfo">
     <div className="footer-inner">
       <div className="footer-links">
-        <div className="footer-columns">
-          {footerLinks.map((col) => (
-            <div key={col.heading} className="footer-column">
-              <h5 className="footer-heading">{col.heading}</h5>
+        {footerLinks.map((col) => (
+          <div key={col.heading} className="footer-column">
+            <h5 className="footer-heading">{col.heading}</h5>
+            {col.isContact ? (
+              <>
+                <div className="footer-contact">
+                  <a href="tel:+380671234567">
+                    <Phone size={18} /> +380 67 123 45 67
+                  </a>
+                  <a href="mailto:support@heartlandhomes.com">
+                    <Mail size={18} /> support@heartlandhomes.com
+                  </a>
+                  <a
+                    href="https://goo.gl/maps/x9c6q"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <MapPin size={18} /> Київ, вул. Хрещатик, 12
+                  </a>
+                </div>
+                <div className="social-links">
+                  <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
+                    <Facebook />
+                  </a>
+                  <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+                    <Instagram />
+                  </a>
+                  <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
+                    <Twitter />
+                  </a>
+                </div>
+              </>
+            ) : (
               <ul className="list-unstyled">
                 {col.links.map((link) => (
                   <li key={link.to}>
@@ -47,45 +80,9 @@ const Footer = () => (
                   </li>
                 ))}
               </ul>
-            </div>
-          ))}
-        </div>
-
-        <div className="footer-extra">
-          <div className="footer-column">
-            <h5 className="footer-heading">Контакти</h5>
-            <div className="footer-contact">
-              <a href="tel:+380671234567">
-                <Phone size={18} /> +380 67 123 45 67
-              </a>
-              <a href="mailto:support@heartlandhomes.com">
-                <Mail size={18} /> support@heartlandhomes.com
-              </a>
-              <a
-                href="https://goo.gl/maps/x9c6q"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <MapPin size={18} /> Київ, вул. Хрещатик, 12
-              </a>
-            </div>
+            )}
           </div>
-
-          <div className="footer-column">
-            <h5 className="footer-heading">Ми в соцмережах</h5>
-            <div className="social-links">
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
-                <Facebook />
-              </a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
-                <Instagram />
-              </a>
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
-                <Twitter />
-              </a>
-            </div>
-          </div>
-        </div>
+        ))}
       </div>
 
       <div className="footer-copyright">

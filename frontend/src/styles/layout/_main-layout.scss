@@ -3,19 +3,25 @@
 @use '../abstract/mixins' as *;
 @use 'sass:math';
 
-:root {
-  --fs-h1: clamp(1.6rem, 1.1rem + 2.6vw, 2.5rem);
-  --fs-h2: clamp(1.25rem, 1.05rem + 1.4vw, 1.875rem);
-  --fs-body: 1rem;
-}
-
+// 1. Core Layout
+// Переконаємося, що body займає всю висоту і є flex-контейнером
 html,
-body {
+body,
+#root {
   height: 100%;
   margin: 0;
   overflow-x: hidden;
 }
 
+body {
+  font-family: $font-family-base;
+  font-size: $font-size-base;
+  line-height: $line-height-base;
+  color: $text-color;
+  background-color: $background-color;
+}
+
+// 2. Sticky Footer
 .main-layout {
   display: flex;
   flex-direction: column;
@@ -23,16 +29,24 @@ body {
 }
 
 .main-content {
-  flex: 1; // розтягує контент
+  flex: 1 0 auto; // Розтягує контент, відштовхуючи футер
 }
 
 footer {
+  flex-shrink: 0; // Гарантує, що футер не стискається
   margin-top: auto;
+  padding: 20px 0;
+  text-align: center;
+  
+  @include media(sm) {
+    text-align: left;
+  }
 }
 
+// 3. Other Layout Components
 .container {
   max-width: 100%;
-  padding-inline: clamp(#{$container-pad-min}, 3.5vw, #{$container-pad-max});
+  padding-inline: clamp($container-pad-min, 3.5vw, $container-pad-max);
   margin-inline: auto;
 
   @include media(sm) {
@@ -50,6 +64,13 @@ footer {
   @include media(xl) {
     max-width: $max-width-2xl;
   }
+}
+
+// Переконаємось, що PageWrapper не ламає flexbox
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 
 /* інпути в flex/grid ніколи не роздувають ряд */

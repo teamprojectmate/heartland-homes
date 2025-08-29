@@ -1,24 +1,37 @@
-// src/api/payments/paymentService.js
 import api from '../axios';
 
 // 🔹 Створити платіж (отримати sessionUrl)
+// ✅ Тепер приймає токен як аргумент
 export const createPayment = async (bookingId, paymentType = 'CARD', token) => {
+  // ✅ Додавання токена до заголовків
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
   const response = await api.post(
     '/payments',
     { bookingId, paymentType },
-    { headers: { Authorization: `Bearer ${token}` } }
+    config
   );
   return response.data; // PaymentDto
 };
 
 // 🔹 Отримати всі платежі користувача (з пагінацією)
+// ✅ Тепер приймає токен як аргумент
 export const fetchPaymentsByUser = async (userId, pageable, token) => {
+  // ✅ Додавання токена до заголовків
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
   const response = await api.get('/payments', {
-    headers: { Authorization: `Bearer ${token}` },
     params: {
       user_id: userId,
-      pageable: JSON.stringify(pageable)
-    }
+      pageable: JSON.stringify(pageable) // Тепер передаємо об'єкт
+    },
+    ...config // ✅ Додавання конфігурації з токеном
   });
   return response.data; // PagePaymentDto
 };

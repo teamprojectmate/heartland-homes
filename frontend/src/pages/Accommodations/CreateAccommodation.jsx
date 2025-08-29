@@ -1,24 +1,23 @@
-// src/pages/Accommodations/CreateAccommodation.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import Notification from '../../components/Notification';
 import { createAccommodation } from '../../api/accommodations/accommodationService';
+import { useSelector } from 'react-redux';
 
 const CreateAccommodation = () => {
   const navigate = useNavigate();
-  const { user } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
     type: 'HOUSE',
     location: '',
     city: '',
-    size: '',
-    amenities: [],
+    size: 'SMALL', // ✅ Початкове значення enum
+    amenities: '', // ✅ Робимо рядок для зручності
     dailyRate: '',
     image: ''
   });
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -28,20 +27,21 @@ const CreateAccommodation = () => {
     }));
   };
 
-  const handleAmenitiesChange = (e) => {
-    setFormData((prev) => ({
-      ...prev,
-      amenities: e.target.value.split(',').map((a) => a.trim())
-    }));
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
     try {
-      await createAccommodation(formData, user.token);
+      const payload = {
+        ...formData,
+        amenities: formData.amenities.split(',').map((a) => a.trim()),
+      };
+      await createAccommodation(payload); 
       navigate('/admin/accommodations');
     } catch (err) {
       setError(err.response?.data?.message || 'Помилка при створенні');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -74,11 +74,15 @@ const CreateAccommodation = () => {
         </div>
         <div className="form-group">
           <label>Розмір</label>
-          <input type="text" name="size" value={formData.size} onChange={handleChange} />
+          <select name="size" value={formData.size} onChange={handleChange}>
+            <option value="SMALL">Маленький</option>
+            <option value="MEDIUM">Середній</option>
+            <option value="LARGE">Великий</option>
+          </select>
         </div>
         <div className="form-group">
           <label>Зручності (через кому)</label>
-          <input type="text" onChange={handleAmenitiesChange} />
+          <input type="text" name="amenities" value={formData.amenities} onChange={handleChange} />
         </div>
         <div className="form-group">
           <label>Ціна за добу</label>
@@ -98,8 +102,8 @@ const CreateAccommodation = () => {
             onChange={handleChange}
           />
         </div>
-        <button type="submit" className="btn-primary">
-          Створити
+        <button type="submit" className="btn-primary" disabled={loading}>
+          {loading ? 'Створення...' : 'Створити'}
         </button>
       </form>
     </div>

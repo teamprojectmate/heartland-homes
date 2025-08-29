@@ -1,4 +1,3 @@
-// src/App.jsx
 import React, { Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -8,6 +7,7 @@ import Header from './components/Header.jsx';
 import Footer from './components/Footer.jsx';
 import Notification from './components/Notification.jsx';
 import PageWrapper from './components/PageWrapper.jsx';
+import ScrollToTop from './components/ScrollToTop.jsx';
 
 // Auth
 import ProtectedRoute from './pages/Auth/ProtectedRoute.jsx';
@@ -33,9 +33,13 @@ import Cookies from './pages/Info/Cookies.jsx';
 const Profile = lazy(() => import('./pages/User/Profile.jsx'));
 const MyBookings = lazy(() => import('./pages/User/MyBookings.jsx'));
 const Payment = lazy(() => import('./pages/User/Payment.jsx'));
+const PaymentSuccess = lazy(() => import('./pages/User/PaymentSuccess.jsx')); // ✅ Новий lazy-loaded компонент
+const PaymentCancel = lazy(() => import('./pages/User/PaymentCancel.jsx'));   // ✅ Новий lazy-loaded компонент
 
 const AdminDashboard = lazy(() => import('./pages/Admin/AdminDashboard.jsx'));
-const AdminAccommodations = lazy(() => import('./pages/Admin/AdminAccommodations.jsx'));
+const AdminAccommodations = lazy(
+  () => import('./pages/Admin/AdminAccommodations.jsx')
+);
 const CreateAccommodation = lazy(
   () => import('./pages/Accommodations/CreateAccommodation.jsx')
 );
@@ -50,7 +54,6 @@ import NotFound from './pages/NotFound.jsx';
 import './styles/main.scss';
 
 function App() {
-  // 🔹 Виправлено: тепер беремо слайси окремо, а не весь state
   const auth = useSelector((state) => state.auth);
   const user = useSelector((state) => state.user);
   const bookings = useSelector((state) => state.bookings);
@@ -76,6 +79,7 @@ function App() {
 
       <main className="main-content">
         <Suspense fallback={<p className="text-center mt-5">Завантаження...</p>}>
+          <ScrollToTop />
           <Routes>
             {/* Public routes */}
             <Route
@@ -146,6 +150,27 @@ function App() {
                 <ProtectedRoute>
                   <PageWrapper title="Оплата">
                     <Payment />
+                  </PageWrapper>
+                </ProtectedRoute>
+              }
+            />
+            {/* ✅ Додано нові маршрути для сторінок успішної та скасованої оплати */}
+            <Route
+              path="/payments/success"
+              element={
+                <ProtectedRoute>
+                  <PageWrapper title="Оплата успішна">
+                    <PaymentSuccess />
+                  </PageWrapper>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/payments/cancel"
+              element={
+                <ProtectedRoute>
+                  <PageWrapper title="Оплату скасовано">
+                    <PaymentCancel />
                   </PageWrapper>
                 </ProtectedRoute>
               }

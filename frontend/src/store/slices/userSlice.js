@@ -1,8 +1,6 @@
-// src/store/slices/userSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../api/axios';
 
-// ----- Initial State -----
 const savedProfile = localStorage.getItem('userProfile');
 const initialState = {
   profile: savedProfile ? JSON.parse(savedProfile) : null,
@@ -10,14 +8,14 @@ const initialState = {
   error: null
 };
 
-// ----- Fetch Profile -----
 export const fetchProfile = createAsyncThunk(
   'user/fetchProfile',
-  async (_, { getState, rejectWithValue }) => {
+  async (token, { rejectWithValue }) => {
     try {
-      const { token } = getState().auth; // 🔑 беремо токен
       const response = await api.get('/users/me', {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       });
       return response.data;
     } catch (err) {
@@ -28,14 +26,19 @@ export const fetchProfile = createAsyncThunk(
   }
 );
 
-// ----- Update Profile -----
 export const updateProfile = createAsyncThunk(
   'user/updateProfile',
-  async (userData, { getState, rejectWithValue }) => {
+  async (userData, { rejectWithValue, getState }) => {
     try {
-      const { token } = getState().auth;
+      const token = getState().auth?.authData?.token;
+      if (!token) {
+        return rejectWithValue('Немає токена авторизації');
+      }
+      
       const response = await api.put('/users/me', userData, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       });
       return response.data;
     } catch (err) {
@@ -44,17 +47,22 @@ export const updateProfile = createAsyncThunk(
   }
 );
 
-// ----- Update User Role (Admin/Manager) -----
 export const updateUserRole = createAsyncThunk(
   'user/updateUserRole',
-  async ({ id, role }, { getState, rejectWithValue }) => {
+  async ({ id, role }, { rejectWithValue, getState }) => {
     try {
-      const { token } = getState().auth;
+      const token = getState().auth?.authData?.token;
+      if (!token) {
+        return rejectWithValue('Немає токена авторизації');
+      }
+
       const response = await api.put(
         `/users/${id}/role`,
         { role },
         {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         }
       );
       return response.data;
@@ -78,7 +86,6 @@ const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // ----- FETCH PROFILE -----
       .addCase(fetchProfile.pending, (s) => {
         s.loading = true;
         s.error = null;
@@ -92,8 +99,6 @@ const userSlice = createSlice({
         s.loading = false;
         s.error = payload;
       })
-
-      // ----- UPDATE PROFILE -----
       .addCase(updateProfile.pending, (s) => {
         s.loading = true;
         s.error = null;
@@ -107,8 +112,6 @@ const userSlice = createSlice({
         s.loading = false;
         s.error = payload;
       })
-
-      // ----- UPDATE ROLE -----
       .addCase(updateUserRole.fulfilled, (s, { payload }) => {
         if (s.profile && s.profile.id === payload.id) {
           s.profile = payload;

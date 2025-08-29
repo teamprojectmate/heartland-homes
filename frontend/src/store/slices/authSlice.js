@@ -1,12 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../api/axios';
 import authService from '../../api/auth/authService';
+import { fetchProfile } from './userSlice'; 
 
 // ----- Initial State -----
 const savedAuth = localStorage.getItem('auth');
 const initialState = {
-  token: savedAuth ? JSON.parse(savedAuth).token : null,
-  user: null, // ✅ юзер підтягнеться після /me
+  authData: savedAuth ? JSON.parse(savedAuth) : null,
   isAuthenticated: !!savedAuth,
   loading: false,
   error: null
@@ -17,20 +17,21 @@ export const login = createAsyncThunk(
   'auth/login',
   async ({ email, password }, { rejectWithValue, dispatch }) => {
     try {
-      const loginResponse = await authService.login(email, password);
+      // 1. Отримуємо токен
+      const { token } = await authService.login({ email, password });
 
-      if (loginResponse?.token) {
-        const token = loginResponse.token;
-        const user = await authService.getProfile(token);
+      // 2. Тепер, коли у нас є токен, ми можемо запитати профіль
+      const user = await dispatch(fetchProfile(token)).unwrap();
 
-        const userData = { token, ...user };
-        localStorage.setItem('auth', JSON.stringify(userData));
+      // 3. Комбінуємо дані і зберігаємо в localStorage
+      const userData = { token, ...user };
+      localStorage.setItem('auth', JSON.stringify(userData));
 
-        return userData;
-      }
-
-      return rejectWithValue('Сервер не повернув токен');
+      // Повертаємо дані для Redux
+      return userData;
     } catch (err) {
+      // ❌ Якщо хоч один крок вище провалився, очищаємо localStorage
+      localStorage.removeItem('auth');
       return rejectWithValue(err.response?.data?.message || 'Помилка логіну');
     }
   }
@@ -43,16 +44,16 @@ export const register = createAsyncThunk(
     try {
       await authService.register(formData);
 
-      // ⚡ одразу логін після реєстрації
-      const result = await dispatch(
-        login({ email: formData.email, password: formData.password })
-      ).unwrap();
+      // ⚡ Одразу логін після реєстрації
+      await dispatch(login({ email: formData.email, password: formData.password }));
 
-      return result;
+      // Успіх буде оброблено в fulfilled логіні
+      return null;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || 'Помилка реєстрації');
     }
   }
+  
 );
 
 const authSlice = createSlice({
@@ -61,8 +62,7 @@ const authSlice = createSlice({
   reducers: {
     logout: (state) => {
       localStorage.removeItem('auth');
-      state.token = null;
-      state.user = null;
+      state.authData = null;
       state.isAuthenticated = false;
     }
   },
@@ -75,17 +75,16 @@ const authSlice = createSlice({
       .addCase(login.fulfilled, (s, { payload }) => {
         s.loading = false;
         s.isAuthenticated = true;
-        s.token = payload.token;
-        s.user = payload;
+        s.authData = payload;
       })
       .addCase(login.rejected, (s, { payload }) => {
         s.loading = false;
         s.error = payload;
       })
-      .addCase(register.fulfilled, (s, { payload }) => {
-        s.isAuthenticated = true;
-        s.token = payload.token;
-        s.user = payload;
+      // ✅ Замість .addCase(register.fulfilled...), бо логін обробляє результат
+      .addCase(register.rejected, (s, { payload }) => {
+        s.loading = false;
+        s.error = payload;
       });
   }
 });

@@ -13,7 +13,7 @@ const BookingForm = ({ accommodationId }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { status } = useSelector((state) => state.bookings);
-  const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const { isAuthenticated } = useSelector((state) => state.auth);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,13 +28,12 @@ const BookingForm = ({ accommodationId }) => {
       setError('Будь ласка, виберіть дати заїзду та виїзду.');
       return;
     }
-
+    
+    // ✅ Видаляємо `userId`. Сервер сам визначає користувача по токену.
     const bookingData = {
       accommodationId,
-      userId: user?.id,
       checkInDate,
       checkOutDate,
-      status: 'PENDING'
     };
 
     const resultAction = await dispatch(createBooking(bookingData));
@@ -74,6 +73,7 @@ const BookingForm = ({ accommodationId }) => {
 
       {error && <Notification message={error} type="danger" />}
 
+      {/* ✅ Оновлюємо кнопку для керування станом */}
       <button type="submit" className="btn-primary" disabled={status === 'loading'}>
         {status === 'loading' ? 'Бронювання...' : 'Забронювати'}
       </button>

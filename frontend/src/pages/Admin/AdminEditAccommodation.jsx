@@ -1,4 +1,3 @@
-// src/pages/Admin/AdminEditAccommodation.jsx
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -11,26 +10,34 @@ import {
 const AdminEditAccommodation = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useSelector((state) => state.auth);
+  // Прибираємо user з useSelector, оскільки він тут не потрібен
+  // const { user } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
-    type: 'HOUSE',
+    type: '',
     location: '',
     city: '',
     size: '',
-    amenities: [],
+    amenities: '', // ✅ Змінили на рядок
     dailyRate: '',
     image: ''
   });
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchAccommodation = async () => {
+      setLoading(true);
       try {
         const data = await getAccommodationById(id);
-        setFormData(data);
+        setFormData({
+          ...data,
+          amenities: data.amenities?.join(', ') || '' // ✅ Форматуємо масив в рядок
+        });
       } catch {
         setError('Не вдалося завантажити дані помешкання');
+      } finally {
+        setLoading(false);
       }
     };
     fetchAccommodation();
@@ -44,22 +51,26 @@ const AdminEditAccommodation = () => {
     }));
   };
 
-  const handleAmenitiesChange = (e) => {
-    setFormData((prev) => ({
-      ...prev,
-      amenities: e.target.value.split(',').map((a) => a.trim())
-    }));
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
     try {
-      await updateAccommodation(id, formData, user.token);
+      const payload = {
+        ...formData,
+        amenities: formData.amenities.split(',').map((a) => a.trim()) // ✅ Перетворюємо рядок у масив
+      };
+      // ✅ Прибрали token з аргументів
+      await updateAccommodation(id, payload);
       navigate('/admin/accommodations');
     } catch (err) {
       setError(err.response?.data?.message || 'Помилка при оновленні');
+    } finally {
+      setLoading(false);
     }
   };
+
+  if (loading) return <p className="text-center">Завантаження...</p>;
 
   return (
     <div className="container page">
@@ -90,14 +101,20 @@ const AdminEditAccommodation = () => {
         </div>
         <div className="form-group">
           <label>Розмір</label>
-          <input type="text" name="size" value={formData.size} onChange={handleChange} />
+          {/* ✅ Використовуємо select для enum */}
+          <select name="size" value={formData.size} onChange={handleChange}>
+            <option value="SMALL">Маленький</option>
+            <option value="MEDIUM">Середній</option>
+            <option value="LARGE">Великий</option>
+          </select>
         </div>
         <div className="form-group">
           <label>Зручності (через кому)</label>
           <input
             type="text"
-            value={formData.amenities?.join(', ') || ''}
-            onChange={handleAmenitiesChange}
+            name="amenities"
+            value={formData.amenities}
+            onChange={handleChange}
           />
         </div>
         <div className="form-group">
@@ -118,8 +135,8 @@ const AdminEditAccommodation = () => {
             onChange={handleChange}
           />
         </div>
-        <button type="submit" className="btn-primary">
-          Зберегти
+        <button type="submit" className="btn-primary" disabled={loading}>
+          {loading ? 'Оновлення...' : 'Зберегти'}
         </button>
       </form>
     </div>

@@ -1,53 +1,32 @@
-import axios from 'axios';
-
-const AUTH_API_URL = 'http://localhost:8080/auth';
-const USERS_API_URL = 'http://localhost:8080/users';
+// src/api/auth/authService.js
+import api from '../axios'; // Використовуємо наш налаштований екземпляр
 
 // ✅ Реєстрація
 const register = async (userData) => {
-  const response = await axios.post(`${AUTH_API_URL}/registration`, userData);
+  const response = await api.post('/auth/registration', userData);
   return response.data;
 };
 
 // ✅ Логін
-const login = async (email, password) => {
-  const response = await axios.post(`${AUTH_API_URL}/login`, { email, password });
-
-  if (response.data?.token) {
-    // ⚡ Зберігаємо уніфіковано під 'auth'
-    localStorage.setItem('auth', JSON.stringify({ token: response.data.token }));
-  }
-
+const login = async (userData) => { // Приймаємо об'єкт, як в схемах
+  const response = await api.post('/auth/login', userData);
+  
+  // ❌ Прибрали всю логіку з localStorage.
+  // Цим займається Redux-санк.
+  
   return response.data;
 };
 
 // ✅ Вихід
 const logout = () => {
-  localStorage.removeItem('auth');
-};
-
-// ✅ Профіль
-const getProfile = async (token) => {
-  const response = await axios.get(`${USERS_API_URL}/me`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return response.data;
-};
-
-// ✅ Оновлення профілю
-const updateUser = async (userData, token) => {
-  const response = await axios.put(`${USERS_API_URL}/me`, userData, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return response.data;
+  // ❌ Прибрали всю логіку з localStorage.
+  // Цим займається Redux-санк.
 };
 
 const authService = {
   register,
   login,
-  logout,
-  getProfile,
-  updateUser
+  logout
 };
 
 export default authService;
