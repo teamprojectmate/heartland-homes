@@ -13,12 +13,12 @@ const SearchForm = () => {
   const { filters, page, size } = useSelector((state) => state.accommodations);
 
   const [formData, setFormData] = useState({
-    city: filters.city.length > 0 ? filters.city[0] : '',
-    type: filters.type.length > 0 ? filters.type[0] : '',
-    accommodationSize:
-      filters.accommodationSize.length > 0 ? filters.accommodationSize[0] : '', // ✅
-    minDailyRate: filters.minDailyRate ?? '',
-    maxDailyRate: filters.maxDailyRate ?? '',
+    // ✅ Використовуємо опціональний ланцюжок для безпечного доступу до даних
+    city: filters?.city?.[0] ?? '',
+    type: filters?.type?.[0] ?? '',
+    accommodationSize: filters?.accommodationSize?.[0] ?? '',
+    minDailyRate: filters?.minDailyRate ?? '',
+    maxDailyRate: filters?.maxDailyRate ?? '',
     page,
     sizePage: size
   });
@@ -38,7 +38,7 @@ const SearchForm = () => {
       setFilters({
         city: formData.city ? [formData.city] : [],
         type: formData.type ? [formData.type] : [],
-        accommodationSize: formData.accommodationSize ? [formData.accommodationSize] : [], // ✅
+        accommodationSize: formData.accommodationSize ? [formData.accommodationSize] : [],
         minDailyRate: formData.minDailyRate ? Number(formData.minDailyRate) : undefined,
         maxDailyRate: formData.maxDailyRate ? Number(formData.maxDailyRate) : undefined
       })
@@ -87,9 +87,9 @@ const SearchForm = () => {
         <label htmlFor="accommodationSize">Розмір</label>
         <select
           id="accommodationSize"
-          name="accommodationSize" // ✅
+          name="accommodationSize"
           className="form-control"
-          value={formData.accommodationSize} // ✅
+          value={formData.accommodationSize}
           onChange={handleChange}
         >
           <option value="">Будь-який</option>

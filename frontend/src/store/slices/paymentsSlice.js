@@ -1,44 +1,46 @@
-// src/store/slices/paymentsSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import api from '../../api/axios';
+import { createPayment as createPaymentService, fetchPaymentsByUser as fetchPaymentsByUserServices } from '../../api/payments/paymentService'; // ✅ Оновлений імпорт
 
 const initialState = {
-  payment: null, // один конкретний платіж (PaymentDto)
-  payments: [], // список платежів користувача
+  payment: null,
+  payments: [],
   status: 'idle',
   error: null
 };
 
-// 🔹 Створення платежу
+// ----- Create payment -----
 export const createPayment = createAsyncThunk(
   'payments/createPayment',
-  async ({ bookingId, paymentType = 'CARD', token }, { rejectWithValue }) => {
+  async ({ bookingId, paymentType = 'CARD' }, { rejectWithValue, getState }) => {
     try {
-      const response = await api.post(
-        '/payments',
-        { bookingId, paymentType },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      return response.data; // PaymentDto
+      const { auth } = getState();
+      if (!auth.isAuthenticated || !auth.authData || !auth.authData.token) {
+        return rejectWithValue('Користувач не автентифікований.');
+      }
+      const token = auth.authData.token;
+
+      const response = await createPaymentService(bookingId, paymentType, token);
+      return response;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || 'Не вдалося створити платіж');
     }
   }
 );
 
-// 🔹 Отримати платежі користувача
+// ----- Fetch payments by user -----
 export const fetchPaymentsByUser = createAsyncThunk(
   'payments/fetchByUser',
-  async ({ userId, pageable, token }, { rejectWithValue }) => {
+  async ({ pageable }, { rejectWithValue, getState }) => {
     try {
-      const response = await api.get('/payments', {
-        headers: { Authorization: `Bearer ${token}` },
-        params: {
-          user_id: userId,
-          pageable: JSON.stringify(pageable)
-        }
-      });
-      return response.data; // PagePaymentDto
+      const { auth } = getState();
+      if (!auth.isAuthenticated || !auth.authData || !auth.authData.token) {
+        return rejectWithValue('Користувач не автентифікований.');
+      }
+      const token = auth.authData.token;
+      const userId = auth.user.id;
+
+      const response = await fetchPaymentsByUserServices(userId, pageable, token);
+      return response;
     } catch (err) {
       return rejectWithValue(
         err.response?.data?.message || 'Не вдалося отримати список платежів'
@@ -59,7 +61,6 @@ const paymentsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // --- Create Payment ---
       .addCase(createPayment.pending, (state) => {
         state.status = 'loading';
       })
@@ -71,14 +72,12 @@ const paymentsSlice = createSlice({
         state.status = 'failed';
         state.error = action.payload;
       })
-
-      // --- Fetch Payments ---
       .addCase(fetchPaymentsByUser.pending, (state) => {
         state.status = 'loading';
       })
       .addCase(fetchPaymentsByUser.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.payments = action.payload.content || []; // PagePaymentDto.content
+        state.payments = action.payload.content || [];
       })
       .addCase(fetchPaymentsByUser.rejected, (state, action) => {
         state.status = 'failed';

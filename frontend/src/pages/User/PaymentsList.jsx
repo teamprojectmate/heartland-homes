@@ -6,19 +6,19 @@ import Notification from '../../components/Notification';
 const PaymentsList = () => {
   const dispatch = useDispatch();
   const { payments, status, error } = useSelector((state) => state.payments);
-  const { user, token } = useSelector((state) => state.auth);
+  const { isAuthenticated } = useSelector((state) => state.auth);
+  // Прибрали 'user' та 'token', оскільки вони не потрібні
 
   useEffect(() => {
-    if (user && token) {
+    // ✅ Просто перевіряємо автентифікацію
+    if (isAuthenticated) {
       dispatch(
         fetchPaymentsByUser({
-          userId: user.id,
-          pageable: { page: 0, size: 10, sort: ['id,desc'] },
-          token
+          pageable: { page: 0, size: 10, sort: ['id,desc'] }
         })
       );
     }
-  }, [dispatch, user, token]);
+  }, [dispatch, isAuthenticated]);
 
   if (status === 'loading') return <p className="text-center">Завантаження...</p>;
   if (error) return <Notification message={error} type="danger" />;

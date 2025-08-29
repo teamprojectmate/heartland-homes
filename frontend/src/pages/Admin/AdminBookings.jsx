@@ -5,7 +5,8 @@ import Notification from '../../components/Notification';
 import {
   fetchBookings,
   deleteBooking,
-  updateBooking
+  updateBooking,
+  setPage
 } from '../../store/slices/bookingsSlice';
 import Pagination from '../../components/Pagination';
 import StatusBadge from '../../components/StatusBadge';
@@ -26,16 +27,20 @@ const AdminBookings = () => {
       navigate('/');
       return;
     }
-    dispatch(fetchBookings({ page: 0, size: 10 }));
-  }, [user, navigate, dispatch]);
+    // ✅ Завантажуємо дані при зміні сторінки
+    dispatch(fetchBookings({ page, size: 10 }));
+  }, [user, navigate, dispatch, page]);
 
   const handleCancelBooking = async (id) => {
+    // ✅ Прибрали token з аргументів
     await dispatch(deleteBooking({ id }));
+    // Після видалення перезавантажуємо дані для поточної сторінки
     dispatch(fetchBookings({ page, size: 10 }));
     setConfirmCancelId(null);
   };
 
   const handleMarkAsPaid = (booking) => {
+    // ✅ Прибрали token з аргументів
     dispatch(
       updateBooking({
         id: booking.id,
@@ -45,7 +50,8 @@ const AdminBookings = () => {
   };
 
   const handlePageChange = (newPage) => {
-    dispatch(fetchBookings({ page: newPage, size: 10 }));
+    // Просто оновлюємо сторінку в стані, а useEffect зробить решту
+    dispatch(setPage(newPage));
   };
 
   if (status === 'loading') {

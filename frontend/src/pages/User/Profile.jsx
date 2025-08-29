@@ -1,4 +1,3 @@
-// src/pages/User/Profile.jsx
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProfile, updateProfile } from '../../store/slices/userSlice';
@@ -9,7 +8,6 @@ const Profile = () => {
   const { profile, loading, error } = useSelector((state) => state.user);
 
   const [formData, setFormData] = useState({ email: '', firstName: '', lastName: '' });
-  const [notification, setNotification] = useState(null);
 
   useEffect(() => {
     dispatch(fetchProfile());
@@ -27,12 +25,7 @@ const Profile = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(updateProfile(formData))
-      .unwrap()
-      .then(() => setNotification({ message: '✅ Профіль оновлено!', type: 'success' }))
-      .catch(() =>
-        setNotification({ message: '❌ Помилка при оновленні профілю.', type: 'danger' })
-      );
+    dispatch(updateProfile(formData));
   };
 
   return (
@@ -40,11 +33,8 @@ const Profile = () => {
       <div className="profile-card">
         <h1 className="auth-title">Мій профіль</h1>
 
-        {/* 🔹 Виводимо будь-які повідомлення завжди */}
+        {/* ✅ Тепер використовуємо тільки error зі слайсу */}
         {error && <Notification message={error} type="danger" />}
-        {notification && (
-          <Notification message={notification.message} type={notification.type} />
-        )}
 
         {loading && <p>Завантаження...</p>}
 

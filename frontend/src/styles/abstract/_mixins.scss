@@ -101,6 +101,7 @@
     background: transparent;
     border-radius: $radius;
     transform: scaleX(0);
+    transform-origin: left; // ✅ додано для покращеного ефекту
     transition:
       transform 0.2s ease,
       background-color 0.2s ease;

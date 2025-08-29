@@ -1,4 +1,3 @@
-// src/pages/Admin/AdminAccommodations.jsx
 import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
@@ -27,12 +26,14 @@ const AdminAccommodations = () => {
       navigate('/');
       return;
     }
-    dispatch(loadAdminAccommodations({ token: user.token, page }));
+    // ✅ Прибрали token з аргументів
+    dispatch(loadAdminAccommodations({ page }));
   }, [user, navigate, dispatch, page]);
 
   const handleDelete = (id) => {
     if (!window.confirm('Ви впевнені, що хочете видалити це помешкання?')) return;
-    dispatch(removeAccommodation({ id, token: user.token }));
+    // ✅ Прибрали token з аргументів
+    dispatch(removeAccommodation({ id }));
   };
 
   if (loading) return <p className="text-center mt-5">Завантаження...</p>;

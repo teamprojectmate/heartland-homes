@@ -1,4 +1,3 @@
-// src/store/slices/accommodationsSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { fetchAccommodations } from '../../api/accommodations/accommodationService';
 
@@ -10,19 +9,23 @@ export const loadAccommodations = createAsyncThunk(
 
       console.log('🔍 Виклик loadAccommodations з фільтрами:', state.filters);
 
+      // ✅ Змінили логіку перевірки на null
       const filters = {
-        city: state.filters.city?.length ? state.filters.city : undefined,
-        type: state.filters.type?.length ? state.filters.type : undefined,
-        accommodationSize: state.filters.accommodationSize?.length
-          ? state.filters.accommodationSize
-          : undefined,
+        city: state.filters.city || undefined,
+        type: state.filters.type || undefined,
+        accommodationSize: state.filters.accommodationSize || undefined,
         minDailyRate: state.filters.minDailyRate ?? undefined,
         maxDailyRate: state.filters.maxDailyRate ?? undefined,
-        page: state.page,
-        size: state.size
       };
 
-      const data = await fetchAccommodations(filters);
+      // ✅ ВИПРАВЛЕНО: Тепер передаємо об'єкт пагінації як другий аргумент
+      const pageable = {
+        page: state.page,
+        size: state.size,
+        sort: state.sort // Не забуваємо про сортування
+      };
+
+      const data = await fetchAccommodations(filters, pageable);
 
       console.log('✅ Відповідь від бекенду:', data);
       return data;
@@ -44,9 +47,9 @@ const accommodationsSlice = createSlice({
     loading: false,
     error: null,
     filters: {
-      city: [],
-      type: [],
-      accommodationSize: [],
+      city: null, 
+      type: null, 
+      accommodationSize: null, 
       minDailyRate: null,
       maxDailyRate: null
     },
@@ -62,9 +65,9 @@ const accommodationsSlice = createSlice({
     },
     resetFilters(state) {
       state.filters = {
-        city: [],
-        type: [],
-        accommodationSize: [],
+        city: null,
+        type: null,
+        accommodationSize: null,
         minDailyRate: null,
         maxDailyRate: null
       };

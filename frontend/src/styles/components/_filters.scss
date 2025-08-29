@@ -1,3 +1,4 @@
+// src/styles/components/_filters.scss
 @use 'sass:math';
 @use '../abstract/variables' as *;
 @use '../abstract/mixins' as *;
@@ -26,36 +27,8 @@
 /* Сітка */
 .filters-grid {
   display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); // ✅ Гнучка сітка
   gap: 1rem;
-
-  > .filter-item:nth-child(1) {
-    grid-column: span 6;
-  }
-
-  > .filter-item:nth-child(2) {
-    grid-column: span 6;
-  }
-
-  > .filter-item:nth-child(3) {
-    grid-column: span 4;
-  }
-
-  > .filter-item:nth-child(4) {
-    grid-column: span 4;
-  }
-
-  > .filter-item:nth-child(5) {
-    grid-column: span 4;
-  }
-
-  @media (max-width: $breakpoint-md) {
-    grid-template-columns: 1fr;
-
-    > .filter-item {
-      grid-column: auto;
-    }
-  }
 }
 
 .filter-item {
@@ -118,6 +91,7 @@
 /* 🔹 Інпути */
 .form-control {
   height: $control-height-md;
+  width: 100%; // ✅ Додано для адаптації
   padding: 0 0.75rem;
   border: 1px solid $border-color;
   border-radius: $radius;

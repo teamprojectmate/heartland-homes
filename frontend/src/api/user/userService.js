@@ -1,30 +1,22 @@
-//src/api/user/userService.js
-import axios from './axios';
+import api from '../axios';
 
 // 🔹 Отримати свій профіль
-export const getCurrentUser = async (token) => {
-  const response = await axios.get('/users/me', {
-    headers: { Authorization: `Bearer ${token}` }
-  });
+export const getCurrentUser = async () => {
+  const response = await api.get('/users/me');
   return response.data;
 };
 
 // 🔹 Оновити свій профіль
-export const updateProfile = async (data, token) => {
-  const response = await axios.put('/users/me', data, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
+export const updateProfile = async (data) => {
+  const response = await api.put('/users/me', data);
   return response.data;
 };
 
 // 🔹 Оновити роль юзера (для адмінки)
-export const updateUserRole = async (id, role, token) => {
-  const response = await axios.put(
+export const updateUserRole = async (id, role) => {
+  const response = await api.put(
     `/users/${id}/role`,
-    { role },
-    {
-      headers: { Authorization: `Bearer ${token}` }
-    }
+    { role }
   );
   return response.data;
 };

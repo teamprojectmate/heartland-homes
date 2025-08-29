@@ -1,3 +1,4 @@
+// src/styles/components/header/nav
 @use '../../abstract/variables' as *;
 @use '../../abstract/mixins' as *;
 
@@ -31,37 +32,16 @@ ul {
 }
 
 .nav-link {
-  position: relative;
   padding: 0.5rem 0;
   font-size: 1.25rem;
   font-weight: 700;
   color: $heading-color;
   text-decoration: none;
 
-  &::after {
-    position: absolute;
-    right: 0;
-    bottom: -8px;
-    left: 0;
-    height: 3px;
-    content: '';
-    background: transparent;
-    border-radius: 99px;
-    transform: scaleX(0);
-    transform-origin: left;
-    transition:
-      transform 0.2s ease,
-      background-color 0.2s ease;
-  }
+  @include underline($primary-color, 3px, 99px, 8px); // ✅ Використовуємо міксин
 
   &:hover {
     color: $primary-color;
-  }
-
-  &:hover::after,
-  &.active::after {
-    background: $primary-color;
-    transform: scaleX(1);
   }
 
   &.active {
