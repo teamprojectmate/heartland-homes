@@ -1,5 +1,4 @@
-// src/pages/Accommodations/AccommodationFilters.jsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Filter, RotateCcw } from 'lucide-react';
 import '../../styles/components/_forms.scss';
 import '../../styles/components/_buttons.scss';
@@ -11,27 +10,35 @@ const AccommodationFilters = ({
   size,
   minDailyRate,
   maxDailyRate,
-  setCity,
-  setType,
-  setSize,
-  setMinDailyRate,
-  setMaxDailyRate,
   onApplyFilters,
   onResetFilters
 }) => {
-  // 🔹 Місто
-  const handleCityChange = (e) => {
-    setCity(e.target.value.trim() || null);
-  };
+  // 🔹 Локальний state для вводу
+  const [localFilters, setLocalFilters] = useState({
+    city: city || '',
+    type: type || '',
+    size: size || '',
+    minDailyRate: minDailyRate || '',
+    maxDailyRate: maxDailyRate || ''
+  });
 
-  // 🔹 Тип житла (одне значення ENUM)
-  const handleTypeChange = (e) => {
-    setType(e.target.value || null);
-  };
+  // Якщо Redux-фільтри оновились ззовні → оновлюємо локальні
+  useEffect(() => {
+    setLocalFilters({
+      city: city || '',
+      type: type || '',
+      size: size || '',
+      minDailyRate: minDailyRate || '',
+      maxDailyRate: maxDailyRate || ''
+    });
+  }, [city, type, size, minDailyRate, maxDailyRate]);
 
-  // 🔹 Розмір (одне значення ENUM)
-  const handleSizeChange = (e) => {
-    setSize(e.target.value || null);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setLocalFilters((prev) => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   return (
@@ -45,10 +52,11 @@ const AccommodationFilters = ({
             <label>Місто</label>
             <input
               type="text"
+              name="city"
               className="form-control"
               placeholder="Наприклад Київ"
-              value={city || ''}
-              onChange={handleCityChange}
+              value={localFilters.city}
+              onChange={handleChange}
             />
           </div>
 
@@ -56,9 +64,10 @@ const AccommodationFilters = ({
           <div className="filter-item">
             <label>Тип житла</label>
             <select
+              name="type"
               className="form-control"
-              value={type || ''}
-              onChange={handleTypeChange}
+              value={localFilters.type}
+              onChange={handleChange}
             >
               <option value="">Будь-який</option>
               <option value="HOUSE">Будинок</option>
@@ -72,9 +81,10 @@ const AccommodationFilters = ({
           <div className="filter-item">
             <label>Розмір</label>
             <select
+              name="size"
               className="form-control"
-              value={size || ''}
-              onChange={handleSizeChange}
+              value={localFilters.size}
+              onChange={handleChange}
             >
               <option value="">Будь-який</option>
               <option value="SMALL">Маленький</option>
@@ -88,12 +98,11 @@ const AccommodationFilters = ({
             <label>Ціна від (₴)</label>
             <input
               type="number"
+              name="minDailyRate"
               className="form-control"
               placeholder="Від, грн"
-              value={minDailyRate ?? ''}
-              onChange={(e) =>
-                setMinDailyRate(e.target.value ? Number(e.target.value) : null)
-              }
+              value={localFilters.minDailyRate}
+              onChange={handleChange}
             />
           </div>
 
@@ -102,19 +111,21 @@ const AccommodationFilters = ({
             <label>Ціна до (₴)</label>
             <input
               type="number"
+              name="maxDailyRate"
               className="form-control"
               placeholder="До, грн"
-              value={maxDailyRate ?? ''}
-              onChange={(e) =>
-                setMaxDailyRate(e.target.value ? Number(e.target.value) : null)
-              }
+              value={localFilters.maxDailyRate}
+              onChange={handleChange}
             />
           </div>
         </div>
 
         {/* Кнопки */}
         <div className="filters-actions">
-          <button className="btn-primary btn-with-icon" onClick={onApplyFilters}>
+          <button
+            className="btn-primary btn-with-icon"
+            onClick={(e) => onApplyFilters(e, localFilters)}
+          >
             <Filter size={18} /> Застосувати
           </button>
           <button className="btn-outline btn-with-icon" onClick={onResetFilters}>

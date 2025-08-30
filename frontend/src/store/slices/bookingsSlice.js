@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import bookingsService from '../../api/bookings/bookingsService';
-import api from '../../api/axios'; // ✅ Додано імпорт
+import api from '../../api/axios';
 
 // ----- Initial state -----
 const initialState = {
@@ -11,22 +11,20 @@ const initialState = {
   paymentStatus: 'idle',
   page: 0,
   totalPages: 0,
-  totalElements: 0,
+  totalElements: 0
 };
 
 // ----- Create booking -----
 export const createBooking = createAsyncThunk(
   'bookings/createBooking',
   async (bookingData, { rejectWithValue, getState }) => {
-    // ✅ Повертаємо логіку отримання токена
     const { auth } = getState();
-    if (auth.isAuthenticated && auth.authData && auth.authData.token) {
+    if (auth?.authData?.token) {
       api.defaults.headers.common['Authorization'] = `Bearer ${auth.authData.token}`;
     }
 
     try {
-      const response = await bookingsService.createBooking(bookingData);
-      return response;
+      return await bookingsService.createBooking(bookingData);
     } catch (err) {
       return rejectWithValue(
         err.response?.data?.message || 'Не вдалося створити бронювання.'
@@ -35,19 +33,17 @@ export const createBooking = createAsyncThunk(
   }
 );
 
-// ----- Fetch current user's bookings (with pagination) -----
+// ----- Fetch current user's bookings -----
 export const fetchMyBookings = createAsyncThunk(
   'bookings/fetchMyBookings',
-  async ({ page = 0, size = 5 }, { rejectWithValue, getState }) => {
-    // ✅ Повертаємо логіку отримання токена
+  async ({ page = 0, size = 5 } = {}, { rejectWithValue, getState }) => {
     const { auth } = getState();
-    if (auth.isAuthenticated && auth.authData && auth.authData.token) {
+    if (auth?.authData?.token) {
       api.defaults.headers.common['Authorization'] = `Bearer ${auth.authData.token}`;
     }
 
     try {
-      const response = await bookingsService.fetchMyBookings(page, size);
-      return response;
+      return await bookingsService.fetchMyBookings(page, size);
     } catch (err) {
       return rejectWithValue(
         err.response?.data?.message || 'Не вдалося завантажити бронювання.'
@@ -59,16 +55,14 @@ export const fetchMyBookings = createAsyncThunk(
 // ----- Fetch all bookings (admin) -----
 export const fetchBookings = createAsyncThunk(
   'bookings/fetchBookings',
-  async ({ page = 0, size = 10, user_id, status } = {}, { rejectWithValue, getState }) => {
-    // ✅ Повертаємо логіку отримання токена
+  async ({ page = 0, size = 10, userId, status } = {}, { rejectWithValue, getState }) => {
     const { auth } = getState();
-    if (auth.isAuthenticated && auth.authData && auth.authData.token) {
+    if (auth?.authData?.token) {
       api.defaults.headers.common['Authorization'] = `Bearer ${auth.authData.token}`;
     }
 
     try {
-      const response = await bookingsService.fetchBookings(page, size, user_id, status);
-      return response;
+      return await bookingsService.fetchBookings(page, size, userId, status);
     } catch (err) {
       return rejectWithValue(
         err.response?.data?.message || 'Не вдалося отримати список бронювань.'
@@ -81,15 +75,13 @@ export const fetchBookings = createAsyncThunk(
 export const fetchBookingById = createAsyncThunk(
   'bookings/fetchBookingById',
   async (id, { rejectWithValue, getState }) => {
-    // ✅ Повертаємо логіку отримання токена
     const { auth } = getState();
-    if (auth.isAuthenticated && auth.authData && auth.authData.token) {
+    if (auth?.authData?.token) {
       api.defaults.headers.common['Authorization'] = `Bearer ${auth.authData.token}`;
     }
 
     try {
-      const response = await bookingsService.fetchBookingById(id);
-      return response;
+      return await bookingsService.fetchBookingById(id);
     } catch (err) {
       return rejectWithValue(
         err.response?.data?.message || 'Не вдалося отримати бронювання.'
@@ -102,15 +94,13 @@ export const fetchBookingById = createAsyncThunk(
 export const updateBooking = createAsyncThunk(
   'bookings/updateBooking',
   async ({ id, bookingData }, { rejectWithValue, getState }) => {
-    // ✅ Повертаємо логіку отримання токена
     const { auth } = getState();
-    if (auth.isAuthenticated && auth.authData && auth.authData.token) {
+    if (auth?.authData?.token) {
       api.defaults.headers.common['Authorization'] = `Bearer ${auth.authData.token}`;
     }
 
     try {
-      const response = await bookingsService.updateBooking(id, bookingData);
-      return response;
+      return await bookingsService.updateBooking(id, bookingData);
     } catch (err) {
       return rejectWithValue(
         err.response?.data?.message || 'Не вдалося оновити бронювання.'
@@ -119,22 +109,41 @@ export const updateBooking = createAsyncThunk(
   }
 );
 
-// ----- Cancel booking -----
+// ----- Cancel booking (user) -----
 export const cancelBooking = createAsyncThunk(
   'bookings/cancelBooking',
   async (id, { rejectWithValue, getState }) => {
-    // ✅ Повертаємо логіку отримання токена
     const { auth } = getState();
-    if (auth.isAuthenticated && auth.authData && auth.authData.token) {
+    if (auth?.authData?.token) {
       api.defaults.headers.common['Authorization'] = `Bearer ${auth.authData.token}`;
     }
 
     try {
-      const response = await bookingsService.cancelBooking(id);
-      return response;
+      await bookingsService.cancelBooking(id);
+      return id;
     } catch (err) {
       return rejectWithValue(
         err.response?.data?.message || 'Не вдалося скасувати бронювання.'
+      );
+    }
+  }
+);
+
+// ----- Delete booking (admin) -----
+export const deleteBooking = createAsyncThunk(
+  'bookings/deleteBooking',
+  async (id, { rejectWithValue, getState }) => {
+    const { auth } = getState();
+    if (auth?.authData?.token) {
+      api.defaults.headers.common['Authorization'] = `Bearer ${auth.authData.token}`;
+    }
+
+    try {
+      await bookingsService.deleteBooking(id);
+      return id;
+    } catch (err) {
+      return rejectWithValue(
+        err.response?.data?.message || 'Не вдалося видалити бронювання.'
       );
     }
   }
@@ -153,7 +162,7 @@ const bookingsSlice = createSlice({
     },
     setPage: (state, action) => {
       state.page = action.payload;
-    },
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -179,7 +188,7 @@ const bookingsSlice = createSlice({
         state.error = action.payload;
       })
 
-      // FETCH ALL BOOKINGS
+      // FETCH ALL BOOKINGS (ADMIN)
       .addCase(fetchBookings.fulfilled, (state, action) => {
         state.bookings = action.payload.content || [];
         state.totalPages = action.payload.totalPages || 0;
@@ -198,15 +207,20 @@ const bookingsSlice = createSlice({
         state.currentBooking = action.payload;
       })
 
-      // CANCEL (DELETE)
+      // CANCEL (USER)
       .addCase(cancelBooking.fulfilled, (state, action) => {
         state.bookings = state.bookings.filter((b) => b.id !== action.payload);
       })
       .addCase(cancelBooking.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload;
+      })
+
+      // DELETE (ADMIN)
+      .addCase(deleteBooking.fulfilled, (state, action) => {
+        state.bookings = state.bookings.filter((b) => b.id !== action.payload);
       });
-  },
+  }
 });
 
 export const { clearCurrentBooking, resetPaymentStatus, setPage } = bookingsSlice.actions;

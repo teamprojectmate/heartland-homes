@@ -34,10 +34,10 @@ body {
 
 footer {
   flex-shrink: 0; // Гарантує, що футер не стискається
-  margin-top: auto;
   padding: 20px 0;
+  margin-top: auto;
   text-align: center;
-  
+
   @include media(sm) {
     text-align: left;
   }
@@ -69,8 +69,8 @@ footer {
 // Переконаємось, що PageWrapper не ламає flexbox
 .page-wrapper {
   display: flex;
-  flex-direction: column;
   flex-grow: 1;
+  flex-direction: column;
 }
 
 /* інпути в flex/grid ніколи не роздувають ряд */

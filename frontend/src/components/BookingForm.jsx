@@ -28,12 +28,12 @@ const BookingForm = ({ accommodationId }) => {
       setError('Будь ласка, виберіть дати заїзду та виїзду.');
       return;
     }
-    
+
     // ✅ Видаляємо `userId`. Сервер сам визначає користувача по токену.
     const bookingData = {
       accommodationId,
       checkInDate,
-      checkOutDate,
+      checkOutDate
     };
 
     const resultAction = await dispatch(createBooking(bookingData));

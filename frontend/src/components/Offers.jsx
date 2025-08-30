@@ -1,3 +1,4 @@
+// src/components/Offers.jsx
 import React, { useState } from 'react';
 import '../styles/components/_offers.scss';
 import '../styles/components/_buttons.scss';
@@ -37,7 +38,7 @@ const offers = [
     details:
       'За кожне бронювання, зроблене у цьому місяці, отримуйте бонуси, які можна використати для майбутніх поїздок.',
     image:
-      'https://images.unsplash.com/photo-1449844908441-8829872d2607?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+      'https://images.unsplash.com/photo-1449844908441-8829872d2607?q=80&w=2070&auto=format&fit=crop'
   }
 ];
 
@@ -45,31 +46,22 @@ const Offers = () => {
   const [selectedOffer, setSelectedOffer] = useState(null);
 
   return (
-    <section className="offers-section">
-      <div className="container">
-        <h2 className="section-heading">Пропозиції</h2>
-        <p className="section-subheading">
-          Акції, знижки та спеціальні пропозиції для вас
-        </p>
-
-        <div className="offers-grid">
-          {offers.map(({ id, title, description, image, details }) => (
-            <article key={id} className="offer-card">
-              <img className="offer-image" src={image} alt={title} loading="lazy" />
-              <div className="card-body">
-                <h5 className="card-title">{title}</h5>
-                <p className="card-text">{description}</p>
-                <button
-                  className="btn-primary mt-auto"
-                  onClick={() => setSelectedOffer({ title, description, details, image })}
-                >
-                  Дізнатися більше
-                </button>
-              </div>
-            </article>
-          ))}
-        </div>
-      </div>
+    <div className="offers-grid">
+      {offers.map(({ id, title, description, image, details }) => (
+        <article key={id} className="offer-card">
+          <img className="offer-image" src={image} alt={title} loading="lazy" />
+          <div className="card-body">
+            <h5 className="card-title">{title}</h5>
+            <p className="card-text">{description}</p>
+            <button
+              className="btn-primary mt-auto"
+              onClick={() => setSelectedOffer({ title, description, details, image })}
+            >
+              Дізнатися більше
+            </button>
+          </div>
+        </article>
+      ))}
 
       {/* Модальне вікно */}
       {selectedOffer && (
@@ -98,7 +90,7 @@ const Offers = () => {
           </div>
         </div>
       )}
-    </section>
+    </div>
   );
 };
 

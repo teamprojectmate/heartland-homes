@@ -1,0 +1,57 @@
+@use '../abstract/variables' as *;
+@use '../abstract/mixins' as *;
+
+.booking-actions {
+  display: flex;
+  flex-grow: 1;
+  flex-wrap: nowrap;
+  gap: 0.5rem;
+  margin-top: auto;
+
+  .btn {
+    flex: 1 1 auto;
+    min-width: 120px;
+    font-size: 0.85rem;
+    text-align: center;
+
+    @include media(md) {
+      font-size: 0.95rem;
+    }
+  }
+}
+
+.pagination-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+  margin-bottom: 2rem;
+}
+
+.bookings-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+
+  .card-custom {
+    flex: 1 1 calc(25% - 1.5rem); // 4 картки в ряд на великих екранах
+    min-width: 280px; // щоб не зжимались занадто
+  }
+
+  @media (max-width: $breakpoint-lg) {
+    .card-custom {
+      flex: 1 1 calc(33.333% - 1.5rem); // 3 в ряд
+    }
+  }
+
+  @media (max-width: $breakpoint-md) {
+    .card-custom {
+      flex: 1 1 calc(50% - 1.5rem); // 2 в ряд
+    }
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    .card-custom {
+      flex: 1 1 100%; // по одній картці
+    }
+  }
+}

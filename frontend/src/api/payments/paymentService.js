@@ -6,14 +6,10 @@ export const createPayment = async (bookingId, paymentType = 'CARD', token) => {
   // ✅ Додавання токена до заголовків
   const config = {
     headers: {
-      Authorization: `Bearer ${token}`,
-    },
+      Authorization: `Bearer ${token}`
+    }
   };
-  const response = await api.post(
-    '/payments',
-    { bookingId, paymentType },
-    config
-  );
+  const response = await api.post('/payments', { bookingId, paymentType }, config);
   return response.data; // PaymentDto
 };
 
@@ -23,8 +19,8 @@ export const fetchPaymentsByUser = async (userId, pageable, token) => {
   // ✅ Додавання токена до заголовків
   const config = {
     headers: {
-      Authorization: `Bearer ${token}`,
-    },
+      Authorization: `Bearer ${token}`
+    }
   };
   const response = await api.get('/payments', {
     params: {

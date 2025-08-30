@@ -1,5 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { createPayment as createPaymentService, fetchPaymentsByUser as fetchPaymentsByUserServices } from '../../api/payments/paymentService'; // ✅ Оновлений імпорт
+import {
+  createPayment as createPaymentService,
+  fetchPaymentsByUser as fetchPaymentsByUserServices
+} from '../../api/payments/paymentService'; // ✅ Оновлений імпорт
 
 const initialState = {
   payment: null,

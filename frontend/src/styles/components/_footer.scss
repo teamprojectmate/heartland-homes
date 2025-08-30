@@ -4,191 +4,192 @@
 @use '../abstract/mixins' as *;
 
 .main-footer {
-padding: 2.5rem 0;
-font-size: 1rem;
-line-height: 1.6;
-color: $white-color;
-background-color: $primary-600;
+  padding: 2.5rem 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: $white-color;
+  background-color: $primary-600;
 
-.footer-inner {
-max-width: $max-width-2xl;
-padding-inline: clamp($container-pad-min, 3vw, $container-pad-max);
-margin: 0 auto;
-}
+  .footer-inner {
+    max-width: $max-width-2xl;
+    padding-inline: clamp($container-pad-min, 3vw, $container-pad-max);
+    margin: 0 auto;
+  }
 }
 
 .footer-links {
-display: grid;
-grid-template-columns: 1fr;
-gap: 2rem;
-margin-bottom: 2rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
 
-@include media(md) {
-grid-template-columns: repeat(2, 1fr);
-}
+  @include media(md) {
+    grid-template-columns: repeat(2, 1fr);
+  }
 
-@include media(lg) {
-grid-template-columns: repeat(4, 1fr);
-}
+  @include media(lg) {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 /* Ліві колонки */
 .footer-columns {
-display: grid;
-grid-template-columns: 1fr;
-gap: 2rem;
-@include media(md) {
-grid-template-columns: repeat(2, 1fr);
-grid-column: 1 / span 2; // Розтягуємо на 2 колонки
-}
-@include media(lg) {
-grid-template-columns: repeat(2, 1fr);
-grid-column: 1 / span 2; // Розтягуємо на 2 колонки
-}
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+
+  @include media(md) {
+    grid-template-columns: repeat(2, 1fr);
+    grid-column: 1 / span 2; // Розтягуємо на 2 колонки
+  }
+
+  @include media(lg) {
+    grid-template-columns: repeat(2, 1fr);
+    grid-column: 1 / span 2; // Розтягуємо на 2 колонки
+  }
 }
 
 .footer-column {
-min-width: 0; // Додаємо, щоб контент не виходив за межі
-a {
-word-wrap: break-word;
-overflow-wrap: break-word;
-white-space: normal;
-}
+  min-width: 0; // Додаємо, щоб контент не виходив за межі
+  a {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+  }
 }
 
 /* Контакти + соцмережі завжди внизу */
 .footer-extra {
-display: grid;
-grid-template-columns: 1fr;
-gap: 2rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
 
-@include media(md) {
-grid-template-columns: repeat(2, 1fr);
-grid-column: 1 / -1;
-}
+  @include media(md) {
+    grid-template-columns: repeat(2, 1fr);
+    grid-column: 1 / -1;
+  }
 }
 
 .footer-heading {
-margin-bottom: 1rem;
-font-size: 1.2rem;
-font-weight: 700;
-color: $white-color;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: $white-color;
 }
 
 .list-unstyled {
-padding: 0;
-margin: 0;
-list-style: none;
+  padding: 0;
+  margin: 0;
+  list-style: none;
 }
 
 .footer-link {
-position: relative;
-display: inline-block;
-margin-bottom: 0.4rem;
-font-size: 1.05rem;
-color: $white-color;
-text-decoration: none;
-opacity: 0.85;
-transition: all 0.3s ease;
+  position: relative;
+  display: inline-block;
+  margin-bottom: 0.4rem;
+  font-size: 1.05rem;
+  color: $white-color;
+  text-decoration: none;
+  opacity: 0.85;
+  transition: all 0.3s ease;
 
-&:hover {
-opacity: 1;
-}
+  &:hover {
+    opacity: 1;
+  }
 
-&::after {
-position: absolute;
-bottom: -2px;
-left: 0;
-width: 0%;
-height: 2px;
-content: '';
-background: $white-color;
-transition: width 0.3s ease;
-}
+  &::after {
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0%;
+    height: 2px;
+    content: '';
+    background: $white-color;
+    transition: width 0.3s ease;
+  }
 
-&:hover::after {
-width: 100%;
-}
+  &:hover::after {
+    width: 100%;
+  }
 }
 
 .footer-contact {
-display: flex;
-flex-direction: column;
-gap: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
 }
 
 .footer-contact a {
-display: flex;
-gap: 0.5rem;
-align-items: center;
-font-size: 1rem;
-color: $white-color;
-text-decoration: none;
-opacity: 0.9;
-transition: all 0.3s ease;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  font-size: 1rem;
+  color: $white-color;
+  text-decoration: none;
+  opacity: 0.9;
+  transition: all 0.3s ease;
 
-svg {
-flex-shrink: 0;
-color: color.adjust($primary-color, $lightness: 15%);
-}
+  svg {
+    flex-shrink: 0;
+    color: color.adjust($primary-color, $lightness: 15%);
+  }
 
-&:hover {
-color: color.adjust($primary-color, $lightness: 15%);
-opacity: 1;
-transform: translateX(3px);
-}
+  &:hover {
+    color: color.adjust($primary-color, $lightness: 15%);
+    opacity: 1;
+    transform: translateX(3px);
+  }
 }
 
 .social-section {
-text-align: center;
+  text-align: center;
 
-@include media(md) {
-text-align: left;
-}
+  @include media(md) {
+    text-align: left;
+  }
 }
 
 .social-links {
-display: flex;
-gap: 0.8rem;
-justify-content: center;
-margin-top: 0.8rem;
+  display: flex;
+  gap: 0.8rem;
+  justify-content: center;
+  margin-top: 0.8rem;
 
-@include media(md) {
-justify-content: flex-start;
-}
+  @include media(md) {
+    justify-content: flex-start;
+  }
 
-a {
-display: flex;
-align-items: center;
-justify-content: center;
-width: 42px;
-height: 42px;
-color: $white-color;
-background-color: rgba($white-color, 0.1);
-border: 1px solid rgba($white-color, 0.2);
-border-radius: 50%;
-transition: all 0.3s ease;
+  a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    color: $white-color;
+    background-color: rgba($white-color, 0.1);
+    border: 1px solid rgba($white-color, 0.2);
+    border-radius: 50%;
+    transition: all 0.3s ease;
 
-&:hover {
-  color: $primary-color;
-  background-color: $white-color;
-  box-shadow: $box-shadow-card-hover;
-  transform: translateY(-3px);
-}
-
-}
+    &:hover {
+      color: $primary-color;
+      background-color: $white-color;
+      box-shadow: $box-shadow-card-hover;
+      transform: translateY(-3px);
+    }
+  }
 }
 
 .footer-copyright {
-width: 100%;
-padding-top: 1.5rem;
-margin-top: 1.5rem;
-text-align: center;
-border-top: 1px solid rgb(255 255 255 / 12%);
+  width: 100%;
+  padding-top: 1.5rem;
+  margin-top: 1.5rem;
+  text-align: center;
+  border-top: 1px solid rgb(255 255 255 / 12%);
 }
 
 .footer-text {
-margin: 0;
-font-size: 0.95rem;
-opacity: 0.7;
+  margin: 0;
+  font-size: 0.95rem;
+  opacity: 0.7;
 }

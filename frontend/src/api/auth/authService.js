@@ -8,14 +8,14 @@ const register = async (userData) => {
 };
 
 // ✅ Логін
-const login = async (userData) => { // Приймаємо об'єкт, як в схемах
+const login = async (userData) => {
+  console.log('📤 Надсилаю на бекенд /auth/login:', userData); // 👈
   const response = await api.post('/auth/login', userData);
-  
-  // ❌ Прибрали всю логіку з localStorage.
-  // Цим займається Redux-санк.
-  
   return response.data;
 };
+
+// ❌ Прибрали всю логіку з localStorage.
+// Цим займається Redux-санк.
 
 // ✅ Вихід
 const logout = () => {

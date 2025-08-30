@@ -1,6 +1,7 @@
 // src/styles/components/_pagination.scss
 @use '../abstract/mixins' as *;
 @use '../abstract/variables' as *;
+@use './buttons' as *;
 
 .pagination {
   @include flex-center(row);
@@ -8,37 +9,43 @@
   gap: $spacer-sm;
   margin-top: $spacer-lg;
 
-  span {
+  .pagination-info {
     font-size: $font-size-sm;
     color: $text-color;
   }
 
+  .pagination-wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 2rem 0;
+    margin-top: auto;
+  }
+
   button {
-    padding: 0.5rem 1rem;
-    font-size: $font-size-sm;
-    color: $primary-color;
-    cursor: pointer;
-    background-color: transparent;
-    border: 1px solid $primary-color;
-    border-radius: $radius-sm;
+    @extend .btn-outline; // ✅ стиль з кнопок
+
+    min-width: 110px;
+    font-weight: 600;
+    text-transform: uppercase;
     transition:
       background 0.2s ease,
-      color 0.2s ease;
+      color 0.2s ease,
+      transform 0.15s ease;
 
     &:hover:not(:disabled) {
-      color: $white-color;
-      background-color: $primary-color;
+      transform: translateY(-2px);
     }
 
     &:disabled {
       cursor: not-allowed;
       opacity: 0.5;
+      transform: none;
     }
   }
 
   // адаптивність
   @include media(sm) {
-    span {
+    .pagination-info {
       font-size: $font-size-md;
     }
 

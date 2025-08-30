@@ -1,37 +1,63 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchAccommodations } from '../../api/accommodations/accommodationService';
+import {
+  fetchAccommodations,
+  fetchAdminAccommodations,
+  deleteAccommodation
+} from '../../api/accommodations/accommodationService';
 
+// ----- Public -----
 export const loadAccommodations = createAsyncThunk(
   'accommodations/load',
   async (_, { getState, rejectWithValue }) => {
     try {
       const state = getState().accommodations;
 
-      console.log('🔍 Виклик loadAccommodations з фільтрами:', state.filters);
-
-      // ✅ Змінили логіку перевірки на null
       const filters = {
         city: state.filters.city || undefined,
         type: state.filters.type || undefined,
         accommodationSize: state.filters.accommodationSize || undefined,
         minDailyRate: state.filters.minDailyRate ?? undefined,
-        maxDailyRate: state.filters.maxDailyRate ?? undefined,
+        maxDailyRate: state.filters.maxDailyRate ?? undefined
       };
 
-      // ✅ ВИПРАВЛЕНО: Тепер передаємо об'єкт пагінації як другий аргумент
       const pageable = {
         page: state.page,
         size: state.size,
-        sort: state.sort // Не забуваємо про сортування
+        sort: state.sort
       };
 
       const data = await fetchAccommodations(filters, pageable);
-
-      console.log('✅ Відповідь від бекенду:', data);
       return data;
     } catch (err) {
-      console.error('❌ Помилка у loadAccommodations:', err);
       return rejectWithValue(err.response?.data?.message || 'Помилка при завантаженні');
+    }
+  }
+);
+
+// ----- Admin: завантаження списку -----
+export const loadAdminAccommodations = createAsyncThunk(
+  'accommodations/loadAdmin',
+  async ({ page = 0, size = 10 }, { rejectWithValue }) => {
+    try {
+      const data = await fetchAdminAccommodations(page, size);
+      return data;
+    } catch (err) {
+      return rejectWithValue(
+        err.response?.data?.message || 'Помилка при завантаженні житла (адмін)'
+      );
+    }
+  }
+);
+
+// ----- Admin: видалення житла -----
+export const removeAccommodation = createAsyncThunk(
+  'accommodations/remove',
+  async (id, { rejectWithValue }) => {
+    try {
+      await deleteAccommodation(id);
+      return id;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || 'Не вдалося видалити житло');
     }
   }
 );
@@ -44,12 +70,13 @@ const accommodationsSlice = createSlice({
     totalElements: 0,
     page: 0,
     size: 10,
+    sort: null,
     loading: false,
     error: null,
     filters: {
-      city: null, 
-      type: null, 
-      accommodationSize: null, 
+      city: null,
+      type: null,
+      accommodationSize: null,
       minDailyRate: null,
       maxDailyRate: null
     },
@@ -79,6 +106,7 @@ const accommodationsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // Public
       .addCase(loadAccommodations.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -93,6 +121,19 @@ const accommodationsSlice = createSlice({
       .addCase(loadAccommodations.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+
+      // Admin load
+      .addCase(loadAdminAccommodations.fulfilled, (state, action) => {
+        state.items = action.payload.content || [];
+        state.totalPages = action.payload.totalPages || 0;
+        state.totalElements = action.payload.totalElements || 0;
+        state.adminMode = true;
+      })
+
+      // Admin remove
+      .addCase(removeAccommodation.fulfilled, (state, action) => {
+        state.items = state.items.filter((acc) => acc.id !== action.payload);
       });
   }
 });
