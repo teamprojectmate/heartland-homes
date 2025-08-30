@@ -34,6 +34,9 @@ public class Accommodation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    private String name;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private AccommodationType type;
@@ -43,6 +46,12 @@ public class Accommodation {
 
     @Column(nullable = false)
     private String city;
+
+    @Column(nullable = false)
+    private String latitude;
+
+    @Column(nullable = false)
+    private String longitude;
 
     @Column(nullable = false)
     private String size;

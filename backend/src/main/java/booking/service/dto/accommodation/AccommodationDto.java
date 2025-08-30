@@ -9,10 +9,14 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 public class AccommodationDto {
+
     private Long id;
+    private String name;
     private AccommodationType type;
     private String location;
     private String city;
+    private String latitude;
+    private String longitude;
     private String size;
     private List<String> amenities;
     private BigDecimal dailyRate;

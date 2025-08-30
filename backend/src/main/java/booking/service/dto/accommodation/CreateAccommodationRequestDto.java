@@ -13,6 +13,9 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class CreateAccommodationRequestDto {
     @NotNull
+    private String name;
+
+    @NotNull
     private AccommodationType type;
 
     @NotBlank
@@ -20,6 +23,12 @@ public class CreateAccommodationRequestDto {
 
     @NotBlank
     private String city;
+
+    @NotBlank
+    private String latitude;
+
+    @NotBlank
+    private String longitude;
 
     @NotBlank
     private String size;
