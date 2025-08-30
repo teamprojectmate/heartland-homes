@@ -39,6 +39,7 @@ const ProtectedRoute = ({ children, requiredRole = null }) => {
     }
   }
 
+  // Якщо все добре → показуємо контент
   return children;
 };
 
