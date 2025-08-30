@@ -11,7 +11,8 @@ import {
   FaSignInAlt,
   FaClipboardList,
   FaUserPlus,
-  FaCreditCard // ✅ для платежів
+  FaCreditCard,
+  FaUserCog // ✅ іконка для адмін-панелі
 } from 'react-icons/fa';
 
 import '../styles/components/_header.scss';
@@ -20,7 +21,7 @@ import '../styles/components/_buttons.scss';
 const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { isAuthenticated } = useSelector((s) => s.auth);
+  const { isAuthenticated, user } = useSelector((s) => s.auth); // ✅ user додано до useSelector
   const [open, setOpen] = useState(false);
 
   const handleLogout = () => {
@@ -65,9 +66,17 @@ const Header = () => {
               </li>
               <li>
                 <NavLink to="/my-payments" className="nav-link">
-                  <FaCreditCard className="nav-icon" /> Мої платежі {/* ✅ нова кнопка */}
+                  <FaCreditCard className="nav-icon" /> Мої платежі
                 </NavLink>
               </li>
+              {/* ✅ Додаємо умову для відображення адмін-панелі */}
+              {user?.role === 'MANAGER' && (
+                <li>
+                  <NavLink to="/admin" className="nav-link">
+                    <FaUserCog className="nav-icon" /> Адмін-панель
+                  </NavLink>
+                </li>
+              )}
               <li>
                 <NavLink to="/profile" className="nav-link">
                   <FaUser className="nav-icon" /> Профіль
@@ -136,9 +145,17 @@ const Header = () => {
             </li>
             <li>
               <NavLink onClick={closeOnNavigate} to="/my-payments">
-                <FaCreditCard className="nav-icon" /> Мої платежі {/* ✅ нова кнопка */}
+                <FaCreditCard className="nav-icon" /> Мої платежі
               </NavLink>
             </li>
+            {/* ✅ Додаємо умову для відображення адмін-панелі у мобільному меню */}
+            {user?.role === 'MANAGER' && (
+              <li>
+                <NavLink onClick={closeOnNavigate} to="/admin">
+                  <FaUserCog className="nav-icon" /> Адмін-панель
+                </NavLink>
+              </li>
+            )}
             <li>
               <NavLink onClick={closeOnNavigate} to="/profile">
                 <FaUser className="nav-icon" /> Профіль

@@ -8,6 +8,7 @@ import Footer from './components/Footer.jsx';
 import Notification from './components/Notification.jsx';
 import PageWrapper from './components/PageWrapper.jsx';
 import ScrollToTop from './components/ScrollToTop.jsx';
+import Home from './pages/Home.jsx';
 
 // Auth
 import ProtectedRoute from './pages/Auth/ProtectedRoute.jsx';
@@ -32,14 +33,13 @@ import Cookies from './pages/Info/Cookies.jsx';
 // Lazy-loaded User/Admin
 const Profile = lazy(() => import('./pages/User/Profile.jsx'));
 const MyBookings = lazy(() => import('./pages/User/MyBookings.jsx'));
+const BookingDetails = lazy(() => import('./pages/User/BookingDetails.jsx'));
 const Payment = lazy(() => import('./pages/User/Payment.jsx'));
-const PaymentSuccess = lazy(() => import('./pages/User/PaymentSuccess.jsx')); // ✅ Новий lazy-loaded компонент
-const PaymentCancel = lazy(() => import('./pages/User/PaymentCancel.jsx'));   // ✅ Новий lazy-loaded компонент
+const PaymentSuccess = lazy(() => import('./pages/User/PaymentSuccess.jsx'));
+const PaymentCancel = lazy(() => import('./pages/User/PaymentCancel.jsx'));
 
 const AdminDashboard = lazy(() => import('./pages/Admin/AdminDashboard.jsx'));
-const AdminAccommodations = lazy(
-  () => import('./pages/Admin/AdminAccommodations.jsx')
-);
+const AdminAccommodations = lazy(() => import('./pages/Admin/AdminAccommodations.jsx'));
 const CreateAccommodation = lazy(
   () => import('./pages/Accommodations/CreateAccommodation.jsx')
 );
@@ -86,7 +86,7 @@ function App() {
               path="/"
               element={
                 <PageWrapper title="Головна">
-                  <Accommodations />
+                  <Home />
                 </PageWrapper>
               }
             />
@@ -135,6 +135,16 @@ function App() {
               }
             />
             <Route
+              path="/my-bookings/:id" // ✅ тепер маршрут співпадає з BookingCard
+              element={
+                <ProtectedRoute>
+                  <PageWrapper title="Деталі бронювання">
+                    <BookingDetails />
+                  </PageWrapper>
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/profile"
               element={
                 <ProtectedRoute>
@@ -154,7 +164,6 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            {/* ✅ Додано нові маршрути для сторінок успішної та скасованої оплати */}
             <Route
               path="/payments/success"
               element={

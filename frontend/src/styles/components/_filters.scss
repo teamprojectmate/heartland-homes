@@ -90,8 +90,8 @@
 
 /* 🔹 Інпути */
 .form-control {
-  height: $control-height-md;
   width: 100%; // ✅ Додано для адаптації
+  height: $control-height-md;
   padding: 0 0.75rem;
   border: 1px solid $border-color;
   border-radius: $radius;

@@ -16,7 +16,8 @@ const AccommodationDetails = () => {
   useEffect(() => {
     const link = document.createElement('link');
     link.rel = 'icon';
-    link.href = 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏠</text></svg>'; // Емодзі-фавікон
+    link.href =
+      'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏠</text></svg>'; // Емодзі-фавікон
     document.head.appendChild(link);
   }, []);
 
@@ -38,7 +39,9 @@ const AccommodationDetails = () => {
   if (error) return <p className="alert alert-danger mt-5 text-center">{error}</p>;
   if (!accommodation) return <p className="text-center mt-5">Помешкання не знайдено.</p>;
 
-  const imageUrl = accommodation.image ? fixDropboxUrl(accommodation.image) : '/no-image.png';
+  const imageUrl = accommodation.image
+    ? fixDropboxUrl(accommodation.image)
+    : '/no-image.png';
 
   return (
     <div className="container mt-4 accommodation-details-container">

@@ -12,10 +12,12 @@ const ProtectedRoute = ({ children, requiredRole = null }) => {
     return <p className="text-center">⏳ Перевірка доступу...</p>;
   }
 
+  // Якщо користувач не авторизований → редірект на /login
   if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
+  // Якщо є вимога до ролі
   if (requiredRole) {
     const roles = Array.isArray(requiredRole) ? requiredRole : [requiredRole];
     if (!roles.includes(user?.role)) {
@@ -32,6 +34,7 @@ const ProtectedRoute = ({ children, requiredRole = null }) => {
     }
   }
 
+  // Якщо все добре → показуємо контент
   return children;
 };
 

@@ -1,4 +1,5 @@
 // src/styles/components/_buttons.scss
+// src/styles/components/_buttons.scss
 @use '../abstract/variables' as *;
 
 /* ───────── core ───────── */
@@ -129,7 +130,7 @@
   @extend %btn;
 
   --btn-bg: $success-color;
-  --btn-fg: #f8fafc;
+  --btn-fg: #000; // ✅ Змінено колір тексту на чорний
   --btn-bd: $success-color;
 
   &:hover {
@@ -141,7 +142,7 @@
   @extend %btn;
 
   --btn-bg: $danger-color;
-  --btn-fg: #fff8f8;
+  --btn-fg: #000; // ✅ Змінено колір тексту на чорний
   --btn-bd: $danger-color;
 
   &:hover {

@@ -34,9 +34,9 @@ const CreateAccommodation = () => {
     try {
       const payload = {
         ...formData,
-        amenities: formData.amenities.split(',').map((a) => a.trim()),
+        amenities: formData.amenities.split(',').map((a) => a.trim())
       };
-      await createAccommodation(payload); 
+      await createAccommodation(payload);
       navigate('/admin/accommodations');
     } catch (err) {
       setError(err.response?.data?.message || 'Помилка при створенні');
@@ -82,7 +82,12 @@ const CreateAccommodation = () => {
         </div>
         <div className="form-group">
           <label>Зручності (через кому)</label>
-          <input type="text" name="amenities" value={formData.amenities} onChange={handleChange} />
+          <input
+            type="text"
+            name="amenities"
+            value={formData.amenities}
+            onChange={handleChange}
+          />
         </div>
         <div className="form-group">
           <label>Ціна за добу</label>

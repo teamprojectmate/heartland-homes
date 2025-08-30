@@ -1,35 +1,51 @@
 import api from '../axios';
 
-const createBooking = async (bookingData) => {
+// ----- Create booking -----
+export const createBooking = async (bookingData) => {
   const response = await api.post('/bookings', bookingData);
   return response.data;
 };
 
-const fetchMyBookings = async (page, size) => {
-  const response = await api.get('/bookings/my', { params: { page, size } });
-  return response.data;
-};
-
-const fetchBookings = async (page, size, userId, status) => {
-  const response = await api.get('/bookings', {
-    params: { page, size, user_id: userId, status },
+// ----- Get my bookings (current user, with pagination) -----
+export const fetchMyBookings = async (page = 0, size = 5) => {
+  const response = await api.get('/bookings/my', {
+    params: { page, size }
   });
   return response.data;
 };
 
-const fetchBookingById = async (id) => {
+// ----- Get all bookings (admin) -----
+export const fetchBookings = async (page = 0, size = 10, userId, status) => {
+  const params = { page, size };
+  if (userId) params.userId = userId;
+  if (status) params.status = status;
+
+  const response = await api.get('/bookings', { params });
+  return response.data;
+};
+
+// ----- Get booking by ID -----
+export const fetchBookingById = async (id) => {
   const response = await api.get(`/bookings/${id}`);
   return response.data;
 };
 
-const updateBooking = async (id, bookingData) => {
+// ----- Update booking -----
+export const updateBooking = async (id, bookingData) => {
   const response = await api.put(`/bookings/${id}`, bookingData);
   return response.data;
 };
 
-const cancelBooking = async (id) => {
-  await api.delete(`/bookings/${id}`);
-  return id;
+// ----- Cancel booking (правильний DELETE) -----
+export const cancelBooking = async (id) => {
+  const response = await api.delete(`/bookings/${id}`);
+  return response.data;
+};
+
+// ----- Delete booking (admin only, теж DELETE) -----
+export const deleteBooking = async (id) => {
+  const response = await api.delete(`/bookings/${id}`);
+  return response.data;
 };
 
 const bookingsService = {
@@ -39,6 +55,7 @@ const bookingsService = {
   fetchBookingById,
   updateBooking,
   cancelBooking,
+  deleteBooking
 };
 
 export default bookingsService;

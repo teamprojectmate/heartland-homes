@@ -34,7 +34,7 @@ export const updateProfile = createAsyncThunk(
       if (!token) {
         return rejectWithValue('Немає токена авторизації');
       }
-      
+
       const response = await api.put('/users/me', userData, {
         headers: {
           Authorization: `Bearer ${token}`

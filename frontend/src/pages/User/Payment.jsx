@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { createPayment } from '../../store/slices/paymentsSlice';
 import Notification from '../../components/Notification';
-import '../../styles/payment.scss'; 
+import '../../styles/payment.scss';
 
 const Payment = () => {
   const dispatch = useDispatch();
@@ -27,7 +27,7 @@ const Payment = () => {
         <p className="payment-subtitle">
           Будь ласка, натисніть кнопку нижче, щоб перейти до захищеної сторінки оплати.
         </p>
-        
+
         {error && <Notification type="danger" message={error} />}
 
         <button
