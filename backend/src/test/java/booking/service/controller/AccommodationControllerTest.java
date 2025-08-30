@@ -126,8 +126,6 @@ class AccommodationControllerTest {
         AccommodationDto actual = objectMapper.readValue(
                 result.getResponse().getContentAsString(),
                 AccommodationDto.class);
-        System.out.println(expected);
-        System.out.println(actual);
         org.junit.jupiter.api.Assertions.assertTrue(
                 reflectionEquals(expected, actual, "dailyRate"));
     }
@@ -160,11 +158,16 @@ class AccommodationControllerTest {
     @DisplayName("Update accommodation by id")
     void update_WithValidIdAndDto_ReturnsUpdatedAccommodation() throws Exception {
         CreateAccommodationRequestDto requestDto = createUpdatedAccommodationRequestDto();
-        AccommodationDto expected = createAccommodationDto(1L)
+        AccommodationDto expected = new AccommodationDto()
+                .setId(1L)
+                .setName(requestDto.getName())
+                .setType(requestDto.getType())
                 .setLocation(requestDto.getLocation())
                 .setCity(requestDto.getCity())
+                .setLatitude(requestDto.getLatitude())
+                .setLongitude(requestDto.getLongitude())
                 .setSize(requestDto.getSize())
-                .setType(requestDto.getType())
+                .setAmenities(requestDto.getAmenities())
                 .setDailyRate(requestDto.getDailyRate())
                 .setImage(requestDto.getImage());
         String jsonRequest = objectMapper.writeValueAsString(requestDto);
@@ -179,6 +182,8 @@ class AccommodationControllerTest {
         AccommodationDto actual = objectMapper.readValue(
                 result.getResponse().getContentAsString(),
                 AccommodationDto.class);
+        System.out.println(expected);
+        System.out.println(actual);
         org.junit.jupiter.api.Assertions.assertTrue(
                 reflectionEquals(expected, actual));
     }

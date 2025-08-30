@@ -14,6 +14,11 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
                   name: type
                   type: VARCHAR(50)
                   constraints:
@@ -26,6 +31,16 @@ databaseChangeLog:
               - column:
                   name: city
                   type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: latitude
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: longitude
+                  type: VARCHAR(100)
                   constraints:
                     nullable: false
               - column:
