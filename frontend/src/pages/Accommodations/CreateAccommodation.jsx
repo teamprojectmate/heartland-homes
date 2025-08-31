@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Notification from '../../components/Notification';
 import { createAccommodation } from '../../api/accommodations/accommodationService';
-import { useSelector } from 'react-redux';
 
 const CreateAccommodation = () => {
   const navigate = useNavigate();
@@ -11,8 +10,11 @@ const CreateAccommodation = () => {
     type: 'HOUSE',
     location: '',
     city: '',
-    size: 'SMALL', // ✅ Початкове значення enum
-    amenities: '', // ✅ Робимо рядок для зручності
+    // ✅ ДОДАНО: Нові поля для широти та довготи
+    latitude: '',
+    longitude: '',
+    size: '',
+    amenities: '',
     dailyRate: '',
     image: ''
   });
@@ -34,7 +36,9 @@ const CreateAccommodation = () => {
     try {
       const payload = {
         ...formData,
-        amenities: formData.amenities.split(',').map((a) => a.trim())
+        // Перетворюємо рядок з зручностями на масив, обрізаючи пробіли
+        amenities: formData.amenities.split(',').map((a) => a.trim()),
+        dailyRate: Number(formData.dailyRate)
       };
       await createAccommodation(payload);
       navigate('/admin/accommodations');
@@ -55,8 +59,9 @@ const CreateAccommodation = () => {
           <select name="type" value={formData.type} onChange={handleChange}>
             <option value="HOUSE">Будинок</option>
             <option value="APARTMENT">Квартира</option>
-            <option value="CONDO">Кондо</option>
+            <option value="HOTEL">Готель</option>
             <option value="VACATION_HOME">Дім для відпочинку</option>
+            <option value="HOSTEL">Хостел</option>
           </select>
         </div>
         <div className="form-group">
@@ -73,12 +78,26 @@ const CreateAccommodation = () => {
           <input type="text" name="city" value={formData.city} onChange={handleChange} />
         </div>
         <div className="form-group">
+          <label>Широта (Latitude)</label>
+          <input
+            type="text"
+            name="latitude"
+            value={formData.latitude}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="form-group">
+          <label>Довгота (Longitude)</label>
+          <input
+            type="text"
+            name="longitude"
+            value={formData.longitude}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="form-group">
           <label>Розмір</label>
-          <select name="size" value={formData.size} onChange={handleChange}>
-            <option value="SMALL">Маленький</option>
-            <option value="MEDIUM">Середній</option>
-            <option value="LARGE">Великий</option>
-          </select>
+          <input type="text" name="size" value={formData.size} onChange={handleChange} />
         </div>
         <div className="form-group">
           <label>Зручності (через кому)</label>

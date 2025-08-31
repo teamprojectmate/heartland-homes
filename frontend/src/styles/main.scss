@@ -8,28 +8,33 @@
 @use './layout/main-layout';
 
 // 3) components
-@use './components/header';
-@use './components/footer';
-@use './components/cards';
-@use './components/forms';
-@use './components/hero';
-@use './components/admin';
-@use './components/offers';
-@use './components/notifications';
+
 @use './components/accommodation-details';
+@use './components/accommodation-gallery';
 @use './components/admin-dashboard';
-@use './components/profile';
-@use './components/filters';
+@use './components/admin';
+@use './components/auth';
+@use './components/badges-status';
+@use './components/badges';
 @use './components/booking-form';
+@use './components/bookings';
+@use './components/buttons';
+@use './components/cards';
+@use './components/filters';
+@use './components/footer';
+@use './components/forms';
+@use './components/header';
+@use './components/hero';
+@use './components/info-pages';
 @use './components/location-map';
 @use './components/map';
-@use './components/buttons';
-@use './components/auth';
-@use './components/pagination';
 @use './components/modal';
-@use './components/info-pages';
+@use './components/notifications';
+@use './components/offers';
+@use './components/pagination';
 @use './components/payment';
-@use './components/bookings';
+@use './components/profile';
+@use './components/searchForm';
 
 // 4) пакетні стилі — імпортуємо як пакет, без шляху до node_modules
 @use '../../node_modules/react-image-gallery/styles/scss/image-gallery';

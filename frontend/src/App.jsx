@@ -135,7 +135,7 @@ function App() {
               }
             />
             <Route
-              path="/my-bookings/:id" // ✅ тепер маршрут співпадає з BookingCard
+              path="/my-bookings/:id"
               element={
                 <ProtectedRoute>
                   <PageWrapper title="Деталі бронювання">
