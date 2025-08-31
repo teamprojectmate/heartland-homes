@@ -1,36 +1,32 @@
-// src/styles/components/_cards.scss
 @use '../abstract/variables' as *;
 @use 'sass:math';
+@use './badges';
 
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(280px, 1fr)
+  ); // ✅ auto-fit + 280px щоб влізало більше
+
   gap: 1.5rem;
   align-items: stretch;
+
+  // ✅ зробимо ширший контейнер
+  max-width: $max-width-2xl;
+  padding-inline: clamp($container-pad-min, 3.5vw, $container-pad-max);
+  margin-inline: auto;
 
   @media (max-width: $breakpoint-sm) {
     grid-template-columns: 1fr;
   }
 }
 
-.card-img-placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 200px;
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: $muted-color;
-  background: $background-light;
-  border-top-left-radius: $radius;
-  border-top-right-radius: $radius;
-}
-
 .card-custom {
   display: flex;
   flex-direction: column;
   height: 100%;
+  overflow: hidden;
   background: $white-color;
   border-radius: $radius;
   box-shadow: $box-shadow-card;
@@ -50,8 +46,6 @@
   width: 100%;
   height: 200px;
   object-fit: cover;
-  border-top-left-radius: $radius;
-  border-top-right-radius: $radius;
   transition: transform 0.3s ease;
 }
 
@@ -76,10 +70,10 @@
   font-weight: 600;
 }
 
-.card-text {
-  margin-bottom: 1rem;
+.city-label {
   font-size: 1rem;
-  color: $muted-color;
+  font-weight: 600;
+  color: $primary-color;
 }
 
 .card-price {
@@ -90,46 +84,7 @@
 }
 
 .card-badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+  @extend .badge-group;
+
   margin: 0.5rem 0 1rem;
-}
-
-.badge {
-  display: inline-block;
-  padding: 0.35rem 0.75rem;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: $white-color;
-  border-radius: $radius-sm;
-  transition:
-    background-color 0.2s ease,
-    transform 0.2s ease;
-
-  &:hover {
-    transform: translateY(-2px);
-  }
-
-  &.badge-type {
-    background-color: $primary-700;
-  }
-
-  &.badge-size {
-    background-color: $success-color;
-  }
-
-  &.badge-status {
-    &.pending {
-      background: $warning-color;
-    }
-
-    &.paid {
-      background: $success-color;
-    }
-
-    &.cancelled {
-      background: $danger-color;
-    }
-  }
 }

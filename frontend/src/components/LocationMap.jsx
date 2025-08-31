@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import setupLeaflet from '../utils/leafletConfig'; // Імпортуємо нову функцію
+import setupLeaflet from '../utils/leafletConfig';
 import '../styles/components/_location-map.scss';
 
 const LocationMap = ({ location, city, latitude, longitude }) => {

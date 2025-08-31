@@ -46,22 +46,25 @@ const Offers = () => {
   const [selectedOffer, setSelectedOffer] = useState(null);
 
   return (
-    <div className="offers-grid">
-      {offers.map(({ id, title, description, image, details }) => (
-        <article key={id} className="offer-card">
-          <img className="offer-image" src={image} alt={title} loading="lazy" />
-          <div className="card-body">
-            <h5 className="card-title">{title}</h5>
-            <p className="card-text">{description}</p>
-            <button
-              className="btn-primary mt-auto"
-              onClick={() => setSelectedOffer({ title, description, details, image })}
-            >
-              Дізнатися більше
-            </button>
-          </div>
-        </article>
-      ))}
+    <>
+      {/* тільки сітка карток */}
+      <div className="offers-grid">
+        {offers.map(({ id, title, description, image, details }) => (
+          <article key={id} className="offer-card">
+            <img className="offer-image" src={image} alt={title} loading="lazy" />
+            <div className="card-body">
+              <h5 className="card-title">{title}</h5>
+              <p className="card-text">{description}</p>
+              <button
+                className="btn-primary mt-auto"
+                onClick={() => setSelectedOffer({ title, description, details, image })}
+              >
+                Дізнатися більше
+              </button>
+            </div>
+          </article>
+        ))}
+      </div>
 
       {/* Модальне вікно */}
       {selectedOffer && (
@@ -90,7 +93,7 @@ const Offers = () => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

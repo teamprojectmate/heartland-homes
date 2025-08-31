@@ -2,26 +2,23 @@
 import api from '../axios';
 
 // 🔹 Пошук житла з фільтрами (GET)
-export const fetchAccommodations = async (filters = {}, pageable = {}) => {
-  const params = {
-    ...filters,
-    page: pageable.page ?? 0,
-    size: pageable.size ?? 10
-  };
-
-  if (pageable.sort) {
-    params.sort = pageable.sort;
-  }
-
-  // 🔹 Видаляємо пусті значення
-  Object.keys(params).forEach((key) => {
-    if (params[key] == null || params[key] === '') {
-      delete params[key];
-    }
-  });
+// Тепер приймає один об'єкт з усіма параметрами для кращої читабельності
+export const fetchAccommodations = async (params = {}) => {
+  // Видаляємо пусті значення та об'єкти з params
+  const cleanedParams = Object.fromEntries(
+    Object.entries(params).filter(
+      ([key, value]) =>
+        value != null &&
+        value !== '' &&
+        !(typeof value === 'object' && Object.keys(value).length === 0)
+    )
+  );
 
   try {
-    const response = await api.get('/accommodations/search', { params });
+    // Відправляємо параметри як query-параметри
+    const response = await api.get('/accommodations/search', {
+      params: cleanedParams
+    });
     return response.data;
   } catch (err) {
     console.error(
@@ -53,7 +50,10 @@ export const updateAccommodation = async (id, formData) => {
 // 🔹 Для адміна (список без фільтрів, пагінація)
 export const fetchAdminAccommodations = async (page = 0, size = 10) => {
   const response = await api.get('/accommodations', {
-    params: { page, size }
+    params: {
+      page,
+      size
+    }
   });
   return response.data;
 };

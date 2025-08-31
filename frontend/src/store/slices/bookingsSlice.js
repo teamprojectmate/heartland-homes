@@ -169,6 +169,8 @@ const bookingsSlice = createSlice({
       // CREATE
       .addCase(createBooking.fulfilled, (state, action) => {
         state.bookings.push(action.payload);
+        state.totalElements += 1;
+        state.totalPages = Math.ceil(state.totalElements / 5);
       })
 
       // FETCH MY BOOKINGS
@@ -210,15 +212,15 @@ const bookingsSlice = createSlice({
       // CANCEL (USER)
       .addCase(cancelBooking.fulfilled, (state, action) => {
         state.bookings = state.bookings.filter((b) => b.id !== action.payload);
-      })
-      .addCase(cancelBooking.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.payload;
+        state.totalElements -= 1;
+        state.totalPages = Math.ceil(state.totalElements / 5);
       })
 
       // DELETE (ADMIN)
       .addCase(deleteBooking.fulfilled, (state, action) => {
         state.bookings = state.bookings.filter((b) => b.id !== action.payload);
+        state.totalElements -= 1;
+        state.totalPages = Math.ceil(state.totalElements / 5);
       });
   }
 });

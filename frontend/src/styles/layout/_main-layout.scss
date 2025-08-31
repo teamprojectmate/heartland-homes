@@ -4,7 +4,6 @@
 @use 'sass:math';
 
 // 1. Core Layout
-// Переконаємося, що body займає всю висоту і є flex-контейнером
 html,
 body,
 #root {
@@ -45,7 +44,10 @@ footer {
 
 // 3. Other Layout Components
 .container {
-  max-width: 100%;
+  width: 100%;
+
+  // замість max-width:100% — ставимо базову максимальну ширину
+  max-width: $max-width-2xl;
   padding-inline: clamp($container-pad-min, 3.5vw, $container-pad-max);
   margin-inline: auto;
 
@@ -66,7 +68,6 @@ footer {
   }
 }
 
-// Переконаємось, що PageWrapper не ламає flexbox
 .page-wrapper {
   display: flex;
   flex-grow: 1;

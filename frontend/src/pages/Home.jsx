@@ -13,20 +13,17 @@ const Home = () => {
   const { items, loading, error } = useSelector((state) => state.accommodations);
 
   useEffect(() => {
-    dispatch(loadAccommodations({ page: 0, size: 4 }));
+    dispatch(loadAccommodations({ pageable: { page: 0, size: 4 } }));
   }, [dispatch]);
 
   const handleSearch = (e, formData) => {
     e.preventDefault();
-
-    dispatch(setFilters(formData)); // записуємо в Redux
-
+    dispatch(setFilters(formData));
     const queryParams = new URLSearchParams(
       Object.fromEntries(
         Object.entries(formData).filter(([_, v]) => v !== null && v !== '')
       )
     ).toString();
-
     navigate(`/accommodations?${queryParams}`);
   };
 
@@ -39,6 +36,7 @@ const Home = () => {
           <p className="hero-subheading">
             Знаходьте пропозиції готелів, приватних помешкань та багато іншого...
           </p>
+          {/* ✅ Використовуємо компонент SearchForm */}
           <SearchForm onSearch={handleSearch} />
         </div>
       </section>
@@ -58,10 +56,8 @@ const Home = () => {
       <section className="accommodations-section">
         <div className="container">
           <h2 className="section-heading">Доступні помешкання</h2>
-
           {loading && <p className="text-center">Завантаження...</p>}
           {error && <p className="text-center text-danger">{error}</p>}
-
           {!loading && !error && (
             <>
               <AccommodationList accommodations={items.slice(0, 4)} />

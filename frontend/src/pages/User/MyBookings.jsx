@@ -1,4 +1,3 @@
-// src/pages/User/MyBookings.jsx
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -32,7 +31,15 @@ const MyBookings = () => {
     dispatch(fetchMyBookings({ page, size: 5 }));
   }, [isAuthenticated, navigate, dispatch, page]);
 
-  // 🔹 Після отримання бронювань підтягнути житло
+  // 🔹 Якщо сторінка пуста після видалення → перейти на попередню
+  useEffect(() => {
+    if (status === 'succeeded' && bookings.length === 0 && page > 0) {
+      dispatch(setPage(page - 1));
+      dispatch(fetchMyBookings({ page: page - 1, size: 5 }));
+    }
+  }, [status, bookings, page, dispatch]);
+
+  // 🔹 Підвантаження житла
   useEffect(() => {
     const fetchAccommodations = async () => {
       if (!bookings || bookings.length === 0) {
@@ -95,7 +102,6 @@ const MyBookings = () => {
 
   const hasBookings = totalElements > 0;
   const hasActiveBookingsOnThisPage = filteredBookings.length > 0;
-  const totalActivePages = Math.ceil(totalElements / 5);
 
   return (
     <div className="container page">
@@ -114,11 +120,11 @@ const MyBookings = () => {
             ))}
           </div>
 
-          {totalActivePages > 1 && (
+          {totalPages > 1 && (
             <div className="pagination-wrapper">
               <Pagination
                 page={page}
-                totalPages={totalActivePages}
+                totalPages={totalPages}
                 onPageChange={handlePageChange}
               />
             </div>

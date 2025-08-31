@@ -1,0 +1,81 @@
+@use '../abstract/variables' as *;
+
+.badge {
+  display: inline-flex;
+  gap: 0.4rem;
+  align-items: center;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: $white-color; // завжди білий
+  border-radius: $radius-sm;
+  box-shadow: $box-shadow-sm;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  // типи житла
+  &.badge-type-house {
+    background-color: $badge-house;
+  }
+
+  &.badge-type-apartment {
+    background-color: $badge-apartment;
+  }
+
+  &.badge-type-hotel {
+    background-color: $badge-hotel;
+  }
+
+  &.badge-type-vacation-home {
+    background-color: $badge-vacation-home;
+  }
+
+  &.badge-type {
+    background-color: $primary-700;
+  }
+
+  // розмір
+  &.badge-size {
+    background-color: $badge-hostel;
+  }
+
+  // зручності
+  &.badge-amenity {
+    font-size: 0.85rem;
+
+    &.wifi {
+      background-color: $badge-wifi;
+    }
+
+    &.kitchen {
+      background-color: $badge-kitchen;
+    }
+
+    &.ac {
+      background-color: $badge-ac;
+    }
+
+    &.parking {
+      background-color: $badge-parking;
+    }
+
+    &.washer {
+      background-color: $badge-washer;
+    }
+
+    &.other {
+      background-color: $badge-other;
+    }
+  }
+}
+
+.badge-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}

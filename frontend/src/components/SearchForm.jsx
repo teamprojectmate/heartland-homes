@@ -1,13 +1,28 @@
-// src/components/SearchForm.jsx
 import React, { useState } from 'react';
 import '../styles/components/_forms.scss';
 import '../styles/components/_buttons.scss';
+import '../styles/components/_searchForm.scss';
+
+// Опції для типів і розмірів житла
+const ACCOMMODATION_TYPES = [
+  { value: 'HOUSE', label: 'Будинок' },
+  { value: 'APARTMENT', label: 'Квартира' },
+  { value: 'HOTEL', label: 'Готель' },
+  { value: 'VACATION_HOME', label: 'Дім для відпочинку' },
+  { value: 'HOSTEL', label: 'Хостел' }
+];
+
+const ACCOMMODATION_SIZES = [
+  { value: 'SMALL', label: 'Маленький' },
+  { value: 'MEDIUM', label: 'Середній' },
+  { value: 'LARGE', label: 'Великий' }
+];
 
 const SearchForm = ({ onSearch }) => {
   const [formData, setFormData] = useState({
     city: '',
     type: '',
-    accommodationSize: '',
+    size: '',
     minDailyRate: '',
     maxDailyRate: ''
   });
@@ -30,9 +45,10 @@ const SearchForm = ({ onSearch }) => {
   return (
     <form onSubmit={handleSubmit} className="search-form-container">
       <div className="search-input-group">
-        <label>Місто</label>
+        <label htmlFor="city">Місто</label>
         <input
           type="text"
+          id="city"
           name="city"
           placeholder="Наприклад, Київ"
           className="form-control"
@@ -42,40 +58,46 @@ const SearchForm = ({ onSearch }) => {
       </div>
 
       <div className="search-input-group">
-        <label>Тип</label>
+        <label htmlFor="type">Тип житла</label>
         <select
+          id="type"
           name="type"
           className="form-control"
           value={formData.type}
           onChange={handleChange}
         >
           <option value="">Будь-який</option>
-          <option value="HOUSE">Будинок</option>
-          <option value="APARTMENT">Квартира</option>
-          <option value="CONDO">Кондо</option>
-          <option value="VACATION_HOME">Будинок для відпочинку</option>
+          {ACCOMMODATION_TYPES.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
         </select>
       </div>
 
       <div className="search-input-group">
-        <label>Розмір</label>
+        <label htmlFor="size">Розмір</label>
         <select
-          name="accommodationSize"
+          id="size"
+          name="size"
           className="form-control"
-          value={formData.accommodationSize}
+          value={formData.size}
           onChange={handleChange}
         >
           <option value="">Будь-який</option>
-          <option value="SMALL">Маленький</option>
-          <option value="MEDIUM">Середній</option>
-          <option value="LARGE">Великий</option>
+          {ACCOMMODATION_SIZES.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
         </select>
       </div>
 
       <div className="search-input-group">
-        <label>Ціна від</label>
+        <label htmlFor="minDailyRate">Ціна від</label>
         <input
           type="number"
+          id="minDailyRate"
           name="minDailyRate"
           className="form-control"
           value={formData.minDailyRate}
@@ -84,9 +106,10 @@ const SearchForm = ({ onSearch }) => {
       </div>
 
       <div className="search-input-group">
-        <label>Ціна до</label>
+        <label htmlFor="maxDailyRate">Ціна до</label>
         <input
           type="number"
+          id="maxDailyRate"
           name="maxDailyRate"
           className="form-control"
           value={formData.maxDailyRate}

@@ -1,0 +1,24 @@
+@use '../abstract/variables' as *;
+
+.badge {
+  &.badge-status {
+    padding: 0.35rem 0.7rem;
+    font-size: 0.85rem;
+    border-radius: $radius-sm;
+
+    &.pending {
+      color: $white-color;
+      background: $warning-color;
+    }
+
+    &.paid {
+      color: $white-color;
+      background: $success-color;
+    }
+
+    &.cancelled {
+      color: $white-color;
+      background: $danger-color;
+    }
+  }
+}
