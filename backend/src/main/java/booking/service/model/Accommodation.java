@@ -41,6 +41,10 @@ public class Accommodation {
     @Column(nullable = false)
     private AccommodationType type;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private AccommodationStatus accommodationStatus;
+
     @Column(nullable = false)
     private String location;
 

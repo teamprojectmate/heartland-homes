@@ -24,6 +24,11 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: accommodation_status
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
                   name: location
                   type: VARCHAR(255)
                   constraints:

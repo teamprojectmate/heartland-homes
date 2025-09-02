@@ -6,14 +6,19 @@ import static booking.service.util.AccommodationUtil.createAccommodationRequestD
 import static booking.service.util.AccommodationUtil.createListOfAccommodations;
 import static booking.service.util.AccommodationUtil.createUpdatedAccommodationRequestDto;
 import static org.apache.commons.lang3.builder.EqualsBuilder.reflectionEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import booking.service.config.WithMockCustomUser;
 import booking.service.dto.accommodation.AccommodationDto;
 import booking.service.dto.accommodation.CreateAccommodationRequestDto;
+import booking.service.model.AccommodationStatus;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -99,8 +104,7 @@ class AccommodationControllerTest {
                         .param("page", "0")
                         .param("accommodationSize", "10")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(org.springframework.test.web.servlet.result
-                        .MockMvcResultMatchers.status().isOk())
+                .andExpect(status().isOk())
                 .andReturn();
 
         JsonNode root = objectMapper.readTree(result.getResponse().getContentAsByteArray());
@@ -109,8 +113,7 @@ class AccommodationControllerTest {
                 contentNode.toString(),
                 new TypeReference<>() {}
         );
-
-        org.junit.jupiter.api.Assertions.assertEquals(expected.size(), actual.size());
+        assertEquals(expected.size(), actual.size());
     }
 
     @WithMockUser(username = "customer", roles = {"CUSTOMER"})
@@ -119,38 +122,36 @@ class AccommodationControllerTest {
     void findById_WithValidId_ReturnsAccommodationDto() throws Exception {
         AccommodationDto expected = createAccommodationDto(1L);
         MvcResult result = mockMvc.perform(get("/accommodations/{id}", 1))
-                .andExpect(org.springframework.test.web.servlet.result
-                        .MockMvcResultMatchers.status().isOk())
+                .andExpect(status().isOk())
                 .andReturn();
 
         AccommodationDto actual = objectMapper.readValue(
                 result.getResponse().getContentAsString(),
                 AccommodationDto.class);
-        org.junit.jupiter.api.Assertions.assertTrue(
-                reflectionEquals(expected, actual, "dailyRate"));
+        assertTrue(reflectionEquals(expected, actual, "dailyRate"));
     }
 
-    @WithMockUser(username = "manager", roles = {"MANAGER"})
+    @WithMockCustomUser(id = 1L, username = "test@example.com", roles = {"MANAGER"})
     @Test
-    @DisplayName("Create a new accommodation")
+    @DisplayName("Create a new accommodation as manager")
     void save_WithValidRequestDto_ReturnsCreatedAccommodation() throws Exception {
         CreateAccommodationRequestDto requestDto = createAccommodationRequestDto();
-        AccommodationDto expected = createAccommodationDto(1L);
         String jsonRequest = objectMapper.writeValueAsString(requestDto);
 
         MvcResult result = mockMvc.perform(post("/accommodations")
                         .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(org.springframework.test.web.servlet.result
-                        .MockMvcResultMatchers.status().isCreated())
+                .andExpect(status().isCreated())
                 .andReturn();
 
         AccommodationDto actual = objectMapper.readValue(
                 result.getResponse().getContentAsString(),
                 AccommodationDto.class);
 
-        org.junit.jupiter.api.Assertions.assertTrue(
-                reflectionEquals(expected, actual, "id", "image"));
+        assertEquals(AccommodationStatus.PERMITTED, actual.getAccommodationStatus());
+        assertEquals(requestDto.getName(), actual.getName());
+        assertEquals(requestDto.getCity(), actual.getCity());
+        assertEquals(requestDto.getType(), actual.getType());
     }
 
     @WithMockUser(username = "manager", roles = {"MANAGER"})
@@ -169,14 +170,14 @@ class AccommodationControllerTest {
                 .setSize(requestDto.getSize())
                 .setAmenities(requestDto.getAmenities())
                 .setDailyRate(requestDto.getDailyRate())
-                .setImage(requestDto.getImage());
+                .setImage(requestDto.getImage())
+                .setAccommodationStatus(AccommodationStatus.PERMITTED);
         String jsonRequest = objectMapper.writeValueAsString(requestDto);
 
         MvcResult result = mockMvc.perform(put("/accommodations/{id}", 1)
                         .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(org.springframework.test.web.servlet.result
-                        .MockMvcResultMatchers.status().isOk())
+                .andExpect(status().isOk())
                 .andReturn();
 
         AccommodationDto actual = objectMapper.readValue(
@@ -184,8 +185,7 @@ class AccommodationControllerTest {
                 AccommodationDto.class);
         System.out.println(expected);
         System.out.println(actual);
-        org.junit.jupiter.api.Assertions.assertTrue(
-                reflectionEquals(expected, actual));
+        assertTrue(reflectionEquals(expected, actual));
     }
 
     @WithMockUser(username = "manager", roles = {"MANAGER"})
@@ -193,8 +193,7 @@ class AccommodationControllerTest {
     @DisplayName("Delete accommodation by id")
     void delete_WithValidId_ReturnsNoContent() throws Exception {
         mockMvc.perform(delete("/accommodations/{id}", 1))
-                .andExpect(org.springframework.test.web.servlet.result
-                        .MockMvcResultMatchers.status().isNoContent());
+                .andExpect(status().isNoContent());
     }
 
     @WithMockUser(username = "customer", roles = {"CUSTOMER"})
@@ -202,8 +201,7 @@ class AccommodationControllerTest {
     @DisplayName("Get accommodation by non-existing id")
     void findById_WithInvalidId_ReturnsNotFound() throws Exception {
         mockMvc.perform(get("/accommodations/{id}", 999))
-                .andExpect(org.springframework.test.web.servlet.result
-                        .MockMvcResultMatchers.status().isNotFound());
+                .andExpect(status().isNotFound());
     }
 
     @WithMockUser(username = "manager", roles = {"MANAGER"})
@@ -215,8 +213,7 @@ class AccommodationControllerTest {
         mockMvc.perform(put("/accommodations/{id}", 999)
                         .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(org.springframework.test.web.servlet.result
-                        .MockMvcResultMatchers.status().isNotFound());
+                .andExpect(status().isNotFound());
     }
 
     @WithMockUser(username = "manager", roles = {"MANAGER"})
@@ -224,8 +221,7 @@ class AccommodationControllerTest {
     @DisplayName("Delete accommodation with invalid id")
     void delete_WithInvalidId_ReturnsNotFound() throws Exception {
         mockMvc.perform(delete("/accommodations/{id}", 999))
-                .andExpect(org.springframework.test.web.servlet.result
-                        .MockMvcResultMatchers.status().isNotFound());
+                .andExpect(status().isNotFound());
     }
 
     @WithMockUser(username = "manager", roles = {"MANAGER"})
@@ -237,8 +233,7 @@ class AccommodationControllerTest {
         mockMvc.perform(post("/accommodations")
                         .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(org.springframework.test.web.servlet.result
-                        .MockMvcResultMatchers.status().isBadRequest());
+                .andExpect(status().isBadRequest());
     }
 }
 
