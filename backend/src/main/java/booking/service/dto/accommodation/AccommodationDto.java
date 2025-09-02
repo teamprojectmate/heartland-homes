@@ -1,5 +1,6 @@
 package booking.service.dto.accommodation;
 
+import booking.service.model.AccommodationStatus;
 import booking.service.model.AccommodationType;
 import java.math.BigDecimal;
 import java.util.List;
@@ -21,4 +22,5 @@ public class AccommodationDto {
     private List<String> amenities;
     private BigDecimal dailyRate;
     private String image;
+    private AccommodationStatus accommodationStatus;
 }

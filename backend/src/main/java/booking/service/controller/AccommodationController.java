@@ -3,6 +3,7 @@ package booking.service.controller;
 import booking.service.dto.accommodation.AccommodationDto;
 import booking.service.dto.accommodation.AccommodationSearchParametersDto;
 import booking.service.dto.accommodation.CreateAccommodationRequestDto;
+import booking.service.dto.accommodation.UpdateAccommodationStatusDto;
 import booking.service.service.AccommodationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -12,8 +13,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -30,13 +33,14 @@ public class AccommodationController {
 
     private final AccommodationService accommodationService;
 
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'MANAGER')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Save a new accommodation",
             description = "Add a new accommodation to inventory")
-    public AccommodationDto save(@RequestBody @Valid CreateAccommodationRequestDto requestDto) {
-        return accommodationService.save(requestDto);
+    public AccommodationDto save(@RequestBody @Valid CreateAccommodationRequestDto requestDto,
+            Authentication authentication) {
+        return accommodationService.save(requestDto, authentication);
     }
 
     @GetMapping
@@ -75,5 +79,14 @@ public class AccommodationController {
     public Page<AccommodationDto> search(
             AccommodationSearchParametersDto searchParameters, Pageable pageable) {
         return accommodationService.search(searchParameters, pageable);
+    }
+
+    @PreAuthorize("hasRole('MANAGER')")
+    @PatchMapping("/{id}/status")
+    @Operation(summary = "Update accommodation status",
+            description = "Approve (PERMITTED) або reject (REJECTED) accommodation")
+    public AccommodationDto updateStatus(@PathVariable Long id,
+            @RequestBody @Valid UpdateAccommodationStatusDto requestDto) {
+        return accommodationService.updateStatus(id, requestDto);
     }
 }

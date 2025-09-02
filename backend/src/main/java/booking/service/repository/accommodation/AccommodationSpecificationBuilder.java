@@ -17,6 +17,7 @@ public class AccommodationSpecificationBuilder implements SpecificationBuilder<A
     private static final String SIZE = "accommodationSize";
     private static final String TYPE = "type";
     private static final String DAILY_RATE = "dailyRate";
+    private static final String ACCOMMODATION_STATUS = "accommodationStatus";
 
     private final AccommodationSpecificationProviderManager providerManager;
 
@@ -45,6 +46,17 @@ public class AccommodationSpecificationBuilder implements SpecificationBuilder<A
             spec = spec.and(providerManager
                     .getSpecificationProvider(TYPE, String[].class)
                     .getSpecification(typeNames));
+        }
+
+        if (searchParameters.accommodationStatus() != null
+                && searchParameters.accommodationStatus().length > 0) {
+            String[] statusNames = Arrays.stream(searchParameters.accommodationStatus())
+                    .map(Enum::name)
+                    .toArray(String[]::new);
+
+            spec = spec.and(providerManager
+                    .getSpecificationProvider(ACCOMMODATION_STATUS, String[].class)
+                    .getSpecification(statusNames));
         }
 
         if (searchParameters.minDailyRate() != null || searchParameters.maxDailyRate() != null) {

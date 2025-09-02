@@ -3,6 +3,7 @@ package booking.service.service;
 import static booking.service.util.AccommodationUtil.createAccommodation2;
 import static booking.service.util.AccommodationUtil.createAccommodationDto2;
 import static booking.service.util.AccommodationUtil.createAccommodationRequestDto2;
+import static booking.service.util.UserUtil.createUser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -17,7 +18,9 @@ import booking.service.dto.accommodation.CreateAccommodationRequestDto;
 import booking.service.exception.EntityNotFoundException;
 import booking.service.mapper.AccommodationMapper;
 import booking.service.model.Accommodation;
+import booking.service.model.AccommodationStatus;
 import booking.service.model.AccommodationType;
+import booking.service.model.User;
 import booking.service.repository.accommodation.AccommodationRepository;
 import booking.service.repository.accommodation.AccommodationSpecificationBuilder;
 import booking.service.service.impl.AccommodationServiceImpl;
@@ -35,6 +38,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.Authentication;
 
 @ExtendWith(MockitoExtension.class)
 class AccommodationServiceTest {
@@ -54,12 +58,16 @@ class AccommodationServiceTest {
         CreateAccommodationRequestDto requestDto = createAccommodationRequestDto2();
         Accommodation accommodation = createAccommodation2(1L);
         AccommodationDto dto = createAccommodationDto2(1L);
+        User mockUser = createUser(1L);
+
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getPrincipal()).thenReturn(mockUser);
 
         when(accommodationMapper.toEntity(requestDto)).thenReturn(accommodation);
         when(accommodationRepository.save(accommodation)).thenReturn(accommodation);
         when(accommodationMapper.toDto(accommodation)).thenReturn(dto);
 
-        AccommodationDto result = accommodationService.save(requestDto);
+        AccommodationDto result = accommodationService.save(requestDto, authentication);
 
         assertNotNull(result);
         assertEquals(dto, result);
@@ -185,6 +193,7 @@ class AccommodationServiceTest {
         AccommodationSearchParametersDto params = new AccommodationSearchParametersDto(
                 new String[]{"Kyiv"}, new String[]{"Large"},
                 new AccommodationType[]{AccommodationType.APARTMENT},
+                new AccommodationStatus[]{AccommodationStatus.PERMITTED},
                 BigDecimal.valueOf(100), BigDecimal.valueOf(300)
         );
 

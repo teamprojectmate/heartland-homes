@@ -3,6 +3,7 @@ package booking.service.util;
 import booking.service.dto.accommodation.AccommodationDto;
 import booking.service.dto.accommodation.CreateAccommodationRequestDto;
 import booking.service.model.Accommodation;
+import booking.service.model.AccommodationStatus;
 import booking.service.model.AccommodationType;
 import java.math.BigDecimal;
 import java.util.List;
@@ -20,7 +21,8 @@ public class AccommodationUtil {
                 .setSize("3 Спальні")
                 .setAmenities(List.of("Wi-Fi", "Кондиціонер", "Пральна машина"))
                 .setDailyRate(BigDecimal.valueOf(2500.00))
-                .setImage("https://www.dropbox.com/scl/fi/rbh8v6jjkhd3txxyhrfhg/photo1.jpg?rlkey=a4lrfbg4pz7zef6fv8jhcq12e&st=w0pq32wx&dl=0");
+                .setImage("https://www.dropbox.com/scl/fi/rbh8v6jjkhd3txxyhrfhg/photo1.jpg?rlkey=a4lrfbg4pz7zef6fv8jhcq12e&st=w0pq32wx&dl=0")
+                .setAccommodationStatus(AccommodationStatus.PERMITTED);
     }
 
     public static List<Accommodation> createListOfAccommodations() {
