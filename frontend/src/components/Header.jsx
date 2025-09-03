@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { NavLink, Link, useNavigate } from 'react-router-dom';
+import { NavLink, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../store/slices/authSlice';
 
-// іконки
 import {
   FaHome,
   FaUser,
@@ -12,7 +11,7 @@ import {
   FaClipboardList,
   FaUserPlus,
   FaCreditCard,
-  FaUserCog // ✅ іконка для адмін-панелі
+  FaUserCog
 } from 'react-icons/fa';
 
 import '../styles/components/_header.scss';
@@ -21,8 +20,11 @@ import '../styles/components/_buttons.scss';
 const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { isAuthenticated, user } = useSelector((s) => s.auth); // ✅ user додано до useSelector
+  const location = useLocation();
+
+  const { isAuthenticated, user } = useSelector((s) => s.auth);
   const [open, setOpen] = useState(false);
+  const [adminMode, setAdminMode] = useState(false);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -30,12 +32,29 @@ const Header = () => {
     navigate('/login');
   };
 
-  const closeOnNavigate = () => setOpen(false);
+  const closeDrawer = () => {
+    setOpen(false);
+  };
 
   useEffect(() => {
     document.body.classList.toggle('no-scroll', open);
     return () => document.body.classList.remove('no-scroll');
   }, [open]);
+
+  // ✅ визначаємо роль
+  const userRole =
+    user?.cleanRole || (Array.isArray(user?.roles) ? user.roles[0] : user?.role);
+
+  const isManager = userRole === 'MANAGER';
+
+  // ✅ якщо ми в адмінці — автоматично включаємо adminMode
+  useEffect(() => {
+    if (location.pathname.startsWith('/admin')) {
+      setAdminMode(true);
+    } else {
+      setAdminMode(false);
+    }
+  }, [location]);
 
   return (
     <>
@@ -69,8 +88,7 @@ const Header = () => {
                   <FaCreditCard className="nav-icon" /> Мої платежі
                 </NavLink>
               </li>
-              {/* ✅ Додаємо умову для відображення адмін-панелі */}
-              {user?.role === 'MANAGER' && (
+              {isManager && (
                 <li>
                   <NavLink to="/admin" className="nav-link">
                     <FaUserCog className="nav-icon" /> Адмін-панель
@@ -120,7 +138,7 @@ const Header = () => {
       {/* Drawer */}
       <div
         id="mobile-drawer"
-        className={`drawer ${open ? 'open' : ''}`}
+        className={`drawer ${open ? 'open' : ''} ${adminMode ? 'admin-mode' : ''}`}
         role="dialog"
         aria-modal="true"
         aria-label="Мобільне меню"
@@ -129,61 +147,95 @@ const Header = () => {
           <button
             className="drawer-close"
             aria-label="Закрити меню"
-            onClick={() => setOpen(false)}
+            onClick={closeDrawer}
           />
 
-          <ul className="drawer-nav" role="navigation">
-            <li>
-              <NavLink onClick={closeOnNavigate} to="/" end>
-                <FaHome className="nav-icon" /> Головна
-              </NavLink>
-            </li>
-            <li>
-              <NavLink onClick={closeOnNavigate} to="/my-bookings">
-                <FaClipboardList className="nav-icon" /> Мої бронювання
-              </NavLink>
-            </li>
-            <li>
-              <NavLink onClick={closeOnNavigate} to="/my-payments">
-                <FaCreditCard className="nav-icon" /> Мої платежі
-              </NavLink>
-            </li>
-            {/* ✅ Додаємо умову для відображення адмін-панелі у мобільному меню */}
-            {user?.role === 'MANAGER' && (
-              <li>
-                <NavLink onClick={closeOnNavigate} to="/admin">
-                  <FaUserCog className="nav-icon" /> Адмін-панель
+          {adminMode ? (
+            <>
+              <h2>Адмін-панель</h2>
+              <ul className="drawer-nav">
+                <li>
+                  <NavLink onClick={closeDrawer} to="/admin">
+                    <FaHome className="nav-icon" /> Головна
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink onClick={closeDrawer} to="/admin/accommodations">
+                    <FaClipboardList className="nav-icon" /> Помешкання
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink onClick={closeDrawer} to="/admin/bookings">
+                    <FaCreditCard className="nav-icon" /> Бронювання
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink onClick={closeDrawer} to="/admin/users">
+                    <FaUser className="nav-icon" /> Користувачі
+                  </NavLink>
+                </li>
+              </ul>
+              <div className="drawer-actions">
+                <NavLink to="/" onClick={() => setOpen(false)} className="btn-primary">
+                  ← На головну
                 </NavLink>
-              </li>
-            )}
-            <li>
-              <NavLink onClick={closeOnNavigate} to="/profile">
-                <FaUser className="nav-icon" /> Профіль
-              </NavLink>
-            </li>
-          </ul>
-
-          {isAuthenticated ? (
-            <div className="drawer-actions">
-              <button className="btn-primary" onClick={handleLogout}>
-                <FaSignOutAlt className="nav-icon" /> Вийти
-              </button>
-            </div>
+              </div>
+            </>
           ) : (
-            <div className="drawer-actions">
-              <NavLink onClick={closeOnNavigate} to="/login" className="btn-primary">
-                <FaSignInAlt className="nav-icon" /> Увійти
-              </NavLink>
-              <NavLink onClick={closeOnNavigate} to="/register" className="btn-secondary">
-                <FaUserPlus className="nav-icon" /> Реєстрація
-              </NavLink>
-            </div>
+            <>
+              <ul className="drawer-nav" role="navigation">
+                <li>
+                  <NavLink onClick={closeDrawer} to="/" end>
+                    <FaHome className="nav-icon" /> Головна
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink onClick={closeDrawer} to="/my-bookings">
+                    <FaClipboardList className="nav-icon" /> Мої бронювання
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink onClick={closeDrawer} to="/my-payments">
+                    <FaCreditCard className="nav-icon" /> Мої платежі
+                  </NavLink>
+                </li>
+                {isManager && (
+                  <li>
+                    <NavLink onClick={closeDrawer} to="/admin">
+                      <FaUserCog className="nav-icon" /> Адмін-панель
+                    </NavLink>
+                  </li>
+                )}
+                <li>
+                  <NavLink onClick={closeDrawer} to="/profile">
+                    <FaUser className="nav-icon" /> Профіль
+                  </NavLink>
+                </li>
+              </ul>
+
+              {isAuthenticated ? (
+                <div className="drawer-actions">
+                  <button className="btn-primary" onClick={handleLogout}>
+                    <FaSignOutAlt className="nav-icon" /> Вийти
+                  </button>
+                </div>
+              ) : (
+                <div className="drawer-actions">
+                  <NavLink onClick={closeDrawer} to="/login" className="btn-primary">
+                    <FaSignInAlt className="nav-icon" /> Увійти
+                  </NavLink>
+                  <NavLink onClick={closeDrawer} to="/register" className="btn-secondary">
+                    <FaUserPlus className="nav-icon" /> Реєстрація
+                  </NavLink>
+                </div>
+              )}
+            </>
           )}
         </div>
 
         <button
           className="drawer-backdrop"
-          onClick={() => setOpen(false)}
+          onClick={closeDrawer}
           aria-label="Закрити меню"
         />
       </div>

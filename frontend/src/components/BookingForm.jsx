@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { createBooking } from '../store/slices/bookingsSlice';
 import Notification from './Notification';
 import '../styles/components/_booking-form.scss';
 
-const BookingForm = ({ accommodationId }) => {
+const BookingForm = ({ accommodation }) => {
   const [checkInDate, setCheckInDate] = useState('');
   const [checkOutDate, setCheckOutDate] = useState('');
   const [error, setError] = useState(null);
@@ -14,6 +14,19 @@ const BookingForm = ({ accommodationId }) => {
   const navigate = useNavigate();
   const { status } = useSelector((state) => state.bookings);
   const { isAuthenticated } = useSelector((state) => state.auth);
+
+  // ✅ Розрахунок кількості ночей і загальної ціни (тільки для UI)
+  const totalPrice = useMemo(() => {
+    if (!checkInDate || !checkOutDate) return 0;
+
+    const start = new Date(checkInDate);
+    const end = new Date(checkOutDate);
+
+    if (end <= start) return 0;
+
+    const nights = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+    return nights * (accommodation?.dailyRate || 0);
+  }, [checkInDate, checkOutDate, accommodation]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,9 +42,14 @@ const BookingForm = ({ accommodationId }) => {
       return;
     }
 
-    // ✅ Видаляємо `userId`. Сервер сам визначає користувача по токену.
+    if (new Date(checkOutDate) <= new Date(checkInDate)) {
+      setError('Дата виїзду повинна бути пізніше заїзду.');
+      return;
+    }
+
+    // ✅ Відправляємо тільки ті поля, які очікує бекенд
     const bookingData = {
-      accommodationId,
+      accommodationId: accommodation.id,
       checkInDate,
       checkOutDate
     };
@@ -71,9 +89,15 @@ const BookingForm = ({ accommodationId }) => {
         />
       </div>
 
+      {/* ✅ Показуємо загальну суму тільки в UI */}
+      {totalPrice > 0 && (
+        <p className="total-price">
+          Загальна сума: <strong>{totalPrice} грн</strong>
+        </p>
+      )}
+
       {error && <Notification message={error} type="danger" />}
 
-      {/* ✅ Оновлюємо кнопку для керування станом */}
       <button type="submit" className="btn-primary" disabled={status === 'loading'}>
         {status === 'loading' ? 'Бронювання...' : 'Забронювати'}
       </button>

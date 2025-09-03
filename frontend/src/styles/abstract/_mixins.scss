@@ -44,6 +44,24 @@
   box-shadow: $shadow;
 }
 
+// Новий міксин для плавного переходу тіней
+@mixin card-shadow-transition {
+  transition:
+    box-shadow 0.3s cubic-bezier(0.25, 0.8, 0.25, 1),
+    transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+// ✅ Виправлення: новий міксин для тіней кнопок
+@mixin button-shadow-transition {
+  transition:
+    box-shadow 0.3s cubic-bezier(0.25, 0.8, 0.25, 1),
+    transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+@mixin button-shadow-hover {
+  box-shadow: $box-shadow-button-hover;
+}
+
 // -----------------------------
 // Typography helpers
 // -----------------------------
@@ -101,7 +119,7 @@
     background: transparent;
     border-radius: $radius;
     transform: scaleX(0);
-    transform-origin: left; // ✅ додано для покращеного ефекту
+    transform-origin: left;
     transition:
       transform 0.2s ease,
       background-color 0.2s ease;

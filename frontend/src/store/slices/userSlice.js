@@ -1,23 +1,26 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import api from '../../api/axios';
+import {
+  getCurrentUser,
+  updateProfile as apiUpdateProfile,
+  updateUserRole as apiUpdateUserRole,
+  deleteUser
+} from '../../api/user/userService';
 
 const savedProfile = localStorage.getItem('userProfile');
+
 const initialState = {
   profile: savedProfile ? JSON.parse(savedProfile) : null,
+  items: [],
   loading: false,
   error: null
 };
 
+// Профіль
 export const fetchProfile = createAsyncThunk(
   'user/fetchProfile',
-  async (token, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get('/users/me', {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      return response.data;
+      return await getCurrentUser();
     } catch (err) {
       return rejectWithValue(
         err.response?.data?.message || 'Не вдалося завантажити профіль'
@@ -26,49 +29,54 @@ export const fetchProfile = createAsyncThunk(
   }
 );
 
+// Оновлення профілю
 export const updateProfile = createAsyncThunk(
   'user/updateProfile',
-  async (userData, { rejectWithValue, getState }) => {
+  async (userData, { rejectWithValue }) => {
     try {
-      const token = getState().auth?.authData?.token;
-      if (!token) {
-        return rejectWithValue('Немає токена авторизації');
-      }
-
-      const response = await api.put('/users/me', userData, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      return response.data;
+      return await apiUpdateProfile(userData);
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || 'Не вдалося оновити профіль');
     }
   }
 );
 
-export const updateUserRole = createAsyncThunk(
-  'user/updateUserRole',
-  async ({ id, role }, { rejectWithValue, getState }) => {
+// Список користувачів
+export const fetchUsers = createAsyncThunk(
+  'user/fetchUsers',
+  async (_, { rejectWithValue }) => {
     try {
-      const token = getState().auth?.authData?.token;
-      if (!token) {
-        return rejectWithValue('Немає токена авторизації');
-      }
-
-      const response = await api.put(
-        `/users/${id}/role`,
-        { role },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
-      return response.data;
+      return await getAllUsers();
     } catch (err) {
       return rejectWithValue(
-        err.response?.data?.message || 'Не вдалося оновити роль користувача'
+        err.response?.data?.message || 'Не вдалося завантажити список'
+      );
+    }
+  }
+);
+
+// Оновлення ролі
+export const updateUserRole = createAsyncThunk(
+  'user/updateUserRole',
+  async ({ id, role }, { rejectWithValue }) => {
+    try {
+      return await apiUpdateUserRole({ id, role });
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || 'Не вдалося оновити роль');
+    }
+  }
+);
+
+// Видалення користувача
+export const removeUser = createAsyncThunk(
+  'user/removeUser',
+  async (id, { rejectWithValue }) => {
+    try {
+      await deleteUser(id);
+      return id;
+    } catch (err) {
+      return rejectWithValue(
+        err.response?.data?.message || 'Не вдалося видалити користувача'
       );
     }
   }
@@ -86,37 +94,28 @@ const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchProfile.pending, (s) => {
-        s.loading = true;
-        s.error = null;
-      })
       .addCase(fetchProfile.fulfilled, (s, { payload }) => {
-        s.loading = false;
         s.profile = payload;
         localStorage.setItem('userProfile', JSON.stringify(payload));
+        s.loading = false;
+      })
+      .addCase(fetchProfile.pending, (s) => {
+        s.loading = true;
       })
       .addCase(fetchProfile.rejected, (s, { payload }) => {
         s.loading = false;
         s.error = payload;
       })
-      .addCase(updateProfile.pending, (s) => {
-        s.loading = true;
-        s.error = null;
-      })
-      .addCase(updateProfile.fulfilled, (s, { payload }) => {
+      .addCase(fetchUsers.fulfilled, (s, { payload }) => {
+        s.items = payload;
         s.loading = false;
-        s.profile = payload;
-        localStorage.setItem('userProfile', JSON.stringify(payload));
-      })
-      .addCase(updateProfile.rejected, (s, { payload }) => {
-        s.loading = false;
-        s.error = payload;
       })
       .addCase(updateUserRole.fulfilled, (s, { payload }) => {
-        if (s.profile && s.profile.id === payload.id) {
-          s.profile = payload;
-          localStorage.setItem('userProfile', JSON.stringify(payload));
-        }
+        const index = s.items.findIndex((u) => u.id === payload.id);
+        if (index !== -1) s.items[index] = payload;
+      })
+      .addCase(removeUser.fulfilled, (s, { payload }) => {
+        s.items = s.items.filter((u) => u.id !== payload);
       });
   }
 });

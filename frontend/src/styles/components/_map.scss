@@ -4,7 +4,7 @@
 
 .map-container {
   width: 100%;
-  height: 500px;
+  height: 100%; // ✅ ОНОВЛЕНО: тепер карта займає всю висоту
   overflow: hidden;
   border-radius: $radius;
   box-shadow: $box-shadow-md;

@@ -2,75 +2,76 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { fixDropboxUrl } from '../utils/fixDropboxUrl';
+import { mapStatus } from '../utils/translations';
+import '../styles/components/_booking-card.scss';
 
 const fallbackImage = '/no-image.png';
 
 const BookingCard = ({ booking, onCancel }) => {
-  const acc = booking.accommodation;
+  const imageUrl = booking.accommodation?.image
+    ? fixDropboxUrl(booking.accommodation.image)
+    : fallbackImage;
 
-  // ✅ картинка з житла або fallback
-  const imageUrl = acc?.image ? fixDropboxUrl(acc.image) : fallbackImage;
-
-  // ✅ адреса — повна, якщо є
-  const address = acc?.address ? acc.address : acc?.city ? acc.city : 'Адреса невідома';
-
-  // ✅ ціна — спочатку з бронювання, інакше з житла
-  const price = booking.totalPrice ?? acc?.dailyRate ?? '—';
+  const { label, color } = mapStatus(booking.status);
 
   return (
-    <div className="card-custom">
+    <div className="booking-card">
       {/* Фото */}
-      <img
-        src={imageUrl}
-        alt={acc?.title ?? 'Зображення житла'}
-        className="card-img-top-custom"
-        onError={(e) => (e.target.src = fallbackImage)}
-      />
+      <div className="booking-card-image-wrapper">
+        <img
+          src={imageUrl}
+          alt={booking.accommodation?.name || 'Зображення помешкання'}
+          className="booking-card-image"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = fallbackImage;
+          }}
+        />
+      </div>
 
-      <div className="card-body">
-        {/* Назва */}
-        <h3 className="card-title">
-          {acc?.title ?? `Помешкання #${booking.accommodationId}`}
-        </h3>
+      {/* Контент */}
+      <div className="booking-card-content">
+        <div className="booking-card-header">
+          <h4 className="booking-card-title">
+            {booking.accommodation?.name || 'Без назви'}
+          </h4>
+          <p className="booking-card-location">
+            {booking.accommodation?.city || 'Невідоме місто'}
+          </p>
+        </div>
 
-        {/* Адреса */}
-        <p className="card-text">📍 {address}</p>
-
-        {/* Дати */}
-        <p>
-          Дати: {new Date(booking.checkInDate).toLocaleDateString()} –{' '}
-          {new Date(booking.checkOutDate).toLocaleDateString()}
-        </p>
-
-        {/* ID */}
-        <p>ID бронювання: {booking.id}</p>
-
-        {/* Статус */}
-        <span className={`badge badge-status ${booking.status.toLowerCase()}`}>
-          Статус: {booking.status}
-        </span>
+        <div className="booking-card-info">
+          <p>
+            Дати: {booking.checkInDate} — {booking.checkOutDate}
+          </p>
+          <p>ID бронювання: {booking.id}</p>
+          <p className="booking-card-status-text">
+            Статус:{' '}
+            <span className="badge badge-status" style={{ backgroundColor: color }}>
+              {label}
+            </span>
+          </p>
+        </div>
 
         {/* Ціна */}
-        <p className="card-price">{price} грн</p>
+        {booking.totalPrice && (
+          <p className="booking-card-price">
+            <strong>{booking.totalPrice} грн</strong>
+          </p>
+        )}
 
-        {/* Дії */}
-        <div className="booking-actions">
-          <Link to={`/my-bookings/${booking.id}`} className="btn btn-primary w-100">
+        {/* Кнопки */}
+        <div className="booking-card-actions">
+          <Link to={`/my-bookings/${booking.id}`} className="btn btn-primary">
             Деталі
           </Link>
-
           {booking.status === 'PENDING' && (
-            <>
-              <Link to={`/payment/${booking.id}`} className="btn btn-success w-100">
-                Оплатити
-              </Link>
-              <button
-                className="btn btn-danger w-100"
-                onClick={() => onCancel?.(booking.id)}
-              >
-                Скасувати
-              </button>
-            </>
+            <button className="btn btn-warning">Оплатити</button>
+          )}
+          {booking.status !== 'CANCELED' && (
+            <button className="btn btn-danger" onClick={() => onCancel(booking.id)}>
+              Скасувати
+            </button>
           )}
         </div>
       </div>

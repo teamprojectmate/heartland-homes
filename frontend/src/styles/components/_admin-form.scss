@@ -1,0 +1,113 @@
+@use '../abstract/variables' as *;
+@use '../abstract/mixins' as *;
+
+.admin-form,
+.form {
+  max-width: 700px;
+  padding: 2.5rem;
+  margin: 3rem auto;
+  background: $surface-color;
+  border-radius: $radius-lg;
+  animation: fade-in-up 0.6s ease both;
+
+  @include card-shadow;
+  @include card-shadow-transition;
+
+  h1 {
+    @include heading($font-size-xl, 700);
+
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2rem;
+    text-align: center;
+
+    &::before {
+      font-size: 1.8rem;
+      content: '✨';
+    }
+  }
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: $font-size-md;
+    font-weight: 600;
+    color: $gray-700;
+    transition: color 0.3s ease;
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    font-size: $font-size-base;
+    color: $text-color;
+    background: $white-color;
+    border: 1px solid $gray-300;
+    border-radius: $radius-md;
+    transition: all 0.3s ease;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      box-shadow: $box-shadow-focus;
+      transform: translateY(-2px);
+    }
+  }
+}
+
+button[type='submit'],
+.btn-primary {
+  display: block;
+  width: 100%;
+  padding: 1rem 1.25rem;
+  font-size: $font-size-md;
+  font-weight: 600;
+  color: $white-color;
+  text-align: center;
+  cursor: pointer;
+  background: linear-gradient(135deg, $primary-color, $primary-600);
+  border: none;
+  border-radius: $radius-md;
+
+  @include button-shadow-transition;
+
+  &:hover {
+    background: linear-gradient(135deg, $primary-600, $primary-700);
+
+    @include button-shadow-hover;
+
+    transform: translateY(-3px);
+  }
+
+  &:active {
+    background: $primary-700;
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    background: $gray-400;
+    box-shadow: none;
+  }
+}
+
+/* 🔥 Анімація при завантаженні */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

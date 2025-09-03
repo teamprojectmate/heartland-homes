@@ -1,3 +1,5 @@
+// src/pages/User/MyBookings.jsx
+
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -10,6 +12,7 @@ import {
 import { getAccommodationById } from '../../api/accommodations/accommodationService';
 import Pagination from '../../components/Pagination';
 import BookingCard from '../../components/BookingCard';
+import '../../styles/components/_bookings.scss';
 import '../../styles/components/_cards.scss';
 
 const MyBookings = () => {
@@ -31,7 +34,7 @@ const MyBookings = () => {
     dispatch(fetchMyBookings({ page, size: 5 }));
   }, [isAuthenticated, navigate, dispatch, page]);
 
-  // 🔹 Якщо сторінка пуста після видалення → перейти на попередню
+  // Якщо сторінка пуста після видалення -> перейти на попередню
   useEffect(() => {
     if (status === 'succeeded' && bookings.length === 0 && page > 0) {
       dispatch(setPage(page - 1));
@@ -39,7 +42,7 @@ const MyBookings = () => {
     }
   }, [status, bookings, page, dispatch]);
 
-  // 🔹 Підвантаження житла
+  // Підвантаження житла
   useEffect(() => {
     const fetchAccommodations = async () => {
       if (!bookings || bookings.length === 0) {
@@ -79,6 +82,8 @@ const MyBookings = () => {
         message: 'Бронювання успішно скасовано!',
         type: 'success'
       });
+      // ✅ Оновлюємо стан, щоб прибрати скасоване бронювання
+      setEnrichedBookings((prev) => prev.filter((b) => b.id !== bookingId));
     } catch (err) {
       setNotification({
         message: 'Не вдалося скасувати бронювання.',
@@ -96,6 +101,7 @@ const MyBookings = () => {
     );
   }
 
+  // ✅ Фільтруємо бронювання, щоб показувати лише активні
   const filteredBookings = enrichedBookings.filter(
     (booking) => booking.status !== 'CANCELED'
   );
@@ -107,6 +113,9 @@ const MyBookings = () => {
     <div className="container page">
       <h1 className="text-center">Мої бронювання</h1>
       {error && <Notification message={error} type="danger" />}
+      {notification.message && (
+        <Notification message={notification.message} type={notification.type} />
+      )}
 
       {hasActiveBookingsOnThisPage ? (
         <>
@@ -119,7 +128,6 @@ const MyBookings = () => {
               />
             ))}
           </div>
-
           {totalPages > 1 && (
             <div className="pagination-wrapper">
               <Pagination
@@ -158,8 +166,6 @@ const MyBookings = () => {
           )}
         </>
       )}
-
-      <Notification message={notification.message} type={notification.type} />
     </div>
   );
 };

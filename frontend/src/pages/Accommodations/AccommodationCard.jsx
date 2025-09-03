@@ -23,7 +23,8 @@ const AccommodationCard = ({ accommodation }) => {
       />
 
       <div className="card-body">
-        <h3 className="card-title">{accommodation.location}</h3>
+        {/* ✅ ДОДАНО: Назва житла */}
+        <h3 className="card-title">{accommodation?.name || 'Без назви'}</h3>
 
         <div className="card-badges">
           <span className="badge badge-type" style={{ backgroundColor: color }}>
@@ -39,7 +40,10 @@ const AccommodationCard = ({ accommodation }) => {
           )}
         </div>
 
-        <p className="city-label">{accommodation.city}</p>
+        {/* ✅ ОНОВЛЕНО: Відображаємо адресу в окремому елементі */}
+        <p className="city-label">
+          {accommodation?.city}, {accommodation?.location}
+        </p>
 
         <p className="card-price">{accommodation.dailyRate} грн / доба</p>
 

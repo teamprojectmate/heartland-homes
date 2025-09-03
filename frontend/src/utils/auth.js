@@ -2,10 +2,15 @@
 
 // Отримати токен з localStorage
 export const getAuthToken = () => {
-  return localStorage.getItem('token');
+  try {
+    const auth = JSON.parse(localStorage.getItem('auth'));
+    return auth?.token || null;
+  } catch {
+    return null;
+  }
 };
 
-// Очистити токен (наприклад, при logout)
+// Очистити токен
 export const clearAuthToken = () => {
-  localStorage.removeItem('token');
+  localStorage.removeItem('auth');
 };

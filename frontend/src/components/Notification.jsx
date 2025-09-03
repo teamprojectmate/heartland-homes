@@ -1,14 +1,17 @@
-// src/components/Notification.jsx
 import React, { useEffect, useState } from 'react';
 import '../styles/components/_notifications.scss';
 
-const Notification = ({ message, type = 'success', duration = 3000 }) => {
+const Notification = ({ message, type = 'success', duration = 3000, onClose }) => {
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => setVisible(false), duration);
+    const timer = setTimeout(() => {
+      setVisible(false);
+      onClose?.();
+    }, duration);
+
     return () => clearTimeout(timer);
-  }, [duration]);
+  }, [duration, onClose]);
 
   if (!visible || !message) return null;
 
@@ -16,13 +19,19 @@ const Notification = ({ message, type = 'success', duration = 3000 }) => {
 
   return (
     <div
-      className={`${notificationClass} fixed-bottom-right`}
+      className={`${notificationClass}`}
       role="alert"
       aria-live="assertive"
       aria-atomic="true"
     >
       <span>{message}</span>
-      <button className="close-btn" onClick={() => setVisible(false)}>
+      <button
+        className="close-btn"
+        onClick={() => {
+          setVisible(false);
+          onClose?.();
+        }}
+      >
         ×
       </button>
     </div>

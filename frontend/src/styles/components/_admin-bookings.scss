@@ -1,0 +1,164 @@
+// src/styles/components/_admin-bookings.scss
+
+@use '../abstract/variables' as *;
+@use '../abstract/mixins' as *;
+@use './admin';
+@use 'sass:color';
+
+.admin-bookings-table-wrapper {
+  @extend .table-wrapper;
+
+  overflow-x: auto;
+}
+
+.admin-bookings-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: $white-color;
+  border-radius: $radius;
+  box-shadow: $box-shadow-md;
+
+  thead {
+    background: $gray-100;
+  }
+
+  tbody tr {
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: $gray-50;
+    }
+  }
+
+  td,
+  th {
+    padding: 0.9rem 0.75rem;
+    font-size: 0.95rem;
+    text-align: center;
+  }
+
+  th {
+    font-weight: 600;
+    color: $gray-700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  // ✅ бейджі статусів
+  .badge-status {
+    @extend .badge;
+
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+
+    &.pending {
+      color: $white-color;
+      background: $warning-color;
+    }
+
+    &.confirmed {
+      color: $white-color;
+      background: $success-color;
+    }
+
+    &.canceled {
+      color: $white-color;
+      background: $danger-color;
+    }
+
+    &.expired {
+      color: $white-color;
+      background: $gray-400;
+    }
+  }
+
+  // ✅ селект
+  select {
+    padding: 6px 10px;
+    font-size: 0.9rem;
+    color: $text-color;
+    background: $white-color;
+    border: 1px solid $gray-300;
+    border-radius: $radius-sm;
+
+    &:focus {
+      outline: none;
+      box-shadow: $box-shadow-focus;
+    }
+  }
+
+  // ✅ кнопки дій
+  .actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
+
+    .btn-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      border-radius: $radius-sm;
+      box-shadow: $box-shadow-sm;
+
+      &.btn-danger {
+        color: $white-color;
+        background: $danger-color;
+
+        &:hover {
+          background: color.adjust($danger-color, $lightness: -10%);
+        }
+      }
+
+      svg {
+        width: 16px;
+        height: 16px;
+      }
+    }
+  }
+}
+
+/* ───────── 📱 Мобільна адаптація ───────── */
+@media (max-width: $breakpoint-md) {
+  .admin-bookings-table {
+    display: block;
+    width: 100%;
+
+    thead {
+      display: none; // ховаємо заголовки таблиці
+    }
+
+    tbody {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    tr {
+      display: block;
+      padding: 1rem;
+      background: $white-color;
+      border: 1px solid $gray-200;
+      border-radius: $radius-md;
+      box-shadow: $box-shadow-sm;
+    }
+
+    td {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      font-size: $font-size-md;
+
+      &::before {
+        font-weight: 600;
+        color: $gray-600;
+        text-transform: uppercase;
+        content: attr(data-label); // ✅ використовуємо data-label для підписів
+      }
+    }
+  }
+}

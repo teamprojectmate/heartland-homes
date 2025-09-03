@@ -15,6 +15,7 @@ $text-color: #2f3b45;
 $muted-color: #6b7280;
 $heading-color: #22313f;
 $border-color: #e5e7eb;
+$gray-50: #f8f8f8;
 $gray-100: #f3f4f6;
 $gray-200: #e5e7eb;
 $gray-300: #d1d5db;
@@ -71,6 +72,7 @@ $line-height-base: 1.6;
 // ───────────────
 $spacer: 24px;
 $spacer-sm: 16px;
+$spacer-md: 20px;
 $spacer-lg: 32px;
 $radius: 12px;
 $radius-sm: 4px;
@@ -102,6 +104,18 @@ $shadow-sm: $box-shadow-sm;
 $shadow-md: $box-shadow-md;
 $shadow-lg: $box-shadow-lg;
 
+// нові, більш об'ємні тіні для "вау-ефекту"
+$box-shadow-card:
+  0 2px 10px rgb(0 0 0 / 8%),
+  0 4px 16px rgb(0 0 0 / 5%);
+$box-shadow-card-hover:
+  0 8px 24px rgb(0 0 0 / 15%),
+  0 6px 20px rgb(0 0 0 / 10%);
+$box-shadow-focus: 0 0 0 3px rgba($primary-color, 0.25);
+$box-shadow-inset: inset 0 2px 4px rgb(0 0 0 / 6%);
+$box-shadow-button: 0 4px 8px rgb(0 0 0 / 10%);
+$box-shadow-button-hover: 0 6px 12px rgb(0 0 0 / 15%);
+
 // ───────────────
 // 📱 Брейкпоінти
 // ───────────────
@@ -111,7 +125,7 @@ $breakpoint-md: 768px;
 $breakpoint-lg: 1024px;
 $breakpoint-xl: 1280px;
 
-/*  флюїдні відступи */
+/* флюїдні відступи */
 $container-pad-min: 14px;
 $container-pad-max: 24px;
 $control-height-sm: 44px;

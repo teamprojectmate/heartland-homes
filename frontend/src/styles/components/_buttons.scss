@@ -1,5 +1,4 @@
 // src/styles/components/_buttons.scss
-// src/styles/components/_buttons.scss
 @use '../abstract/variables' as *;
 
 /* ───────── core ───────── */
@@ -130,7 +129,7 @@
   @extend %btn;
 
   --btn-bg: $success-color;
-  --btn-fg: #000; // ✅ Змінено колір тексту на чорний
+  --btn-fg: #000;
   --btn-bd: $success-color;
 
   &:hover {
@@ -142,11 +141,42 @@
   @extend %btn;
 
   --btn-bg: $danger-color;
-  --btn-fg: #000; // ✅ Змінено колір тексту на чорний
+  --btn-fg: #000;
   --btn-bd: $danger-color;
 
   &:hover {
     filter: brightness(0.96);
+  }
+}
+
+/* ───────── special small icon button (таблиці) ───────── */
+.btn-icon {
+  @extend %btn;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  min-width: 32px;
+  height: 32px;
+  min-height: 32px;
+  padding: 0;
+  border-radius: $radius-sm;
+  box-shadow: none;
+
+  svg {
+    width: 18px;
+    height: 18px;
+    color: $white-color;
+  }
+}
+
+.btn-icon.btn-danger {
+  background-color: $danger-color;
+  border: none;
+
+  &:hover {
+    filter: brightness(0.9);
   }
 }
 
@@ -181,14 +211,6 @@
   &:hover {
     background: #e8f0ef;
   }
-}
-
-.btn-icon {
-  @extend %btn;
-
-  width: 44px;
-  min-width: 44px;
-  padding: 0;
 }
 
 .btn-solid {

@@ -1,4 +1,4 @@
-// src/styles/components/header/drawer
+// src/styles/components/header/_drawer.scss
 @use 'sass:color';
 @use '../../abstract/variables' as *;
 @use '../../abstract/mixins' as *;
@@ -7,7 +7,7 @@
 .drawer {
   position: fixed;
   inset: 0;
-  z-index: 9999; // поверх усього
+  z-index: 9999;
   display: flex;
   justify-content: flex-end;
   pointer-events: none;
@@ -20,7 +20,7 @@
 .drawer-backdrop {
   position: absolute;
   inset: 0;
-  z-index: 1; // вище контенту сторінки
+  z-index: 1;
   background: rgb(15 15 20 / 45%);
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -32,20 +32,27 @@
 
 .drawer-content {
   position: relative;
-  z-index: 2; // вище бекдропу
+  z-index: 2;
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 420px;
+  max-width: 320px;
   height: 100vh;
-  padding: 24px 20px;
+  padding: 24px 22px;
   overflow-y: auto;
   background: $surface-color;
-  border-left: 1px solid $border-color;
-  border-radius: 12px 0 0 12px;
+  border-left: 1px solid $gray-200;
+  border-radius: 16px 0 0 16px;
   box-shadow: $box-shadow-lg;
   transform: translateX(100%);
   transition: transform 0.35s ease;
+
+  h2 {
+    margin: 0 0 1.2rem;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: $heading-color;
+  }
 }
 
 .drawer.open .drawer-content {
@@ -56,17 +63,17 @@
 .drawer-nav {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
   padding: 0;
-  margin: 20px 0;
+  margin: 0 0 1.5rem;
   list-style: none;
 
   li a {
     display: flex;
     gap: 10px;
     align-items: center;
-    padding: 10px 14px;
-    font-size: 1.1rem;
+    padding: 12px 14px;
+    font-size: 1rem;
     font-weight: 600;
     color: $heading-color;
     text-decoration: none;
@@ -77,14 +84,19 @@
 
     &:hover {
       color: $primary-color;
-      background: #f8f9fa;
+      background: $gray-100;
     }
 
     &.active {
       color: $primary-color;
-      background: #f1f3f5;
+      background: $gray-200;
     }
   }
+}
+
+.drawer-nav li a .icon {
+  width: 20px;
+  height: 20px;
 }
 
 /* Кнопки */
@@ -92,38 +104,28 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding-top: 20px;
+  padding-top: 16px;
   margin-top: auto;
   border-top: 1px solid $border-color;
 
-  a,
-  button {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    padding: 14px;
-    font-size: 1rem;
+  .btn-back {
+    justify-content: flex-start;
+    padding: 10px 0;
+    font-size: 0.95rem;
     font-weight: 600;
-    border-radius: 12px;
-  }
+    color: $primary-color;
+    cursor: pointer;
+    background: transparent;
+    border: none;
 
-  .btn-primary {
-    color: $white-color;
-    background: $primary-color;
-
-    &:hover {
-      background: color.scale($primary-color, $lightness: -7%);
+    &::before {
+      margin-right: 8px;
+      font-size: 1.1rem;
+      content: '←';
     }
-  }
-
-  .btn-secondary {
-    color: $heading-color;
-    background: #f1f3f5;
 
     &:hover {
-      background: #e9ecef;
+      color: $primary-600;
     }
   }
 }
@@ -133,16 +135,15 @@
   position: relative;
   display: flex;
   align-items: center;
-  align-self: flex-start;
+  align-self: flex-end;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  margin-bottom: 10px;
+  width: 40px;
+  height: 40px;
+  margin-bottom: 16px;
   cursor: pointer;
-  background: $white-color;
-  border: 1px solid $border-color;
+  background: $gray-100;
+  border: 1px solid $gray-300;
   border-radius: 50%;
-  transition: all 0.2s ease;
 
   &::before,
   &::after {
@@ -152,7 +153,6 @@
     content: '';
     background: $heading-color;
     border-radius: 2px;
-    transition: background 0.2s ease;
   }
 
   &::before {
@@ -165,10 +165,56 @@
 
   &:hover {
     background: $primary-color;
+
+    &::before,
+    &::after {
+      background: $white-color;
+    }
+  }
+}
+
+/* Drawer admin-mode */
+.drawer.admin-mode .drawer-content {
+  color: $white-color;
+  background: $gray-800; // темний фон
+
+  h2 {
+    color: $white-color;
   }
 
-  &:hover::before,
-  &:hover::after {
-    background: $white-color;
+  .drawer-nav li a {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    color: $white-color;
+
+    &:hover {
+      color: $primary-color;
+      background: $gray-700;
+    }
+
+    &.active {
+      color: $primary-color;
+      background: $gray-700;
+    }
+
+    .nav-icon {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  .drawer-actions {
+    border-top: 1px solid $gray-700;
+
+    .btn-primary {
+      color: $white-color;
+      background: $primary-color;
+      border: none;
+
+      &:hover {
+        background: $primary-600;
+      }
+    }
   }
 }

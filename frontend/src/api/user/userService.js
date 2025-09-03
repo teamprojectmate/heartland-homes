@@ -1,19 +1,31 @@
+// src/api/user/userService.js
 import api from '../axios';
 
-// 🔹 Отримати свій профіль
+// Поточний користувач
 export const getCurrentUser = async () => {
-  const response = await api.get('/users/me');
-  return response.data;
+  const { data } = await api.get('/users/me');
+  return data;
 };
 
-// 🔹 Оновити свій профіль
-export const updateProfile = async (data) => {
-  const response = await api.put('/users/me', data);
-  return response.data;
+// Оновлення профілю
+export const updateProfile = async (userData) => {
+  const { data } = await api.put('/users/me', userData);
+  return data;
 };
 
-// 🔹 Оновити роль юзера (для адмінки)
-export const updateUserRole = async (id, role) => {
-  const response = await api.put(`/users/${id}/role`, { role });
-  return response.data;
+// Список користувачів ✅
+export const getAllUsers = async () => {
+  const { data } = await api.get('/users');
+  return data;
+};
+
+// Оновлення ролі
+export const updateUserRole = async ({ id, role }) => {
+  const { data } = await api.put(`/users/${id}/role`, { role });
+  return data;
+};
+
+// Видалення користувача
+export const deleteUser = async (id) => {
+  await api.delete(`/users/${id}`);
 };

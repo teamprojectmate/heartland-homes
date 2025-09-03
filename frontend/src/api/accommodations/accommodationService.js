@@ -1,4 +1,3 @@
-// src/api/accommodations/accommodationService.js
 import api from '../axios';
 
 // 🔹 Пошук житла з фільтрами (GET)

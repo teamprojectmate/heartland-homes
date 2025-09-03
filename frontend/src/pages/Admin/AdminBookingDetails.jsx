@@ -53,7 +53,6 @@ const AccommodationDetails = () => {
 
   return (
     <div className="accommodation-details-page">
-      {/* Заголовок */}
       <div className="page-header">
         <h2 className="page-title">Деталі помешкання</h2>
         <h3 className="page-subtitle">
@@ -64,18 +63,14 @@ const AccommodationDetails = () => {
         </p>
       </div>
 
-      {/* Контент */}
-      <div className="details-grid">
-        {/* Ліва частина */}
-        <div className="left-column">
-          <div className="gallery-wrapper">
-            <AccommodationGallery
-              images={
-                accommodation.images || (accommodation.image ? [accommodation.image] : [])
-              }
-            />
-          </div>
+      <AccommodationGallery
+        images={
+          accommodation.images || (accommodation.image ? [accommodation.image] : [])
+        }
+      />
 
+      <div className="details-grid">
+        <div className="details-info-section">
           <div className="details-card">
             <h4 className="details-section-title">Інформація</h4>
 
@@ -110,49 +105,39 @@ const AccommodationDetails = () => {
               </div>
             </div>
           </div>
+
+          {accommodation?.latitude && accommodation?.longitude && (
+            <div className="location-map-container">
+              <h4 className="details-section-title">Розташування</h4>
+              <LocationMap
+                location={accommodation?.location}
+                city={accommodation?.city}
+                latitude={accommodation?.latitude}
+                longitude={accommodation?.longitude}
+              />
+            </div>
+          )}
         </div>
 
-        {/* Права частина */}
-        <div className="right-column">
-          <div className="booking-details-card">
-            <h5 className="booking-title">Забронювати</h5>
-
-            <div className="booking-price">
-              <div className="price-row">
-                <span className="price">{accommodation?.dailyRate || '—'}</span>
-                <span className="currency">грн</span>
-              </div>
-              <div className="per-night">/ доба</div>
+        <div className="booking-card">
+          <h5 className="booking-title">Забронювати</h5>
+          <p className="booking-price">
+            {accommodation?.dailyRate || '—'} грн <span>/ доба</span>
+          </p>
+          {isAuthenticated ? (
+            <BookingForm accommodation={accommodation} />
+          ) : (
+            <div className="text-center">
+              <p className="text-muted mb-2">
+                Для бронювання необхідно увійти в систему.
+              </p>
+              <Link to="/login" className="btn btn-primary w-100">
+                Увійти
+              </Link>
             </div>
-
-            {isAuthenticated ? (
-              <BookingForm accommodation={accommodation} />
-            ) : (
-              <div className="text-center">
-                <p className="text-muted mb-2">
-                  Для бронювання необхідно увійти в систему.
-                </p>
-                <Link to="/login" className="btn btn-primary w-100">
-                  Увійти
-                </Link>
-              </div>
-            )}
-          </div>
+          )}
         </div>
       </div>
-
-      {/* Карта вниз на всю ширину */}
-      {accommodation?.latitude && accommodation?.longitude && (
-        <div className="location-map-full">
-          <h4 className="details-section-title">Розташування</h4>
-          <LocationMap
-            location={accommodation?.location}
-            city={accommodation?.city}
-            latitude={accommodation?.latitude}
-            longitude={accommodation?.longitude}
-          />
-        </div>
-      )}
     </div>
   );
 };
