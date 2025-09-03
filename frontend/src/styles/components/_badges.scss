@@ -1,3 +1,4 @@
+// src/styles/components/_badges.scss
 @use '../abstract/variables' as *;
 
 .badge {
@@ -7,7 +8,7 @@
   padding: 0.35rem 0.75rem;
   font-size: 0.9rem;
   font-weight: 600;
-  color: $white-color; // завжди білий
+  color: $white-color;
   border-radius: $radius-sm;
   box-shadow: $box-shadow-sm;
   transition:
@@ -70,6 +71,25 @@
 
     &.other {
       background-color: $badge-other;
+    }
+  }
+
+  // 🔹 статуси бронювань
+  &.badge-status {
+    &.pending {
+      background-color: $warning-color;
+    }
+
+    &.confirmed {
+      background-color: $success-color;
+    }
+
+    &.canceled {
+      background-color: $danger-color;
+    }
+
+    &.expired {
+      background-color: $gray-600;
     }
   }
 }

@@ -7,7 +7,8 @@
   gap: 1.2rem;
   align-items: center;
 
-  @include media(md) {
+  // ❌ було md → ✅ стало lg
+  @include media(lg) {
     display: flex;
     gap: 2rem; // відстань між пунктами
     align-items: center;

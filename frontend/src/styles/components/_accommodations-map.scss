@@ -1,0 +1,38 @@
+// src/styles/components/_accommodation-map.scss
+@use '../abstract/variables' as *;
+@use '../abstract/mixins' as *;
+
+.accommodations-page-container {
+  display: flex; // ✅ ДОДАНО: Використовуємо Flexbox для розміщення елементів в рядок
+  flex-direction: column; // ✅ ДОДАНО: За замовчуванням елементи розташовуються вертикально
+  gap: 1.5rem; // ✅ ДОДАНО: Простір між елементами
+  min-height: 100vh; // ✅ ДОДАНО: Заповнюємо весь екран
+
+  @media (width >= 992px) {
+    flex-direction: row; // ✅ ОНОВЛЕНО: На десктопах розміщуємо горизонтально
+    height: calc(
+      100vh - 80px
+    ); // ✅ ДОДАНО: Використовуємо 100% висоти, щоб карта була повноекранною
+  }
+
+  .accommodations-list-wrapper {
+    flex: 1; // ✅ ДОДАНО: Елемент займає вільний простір
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    overflow-y: auto; // ✅ ДОДАНО: Дозволяємо скролл всередині списку
+
+    .container {
+      width: 100%;
+    }
+  }
+
+  .accommodations-map-wrapper {
+    position: relative; // ✅ ДОДАНО: Позиціонування для карти
+    flex: 1; // ✅ ДОДАНО: Карта також займає вільний простір
+    height: 300px; // ✅ ДОДАНО: Висота для карти на мобільних
+
+    @media (width >= 992px) {
+      height: auto; // ✅ ОНОВЛЕНО: На десктопах висота буде автоматичною
+    }
+  }
+}

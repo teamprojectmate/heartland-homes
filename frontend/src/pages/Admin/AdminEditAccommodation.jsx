@@ -1,24 +1,27 @@
+// src/pages/Admin/AdminEditAccommodation.jsx
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import Notification from '../../components/Notification';
 import {
   getAccommodationById,
   updateAccommodation
 } from '../../api/accommodations/accommodationService.js';
+import { mapType, mapAmenity } from '../../utils/translation';
+import '../../styles/components/_admin-form.scss';
 
 const AdminEditAccommodation = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  // Прибираємо user з useSelector, оскільки він тут не потрібен
-  // const { user } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
+    name: '',
     type: '',
     location: '',
     city: '',
+    latitude: '',
+    longitude: '',
     size: '',
-    amenities: '', // ✅ Змінили на рядок
+    amenities: '',
     dailyRate: '',
     image: ''
   });
@@ -32,7 +35,7 @@ const AdminEditAccommodation = () => {
         const data = await getAccommodationById(id);
         setFormData({
           ...data,
-          amenities: data.amenities?.join(', ') || '' // ✅ Форматуємо масив в рядок
+          amenities: data.amenities?.join(', ') || ''
         });
       } catch {
         setError('Не вдалося завантажити дані помешкання');
@@ -45,10 +48,7 @@ const AdminEditAccommodation = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
@@ -58,9 +58,11 @@ const AdminEditAccommodation = () => {
     try {
       const payload = {
         ...formData,
-        amenities: formData.amenities.split(',').map((a) => a.trim()) // ✅ Перетворюємо рядок у масив
+        amenities: formData.amenities
+          .split(',')
+          .map((a) => a.trim())
+          .filter(Boolean)
       };
-      // ✅ Прибрали token з аргументів
       await updateAccommodation(id, payload);
       navigate('/admin/accommodations');
     } catch (err) {
@@ -70,22 +72,46 @@ const AdminEditAccommodation = () => {
     }
   };
 
-  if (loading) return <p className="text-center">Завантаження...</p>;
+  if (loading) return <p className="text-center">⏳ Завантаження...</p>;
 
   return (
     <div className="container page">
-      <h1 className="text-center">Редагувати помешкання</h1>
-      {error && <Notification message={error} type="danger" />}
-      <form onSubmit={handleSubmit} className="form">
+      <form onSubmit={handleSubmit} className="admin-form">
+        <h1>Редагувати помешкання</h1>
+        {error && <Notification message={error} type="danger" />}
+
+        {/* Назва */}
+        <div className="form-group">
+          <label>Назва</label>
+          <input type="text" name="name" value={formData.name} onChange={handleChange} />
+        </div>
+
+        {/* Тип + бейдж превʼю */}
         <div className="form-group">
           <label>Тип</label>
           <select name="type" value={formData.type} onChange={handleChange}>
             <option value="HOUSE">Будинок</option>
             <option value="APARTMENT">Квартира</option>
-            <option value="CONDO">Кондо</option>
+            <option value="HOTEL">Готель</option>
             <option value="VACATION_HOME">Дім для відпочинку</option>
+            <option value="HOSTEL">Хостел</option>
+            <option value="COTTAGE">Котедж</option>
           </select>
+          {formData.type && (
+            <div className="badge-group" style={{ marginTop: '0.5rem' }}>
+              {(() => {
+                const type = mapType(formData.type);
+                return (
+                  <span className={`badge badge-type-${formData.type.toLowerCase()}`}>
+                    {type.icon} {type.label}
+                  </span>
+                );
+              })()}
+            </div>
+          )}
         </div>
+
+        {/* Локація */}
         <div className="form-group">
           <label>Локація</label>
           <input
@@ -95,19 +121,42 @@ const AdminEditAccommodation = () => {
             onChange={handleChange}
           />
         </div>
+
+        {/* Місто */}
         <div className="form-group">
           <label>Місто</label>
           <input type="text" name="city" value={formData.city} onChange={handleChange} />
         </div>
+
+        {/* Latitude */}
+        <div className="form-group">
+          <label>Широта (Latitude)</label>
+          <input
+            type="text"
+            name="latitude"
+            value={formData.latitude}
+            onChange={handleChange}
+          />
+        </div>
+
+        {/* Longitude */}
+        <div className="form-group">
+          <label>Довгота (Longitude)</label>
+          <input
+            type="text"
+            name="longitude"
+            value={formData.longitude}
+            onChange={handleChange}
+          />
+        </div>
+
+        {/* Size */}
         <div className="form-group">
           <label>Розмір</label>
-          {/* ✅ Використовуємо select для enum */}
-          <select name="size" value={formData.size} onChange={handleChange}>
-            <option value="SMALL">Маленький</option>
-            <option value="MEDIUM">Середній</option>
-            <option value="LARGE">Великий</option>
-          </select>
+          <input type="text" name="size" value={formData.size} onChange={handleChange} />
         </div>
+
+        {/* Amenities + бейджі */}
         <div className="form-group">
           <label>Зручності (через кому)</label>
           <input
@@ -116,7 +165,23 @@ const AdminEditAccommodation = () => {
             value={formData.amenities}
             onChange={handleChange}
           />
+          <div className="badge-group" style={{ marginTop: '0.5rem' }}>
+            {formData.amenities
+              .split(',')
+              .map((a) => a.trim())
+              .filter(Boolean)
+              .map((a, idx) => {
+                const amenity = mapAmenity(a);
+                return (
+                  <span key={idx} className={`badge badge-amenity ${amenity.slug}`}>
+                    {amenity.icon} {amenity.label}
+                  </span>
+                );
+              })}
+          </div>
         </div>
+
+        {/* Daily rate */}
         <div className="form-group">
           <label>Ціна за добу</label>
           <input
@@ -126,6 +191,8 @@ const AdminEditAccommodation = () => {
             onChange={handleChange}
           />
         </div>
+
+        {/* Image */}
         <div className="form-group">
           <label>URL зображення</label>
           <input
@@ -135,6 +202,7 @@ const AdminEditAccommodation = () => {
             onChange={handleChange}
           />
         </div>
+
         <button type="submit" className="btn-primary" disabled={loading}>
           {loading ? 'Оновлення...' : 'Зберегти'}
         </button>

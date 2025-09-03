@@ -8,10 +8,16 @@
   min-width: 280px;
   max-width: 400px;
   padding: 1rem 1.5rem;
+  margin-top: 0.5rem; // відступ між повідомленнями
   font-weight: 600;
   border-radius: $radius;
   box-shadow: $box-shadow-md;
   transition: all 0.3s ease-in-out;
+  animation: slide-in 0.3s ease-out forwards;
+
+  &.closing {
+    animation: slide-out 0.3s ease-in forwards;
+  }
 
   .close-btn {
     margin-left: 1rem;
@@ -53,7 +59,9 @@
   right: 20px;
   bottom: 20px;
   z-index: 1050;
-  animation: slide-in 0.3s ease-out forwards;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 }
 
 @keyframes slide-in {
@@ -65,5 +73,17 @@
   to {
     opacity: 1;
     transform: translateX(0);
+  }
+}
+
+@keyframes slide-out {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(100%);
   }
 }

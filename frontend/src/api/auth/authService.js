@@ -1,5 +1,4 @@
-// src/api/auth/authService.js
-import api from '../axios'; // Використовуємо наш налаштований екземпляр
+import api from '../axios'; // наш axios з інтерцептором
 
 // ✅ Реєстрація
 const register = async (userData) => {
@@ -9,18 +8,14 @@ const register = async (userData) => {
 
 // ✅ Логін
 const login = async (userData) => {
-  console.log('📤 Надсилаю на бекенд /auth/login:', userData); // 👈
+  console.log('📤 Надсилаю на бекенд /auth/login:', userData);
   const response = await api.post('/auth/login', userData);
-  return response.data;
+  return response.data; // очікуємо { token: "..." }
 };
-
-// ❌ Прибрали всю логіку з localStorage.
-// Цим займається Redux-санк.
 
 // ✅ Вихід
 const logout = () => {
-  // ❌ Прибрали всю логіку з localStorage.
-  // Цим займається Redux-санк.
+  localStorage.removeItem('auth');
 };
 
 const authService = {

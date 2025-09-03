@@ -5,7 +5,7 @@
 /* Бургер */
 .burger {
   z-index: 10001;
-  display: inline-flex; // ✅ по замовчуванню видно
+  display: inline-flex;
   flex-direction: column;
   gap: 5px;
   justify-content: center;
@@ -39,8 +39,8 @@
     }
   }
 
-  /* ❌ При великих екранах ховаємо бургер */
-  @include media(md) {
+  /* ❌ При великих екранах ховаємо */
+  @include media(lg) {
     display: none;
   }
 }

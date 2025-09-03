@@ -1,0 +1,152 @@
+// src/styles/components/_booking-card.scss
+@use '../abstract/variables' as *;
+@use '../abstract/mixins' as *;
+@use './badges-status';
+
+.booking-card {
+  @include card-shadow;
+  @include card-shadow-transition;
+
+  display: flex;
+  max-width: 700px;
+  margin: 0 auto $spacer;
+  overflow: hidden;
+  background-color: $surface-color;
+  border-radius: $radius-md;
+
+  &:hover {
+    @include card-shadow-hover;
+
+    transform: translateY(-2px);
+  }
+
+  /* Обгортка для фото */
+  .booking-card-image-wrapper {
+    flex: 0 0 250px;
+    height: 100%;
+
+    @media (max-width: $breakpoint-sm) {
+      flex: 0 0 auto;
+      width: 100%;
+      height: 180px;
+    }
+  }
+
+  .booking-card-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .booking-card-content {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: $spacer-sm;
+
+    @media (max-width: $breakpoint-sm) {
+      padding: $spacer-sm;
+    }
+  }
+
+  .booking-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+
+  .booking-card-title {
+    margin: 0;
+    font-size: $font-size-lg;
+    color: $heading-color;
+  }
+
+  .booking-card-location {
+    font-size: $font-size-sm;
+    color: $muted-color;
+  }
+
+  .booking-card-info {
+    margin-bottom: 0.75rem;
+
+    p {
+      margin-bottom: 0.25rem;
+      font-size: $font-size-base;
+      font-weight: 600;
+      color: $text-color;
+    }
+  }
+
+  .booking-card-status-text {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    font-weight: 600;
+  }
+
+  .badge {
+    @extend .badge-status;
+
+    padding: 0.25rem 0.6rem;
+    font-size: 0.8rem;
+    font-weight: bold;
+  }
+
+  .booking-card-price {
+    margin: 0.5rem 0 1rem;
+    font-size: $font-size-xl;
+    font-weight: bold;
+    color: $primary-color;
+  }
+
+  .booking-card-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: auto;
+
+    .btn {
+      flex-grow: 1;
+      padding: 0.6rem;
+      font-size: $font-size-sm;
+      transition: all 0.3s ease-in-out;
+
+      @include button-shadow-transition;
+
+      &:hover {
+        transform: translateY(-1px);
+
+        @include button-shadow-hover;
+      }
+    }
+
+    .btn-warning {
+      color: $white-color;
+      background-color: $warning-color;
+      border-color: $warning-color;
+    }
+
+    .btn-danger {
+      color: $white-color;
+      background-color: $danger-color;
+      border-color: $danger-color;
+    }
+  }
+
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+
+    .booking-card-image-wrapper {
+      width: 100%;
+      height: 200px;
+    }
+  }
+}
+
+.booking-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacer;
+}

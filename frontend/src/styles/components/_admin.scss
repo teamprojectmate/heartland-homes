@@ -1,34 +1,173 @@
 // src/styles/components/_admin.scss
-
-@use 'sass:color';
 @use '../abstract/variables' as *;
 @use '../abstract/mixins' as *;
-
-.admin-table {
-  width: 100%;
-  margin-top: 1rem;
-  border-collapse: collapse;
-}
-
-.admin-table th,
-.admin-table td {
-  padding: 1rem;
-  text-align: left;
-  border-bottom: 1px solid $border-color;
-}
-
-.admin-table th {
-  font-weight: 600;
-  color: $text-color;
-  background-color: $background-color;
-}
-
-.btn-action {
-  margin-right: 0.5rem;
-}
+@use 'sass:color';
 
 .admin-page-container {
   min-height: 100vh;
-  padding: 2rem;
-  background-color: $background-color;
+  padding: 2rem 1rem;
+  background-color: $background-light;
+}
+
+// ==========================
+// 📊 Таблиці
+// ==========================
+.table-wrapper {
+  overflow-x: auto;
+  background-color: $surface-color;
+  border-radius: $radius-md;
+
+  @include card-shadow;
+}
+
+.admin-table,
+.admin-users-table,
+.admin-bookings-table {
+  width: 100%;
+  font-size: $font-size-sm;
+  color: $text-color;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: 1.1rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid $gray-200;
+  }
+
+  th {
+    font-weight: 600;
+    color: $heading-color;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: $gray-100;
+  }
+
+  tbody tr:nth-child(even) {
+    background-color: $background-light; // зебра
+  }
+
+  tbody tr:hover {
+    background-color: $gray-100;
+    transition: background-color 0.2s ease;
+  }
+
+  .table-img {
+    width: 60px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: $radius-sm;
+    box-shadow: $shadow-sm;
+  }
+}
+
+// ==========================
+// 🎨 Кнопки (material-like)
+// ==========================
+.btn-primary,
+.btn-secondary,
+.btn-danger {
+  display: inline-flex;
+  gap: 0.6rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  font-size: $font-size-sm;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  border-radius: $radius-md;
+  box-shadow: $box-shadow-button;
+
+  @include card-shadow-transition;
+
+  &:hover {
+    box-shadow: $box-shadow-button-hover;
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    box-shadow: $box-shadow-inset;
+    transform: translateY(0);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: $box-shadow-focus;
+  }
+}
+
+.btn-primary {
+  color: $white-color;
+  background: $primary-color;
+
+  &:hover {
+    background: color.scale($primary-color, $lightness: -8%);
+  }
+}
+
+.btn-secondary {
+  color: $text-color;
+  background: $white-color;
+  border: 1px solid $gray-300;
+
+  &:hover {
+    background: $gray-100;
+    border-color: $gray-400;
+  }
+}
+
+.btn-danger {
+  color: $white-color;
+  background: $danger-color;
+
+  &:hover {
+    background: color.scale($danger-color, $lightness: -8%);
+  }
+}
+
+.btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+}
+
+// ==========================
+// 🏷️ Бейджі статусів (з бекграундом)
+// ==========================
+.badge {
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: $white-color;
+  text-transform: uppercase;
+  border-radius: 99px; // для ефекту pill
+
+  @include card-shadow-transition;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+.badge-status-pending {
+  background: $warning-color;
+}
+
+.badge-status-confirmed {
+  background: $success-color;
+}
+
+.badge-status-cancelled {
+  background: $danger-color;
+}
+
+.badge-status-expired {
+  background: $gray-400;
+}
+
+.badge-type {
+  text-transform: capitalize;
+  background: $primary-700;
+  border-radius: $radius-sm;
 }

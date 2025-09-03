@@ -11,16 +11,26 @@
 
 @use './components/accommodation-details';
 @use './components/accommodation-gallery';
+@use './components/accommodations-map';
+@use './components/admin-accommodations';
+@use './components/admin-booking-details';
+@use './components/admin-bookings';
 @use './components/admin-dashboard';
+@use './components/admin-form';
+@use './components/admin-layout';
+@use './components/admin-users';
 @use './components/admin';
 @use './components/auth';
 @use './components/badges-status';
 @use './components/badges';
+@use './components/booking-card';
+@use './components/booking-details';
 @use './components/booking-form';
 @use './components/bookings';
 @use './components/buttons';
 @use './components/cards';
 @use './components/filters';
+@use './components/footer-extension';
 @use './components/footer';
 @use './components/forms';
 @use './components/header';

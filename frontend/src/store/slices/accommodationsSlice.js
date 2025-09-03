@@ -1,9 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import {
-  fetchAccommodations,
-  fetchAdminAccommodations,
-  deleteAccommodation
-} from '../../api/accommodations/accommodationService';
+import * as accommodationService from '../../api/accommodations/accommodationService';
 
 // ----- Public -----
 export const loadAccommodations = createAsyncThunk(
@@ -26,7 +22,7 @@ export const loadAccommodations = createAsyncThunk(
         sort: state.sort
       };
 
-      const data = await fetchAccommodations(filters, pageable);
+      const data = await accommodationService.fetchAccommodations(filters, pageable);
       return data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || 'Помилка при завантаженні');
@@ -39,7 +35,7 @@ export const loadAdminAccommodations = createAsyncThunk(
   'accommodations/loadAdmin',
   async ({ page = 0, size = 10 }, { rejectWithValue }) => {
     try {
-      const data = await fetchAdminAccommodations(page, size);
+      const data = await accommodationService.fetchAdminAccommodations(page, size);
       return data;
     } catch (err) {
       return rejectWithValue(
@@ -54,10 +50,25 @@ export const removeAccommodation = createAsyncThunk(
   'accommodations/remove',
   async (id, { rejectWithValue }) => {
     try {
-      await deleteAccommodation(id);
+      await accommodationService.deleteAccommodation(id);
       return id;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || 'Не вдалося видалити житло');
+    }
+  }
+);
+
+// ✅ ДОДАНО: Створення житла
+export const createAccommodationAsync = createAsyncThunk(
+  'accommodations/create',
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await accommodationService.createAccommodation(formData);
+      return response;
+    } catch (err) {
+      return rejectWithValue(
+        err.response?.data?.message || 'Помилка при створенні житла'
+      );
     }
   }
 );
@@ -134,6 +145,20 @@ const accommodationsSlice = createSlice({
       // Admin remove
       .addCase(removeAccommodation.fulfilled, (state, action) => {
         state.items = state.items.filter((acc) => acc.id !== action.payload);
+      })
+
+      // ✅ ДОДАНО: Створення житла
+      .addCase(createAccommodationAsync.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createAccommodationAsync.fulfilled, (state) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(createAccommodationAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   }
 });

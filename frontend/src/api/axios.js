@@ -11,7 +11,8 @@ const instance = axios.create({
 // 🔹 Функція для отримання токена з localStorage
 const getAuthToken = () => {
   try {
-    const authData = JSON.parse(localStorage.getItem('authData'));
+    // ✅ Виправлено: використовуємо правильний ключ 'auth'
+    const authData = JSON.parse(localStorage.getItem('auth'));
     return authData?.token;
   } catch (error) {
     console.error('Помилка при парсингу токена з localStorage:', error);
@@ -21,12 +22,10 @@ const getAuthToken = () => {
 
 instance.interceptors.request.use(
   (config) => {
-    const token = getAuthToken(); // ✅ Змінено: отримуємо токен з localStorage
-
+    const token = getAuthToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-
     return config;
   },
   (error) => Promise.reject(error)

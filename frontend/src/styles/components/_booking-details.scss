@@ -1,0 +1,138 @@
+@use '../abstract/variables' as *;
+@use '../abstract/mixins' as *;
+@use 'sass:color';
+
+.booking-details-page {
+  padding-top: $spacer-lg;
+  padding-bottom: $spacer-lg;
+
+  .section-heading {
+    margin-bottom: $spacer-lg;
+    font-size: 2rem;
+    font-weight: 700;
+    color: $heading-color;
+    text-align: center;
+  }
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: $spacer;
+  align-items: flex-start;
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.booking-info-card,
+.actions-card {
+  @include card-shadow;
+
+  padding: $spacer;
+  background-color: $white-color;
+  border-radius: $radius;
+}
+
+.booking-info-card {
+  .booking-image {
+    width: 100%;
+    height: auto;
+    margin-bottom: $spacer-sm;
+    border-radius: $radius;
+  }
+
+  .card-title {
+    margin: 0 0 0.25rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  .card-subtitle {
+    margin-bottom: $spacer;
+    font-size: 1rem;
+    color: $muted-color;
+  }
+
+  .booking-details-content {
+    p {
+      margin-bottom: 0.5rem;
+    }
+
+    .total-price {
+      margin-top: $spacer-sm;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: $primary-color;
+    }
+  }
+}
+
+.actions-card {
+  display: flex;
+  flex-direction: column;
+  gap: $spacer-md;
+  align-items: center;
+
+  .booking-price {
+    display: flex;
+    gap: 0.35rem;
+    align-items: baseline;
+    margin-bottom: 1rem;
+
+    .label {
+      margin-right: 0.25rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: $muted-color;
+    }
+
+    .price {
+      font-size: 2rem;
+      font-weight: 700;
+      color: $primary-color;
+    }
+
+    .currency {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: $primary-color;
+    }
+  }
+
+  .btn {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: $radius-sm;
+  }
+
+  .btn-danger {
+    color: $white-color;
+    background: $danger-color;
+
+    &:hover {
+      background: color.adjust($danger-color, $lightness: -7%);
+    }
+  }
+
+  .btn-success {
+    color: $white-color;
+    background: $success-color;
+
+    &:hover {
+      background: color.adjust($success-color, $lightness: -7%);
+    }
+  }
+
+  .btn-secondary {
+    color: $text-color;
+    background: $gray-200;
+
+    &:hover {
+      background: $gray-300;
+    }
+  }
+}
