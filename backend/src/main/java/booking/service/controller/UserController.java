@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,5 +48,13 @@ public class UserController {
     public UserResponseDto updateCurrentUserProfile(
             @RequestBody @Valid UpdateUserProfileRequestDto requestDto) {
         return userService.updateCurrentUserProfile(requestDto);
+    }
+
+    @PreAuthorize("hasRole('MANAGER')")
+    @GetMapping
+    @Operation(summary = "Get all users (for managers only)",
+            description = "Retrieve a paginated list of all users.")
+    public Page<UserResponseDto> getAllUsers(Pageable pageable) {
+        return userService.findAll(pageable);
     }
 }
