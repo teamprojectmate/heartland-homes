@@ -1,4 +1,3 @@
-// src/components/Notification.jsx
 import React, { useEffect, useState } from 'react';
 import '../styles/components/_notifications.scss';
 
