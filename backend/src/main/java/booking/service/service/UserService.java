@@ -5,6 +5,8 @@ import booking.service.dto.user.UpdateUserRoleRequestDto;
 import booking.service.dto.user.UserRegistrationRequestDto;
 import booking.service.dto.user.UserResponseDto;
 import booking.service.exception.RegistrationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface UserService {
 
@@ -17,4 +19,6 @@ public interface UserService {
     UserResponseDto getCurrentUserProfile();
 
     UserResponseDto updateCurrentUserProfile(UpdateUserProfileRequestDto requestDto);
+
+    Page<UserResponseDto> findAll(Pageable pageable);
 }

@@ -90,7 +90,7 @@ class UserControllerTest {
     @Test
     @DisplayName("Update user role with valid ID and role")
     void updateUserRole_ValidRequest_ReturnsUpdatedUser() throws Exception {
-        UpdateUserRoleRequestDto requestDto = createUpdateUserRoleRequestDto("CUSTOMER");
+        UpdateUserRoleRequestDto requestDto = createUpdateUserRoleRequestDto("MANAGER");
         UserResponseDto expected = createUserResponseDto(1L);
 
         MvcResult result = mockMvc.perform(put("/users/{id}/role", 1L)
@@ -101,7 +101,6 @@ class UserControllerTest {
 
         UserResponseDto actual = objectMapper.readValue(result.getResponse().getContentAsString(),
                 UserResponseDto.class);
-
         assertTrue(reflectionEquals(expected, actual));
     }
 
@@ -117,7 +116,6 @@ class UserControllerTest {
 
         UserResponseDto actual = objectMapper.readValue(result.getResponse().getContentAsString(),
                 UserResponseDto.class);
-
         assertTrue(reflectionEquals(expected, actual, "id"));
     }
 
@@ -137,6 +135,8 @@ class UserControllerTest {
         UserResponseDto actual = objectMapper.readValue(result.getResponse().getContentAsString(),
                 UserResponseDto.class);
 
+        System.out.println(expected);
+        System.out.println(actual);
         assertTrue(reflectionEquals(expected, actual, "id"));
     }
 

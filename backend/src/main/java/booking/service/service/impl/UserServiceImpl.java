@@ -16,6 +16,8 @@ import booking.service.service.UserService;
 import jakarta.transaction.Transactional;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -85,5 +87,11 @@ public class UserServiceImpl implements UserService {
         user.setEmail(requestDto.getEmail());
         userRepository.save(user);
         return userMapper.toDto(user);
+    }
+
+    @Override
+    public Page<UserResponseDto> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable)
+                .map(userMapper::toDto);
     }
 }

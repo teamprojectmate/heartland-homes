@@ -17,7 +17,8 @@ public class UserUtil {
                 .setId(id)
                 .setEmail("test@example.com")
                 .setFirstName("Test")
-                .setLastName("User");
+                .setLastName("User")
+                .setRole("MANAGER");
     }
 
     public static UserResponseDto createUpdatedUserResponseDto(Long id) {
@@ -25,7 +26,8 @@ public class UserUtil {
                 .setId(id)
                 .setEmail("updated@example.com")
                 .setFirstName("Updated")
-                .setLastName("User");
+                .setLastName("User")
+                .setRole("MANAGER");
     }
 
     public static UpdateUserRoleRequestDto createUpdateUserRoleRequestDto(String role) {
