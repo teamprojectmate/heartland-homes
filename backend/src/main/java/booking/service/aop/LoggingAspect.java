@@ -13,7 +13,6 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
-
 @Aspect
 @Component
 public class LoggingAspect {
@@ -23,7 +22,6 @@ public class LoggingAspect {
             "password", "token", "secret", "key", "credential"
     );
 
-    // Використовуйте лише @Around для уникнення дублювання
     @Around(
             "within(booking.service.controller..*) "
                     + "|| within(booking.service.service..*) "
@@ -67,7 +65,6 @@ public class LoggingAspect {
             throwing = "ex"
     )
     public void logCriticalErrors(JoinPoint joinPoint, Throwable ex) {
-        // Логуємо лише серйозні помилки на рівні сервісу
         if (ex instanceof RuntimeException && !(ex instanceof IllegalArgumentException)) {
             logger.error("КРИТИЧНА ПОМИЛКА в методі {}: ",
                     joinPoint.getSignature().toShortString(), ex);

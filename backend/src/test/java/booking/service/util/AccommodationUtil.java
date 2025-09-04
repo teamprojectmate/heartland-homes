@@ -147,39 +147,4 @@ public class AccommodationUtil {
                 .setDailyRate(BigDecimal.valueOf(3000.00))
                 .setImage("https://www.dropbox.com/scl/fi/kp6w4a02drpbembtsxd7l/photo3.jpg?rlkey=dsnglnv4gejqkza4hvu7zmrt7&st=irkh4lf4&dl=0");
     }
-
-    public static CreateAccommodationRequestDto createAccommodationRequestDto2() {
-        return new CreateAccommodationRequestDto()
-                .setType(AccommodationType.APARTMENT)
-                .setLocation("Khreshchatyk 1")
-                .setCity("Kyiv")
-                .setSize("Large")
-                .setAmenities(List.of("WiFi", "TV"))
-                .setDailyRate(BigDecimal.valueOf(200))
-                .setImage("image.jpg");
-    }
-
-    public static Accommodation createAccommodation2(Long id) {
-        return new Accommodation()
-                .setId(id)
-                .setType(AccommodationType.APARTMENT)
-                .setLocation("Khreshchatyk 1")
-                .setCity("Kyiv")
-                .setSize("Large")
-                .setAmenities(List.of("WiFi", "TV"))
-                .setDailyRate(BigDecimal.valueOf(200))
-                .setImage("image.jpg");
-    }
-
-    public static AccommodationDto createAccommodationDto2(Long id) {
-        return new AccommodationDto()
-                .setId(id)
-                .setType(AccommodationType.APARTMENT)
-                .setLocation("Khreshchatyk 1")
-                .setCity("Kyiv")
-                .setSize("Large")
-                .setAmenities(List.of("WiFi", "TV"))
-                .setDailyRate(BigDecimal.valueOf(200))
-                .setImage("image.jpg");
-    }
 }
