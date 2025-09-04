@@ -43,11 +43,11 @@ const AdminUsers = () => {
           <tbody>
             {items.map((u) => (
               <tr key={u.id}>
-                <td>{u.id}</td>
-                <td>{u.email}</td>
-                <td>{u.firstName}</td>
-                <td>{u.lastName}</td>
-                <td>
+                <td data-label="ID">{u.id}</td>
+                <td data-label="Email">{u.email}</td>
+                <td data-label="Ім’я">{u.firstName}</td>
+                <td data-label="Прізвище">{u.lastName}</td>
+                <td data-label="Роль">
                   <select
                     className="role-select"
                     value={u.role}
@@ -57,7 +57,7 @@ const AdminUsers = () => {
                     <option value="MANAGER">MANAGER</option>
                   </select>
                 </td>
-                <td>
+                <td data-label="Дії">
                   <button
                     className="btn-icon delete"
                     onClick={() => handleDeleteUser(u.id)}

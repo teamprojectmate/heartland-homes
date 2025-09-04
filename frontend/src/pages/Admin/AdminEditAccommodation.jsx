@@ -6,7 +6,7 @@ import {
   getAccommodationById,
   updateAccommodation
 } from '../../api/accommodations/accommodationService.js';
-import { mapType, mapAmenity } from '../../utils/translation';
+import { mapType, mapAmenity } from '../../utils/translations/index.js';
 import '../../styles/components/_admin-form.scss';
 
 const AdminEditAccommodation = () => {

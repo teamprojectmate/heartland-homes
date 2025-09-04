@@ -3,13 +3,18 @@ import React from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import { HomeIcon, UserIcon, CreditCardIcon } from '@heroicons/react/24/outline';
 import { MdAdminPanelSettings } from 'react-icons/md';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../store/slices/authSlice';
 
 const AdminLayout = () => {
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+
   return (
     <div className="admin-layout">
-      {/* 🔹 Sidebar для desktop */}
+      {/* 🔹 Sidebar */}
       <aside className="admin-sidebar">
-        <div className="admin-title">Адмін-панель</div>
+        <div className="admin-brand">Heartland Admin</div>
         <nav>
           <ul>
             <li>
@@ -36,9 +41,22 @@ const AdminLayout = () => {
         </nav>
       </aside>
 
-      {/* 🔹 Контент сторінки */}
+      {/* 🔹 Контент */}
       <main className="admin-content">
-        <Outlet />
+        <header className="admin-header">
+          <h2>Адмін-панель</h2>
+          <div className="admin-user-actions">
+            <span className="admin-user">
+              👤 {user?.firstName || user?.email} ({user?.cleanRole})
+            </span>
+            <button className="btn-logout" onClick={() => dispatch(logout())}>
+              Вийти
+            </button>
+          </div>
+        </header>
+        <div className="admin-main">
+          <Outlet />
+        </div>
       </main>
     </div>
   );

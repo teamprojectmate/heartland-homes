@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import {
   getCurrentUser,
+  getAllUsers,
   updateProfile as apiUpdateProfile,
   updateUserRole as apiUpdateUserRole,
   deleteUser
@@ -15,7 +16,7 @@ const initialState = {
   error: null
 };
 
-// Профіль
+// --- Профіль ---
 export const fetchProfile = createAsyncThunk(
   'user/fetchProfile',
   async (_, { rejectWithValue }) => {
@@ -29,7 +30,7 @@ export const fetchProfile = createAsyncThunk(
   }
 );
 
-// Оновлення профілю
+// --- Оновлення профілю ---
 export const updateProfile = createAsyncThunk(
   'user/updateProfile',
   async (userData, { rejectWithValue }) => {
@@ -41,12 +42,19 @@ export const updateProfile = createAsyncThunk(
   }
 );
 
-// Список користувачів
+// --- Список користувачів ---
 export const fetchUsers = createAsyncThunk(
   'user/fetchUsers',
   async (_, { rejectWithValue }) => {
     try {
-      return await getAllUsers();
+      const users = await getAllUsers();
+
+      // нормалізація ролей
+      return users.map((u) => {
+        let role = u.role || (Array.isArray(u.roles) ? u.roles[0] : null);
+        if (role?.startsWith('ROLE_')) role = role.replace('ROLE_', '');
+        return { ...u, role };
+      });
     } catch (err) {
       return rejectWithValue(
         err.response?.data?.message || 'Не вдалося завантажити список'
@@ -55,19 +63,20 @@ export const fetchUsers = createAsyncThunk(
   }
 );
 
-// Оновлення ролі
+// --- Оновлення ролі ---
 export const updateUserRole = createAsyncThunk(
   'user/updateUserRole',
   async ({ id, role }, { rejectWithValue }) => {
     try {
-      return await apiUpdateUserRole({ id, role });
+      const updated = await apiUpdateUserRole({ id, role });
+      return { id, role: updated.role || role };
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || 'Не вдалося оновити роль');
     }
   }
 );
 
-// Видалення користувача
+// --- Видалення користувача ---
 export const removeUser = createAsyncThunk(
   'user/removeUser',
   async (id, { rejectWithValue }) => {
@@ -94,6 +103,7 @@ const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // PROFILE
       .addCase(fetchProfile.fulfilled, (s, { payload }) => {
         s.profile = payload;
         localStorage.setItem('userProfile', JSON.stringify(payload));
@@ -106,14 +116,22 @@ const userSlice = createSlice({
         s.loading = false;
         s.error = payload;
       })
+
+      // USERS
       .addCase(fetchUsers.fulfilled, (s, { payload }) => {
         s.items = payload;
         s.loading = false;
       })
+
+      // UPDATE ROLE
       .addCase(updateUserRole.fulfilled, (s, { payload }) => {
         const index = s.items.findIndex((u) => u.id === payload.id);
-        if (index !== -1) s.items[index] = payload;
+        if (index !== -1) {
+          s.items[index].role = payload.role;
+        }
       })
+
+      // REMOVE USER
       .addCase(removeUser.fulfilled, (s, { payload }) => {
         s.items = s.items.filter((u) => u.id !== payload);
       });

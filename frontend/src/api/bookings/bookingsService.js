@@ -31,8 +31,21 @@ export const fetchBookingById = async (id) => {
 };
 
 // ----- Оновити бронювання -----
-export const updateBooking = async (id, bookingData) => {
-  const response = await api.put(`/bookings/${id}`, bookingData);
+export const updateBooking = async (id, booking) => {
+  const payload = {
+    checkInDate: booking.checkInDate,
+    checkOutDate: booking.checkOutDate,
+    accommodationId: booking.accommodationId,
+    userId: booking.userId,
+    status: booking.status
+  };
+
+  console.log('📤 PUT /bookings payload:', payload);
+
+  const response = await api.put(`/bookings/${id}`, payload);
+
+  console.log('✅ PUT /bookings response:', response.data);
+
   return response.data;
 };
 

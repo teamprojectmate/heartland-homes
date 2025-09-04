@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { FaEnvelope, FaLock, FaHome } from 'react-icons/fa';
 import { login } from '../../store/slices/authSlice';
+import GoogleLoginButton from '../../components/GoogleLoginButton';
 import '../../styles/components/_auth.scss';
 
 const Login = () => {
@@ -24,7 +25,6 @@ const Login = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      // 🔹 Якщо користувача редіректнули сюди з ProtectedRoute
       const redirectPath = location.state?.from?.pathname || '/';
       navigate(redirectPath, { replace: true });
     }
@@ -38,6 +38,7 @@ const Login = () => {
           Немає акаунта? <Link to="/register">Зареєструватися</Link>
         </p>
 
+        {/* 🔹 Форма email + пароль */}
         <form onSubmit={handleSubmit}>
           <div className="form-group with-icon">
             <FaEnvelope className="input-icon" />
@@ -71,6 +72,9 @@ const Login = () => {
             {loading ? 'Зачекайте...' : 'Увійти'}
           </button>
         </form>
+
+        {/* 🔹 Кнопка входу через Google */}
+        <GoogleLoginButton />
       </div>
 
       <div className="auth-side">

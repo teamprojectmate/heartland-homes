@@ -1,14 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { fixDropboxUrl } from '../../utils/fixDropboxUrl';
 import { mapType } from '../../utils/translations';
+import { getSafeImageUrl } from '../../utils/getSafeImageUrl';
 
 const fallbackImage = '/no-image.png';
 
 const AccommodationCard = ({ accommodation }) => {
-  const imageUrl = accommodation.image
-    ? fixDropboxUrl(accommodation.image)
-    : fallbackImage;
+  const imageUrl = getSafeImageUrl(accommodation.image);
 
   // тип житла (переклад + іконка + колір)
   const { label, icon, color } = mapType(accommodation.type);
@@ -19,11 +17,10 @@ const AccommodationCard = ({ accommodation }) => {
         src={imageUrl}
         alt={accommodation.location || 'Зображення житла'}
         className="card-img-top-custom"
-        onError={(e) => (e.target.src = fallbackImage)}
+        onError={(e) => (e.currentTarget.src = fallbackImage)}
       />
 
       <div className="card-body">
-        {/* ✅ ДОДАНО: Назва житла */}
         <h3 className="card-title">{accommodation?.name || 'Без назви'}</h3>
 
         <div className="card-badges">
@@ -31,7 +28,6 @@ const AccommodationCard = ({ accommodation }) => {
             {icon} {label}
           </span>
 
-          {/* ✅ виправлений бейдж кількості спалень */}
           {accommodation.size && (
             <span className="badge badge-size">
               {parseInt(accommodation.size, 10)}{' '}
@@ -40,7 +36,6 @@ const AccommodationCard = ({ accommodation }) => {
           )}
         </div>
 
-        {/* ✅ ОНОВЛЕНО: Відображаємо адресу в окремому елементі */}
         <p className="city-label">
           {accommodation?.city}, {accommodation?.location}
         </p>

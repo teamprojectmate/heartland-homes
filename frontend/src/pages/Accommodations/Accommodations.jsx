@@ -6,7 +6,10 @@ import AccommodationList from './AccommodationList';
 import Notification from '../../components/Notification';
 import AccommodationFilters from './AccommodationFilters';
 import Pagination from '../../components/Pagination';
-import AccommodationsMap from './AccommodationsMap'; // ✅ ДОДАНО: новий компонент карти
+import BaseMap from '../../components/BaseMap';
+import { getSafeImageUrl } from '../../utils/getSafeImageUrl';
+import AccommodationDetails from './AccommodationDetails';
+
 import {
   loadAccommodations,
   setFilters,
@@ -14,8 +17,54 @@ import {
   setPage
 } from '../../store/slices/accommodationsSlice';
 
-// ✅ ДОДАНО: імпорт стилів для сторінки
 import '../../styles/components/_accommodations-map.scss';
+
+// ✅ Простий компонент модалки
+const Modal = ({ isOpen, onClose, children }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div
+      style={{
+        position: 'fixed',
+        inset: 0,
+        backgroundColor: 'rgba(0,0,0,0.6)',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 2000
+      }}
+      onClick={onClose}
+    >
+      <div
+        style={{
+          background: '#fff',
+          borderRadius: '12px',
+          width: '90%',
+          maxWidth: '1000px',
+          maxHeight: '90vh',
+          overflowY: 'auto',
+          padding: '1rem'
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={onClose}
+          style={{
+            float: 'right',
+            border: 'none',
+            background: 'transparent',
+            fontSize: '1.5rem',
+            cursor: 'pointer'
+          }}
+        >
+          ✖
+        </button>
+        {children}
+      </div>
+    </div>
+  );
+};
 
 const Accommodations = () => {
   const dispatch = useDispatch();
@@ -25,9 +74,11 @@ const Accommodations = () => {
     (state) => state.accommodations
   );
   const accommodationListRef = useRef(null);
-  const [highlightedId, setHighlightedId] = useState(null); // ✅ ДОДАНО: новий стан для виділеної картки
+  const [highlightedId, setHighlightedId] = useState(null);
 
-  // читаємо фільтри з URL і зберігаємо в Redux
+  // ✅ Для модалки
+  const [selectedAccommodation, setSelectedAccommodation] = useState(null);
+
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const newFilters = {};
@@ -39,7 +90,6 @@ const Accommodations = () => {
     dispatch(setFilters(newFilters));
   }, [dispatch, location.search]);
 
-  // коли змінюються фільтри → робимо запит
   useEffect(() => {
     dispatch(loadAccommodations());
   }, [dispatch, filters, page]);
@@ -58,7 +108,6 @@ const Accommodations = () => {
     navigate('/accommodations');
   };
 
-  // ✅ НОВА ФУНКЦІЯ: для зміни стану при наведенні
   const handleCardHover = (id) => {
     setHighlightedId(id);
   };
@@ -94,7 +143,6 @@ const Accommodations = () => {
 
           {!loading && !error && items.length > 0 ? (
             <>
-              {/* ✅ ОНОВЛЕНО: передаємо новий пропс */}
               <AccommodationList accommodations={items} onCardHover={handleCardHover} />
               <Pagination
                 page={page}
@@ -107,10 +155,39 @@ const Accommodations = () => {
           )}
         </div>
       </div>
-      {/* ✅ НОВИЙ КОМПОНЕНТ КАРТИ */}
+
       <div className="accommodations-map-wrapper">
-        <AccommodationsMap accommodations={items} highlightedId={highlightedId} />
+        <BaseMap
+          items={items}
+          highlightedId={highlightedId}
+          renderPopup={(acc) => (
+            <div style={{ width: '150px' }}>
+              <img
+                src={acc.image ? getSafeImageUrl(acc.image) : '/no-image.png'}
+                alt={acc.name || 'Помешкання'}
+                style={{
+                  width: '100%',
+                  borderRadius: '6px',
+                  marginBottom: '6px',
+                  cursor: 'pointer'
+                }}
+                onError={(e) => (e.currentTarget.src = '/no-image.png')}
+                onClick={() => setSelectedAccommodation(acc)} // ✅ відкриваємо модалку
+              />
+              <strong>{acc.name}</strong>
+              <div>{acc.city}</div>
+            </div>
+          )}
+        />
       </div>
+
+      {/* ✅ Модалка з деталями */}
+      <Modal
+        isOpen={!!selectedAccommodation}
+        onClose={() => setSelectedAccommodation(null)}
+      >
+        {selectedAccommodation && <AccommodationDetails id={selectedAccommodation.id} />}
+      </Modal>
     </div>
   );
 };

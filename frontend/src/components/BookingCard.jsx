@@ -3,11 +3,18 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { fixDropboxUrl } from '../utils/fixDropboxUrl';
 import { mapStatus } from '../utils/translations';
+import { TrashIcon } from '@heroicons/react/24/solid';
 import '../styles/components/_booking-card.scss';
 
 const fallbackImage = '/no-image.png';
 
-const BookingCard = ({ booking, onCancel }) => {
+const BookingCard = ({
+  booking,
+  onCancel,
+  onStatusChange,
+  onDelete,
+  showAdminControls = false
+}) => {
   const imageUrl = booking.accommodation?.image
     ? fixDropboxUrl(booking.accommodation.image)
     : fallbackImage;
@@ -51,6 +58,12 @@ const BookingCard = ({ booking, onCancel }) => {
               {label}
             </span>
           </p>
+          {showAdminControls && booking.user && (
+            <p>
+              <strong>Користувач:</strong> {booking.user.firstName}{' '}
+              {booking.user.lastName} ({booking.user.email})
+            </p>
+          )}
         </div>
 
         {/* Ціна */}
@@ -62,16 +75,42 @@ const BookingCard = ({ booking, onCancel }) => {
 
         {/* Кнопки */}
         <div className="booking-card-actions">
-          <Link to={`/my-bookings/${booking.id}`} className="btn btn-primary">
-            Деталі
-          </Link>
-          {booking.status === 'PENDING' && (
-            <button className="btn btn-warning">Оплатити</button>
+          {!showAdminControls && (
+            <>
+              <Link to={`/my-bookings/${booking.id}`} className="btn btn-primary">
+                Деталі
+              </Link>
+              {booking.status === 'PENDING' && (
+                <button className="btn btn-warning">Оплатити</button>
+              )}
+              {booking.status !== 'CANCELED' && (
+                <button className="btn btn-danger" onClick={() => onCancel(booking.id)}>
+                  Скасувати
+                </button>
+              )}
+            </>
           )}
-          {booking.status !== 'CANCELED' && (
-            <button className="btn btn-danger" onClick={() => onCancel(booking.id)}>
-              Скасувати
-            </button>
+
+          {showAdminControls && (
+            <>
+              <select
+                value={booking.status}
+                onChange={(e) => onStatusChange(booking, e.target.value)}
+                className="role-select"
+              >
+                <option value="PENDING">Очікує</option>
+                <option value="CONFIRMED">Підтверджено</option>
+                <option value="CANCELED">Скасовано</option>
+                <option value="EXPIRED">Прострочено</option>
+              </select>
+              <button
+                className="btn-icon btn-danger"
+                onClick={() => onDelete(booking.id)}
+                title="Видалити бронювання"
+              >
+                <TrashIcon className="w-5 h-5 text-white" />
+              </button>
+            </>
           )}
         </div>
       </div>

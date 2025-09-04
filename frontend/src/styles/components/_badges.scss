@@ -19,7 +19,7 @@
     transform: translateY(-2px);
   }
 
-  // типи житла
+  /* ──────────────── 🏠 Типи житла ──────────────── */
   &.badge-type-house {
     background-color: $badge-house;
   }
@@ -36,16 +36,24 @@
     background-color: $badge-vacation-home;
   }
 
+  &.badge-type-cottage {
+    background-color: $badge-cottage;
+  }
+
+  &.badge-type-hostel {
+    background-color: $badge-hostel;
+  }
+
   &.badge-type {
     background-color: $primary-700;
   }
 
-  // розмір
+  /* ──────────────── 📐 Розмір ──────────────── */
   &.badge-size {
     background-color: $badge-hostel;
   }
 
-  // зручності
+  /* ──────────────── 🔧 Зручності ──────────────── */
   &.badge-amenity {
     font-size: 0.85rem;
 
@@ -74,7 +82,7 @@
     }
   }
 
-  // 🔹 статуси бронювань
+  /* ──────────────── 📌 Статуси бронювань ──────────────── */
   &.badge-status {
     &.pending {
       background-color: $warning-color;
@@ -91,9 +99,26 @@
     &.expired {
       background-color: $gray-600;
     }
+
+    /* ──────────────── 🏢 Статуси житла ──────────────── */
+    &.requires-verification {
+      color: $white-color;
+      background-color: $warning-color;
+    }
+
+    &.permitted {
+      color: $white-color;
+      background-color: $success-color;
+    }
+
+    &.rejected {
+      color: $white-color;
+      background-color: $danger-color;
+    }
   }
 }
 
+/* Група бейджів */
 .badge-group {
   display: flex;
   flex-wrap: wrap;

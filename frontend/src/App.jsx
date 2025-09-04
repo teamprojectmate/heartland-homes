@@ -1,6 +1,7 @@
-import React, { Suspense, lazy } from 'react';
+// src/App.jsx
+import React, { Suspense, lazy, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 // Спільні компоненти
 import Header from './components/Header.jsx';
@@ -58,7 +59,40 @@ import NotFound from './pages/NotFound.jsx';
 
 import './styles/main.scss';
 
+// Redux
+import { setUser } from './store/slices/authSlice';
+import authService from './api/auth/authService';
+
 function App() {
+  const dispatch = useDispatch();
+
+  // підтягування профілю з localStorage при старті
+  useEffect(() => {
+    const stored = JSON.parse(localStorage.getItem('auth'));
+    if (stored?.token) {
+      authService
+        .getProfile()
+        .then((profile) => {
+          const cleanRole = profile.role?.startsWith('ROLE_')
+            ? profile.role.replace('ROLE_', '')
+            : profile.role;
+
+          dispatch(
+            setUser({
+              token: stored.token,
+              ...profile,
+              cleanRole
+            })
+          );
+        })
+        .catch(() => {
+          // якщо токен не валідний
+          localStorage.removeItem('auth');
+          localStorage.removeItem('userProfile');
+        });
+    }
+  }, [dispatch]);
+
   const auth = useSelector((state) => state.auth);
   const user = useSelector((state) => state.user);
   const bookings = useSelector((state) => state.bookings);
@@ -77,7 +111,6 @@ function App() {
     <div className="main-layout">
       <Header />
 
-      {/* глобальні повідомлення */}
       {errors.map((err, idx) => (
         <Notification key={idx} message={err} type="error" />
       ))}

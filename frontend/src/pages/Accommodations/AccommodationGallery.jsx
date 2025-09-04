@@ -6,10 +6,9 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
-import { fixDropboxUrl } from '../../utils/fixDropboxUrl';
+import { getSafeImageUrl } from '../../utils/getSafeImageUrl';
 
 const AccommodationGallery = ({ images }) => {
-  // Якщо немає фото → fallback
   if (!images || images.length === 0) {
     return (
       <div className="gallery-fallback">
@@ -18,20 +17,14 @@ const AccommodationGallery = ({ images }) => {
     );
   }
 
-  // Якщо тільки одне фото
   if (images.length === 1) {
     return (
       <div className="single-image-container">
-        <img
-          src={fixDropboxUrl(images[0])}
-          alt="Фото помешкання"
-          onError={(e) => (e.target.src = '/no-image.png')}
-        />
+        <img src={getSafeImageUrl(images[0])} alt="Фото помешкання" />
       </div>
     );
   }
 
-  // Якщо більше фото → Swiper
   return (
     <div className="accommodation-gallery">
       <Swiper
@@ -43,11 +36,7 @@ const AccommodationGallery = ({ images }) => {
       >
         {images.map((img, idx) => (
           <SwiperSlide key={idx}>
-            <img
-              src={fixDropboxUrl(img)}
-              alt={`Фото ${idx + 1}`}
-              onError={(e) => (e.target.src = '/no-image.png')}
-            />
+            <img src={getSafeImageUrl(img)} alt={`Фото ${idx + 1}`} />
           </SwiperSlide>
         ))}
       </Swiper>

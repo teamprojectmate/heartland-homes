@@ -1,12 +1,11 @@
+// src/api/accommodations/accommodationService.js
 import api from '../axios';
 
 // 🔹 Пошук житла з фільтрами (GET)
-// Тепер приймає один об'єкт з усіма параметрами для кращої читабельності
 export const fetchAccommodations = async (params = {}) => {
-  // Видаляємо пусті значення та об'єкти з params
   const cleanedParams = Object.fromEntries(
     Object.entries(params).filter(
-      ([key, value]) =>
+      ([, value]) =>
         value != null &&
         value !== '' &&
         !(typeof value === 'object' && Object.keys(value).length === 0)
@@ -14,7 +13,6 @@ export const fetchAccommodations = async (params = {}) => {
   );
 
   try {
-    // Відправляємо параметри як query-параметри
     const response = await api.get('/accommodations/search', {
       params: cleanedParams
     });
@@ -40,7 +38,7 @@ export const createAccommodation = async (formData) => {
   return response.data;
 };
 
-// 🔹 Оновити житло
+// 🔹 Оновити житло (повний PUT)
 export const updateAccommodation = async (id, formData) => {
   const response = await api.put(`/accommodations/${id}`, formData);
   return response.data;
@@ -48,12 +46,7 @@ export const updateAccommodation = async (id, formData) => {
 
 // 🔹 Для адміна (список без фільтрів, пагінація)
 export const fetchAdminAccommodations = async (page = 0, size = 10) => {
-  const response = await api.get('/accommodations', {
-    params: {
-      page,
-      size
-    }
-  });
+  const response = await api.get('/accommodations', { params: { page, size } });
   return response.data;
 };
 
@@ -61,4 +54,24 @@ export const fetchAdminAccommodations = async (page = 0, size = 10) => {
 export const deleteAccommodation = async (id) => {
   const response = await api.delete(`/accommodations/${id}`);
   return response.data;
+};
+
+// 🔹 Оновити статус житла (PATCH /accommodations/{id}/status)
+export const updateAccommodationStatus = async (id, status) => {
+  try {
+    console.log(`📤 PATCH /accommodations/${id}/status →`, status);
+
+    const response = await api.patch(`/accommodations/${id}/status`, {
+      status: status // ✅ саме так очікує бекенд
+    });
+
+    console.log('✅ Відповідь сервера:', response.data);
+    return response.data;
+  } catch (err) {
+    console.error(
+      `❌ Помилка при PATCH /accommodations/${id}/status:`,
+      err.response?.data || err.message
+    );
+    throw err;
+  }
 };

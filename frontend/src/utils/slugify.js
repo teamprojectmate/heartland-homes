@@ -1,3 +1,4 @@
+// src/utils/slugify.js
 /**
  * Перетворює рядок у slug
  * Напр. "Vacation Home" -> "vacation_home"
