@@ -1,21 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import BookingForm from '../../components/BookingForm';
-import LocationMap from '../../components/LocationMap';
+import BaseMap from '../../components/BaseMap';
 import AccommodationGallery from './AccommodationGallery';
 import { getAccommodationById } from '../../api/accommodations/accommodationService';
 import { useSelector } from 'react-redux';
 
-// словники
 import { mapType, mapAmenity } from '../../utils/translations';
+import { getSafeImageUrl } from '../../utils/getSafeImageUrl';
 
-// стилі
 import '../../styles/components/_accommodation-details.scss';
 import '../../styles/components/_accommodation-gallery.scss';
 import '../../styles/components/_badges.scss';
 
-const AccommodationDetails = () => {
-  const { id } = useParams();
+const AccommodationDetails = ({ id: propId }) => {
+  // ✅ або беремо id з props, або з useParams
+  const { id: routeId } = useParams();
+  const id = propId || routeId;
+
   const [accommodation, setAccommodation] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -23,6 +25,7 @@ const AccommodationDetails = () => {
   const { isAuthenticated } = useSelector((state) => state.auth);
 
   useEffect(() => {
+    if (!id) return;
     const fetchAccommodation = async () => {
       try {
         const data = await getAccommodationById(id);
@@ -71,7 +74,11 @@ const AccommodationDetails = () => {
           <div className="gallery-wrapper">
             <AccommodationGallery
               images={
-                accommodation.images || (accommodation.image ? [accommodation.image] : [])
+                accommodation.images?.length
+                  ? accommodation.images.map((img) => getSafeImageUrl(img))
+                  : accommodation.image
+                    ? [getSafeImageUrl(accommodation.image)]
+                    : []
               }
             />
           </div>
@@ -145,11 +152,20 @@ const AccommodationDetails = () => {
       {accommodation?.latitude && accommodation?.longitude && (
         <div className="location-map-full">
           <h4 className="details-section-title">Розташування</h4>
-          <LocationMap
-            location={accommodation?.location}
-            city={accommodation?.city}
-            latitude={accommodation?.latitude}
-            longitude={accommodation?.longitude}
+          <BaseMap
+            items={[accommodation]}
+            renderPopup={(acc) => (
+              <div style={{ width: '150px' }}>
+                <img
+                  src={getSafeImageUrl(acc.image) || '/no-image.png'}
+                  alt={acc.name}
+                  style={{ width: '100%', borderRadius: '6px', marginBottom: '6px' }}
+                  onError={(e) => (e.currentTarget.src = '/no-image.png')}
+                />
+                <strong>{acc.name}</strong>
+                <div>{acc.city}</div>
+              </div>
+            )}
           />
         </div>
       )}

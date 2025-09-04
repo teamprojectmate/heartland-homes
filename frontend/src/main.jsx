@@ -3,15 +3,21 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
+import { GoogleOAuthProvider } from '@react-oauth/google'; // ✅ додано
 import { store } from './store/store';
 import App from './App.jsx';
 import './styles/main.scss';
+
+// ⚠️ заміни на свій CLIENT_ID з Google Cloud Console
+const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <Provider store={store}>
       <BrowserRouter>
-        <App />
+        <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+          <App />
+        </GoogleOAuthProvider>
       </BrowserRouter>
     </Provider>
   </React.StrictMode>

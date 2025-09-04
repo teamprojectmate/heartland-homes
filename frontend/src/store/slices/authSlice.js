@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { jwtDecode } from 'jwt-decode';
 import authService from '../../api/auth/authService';
 
 // Читаємо збережені дані з localStorage
@@ -36,49 +35,23 @@ export const login = createAsyncThunk(
     try {
       const { token } = await authService.login({ email, password });
 
-      // 🔑 Декодуємо токен
-      const decoded = jwtDecode(token);
-      console.log('🔑 JWT payload:', decoded);
+      localStorage.setItem('auth', JSON.stringify({ token }));
 
-      // Витягуємо роль з токена
-      let rawRole;
-      if (Array.isArray(decoded.roles) && decoded.roles.length > 0) {
-        rawRole = decoded.roles[0];
-      } else if (decoded.role) {
-        rawRole = decoded.role;
-      } else {
-        rawRole = decoded.authorities?.[0] || null;
-      }
+      const profile = await authService.getProfile();
 
+      let rawRole = profile.role || (profile.roles?.[0] ?? null);
       let cleanRole = rawRole?.startsWith('ROLE_')
         ? rawRole.replace('ROLE_', '')
         : rawRole;
 
-      // Підтягуємо профіль
-      let profile = {};
-      try {
-        profile = await authService.getProfile();
-        localStorage.setItem('userProfile', JSON.stringify(profile));
-
-        if (Array.isArray(profile?.roles) && profile.roles.length > 0) {
-          cleanRole = profile.roles[0]?.startsWith('ROLE_')
-            ? profile.roles[0].replace('ROLE_', '')
-            : profile.roles[0];
-        }
-      } catch {
-        console.warn('⚠️ /users/me недоступний, використовую тільки JWT');
-      }
-
-      // Формуємо фінальний об'єкт користувача
       const userData = {
         token,
-        ...decoded,
         ...profile,
         cleanRole
       };
 
-      // Зберігаємо
       localStorage.setItem('auth', JSON.stringify(userData));
+      localStorage.setItem('userProfile', JSON.stringify(profile));
 
       return userData;
     } catch (err) {
@@ -104,10 +77,9 @@ export const register = createAsyncThunk(
 // 🔹 Логаут
 export const logout = createAsyncThunk('auth/logout', async () => {
   authService.logout();
-  localStorage.removeItem('auth');
-  localStorage.removeItem('userProfile');
 });
 
+// Slice
 const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -117,13 +89,31 @@ const authSlice = createSlice({
       s.isSuccess = false;
       s.isError = false;
       s.message = '';
+    },
+    setUser: (s, { payload }) => {
+      s.user = payload;
+      s.isAuthenticated = !!payload;
+    },
+    // 🔹 Додаємо для Google Login
+    loginSuccess: (s, { payload }) => {
+      s.user = payload;
+      s.isAuthenticated = true;
+      s.isError = false;
+      s.isLoading = false;
+
+      localStorage.setItem('auth', JSON.stringify(payload));
+      if (payload.profile) {
+        localStorage.setItem('userProfile', JSON.stringify(payload.profile));
+      }
     }
   },
   extraReducers: (builder) => {
     builder
-      // LOGIN
       .addCase(login.pending, (s) => {
         s.isLoading = true;
+        s.isError = false;
+        s.isSuccess = false;
+        s.message = '';
       })
       .addCase(login.fulfilled, (s, { payload }) => {
         s.isLoading = false;
@@ -138,10 +128,10 @@ const authSlice = createSlice({
         s.user = null;
         s.isAuthenticated = false;
       })
-
-      // REGISTER
       .addCase(register.pending, (s) => {
         s.isLoading = true;
+        s.isError = false;
+        s.isSuccess = false;
       })
       .addCase(register.fulfilled, (s) => {
         s.isLoading = false;
@@ -153,8 +143,6 @@ const authSlice = createSlice({
         s.isError = true;
         s.message = payload;
       })
-
-      // LOGOUT
       .addCase(logout.fulfilled, (s) => {
         s.user = null;
         s.isAuthenticated = false;
@@ -162,5 +150,5 @@ const authSlice = createSlice({
   }
 });
 
-export const { reset } = authSlice.actions;
+export const { reset, setUser, loginSuccess } = authSlice.actions; // ✅ тепер є loginSuccess
 export default authSlice.reducer;

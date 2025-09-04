@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Notification from '../../components/Notification';
 import { createAccommodation } from '../../api/accommodations/accommodationService';
-import { mapType, mapAmenity } from '../../utils/translations/index';
+import { mapType, mapAmenity } from '../../utils/translations';
+import { getSafeImageUrl } from '../../utils/getSafeImageUrl';
 
 const CreateAccommodation = () => {
   const navigate = useNavigate();
@@ -173,7 +174,7 @@ const CreateAccommodation = () => {
           />
         </div>
 
-        {/* Image */}
+        {/* Image + превʼю */}
         <div className="form-group">
           <label>URL зображення</label>
           <input
@@ -183,6 +184,16 @@ const CreateAccommodation = () => {
             onChange={handleChange}
             placeholder="https://example.com/image.jpg"
           />
+          {formData.image && (
+            <div className="preview-image" style={{ marginTop: '0.5rem' }}>
+              <img
+                src={getSafeImageUrl(formData.image)}
+                alt="Превʼю"
+                style={{ maxWidth: '200px', borderRadius: '8px' }}
+                onError={(e) => (e.currentTarget.src = '/no-image.png')}
+              />
+            </div>
+          )}
         </div>
 
         <button type="submit" className="btn-primary" disabled={loading}>

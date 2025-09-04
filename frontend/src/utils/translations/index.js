@@ -1,4 +1,4 @@
-// src/utils/translation/index.js
+// src/utils/translations/index.js
 
 // -----------------------------
 // 🏠 Типи житла
@@ -54,20 +54,30 @@ export const amenityTranslations = {
 };
 
 // -----------------------------
-// 📌 Статуси бронювань
+// 📌 Статуси бронювань + житла
 // -----------------------------
 export const statusTranslations = {
+  // 🔹 бронювання
   PENDING: { label: 'Очікує', color: '#f59e0b', slug: 'pending' },
   CONFIRMED: { label: 'Підтверджено', color: '#16a34a', slug: 'confirmed' },
-  CANCELED: { label: 'Скасовано', color: '#dc2626', slug: 'cancelled' },
-  EXPIRED: { label: 'Прострочено', color: '#9ca3af', slug: 'expired' }
+  CANCELED: { label: 'Скасовано', color: '#dc2626', slug: 'canceled' },
+  EXPIRED: { label: 'Прострочено', color: '#9ca3af', slug: 'expired' },
+
+  // 🔹 житло
+  REQUIRES_VERIFICATION: {
+    label: 'Очікує перевірки',
+    color: '#f59e0b',
+    slug: 'requires-verification'
+  },
+  PERMITTED: { label: 'Дозволено', color: '#16a34a', slug: 'permitted' },
+  REJECTED: { label: 'Відхилено', color: '#dc2626', slug: 'rejected' }
 };
 
 // -----------------------------
 // ⚙️ Universal Mapper
 // -----------------------------
 export const mapType = (type = '') => {
-  const normalized = type.toUpperCase();
+  const normalized = type?.toUpperCase();
   return typeTranslations[normalized] || { label: type, icon: '🏘️', color: '#0f766e' };
 };
 
@@ -85,7 +95,7 @@ export const mapAmenity = (amenity = '') => {
 };
 
 export const mapStatus = (status = '') => {
-  const normalized = status.toUpperCase();
+  const normalized = status?.toUpperCase();
   return (
     statusTranslations[normalized] || { label: status, color: '#6b7280', slug: 'unknown' }
   );

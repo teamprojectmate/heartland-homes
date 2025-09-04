@@ -1,5 +1,6 @@
 // src/styles/components/_buttons.scss
 @use '../abstract/variables' as *;
+@use 'sass:color';
 
 /* ───────── core ───────── */
 %btn {
@@ -165,15 +166,34 @@
   box-shadow: none;
 
   svg {
+    flex-shrink: 0;
     width: 18px;
     height: 18px;
-    color: $white-color;
   }
 }
 
+/* Сірий — редагування */
+.btn-icon.btn-secondary {
+  background-color: $muted-color;
+  border: none;
+
+  svg {
+    color: $white-color; // ✏ завжди видно
+  }
+
+  &:hover {
+    background-color: color.scale($muted-color, $lightness: -20%);
+  }
+}
+
+/* Червоний — видалення */
 .btn-icon.btn-danger {
   background-color: $danger-color;
   border: none;
+
+  svg {
+    color: $white-color; // 🗑 завжди видно
+  }
 
   &:hover {
     filter: brightness(0.9);

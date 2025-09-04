@@ -45,6 +45,7 @@
 @use './components/payment';
 @use './components/profile';
 @use './components/searchForm';
+@use './components/status-select';
 
 // 4) пакетні стилі — імпортуємо як пакет, без шляху до node_modules
 @use '../../node_modules/react-image-gallery/styles/scss/image-gallery';

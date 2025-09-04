@@ -7,13 +7,15 @@ import Pagination from '../../components/Pagination';
 import {
   loadAdminAccommodations,
   removeAccommodation,
-  setPage
+  setPage,
+  updateAccommodationStatusAsync
 } from '../../store/slices/accommodationsSlice';
 import '../../styles/components/_admin.scss';
 import { fixDropboxUrl } from '../../utils/fixDropboxUrl';
-import { FaPlus } from 'react-icons/fa';
+import { FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
 import { mapType } from '../../utils/translations';
 import '../../styles/components/_badges.scss';
+import '../../styles/components/_status-select.scss';
 
 const AdminAccommodations = () => {
   const navigate = useNavigate();
@@ -37,8 +39,12 @@ const AdminAccommodations = () => {
 
   const handleDelete = (id) => {
     if (window.confirm('Видалити помешкання?')) {
-      dispatch(removeAccommodation({ id }));
+      dispatch(removeAccommodation(id));
     }
+  };
+
+  const handleStatusChange = (id, status) => {
+    dispatch(updateAccommodationStatusAsync({ id, status }));
   };
 
   if (loading) return <p className="text-center mt-5">Завантаження...</p>;
@@ -49,6 +55,7 @@ const AdminAccommodations = () => {
     <div className="container admin-page-container">
       <h1 className="section-heading text-center">Управління помешканнями</h1>
       {error && <Notification message={error} type="danger" />}
+
       <div className="text-end mb-3">
         <Link to="/admin/accommodations/new" className="btn-primary">
           <FaPlus /> Додати помешкання
@@ -63,11 +70,11 @@ const AdminAccommodations = () => {
                 <tr>
                   <th>ID</th>
                   <th>Назва</th>
-                  <th>Локація</th>
                   <th>Місто</th>
                   <th>Тип</th>
-                  <th>Ціна</th>
+                  <th className="text-end">Ціна</th>
                   <th>Зображення</th>
+                  <th>Статус</th>
                   <th>Дії</th>
                 </tr>
               </thead>
@@ -75,11 +82,11 @@ const AdminAccommodations = () => {
                 {accommodations.map((acc) => {
                   const imageUrl = acc.image ? fixDropboxUrl(acc.image) : fallbackImage;
                   const { label, icon, color } = mapType(acc.type);
+
                   return (
                     <tr key={acc.id}>
                       <td data-label="ID">{acc.id}</td>
                       <td data-label="Назва">{acc.name}</td>
-                      <td data-label="Локація">{acc.location}</td>
                       <td data-label="Місто">{acc.city}</td>
                       <td data-label="Тип">
                         <span
@@ -89,7 +96,9 @@ const AdminAccommodations = () => {
                           {icon} {label}
                         </span>
                       </td>
-                      <td data-label="Ціна">{acc.dailyRate} грн</td>
+                      <td data-label="Ціна" className="price">
+                        {acc.dailyRate} грн
+                      </td>
                       <td data-label="Зображення">
                         <img
                           src={imageUrl}
@@ -97,18 +106,31 @@ const AdminAccommodations = () => {
                           className="table-img"
                         />
                       </td>
+                      <td data-label="Статус">
+                        <select
+                          value={acc.accommodationStatus}
+                          onChange={(e) => handleStatusChange(acc.id, e.target.value)}
+                          className={`status-select ${acc.accommodationStatus?.toLowerCase()}`}
+                        >
+                          <option value="REQUIRES_VERIFICATION">Очікує перевірки</option>
+                          <option value="PERMITTED">Дозволено</option>
+                          <option value="REJECTED">Відхилено</option>
+                        </select>
+                      </td>
                       <td data-label="Дії" className="actions">
                         <Link
                           to={`/admin/accommodations/edit/${acc.id}`}
-                          className="btn-secondary btn-sm"
+                          className="btn-icon btn-secondary"
+                          title="Редагувати"
                         >
-                          ✏ Редагувати
+                          <FaEdit />
                         </Link>
                         <button
-                          className="btn-danger btn-sm"
+                          className="btn-icon btn-danger"
                           onClick={() => handleDelete(acc.id)}
+                          title="Видалити"
                         >
-                          🗑 Видалити
+                          <FaTrash />
                         </button>
                       </td>
                     </tr>
@@ -117,6 +139,7 @@ const AdminAccommodations = () => {
               </tbody>
             </table>
           </div>
+
           <Pagination
             page={page}
             totalPages={totalPages}

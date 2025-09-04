@@ -1,5 +1,6 @@
-@use '../abstract/variables' as *;
+// src/styles/components/_admin-accommodation.scss
 @use '../abstract/mixins' as *;
+@use '../abstract/variables' as *;
 @use 'sass:color';
 
 .admin-page-container {
@@ -76,24 +77,46 @@
     margin-bottom: 1.2rem;
     background: $white-color;
     border: 1px solid $gray-200;
-    border-radius: $radius-md;
-    box-shadow: $shadow-sm;
+    border-radius: $radius-lg;
+    box-shadow: $box-shadow-card;
   }
 
+  /* головний блок для кожної "клітинки" */
   .admin-table td {
-    display: flex;
+    display: grid;
+    grid-template-columns: 40% 1fr; /* label 40%, значення справа */
+    gap: 0.75rem;
     align-items: center;
-    justify-content: space-between;
-    padding: 0.6rem 0;
-    border-bottom: none;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid $gray-100;
 
     &::before {
-      flex: 0 0 40%;
-      max-width: 40%;
+      grid-column: 1;
+      font-size: 0.9rem;
       font-weight: 600;
-      color: $muted-color;
+      color: $gray-600;
       content: attr(data-label);
     }
+
+    /* значення у другій колонці */
+    span,
+    p,
+    img,
+    select,
+    .badge,
+    .btn-icon {
+      grid-column: 2;
+      font-size: 1rem;
+      font-weight: 500;
+      color: $heading-color;
+    }
+  }
+
+  /* Спеціально для ціни */
+  .admin-table td.price {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: $primary-color;
   }
 
   .admin-table td:last-child {
@@ -107,10 +130,46 @@
     border-radius: $radius-md;
   }
 
-  .actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    justify-content: flex-end;
+  /* 🛠️ Дії */
+  .admin-table td.actions {
+    display: flex !important; /* перезаписуємо grid */
+    flex-direction: row; /* кнопки в ряд */
+    gap: 0.8rem;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.8rem;
+
+    &::before {
+      display: none; /* ховаємо текст "Дії" */
+    }
+
+    .btn-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      font-size: 1.1rem;
+      border-radius: 50%;
+      box-shadow: $box-shadow-sm;
+
+      &.btn-secondary {
+        color: $white-color;
+        background: $gray-500;
+
+        &:hover {
+          background: $gray-600;
+        }
+      }
+
+      &.btn-danger {
+        color: $white-color;
+        background: $danger-color;
+
+        &:hover {
+          background: color.adjust($danger-color, $lightness: -8%);
+        }
+      }
+    }
   }
 }

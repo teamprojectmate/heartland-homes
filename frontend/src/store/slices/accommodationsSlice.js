@@ -1,7 +1,8 @@
+// src/store/slices/accommodationsSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import * as accommodationService from '../../api/accommodations/accommodationService';
 
-// ----- Public -----
+// ----- Public: завантаження житла -----
 export const loadAccommodations = createAsyncThunk(
   'accommodations/load',
   async (_, { getState, rejectWithValue }) => {
@@ -13,7 +14,8 @@ export const loadAccommodations = createAsyncThunk(
         type: state.filters.type || undefined,
         accommodationSize: state.filters.accommodationSize || undefined,
         minDailyRate: state.filters.minDailyRate ?? undefined,
-        maxDailyRate: state.filters.maxDailyRate ?? undefined
+        maxDailyRate: state.filters.maxDailyRate ?? undefined,
+        status: 'PERMITTED'
       };
 
       const pageable = {
@@ -22,7 +24,10 @@ export const loadAccommodations = createAsyncThunk(
         sort: state.sort
       };
 
-      const data = await accommodationService.fetchAccommodations(filters, pageable);
+      const data = await accommodationService.fetchAccommodations({
+        ...filters,
+        ...pageable
+      });
       return data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || 'Помилка при завантаженні');
@@ -58,13 +63,12 @@ export const removeAccommodation = createAsyncThunk(
   }
 );
 
-// ✅ ДОДАНО: Створення житла
+// ----- Створення житла -----
 export const createAccommodationAsync = createAsyncThunk(
   'accommodations/create',
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await accommodationService.createAccommodation(formData);
-      return response;
+      return await accommodationService.createAccommodation(formData);
     } catch (err) {
       return rejectWithValue(
         err.response?.data?.message || 'Помилка при створенні житла'
@@ -72,6 +76,28 @@ export const createAccommodationAsync = createAsyncThunk(
     }
   }
 );
+
+// ----- Admin: оновлення статусу житла -----
+export const updateAccommodationStatusAsync = createAsyncThunk(
+  'accommodations/updateStatus',
+  async ({ id, status }, { rejectWithValue }) => {
+    try {
+      const response = await accommodationService.updateAccommodationStatus(id, status);
+      return { id, accommodationStatus: response.accommodationStatus }; // ✅ беремо як на бекенді
+    } catch (err) {
+      return rejectWithValue(
+        err.response?.data?.message || 'Не вдалося оновити статус житла'
+      );
+    }
+  }
+);
+
+extraReducers: (builder) => {
+  builder.addCase(updateAccommodationStatusAsync.fulfilled, (state, { payload }) => {
+    const idx = state.items.findIndex((item) => item.id === payload.id);
+    if (idx !== -1) state.items[idx] = payload; // замінюємо повністю
+  });
+};
 
 const accommodationsSlice = createSlice({
   name: 'accommodations',
@@ -95,10 +121,7 @@ const accommodationsSlice = createSlice({
   },
   reducers: {
     setFilters(state, action) {
-      state.filters = {
-        ...state.filters,
-        ...action.payload
-      };
+      state.filters = { ...state.filters, ...action.payload };
       state.page = 0;
     },
     resetFilters(state) {
@@ -117,48 +140,55 @@ const accommodationsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Public
-      .addCase(loadAccommodations.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+      // Public load
+      .addCase(loadAccommodations.pending, (s) => {
+        s.loading = true;
+        s.error = null;
       })
-      .addCase(loadAccommodations.fulfilled, (state, action) => {
-        state.loading = false;
-        state.items = action.payload.content || [];
-        state.totalPages = action.payload.totalPages || 0;
-        state.totalElements = action.payload.totalElements || 0;
-        state.adminMode = false;
+      .addCase(loadAccommodations.fulfilled, (s, { payload }) => {
+        s.loading = false;
+        s.items = payload.content || [];
+        s.totalPages = payload.totalPages || 0;
+        s.totalElements = payload.totalElements || 0;
+        s.adminMode = false;
       })
-      .addCase(loadAccommodations.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
+      .addCase(loadAccommodations.rejected, (s, { payload }) => {
+        s.loading = false;
+        s.error = payload;
       })
 
       // Admin load
-      .addCase(loadAdminAccommodations.fulfilled, (state, action) => {
-        state.items = action.payload.content || [];
-        state.totalPages = action.payload.totalPages || 0;
-        state.totalElements = action.payload.totalElements || 0;
-        state.adminMode = true;
+      .addCase(loadAdminAccommodations.fulfilled, (s, { payload }) => {
+        s.items = payload.content || [];
+        s.totalPages = payload.totalPages || 0;
+        s.totalElements = payload.totalElements || 0;
+        s.adminMode = true;
       })
 
       // Admin remove
-      .addCase(removeAccommodation.fulfilled, (state, action) => {
-        state.items = state.items.filter((acc) => acc.id !== action.payload);
+      .addCase(removeAccommodation.fulfilled, (s, { payload }) => {
+        s.items = s.items.filter((acc) => acc.id !== payload);
       })
 
-      // ✅ ДОДАНО: Створення житла
-      .addCase(createAccommodationAsync.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+      // Create
+      .addCase(createAccommodationAsync.pending, (s) => {
+        s.loading = true;
+        s.error = null;
       })
-      .addCase(createAccommodationAsync.fulfilled, (state) => {
-        state.loading = false;
-        state.error = null;
+      .addCase(createAccommodationAsync.fulfilled, (s) => {
+        s.loading = false;
+        s.error = null;
       })
-      .addCase(createAccommodationAsync.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
+      .addCase(createAccommodationAsync.rejected, (s, { payload }) => {
+        s.loading = false;
+        s.error = payload;
+      })
+
+      // Admin update status
+      .addCase(updateAccommodationStatusAsync.fulfilled, (state, action) => {
+        const { id, accommodationStatus } = action.payload;
+        const acc = state.items.find((item) => item.id === id);
+        if (acc) acc.accommodationStatus = accommodationStatus; // ✅ правильно
       });
   }
 });

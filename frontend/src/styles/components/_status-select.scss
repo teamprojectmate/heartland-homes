@@ -1,0 +1,32 @@
+// src/styles/components/_status-select.scss
+@use '../abstract/variables' as *;
+
+.status-select {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: $white-color;
+  text-align: center;
+  appearance: none;
+  cursor: pointer;
+  border: none;
+  border-radius: $radius-sm;
+  box-shadow: $box-shadow-sm;
+
+  &.requires-verification {
+    background-color: $warning-color;
+  }
+
+  &.permitted {
+    background-color: $success-color;
+  }
+
+  &.rejected {
+    background-color: $danger-color;
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.25);
+  }
+}
