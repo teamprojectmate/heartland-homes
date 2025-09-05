@@ -2,6 +2,7 @@ package booking.service.service.impl;
 
 import booking.service.dto.booking.BookingDto;
 import booking.service.dto.booking.CreateBookingRequestDto;
+import booking.service.dto.booking.UpdateBookingStatusDto;
 import booking.service.exception.EntityNotFoundException;
 import booking.service.exception.UnpaidPaymentException;
 import booking.service.mapper.BookingMapper;
@@ -221,6 +222,16 @@ public class BookingServiceImpl implements BookingService {
                 booking.getCheckInDate(),
                 booking.getCheckOutDate()
         ));
+    }
+
+    @Override
+    public BookingDto updateStatus(Long id, UpdateBookingStatusDto requestDto) {
+        Booking booking = bookingRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Can't find accommodation by id: " + id)
+        );
+        booking.setStatus(requestDto.getBookingStatus());
+        bookingRepository.save(booking);
+        return bookingMapper.toDto(booking);
     }
 
     private boolean isManager(User user) {

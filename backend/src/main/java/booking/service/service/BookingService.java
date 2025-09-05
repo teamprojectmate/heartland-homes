@@ -2,6 +2,7 @@ package booking.service.service;
 
 import booking.service.dto.booking.BookingDto;
 import booking.service.dto.booking.CreateBookingRequestDto;
+import booking.service.dto.booking.UpdateBookingStatusDto;
 import booking.service.model.BookingStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,4 +22,6 @@ public interface BookingService {
     BookingDto update(Long id, CreateBookingRequestDto requestDto, Authentication authentication);
 
     void cancel(Long id, Authentication authentication);
+
+    BookingDto updateStatus(Long id, UpdateBookingStatusDto requestDto);
 }

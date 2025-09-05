@@ -2,6 +2,7 @@ package booking.service.controller;
 
 import booking.service.dto.booking.BookingDto;
 import booking.service.dto.booking.CreateBookingRequestDto;
+import booking.service.dto.booking.UpdateBookingStatusDto;
 import booking.service.model.BookingStatus;
 import booking.service.service.BookingService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,6 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -82,5 +84,14 @@ public class BookingController {
     @Operation(summary = "Cancel booking", description = "Cancel a booking by ID")
     public void cancel(@PathVariable Long id, Authentication authentication) {
         bookingService.cancel(id, authentication);
+    }
+
+    @PreAuthorize("hasRole('MANAGER')")
+    @PatchMapping("/{id}/status")
+    @Operation(summary = "Update booking status",
+            description = "Change booking status")
+    public BookingDto updateStatus(@PathVariable Long id,
+            @RequestBody @Valid UpdateBookingStatusDto requestDto) {
+        return bookingService.updateStatus(id, requestDto);
     }
 }
