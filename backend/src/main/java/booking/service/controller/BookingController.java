@@ -89,7 +89,7 @@ public class BookingController {
     @PreAuthorize("hasRole('MANAGER')")
     @PatchMapping("/{id}/status")
     @Operation(summary = "Update booking status",
-            description = "Change booking status")
+            description = "Change booking status for admins")
     public BookingDto updateStatus(@PathVariable Long id,
             @RequestBody @Valid UpdateBookingStatusDto requestDto) {
         return bookingService.updateStatus(id, requestDto);
