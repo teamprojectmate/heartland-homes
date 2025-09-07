@@ -31,7 +31,9 @@ const LoginSuccess = () => {
     <div className="auth-layout">
       <div className="auth-card">
         <h2 className="auth-title">Авторизація...</h2>
-        <p className="form-subtitle">Будь ласка, зачекайте, виконується вхід через Google.</p>
+        <p className="form-subtitle">
+          Будь ласка, зачекайте, виконується вхід через Google.
+        </p>
       </div>
     </div>
   );
