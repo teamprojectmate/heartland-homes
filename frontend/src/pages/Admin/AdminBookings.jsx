@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  fetchBookings,
-  updateBookingStatus,
-  deleteBooking
-} from '../../store/slices/bookingsSlice';
+import { fetchBookings, deleteBooking } from '../../store/slices/bookingsSlice';
 import { getAccommodationById } from '../../api/accommodations/accommodationService';
 import { getAllUsers } from '../../api/user/userService';
 import AdminTable from '../Admin/AdminTable';
@@ -51,24 +47,24 @@ const AdminBookings = () => {
 
     const enrichData = async () => {
       const results = await Promise.all(
-        bookings.map(async (booking) => {
+        bookings.map(async (b) => {
           let accommodation = null;
           let totalPrice = null;
 
           try {
-            accommodation = await getAccommodationById(booking.accommodationId);
-            if (accommodation && booking.checkInDate && booking.checkOutDate) {
-              const start = new Date(booking.checkInDate);
-              const end = new Date(booking.checkOutDate);
+            accommodation = await getAccommodationById(b.accommodationId);
+            if (accommodation && b.checkInDate && b.checkOutDate) {
+              const start = new Date(b.checkInDate);
+              const end = new Date(b.checkOutDate);
               const nights = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
               totalPrice = nights * (accommodation.dailyRate || 0);
             }
           } catch {
-            console.warn(`Не вдалося завантажити житло id=${booking.accommodationId}`);
+            console.warn(`Не вдалося завантажити житло id=${b.accommodationId}`);
           }
 
-          const user = usersMap[booking.userId];
-          return { ...booking, accommodation, user, totalPrice };
+          const user = usersMap[b.userId];
+          return { ...b, accommodation, user, totalPrice };
         })
       );
       setEnrichedBookings(results);
@@ -78,10 +74,6 @@ const AdminBookings = () => {
   }, [bookings, usersMap]);
 
   // --- дії ---
-  const handleStatusChange = (booking, newStatus) => {
-    dispatch(updateBookingStatus({ booking, status: newStatus }));
-  };
-
   const handleDelete = (id) => {
     dispatch(deleteBooking(id));
   };
@@ -115,8 +107,9 @@ const AdminBookings = () => {
       label: 'Статус',
       render: (b) => (
         <StatusSelect
+          type="booking"
           value={b.status}
-          onChange={(newStatus) => handleStatusChange(b, newStatus)}
+          onChange={() => {}} // статус змінюється тільки бекендом
         />
       )
     }
@@ -128,13 +121,8 @@ const AdminBookings = () => {
 
       {isMobile ? (
         <div className="admin-bookings-cards">
-          {enrichedBookings.map((booking) => (
-            <AdminBookingCard
-              key={booking.id}
-              booking={booking}
-              onStatusChange={handleStatusChange}
-              onDelete={handleDelete}
-            />
+          {enrichedBookings.map((b) => (
+            <AdminBookingCard key={b.id} booking={b} onDelete={handleDelete} />
           ))}
         </div>
       ) : (

@@ -10,7 +10,7 @@ import '../../styles/components/admin/_admin-bookings.scss';
 
 const fallbackImage = '/assets/no-image.svg'; // ✅ fallback в public/assets
 
-const AdminBookingCard = ({ booking, onStatusChange, onDelete }) => {
+const AdminBookingCard = ({ booking, onDelete }) => {
   const image = booking.accommodation?.image
     ? fixDropboxUrl(booking.accommodation.image)
     : fallbackImage;
@@ -53,8 +53,9 @@ const AdminBookingCard = ({ booking, onStatusChange, onDelete }) => {
 
         <div className="card-actions">
           <StatusSelect
+            type="booking"
             value={booking.status}
-            onChange={(newStatus) => onStatusChange(booking, newStatus)}
+            onChange={() => {}} // статус змінюється тільки бекендом
           />
 
           <button className="btn-inline btn-danger" onClick={() => onDelete(booking.id)}>

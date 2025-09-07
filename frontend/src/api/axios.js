@@ -8,6 +8,7 @@ const instance = axios.create({
     qs.stringify(params, { arrayFormat: 'repeat', allowDots: true })
 });
 
+// 🔹 Функція для отримання токена з localStorage
 const getAuthData = () => {
   try {
     return JSON.parse(localStorage.getItem('auth')) || null;
@@ -21,6 +22,7 @@ const getAuthData = () => {
 instance.interceptors.request.use((config) => {
   const auth = getAuthData();
   const token = auth?.token;
+
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

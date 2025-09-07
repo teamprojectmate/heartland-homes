@@ -25,6 +25,7 @@ const AdminAccommodationCard = ({ acc, onStatusChange, onDelete }) => {
         <div className="card-header">
           <h3 className="accommodation-title">{acc.name}</h3>
           <StatusSelect
+            type="accommodation"
             value={acc.accommodationStatus}
             onChange={(newStatus) => onStatusChange(acc.id, newStatus)}
           />
