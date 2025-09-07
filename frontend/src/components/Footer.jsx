@@ -3,8 +3,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Phone, Mail, MapPin, Facebook, Instagram, Twitter } from 'lucide-react';
-import '../styles/components/_footer.scss';
-import '../styles/components/_footer-extension.scss';
+import '../styles/components/footer/_footer.scss';
+import '../styles/components/footer/_footer-extension.scss';
 
 const footerLinks = [
   {
@@ -43,7 +43,7 @@ const Footer = () => {
   return (
     <footer className="main-footer" role="contentinfo">
       <div className="footer-inner">
-        {/* ✅ Нова секція для авторизованих користувачів */}
+        {/* секція для авторизованих користувачів */}
         {isAuthenticated && (
           <div className="list-property-section">
             <h5 className="footer-heading">Зареєструвати своє помешкання</h5>

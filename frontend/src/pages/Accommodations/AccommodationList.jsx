@@ -12,7 +12,7 @@ const AccommodationList = ({ accommodations, onCardHover }) => {
       {accommodations.map((acc) => (
         <div
           key={acc.id}
-          // ✅ ДОДАНО: обробники подій для наведення
+          // обробники подій для наведення
           onMouseEnter={() => onCardHover(acc.id)}
           onMouseLeave={() => onCardHover(null)}
         >

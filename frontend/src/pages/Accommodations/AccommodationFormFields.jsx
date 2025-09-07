@@ -20,7 +20,7 @@ const AccommodationFormFields = ({
   handleChange,
   showLocation = true,
   showDailyRate = true,
-  showDailyRateRange = false, // ✅ Новий пропс для діапазону цін
+  showDailyRateRange = false,
   showImage = true,
   showAmenities = true,
   showLatitude = true,
@@ -28,6 +28,18 @@ const AccommodationFormFields = ({
 }) => {
   return (
     <>
+      <div className="form-group">
+        <label>Місто</label>
+        <input
+          type="text"
+          name="city"
+          value={formData.city}
+          onChange={handleChange}
+          className="form-control"
+          placeholder="Наприклад, Київ"
+        />
+      </div>
+
       <div className="form-group">
         <label>Тип житла</label>
         <select
@@ -43,18 +55,6 @@ const AccommodationFormFields = ({
             </option>
           ))}
         </select>
-      </div>
-
-      <div className="form-group">
-        <label>Місто</label>
-        <input
-          type="text"
-          name="city"
-          value={formData.city}
-          onChange={handleChange}
-          className="form-control"
-          placeholder="Наприклад, Київ"
-        />
       </div>
 
       <div className="form-group">
@@ -74,71 +74,6 @@ const AccommodationFormFields = ({
         </select>
       </div>
 
-      {showLocation && (
-        <div className="form-group">
-          <label>Локація</label>
-          <input
-            type="text"
-            name="location"
-            value={formData.location}
-            onChange={handleChange}
-            className="form-control"
-          />
-        </div>
-      )}
-
-      {showLatitude && (
-        <div className="form-group">
-          <label>Широта (Latitude)</label>
-          <input
-            type="text"
-            name="latitude"
-            value={formData.latitude}
-            onChange={handleChange}
-            className="form-control"
-          />
-        </div>
-      )}
-
-      {showLongitude && (
-        <div className="form-group">
-          <label>Довгота (Longitude)</label>
-          <input
-            type="text"
-            name="longitude"
-            value={formData.longitude}
-            onChange={handleChange}
-            className="form-control"
-          />
-        </div>
-      )}
-
-      {showAmenities && (
-        <div className="form-group">
-          <label>Зручності (через кому)</label>
-          <input
-            type="text"
-            name="amenities"
-            value={formData.amenities}
-            onChange={handleChange}
-            className="form-control"
-          />
-        </div>
-      )}
-
-      {showDailyRate && (
-        <div className="form-group">
-          <label>Ціна за добу</label>
-          <input
-            type="number"
-            name="dailyRate"
-            value={formData.dailyRate}
-            onChange={handleChange}
-            className="form-control"
-          />
-        </div>
-      )}
-
       {showDailyRateRange && (
         <div className="price-range-group">
           <div className="form-group">
@@ -149,6 +84,7 @@ const AccommodationFormFields = ({
               value={formData.minDailyRate}
               onChange={handleChange}
               className="form-control"
+              placeholder="грн"
             />
           </div>
           <div className="form-group">
@@ -159,21 +95,9 @@ const AccommodationFormFields = ({
               value={formData.maxDailyRate}
               onChange={handleChange}
               className="form-control"
+              placeholder="грн"
             />
           </div>
-        </div>
-      )}
-
-      {showImage && (
-        <div className="form-group">
-          <label>URL зображення</label>
-          <input
-            type="text"
-            name="image"
-            value={formData.image}
-            onChange={handleChange}
-            className="form-control"
-          />
         </div>
       )}
     </>

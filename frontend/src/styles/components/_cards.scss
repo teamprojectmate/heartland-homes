@@ -1,28 +1,9 @@
+// src/styles/components/cards.scss
 @use '../abstract/variables' as *;
-@use 'sass:math';
-@use './badges';
+@use '../abstract/mixins' as *;
 
-.cards-grid {
-  display: grid;
-  grid-template-columns: repeat(
-    auto-fit,
-    minmax(280px, 1fr)
-  ); // ✅ auto-fit + 280px щоб влізало більше
-
-  gap: 1.5rem;
-  align-items: stretch;
-
-  // ✅ зробимо ширший контейнер
-  max-width: $max-width-2xl;
-  padding-inline: clamp($container-pad-min, 3.5vw, $container-pad-max);
-  margin-inline: auto;
-
-  @media (max-width: $breakpoint-sm) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.card-custom {
+/* ───────── Base ───────── */
+%card-base {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -34,6 +15,26 @@
     transform 0.2s ease,
     box-shadow 0.2s ease,
     border 0.2s ease;
+}
+
+/* ───────── Grid ───────── */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  align-items: stretch;
+  max-width: $max-width-2xl;
+  padding-inline: clamp($container-pad-min, 3.5vw, $container-pad-max);
+  margin-inline: auto;
+
+  @media (max-width: $breakpoint-sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ───────── Variants ───────── */
+.card-custom {
+  @extend %card-base;
 
   &:hover {
     border: 1px solid $primary-color;
@@ -47,10 +48,10 @@
   height: 200px;
   object-fit: cover;
   transition: transform 0.3s ease;
-}
 
-.card-custom:hover .card-img-top-custom {
-  transform: scale(1.03);
+  .card-custom:hover & {
+    transform: scale(1.03);
+  }
 }
 
 .card-body {
@@ -83,8 +84,7 @@
   color: $primary-color;
 }
 
+/* 🔹 Тільки локальний відступ */
 .card-badges {
-  @extend .badge-group;
-
   margin: 0.5rem 0 1rem;
 }

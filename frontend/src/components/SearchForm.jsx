@@ -1,9 +1,10 @@
+// src/components/SearchForm.jsx
 import React, { useState } from 'react';
 import '../styles/components/_forms.scss';
 import '../styles/components/_buttons.scss';
 import '../styles/components/_searchForm.scss';
 
-// Опції для типів і розмірів житла
+// Опції для типів житла
 const ACCOMMODATION_TYPES = [
   { value: 'HOUSE', label: 'Будинок' },
   { value: 'APARTMENT', label: 'Квартира' },
@@ -12,6 +13,7 @@ const ACCOMMODATION_TYPES = [
   { value: 'HOSTEL', label: 'Хостел' }
 ];
 
+// Опції для розміру
 const ACCOMMODATION_SIZES = [
   { value: 'SMALL', label: 'Маленький' },
   { value: 'MEDIUM', label: 'Середній' },
@@ -44,6 +46,7 @@ const SearchForm = ({ onSearch }) => {
 
   return (
     <form onSubmit={handleSubmit} className="search-form-container">
+      {/* Місто */}
       <div className="search-input-group">
         <label htmlFor="city">Місто</label>
         <input
@@ -57,6 +60,7 @@ const SearchForm = ({ onSearch }) => {
         />
       </div>
 
+      {/* Тип житла */}
       <div className="search-input-group">
         <label htmlFor="type">Тип житла</label>
         <select
@@ -66,7 +70,7 @@ const SearchForm = ({ onSearch }) => {
           value={formData.type}
           onChange={handleChange}
         >
-          <option value="">Будь-який</option>
+          <option value="">— Оберіть тип —</option>
           {ACCOMMODATION_TYPES.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
@@ -75,6 +79,7 @@ const SearchForm = ({ onSearch }) => {
         </select>
       </div>
 
+      {/* Розмір */}
       <div className="search-input-group">
         <label htmlFor="size">Розмір</label>
         <select
@@ -93,6 +98,7 @@ const SearchForm = ({ onSearch }) => {
         </select>
       </div>
 
+      {/* Ціна від */}
       <div className="search-input-group">
         <label htmlFor="minDailyRate">Ціна від</label>
         <input
@@ -105,6 +111,7 @@ const SearchForm = ({ onSearch }) => {
         />
       </div>
 
+      {/* Ціна до */}
       <div className="search-input-group">
         <label htmlFor="maxDailyRate">Ціна до</label>
         <input
@@ -117,6 +124,7 @@ const SearchForm = ({ onSearch }) => {
         />
       </div>
 
+      {/* Кнопка */}
       <button className="btn-primary" type="submit">
         🔍 Шукати
       </button>

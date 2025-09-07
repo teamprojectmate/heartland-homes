@@ -1,9 +1,11 @@
+// src/components/filters/AccommodationFilters.jsx
 import React, { useState, useEffect } from 'react';
 import { Filter, RotateCcw } from 'lucide-react';
 import AccommodationFormFields from './AccommodationFormFields';
+
 import '../../styles/components/_forms.scss';
 import '../../styles/components/_buttons.scss';
-import '../../styles/components/_filters.scss';
+import '../../styles/components/accommodation/_accommodation-form-fields.scss';
 
 const AccommodationFilters = ({
   city,
@@ -49,24 +51,48 @@ const AccommodationFilters = ({
 
   return (
     <section className="filters-section">
-      <div className="filters-box">
-        <h4 className="filters-heading">Фільтри та сортування</h4>
-        <form onSubmit={handleApply}>
-          <div className="filters-grid">
-            {/* Використовуємо універсальний компонент і передаємо всі необхідні пропси */}
-            <AccommodationFormFields
-              formData={localFilters}
-              handleChange={handleChange}
-              // ✅ Передаємо пропси, які приховають зайві поля
-              showLocation={false}
-              showImage={false}
-              showAmenities={false}
-              showLatitude={false}
-              showLongitude={false}
-              // ✅ Явно вказуємо, що потрібні поля для діапазону цін
-              showDailyRate={false}
-              showDailyRateRange={true}
-            />
+      <form onSubmit={handleApply} className="accommodation-form-fields two-rows">
+        {/* 1-й рядок */}
+        <div className="filters-row">
+          <AccommodationFormFields
+            formData={localFilters}
+            handleChange={handleChange}
+            showDailyRate={false}
+            showDailyRateRange={false}
+            showLocation={false}
+            showImage={false}
+            showAmenities={false}
+            showLatitude={false}
+            showLongitude={false}
+            onlyBasicFields={true} // ми залишаємо тільки city, type, size
+          />
+        </div>
+
+        {/* 2-й рядок */}
+        <div className="filters-row">
+          <div className="price-range-group">
+            <div className="form-group">
+              <label>Ціна від</label>
+              <input
+                type="number"
+                name="minDailyRate"
+                value={localFilters.minDailyRate}
+                onChange={handleChange}
+                className="form-control"
+                placeholder="грн"
+              />
+            </div>
+            <div className="form-group">
+              <label>Ціна до</label>
+              <input
+                type="number"
+                name="maxDailyRate"
+                value={localFilters.maxDailyRate}
+                onChange={handleChange}
+                className="form-control"
+                placeholder="грн"
+              />
+            </div>
           </div>
 
           <div className="filters-actions">
@@ -81,8 +107,8 @@ const AccommodationFilters = ({
               <RotateCcw size={18} /> Скинути
             </button>
           </div>
-        </form>
-      </div>
+        </div>
+      </form>
     </section>
   );
 };

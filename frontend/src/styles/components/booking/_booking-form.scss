@@ -1,0 +1,17 @@
+// src/styles/components/booking/_booking-form.scss
+@use '../../abstract/variables' as *;
+
+.booking-form {
+  padding-top: $spacer-sm;
+
+  .form-group {
+    margin-bottom: $spacer-sm;
+  }
+}
+
+.total-price {
+  margin: 0.75rem 0;
+  font-size: $font-size-lg;
+  font-weight: 600;
+  color: $primary-color;
+}

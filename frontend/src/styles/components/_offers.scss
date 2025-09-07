@@ -1,5 +1,4 @@
 // src/styles/components/_offers.scss
-@use 'sass:color';
 @use '../abstract/variables' as *;
 @use '../abstract/mixins' as *;
 
@@ -7,8 +6,7 @@
   padding: 4rem 0;
 
   .container {
-    // робимо однаково як у cards-grid
-    max-width: $max-width-2xl; // 🔹 ширший контейнер
+    max-width: $max-width-2xl;
     padding: 0 1rem;
     margin: 0 auto;
   }
@@ -30,11 +28,7 @@
 
 .offers-grid {
   display: grid;
-  grid-template-columns: repeat(
-    auto-fill,
-    minmax(280px, 1fr)
-  ); // 🔹 як у житлових картках
-
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 2rem;
   align-items: stretch;
 
@@ -49,7 +43,7 @@
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: $white-color;
+  background: $surface-color;
   border-radius: $radius-lg;
   transition:
     transform 0.2s ease,
@@ -115,14 +109,14 @@
   width: 90%;
   max-width: 600px;
   padding: 2rem;
-  background-color: #fff;
-  border-radius: 12px;
+  background-color: $surface-color; // ✅ замість #fff
+  border-radius: $radius-lg;
   animation: modal-open 0.4s ease-out;
 
   img {
     width: 100%;
     margin-bottom: 1.5rem;
-    border-radius: 8px;
+    border-radius: $radius-md;
   }
 }
 
@@ -131,7 +125,7 @@
   top: 15px;
   right: 15px;
   font-size: 1.5rem;
-  color: #7f8c8d;
+  color: $muted-color; // ✅ замість #7f8c8d
   cursor: pointer;
   background: none;
   border: none;

@@ -1,24 +1,31 @@
-import React from 'react';
-import PageWrapper from '../../components/PageWrapper';
-import { Link } from 'react-router-dom';
+// src/pages/User/PaymentSuccess.jsx
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import '../../styles/components/payment/_payment-checkout.scss';
 
 const PaymentSuccess = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // перенаправлення через 2 секунди
+    const timer = setTimeout(() => {
+      navigate('/my-payments');
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [navigate]);
+
   return (
-    <PageWrapper title="Оплата успішна">
-      <div className="payment-page">
-        <div className="payment-card">
-          <h2 className="payment-title" style={{ color: '#16a34a' }}>
-            🎉 Оплату успішно завершено! 🎉
-          </h2>
-          <p className="payment-subtitle">
-            Дякуємо за вашу оплату. Ваше бронювання підтверджено.
-          </p>
-          <Link to="/my-bookings" className="payment-button">
-            Перейти до моїх бронювань
-          </Link>
-        </div>
+    <div className="payment-page">
+      <div className="payment-card payment-checkout">
+        <h2 className="payment-title" style={{ color: '#16a34a' }}>
+          🎉 Оплату успішно завершено! 🎉
+        </h2>
+        <p className="payment-subtitle">
+          Дякуємо за вашу оплату. Ви будете перенаправлені на сторінку "Мої платежі".
+        </p>
       </div>
-    </PageWrapper>
+    </div>
   );
 };
 

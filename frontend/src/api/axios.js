@@ -23,7 +23,7 @@ const getAuthData = () => {
 instance.interceptors.request.use(
   (config) => {
     const auth = getAuthData();
-    const token = auth?.token; // ✅ твій бекенд повертає саме token
+    const token = auth?.token;
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;

@@ -9,6 +9,9 @@ import { fixDropboxUrl } from '../utils/fixDropboxUrl';
 import { mapStatus } from '../utils/translations';
 import Notification from '../components/Notification';
 import { FaTrash } from 'react-icons/fa';
+import '../styles/components/booking/_booking-card.scss';
+import '../styles/components/booking/_booking-details.scss';
+import '../styles/components/booking/_booking-details.scss';
 
 const fallbackImage = '/no-image.png';
 

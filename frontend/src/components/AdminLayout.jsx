@@ -1,14 +1,22 @@
 // src/layouts/AdminLayout.jsx
 import React from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { HomeIcon, UserIcon, CreditCardIcon } from '@heroicons/react/24/outline';
 import { MdAdminPanelSettings } from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../store/slices/authSlice';
 
+import '../styles/components/admin/_admin-layout.scss';
+
 const AdminLayout = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/login'); // після виходу кидає на логін
+  };
 
   return (
     <div className="admin-layout">
@@ -41,7 +49,7 @@ const AdminLayout = () => {
         </nav>
       </aside>
 
-      {/* 🔹 Контент */}
+      {/* 🔹 Content */}
       <main className="admin-content">
         <header className="admin-header">
           <h2>Адмін-панель</h2>
@@ -49,11 +57,12 @@ const AdminLayout = () => {
             <span className="admin-user">
               👤 {user?.firstName || user?.email} ({user?.cleanRole})
             </span>
-            <button className="btn-logout" onClick={() => dispatch(logout())}>
+            <button className="btn-logout" onClick={handleLogout}>
               Вийти
             </button>
           </div>
         </header>
+
         <div className="admin-main">
           <Outlet />
         </div>

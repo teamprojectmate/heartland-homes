@@ -83,7 +83,7 @@ export const updateAccommodationStatusAsync = createAsyncThunk(
   async ({ id, status }, { rejectWithValue }) => {
     try {
       const response = await accommodationService.updateAccommodationStatus(id, status);
-      return { id, accommodationStatus: response.accommodationStatus }; // ✅ беремо як на бекенді
+      return { id, accommodationStatus: response.accommodationStatus };
     } catch (err) {
       return rejectWithValue(
         err.response?.data?.message || 'Не вдалося оновити статус житла'
@@ -95,7 +95,7 @@ export const updateAccommodationStatusAsync = createAsyncThunk(
 extraReducers: (builder) => {
   builder.addCase(updateAccommodationStatusAsync.fulfilled, (state, { payload }) => {
     const idx = state.items.findIndex((item) => item.id === payload.id);
-    if (idx !== -1) state.items[idx] = payload; // замінюємо повністю
+    if (idx !== -1) state.items[idx] = payload;
   });
 };
 
@@ -188,7 +188,7 @@ const accommodationsSlice = createSlice({
       .addCase(updateAccommodationStatusAsync.fulfilled, (state, action) => {
         const { id, accommodationStatus } = action.payload;
         const acc = state.items.find((item) => item.id === id);
-        if (acc) acc.accommodationStatus = accommodationStatus; // ✅ правильно
+        if (acc) acc.accommodationStatus = accommodationStatus;
       });
   }
 });

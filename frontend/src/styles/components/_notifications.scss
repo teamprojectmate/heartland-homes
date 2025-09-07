@@ -8,7 +8,7 @@
   min-width: 280px;
   max-width: 400px;
   padding: 1rem 1.5rem;
-  margin-top: 0.5rem; // відступ між повідомленнями
+  margin-top: 0.5rem;
   font-weight: 600;
   border-radius: $radius;
   box-shadow: $box-shadow-md;
@@ -46,12 +46,12 @@
 
 .notification-info {
   color: $white-color;
-  background-color: #17a2b8;
+  background-color: $info-color; // ✅ замість #17a2b8
 }
 
 .notification-warning {
   color: $white-color;
-  background-color: #ffc107;
+  background-color: $warning-alt; // ✅ замість #ffc107
 }
 
 .fixed-bottom-right {

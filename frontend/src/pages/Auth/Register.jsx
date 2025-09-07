@@ -2,8 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
+import { FaUser, FaEnvelope, FaLock } from 'react-icons/fa';
 import { register, reset } from '../../store/slices/authSlice';
 import Notification from '../../components/Notification';
+import '../../styles/components/_auth.scss';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -19,11 +21,9 @@ const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { isAuthenticated, isLoading, isError, isSuccess, message } = useSelector(
-    (state) => state.auth
-  );
+  const { isLoading, isError, isSuccess, message } = useSelector((state) => state.auth);
 
-  // 🔹 Якщо реєстрація пройшла успішно → редірект на /login
+  // ✅ Редірект після успішної реєстрації
   useEffect(() => {
     if (isSuccess) {
       navigate('/login');
@@ -40,96 +40,116 @@ const Register = () => {
 
   const onSubmit = (e) => {
     e.preventDefault();
-
     if (password !== confirmPassword) {
       alert('Паролі не співпадають');
       return;
     }
-
     dispatch(register({ email, password, firstName, lastName }));
   };
 
   return (
-    <div className="container page mt-4">
-      <h1 className="auth-title text-center">Реєстрація</h1>
+    <div className="auth-layout">
+      <div className="auth-card">
+        <h2 className="auth-title">Реєстрація</h2>
 
-      {isError && <Notification message={message} type="error" />}
-      {isSuccess && (
-        <Notification
-          message="Реєстрація успішна! Тепер ви можете увійти."
-          type="success"
-        />
-      )}
-
-      <form onSubmit={onSubmit} className="auth-form">
-        <div className="form-group">
-          <label htmlFor="firstName">Ім’я</label>
-          <input
-            type="text"
-            id="firstName"
-            name="firstName"
-            value={firstName}
-            onChange={onChange}
-            required
+        {isError && <Notification message={message} type="error" />}
+        {isSuccess && (
+          <Notification
+            message="Реєстрація успішна! Тепер ви можете увійти."
+            type="success"
           />
-        </div>
+        )}
 
-        <div className="form-group">
-          <label htmlFor="lastName">Прізвище</label>
-          <input
-            type="text"
-            id="lastName"
-            name="lastName"
-            value={lastName}
-            onChange={onChange}
-            required
-          />
-        </div>
+        <form onSubmit={onSubmit}>
+          <div className="form-group with-icon">
+            <FaUser className="input-icon" />
+            <input
+              type="text"
+              id="firstName"
+              name="firstName"
+              className="form-control"
+              placeholder="Ім’я"
+              value={firstName}
+              onChange={onChange}
+              required
+            />
+          </div>
 
-        <div className="form-group">
-          <label htmlFor="email">Електронна пошта</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={email}
-            onChange={onChange}
-            required
-          />
-        </div>
+          <div className="form-group with-icon">
+            <FaUser className="input-icon" />
+            <input
+              type="text"
+              id="lastName"
+              name="lastName"
+              className="form-control"
+              placeholder="Прізвище"
+              value={lastName}
+              onChange={onChange}
+              required
+            />
+          </div>
 
-        <div className="form-group">
-          <label htmlFor="password">Пароль</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={password}
-            onChange={onChange}
-            required
-          />
-        </div>
+          <div className="form-group with-icon">
+            <FaEnvelope className="input-icon" />
+            <input
+              type="email"
+              id="email"
+              name="email"
+              className="form-control"
+              placeholder="Електронна пошта"
+              value={email}
+              onChange={onChange}
+              required
+            />
+          </div>
 
-        <div className="form-group">
-          <label htmlFor="confirmPassword">Підтвердіть пароль</label>
-          <input
-            type="password"
-            id="confirmPassword"
-            name="confirmPassword"
-            value={confirmPassword}
-            onChange={onChange}
-            required
-          />
-        </div>
+          <div className="form-group with-icon">
+            <FaLock className="input-icon" />
+            <input
+              type="password"
+              id="password"
+              name="password"
+              className="form-control"
+              placeholder="Пароль"
+              value={password}
+              onChange={onChange}
+              required
+            />
+          </div>
 
-        <button type="submit" className="btn btn-primary" disabled={isLoading}>
-          {isLoading ? 'Реєстрація...' : 'Зареєструватися'}
-        </button>
-      </form>
+          <div className="form-group with-icon">
+            <FaLock className="input-icon" />
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              className="form-control"
+              placeholder="Підтвердіть пароль"
+              value={confirmPassword}
+              onChange={onChange}
+              required
+            />
+          </div>
 
-      <p className="text-center mt-3">
-        Вже маєте акаунт? <Link to="/login">Увійти</Link>
-      </p>
+          <button type="submit" className="btn btn-primary" disabled={isLoading}>
+            {isLoading ? 'Реєстрація...' : 'Зареєструватися'}
+          </button>
+        </form>
+
+        <p className="form-subtitle text-center">
+          Вже маєте акаунт? <Link to="/login">Увійти</Link>
+        </p>
+      </div>
+
+      {/* 🔹 Додаємо модифікатор register */}
+      <div className="auth-side register">
+        <span className="auth-icon">✨</span>
+        <h2 className="auth-title">Ласкаво просимо!</h2>
+        <p className="auth-subtitle">
+          Зареєструйтесь, щоб знайти свій ідеальний дім разом з{' '}
+          <strong>Heartland Homes</strong>.
+        </p>
+      </div>
     </div>
   );
 };

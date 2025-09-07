@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import BookingForm from '../../components/BookingForm';
+import { BookingForm } from '../../components/booking';
 import BaseMap from '../../components/BaseMap';
 import AccommodationGallery from './AccommodationGallery';
 import { getAccommodationById } from '../../api/accommodations/accommodationService';
@@ -9,9 +9,9 @@ import { useSelector } from 'react-redux';
 import { mapType, mapAmenity } from '../../utils/translations';
 import { getSafeImageUrl } from '../../utils/getSafeImageUrl';
 
-import '../../styles/components/_accommodation-details.scss';
-import '../../styles/components/_accommodation-gallery.scss';
-import '../../styles/components/_badges.scss';
+import '../../styles/components/accommodation/_accommodation-details.scss';
+import '../../styles/components/accommodation/_accommodation-gallery.scss';
+import '../../styles/components/badges/_badges.scss';
 
 const AccommodationDetails = ({ id: propId }) => {
   // ✅ або беремо id з props, або з useParams

@@ -40,12 +40,7 @@ export const updateBooking = async (id, booking) => {
     status: booking.status
   };
 
-  console.log('📤 PUT /bookings payload:', payload);
-
   const response = await api.put(`/bookings/${id}`, payload);
-
-  console.log('✅ PUT /bookings response:', response.data);
-
   return response.data;
 };
 

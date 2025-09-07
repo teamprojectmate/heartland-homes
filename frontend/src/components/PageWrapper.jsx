@@ -1,14 +1,16 @@
 // src/components/PageWrapper.jsx
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import Notification from './Notification';
 
-const PageWrapper = ({ title, children }) => {
+const PageWrapper = ({ title, children, extraErrors = [] }) => {
   const errors = [
     useSelector((s) => s.auth.error),
     useSelector((s) => s.user.error),
     useSelector((s) => s.bookings.error),
     useSelector((s) => s.accommodations.error),
-    useSelector((s) => s.payments.error)
+    useSelector((s) => s.payments.error),
+    ...extraErrors
   ].filter(Boolean);
 
   const [blink, setBlink] = useState(false);
@@ -42,7 +44,14 @@ const PageWrapper = ({ title, children }) => {
     }
   }, [blink, errors, title]);
 
-  return <>{children}</>;
+  return (
+    <>
+      {errors.map((err, idx) => (
+        <Notification key={idx} message={err} type="danger" />
+      ))}
+      {children}
+    </>
+  );
 };
 
 export default PageWrapper;

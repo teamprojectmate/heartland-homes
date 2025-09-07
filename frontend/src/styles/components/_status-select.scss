@@ -1,11 +1,11 @@
 // src/styles/components/_status-select.scss
 @use '../abstract/variables' as *;
+@use 'sass:color';
 
 .status-select {
   padding: 0.4rem 0.75rem;
   font-size: 0.85rem;
   font-weight: 600;
-  color: $white-color;
   text-align: center;
   appearance: none;
   cursor: pointer;
@@ -14,14 +14,17 @@
   box-shadow: $box-shadow-sm;
 
   &.requires-verification {
-    background-color: $warning-color;
+    color: $white-color;
+    background-color: color.adjust($warning-color, $lightness: -10%);
   }
 
   &.permitted {
+    color: $white-color;
     background-color: $success-color;
   }
 
   &.rejected {
+    color: $white-color;
     background-color: $danger-color;
   }
 

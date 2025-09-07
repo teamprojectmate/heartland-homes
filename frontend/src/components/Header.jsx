@@ -1,3 +1,4 @@
+// src/components/Header.jsx
 import React, { useEffect, useState } from 'react';
 import { NavLink, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
@@ -14,7 +15,7 @@ import {
   FaUserCog
 } from 'react-icons/fa';
 
-import '../styles/components/_header.scss';
+import '../styles/components/header/_index.scss';
 import '../styles/components/_buttons.scss';
 
 const Header = () => {

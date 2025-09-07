@@ -17,7 +17,7 @@ import {
   setPage
 } from '../../store/slices/accommodationsSlice';
 
-import '../../styles/components/_accommodations-map.scss';
+import '../../styles/components/accommodation/_accommodations-map.scss';
 
 // ✅ Простий компонент модалки
 const Modal = ({ isOpen, onClose, children }) => {

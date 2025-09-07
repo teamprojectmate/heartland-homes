@@ -2,20 +2,25 @@
 import React, { useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
+import setupLeaflet from '../utils/leafletConfig';
 import 'leaflet/dist/leaflet.css';
 
-// стандартна іконка
+// 🔹 виправляємо дефолтні іконки
+setupLeaflet();
+
+// 🔹 завжди створюємо іконки
 const defaultIcon = new L.Icon({
-  iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
-  iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  iconRetinaUrl:
+    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  shadowUrl:
+    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
   shadowSize: [41, 41]
 });
 
-// іконка для виділеного маркера
 const highlightedIcon = new L.Icon({
   iconUrl:
     'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
@@ -32,7 +37,7 @@ const highlightedIcon = new L.Icon({
 const BaseMap = ({ items = [], highlightedId = null, renderPopup }) => {
   const mapRef = useRef(null);
 
-  // Коли змінюються items → підганяємо карту під всі маркери
+  // ✅ підганяємо карту під маркери
   useEffect(() => {
     if (mapRef.current && items.length > 0) {
       const bounds = items
@@ -45,7 +50,6 @@ const BaseMap = ({ items = [], highlightedId = null, renderPopup }) => {
     }
   }, [items]);
 
-  // Якщо немає даних
   if (!items || items.length === 0) {
     return (
       <div
@@ -84,17 +88,17 @@ const BaseMap = ({ items = [], highlightedId = null, renderPopup }) => {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         />
+
         {items.map((acc) => {
           if (!acc.latitude || !acc.longitude) return null;
 
           const isHighlighted = highlightedId && acc.id === highlightedId;
-          const markerIcon = isHighlighted ? highlightedIcon : defaultIcon;
 
           return (
             <Marker
               key={acc.id}
               position={[acc.latitude, acc.longitude]}
-              icon={markerIcon}
+              icon={isHighlighted ? highlightedIcon : defaultIcon}
             >
               <Popup>
                 {renderPopup ? (

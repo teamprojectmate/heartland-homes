@@ -1,15 +1,11 @@
 // src/styles/components/_buttons.scss
 @use '../abstract/variables' as *;
+@use '../abstract/mixins' as *;
 @use 'sass:color';
+@use 'sass:map';
 
 /* ───────── core ───────── */
 %btn {
-  --btn-bg: #f5f7f9;
-  --btn-fg: #222;
-  --btn-bd: transparent;
-  --btn-shadow: 0 6px 16px rgb(16 24 40 / 10%);
-  --btn-shadow-active: 0 3px 8px rgb(16 24 40 / 14%);
-
   display: inline-flex;
   gap: 0.5rem;
   align-items: center;
@@ -19,15 +15,11 @@
   font-size: clamp(0.95rem, 0.9rem + 0.2vw, 1rem);
   font-weight: 800;
   line-height: 1;
-  color: var(--btn-fg);
   letter-spacing: 0.2px;
   text-decoration: none;
   appearance: none;
   cursor: pointer;
-  background: var(--btn-bg);
-  border: 1px solid var(--btn-bd);
   border-radius: $radius;
-  box-shadow: var(--btn-shadow);
   transition:
     transform 0.08s ease,
     box-shadow 0.15s ease,
@@ -41,13 +33,7 @@
   }
 
   &:active {
-    box-shadow: var(--btn-shadow-active);
     transform: translateY(1px);
-  }
-
-  &:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba($primary-color, 0.35);
   }
 
   &:disabled,
@@ -58,183 +44,61 @@
   }
 }
 
-.btn {
-  @extend %btn;
-}
+/* ───────── variants via map (класи) ───────── */
+@each $variant, $map in $button-variants {
+  .btn-#{$variant} {
+    @extend %btn;
 
-/* ✅ Активні стани */
-.btn-primary.active,
-.btn-secondary.active {
-  box-shadow: 0 0 0 3px rgba($primary-color, 0.3);
-  filter: brightness(1.05);
-}
+    color: map.get($map, fg);
+    background: map.get($map, bg);
+    border: 1px solid map.get($map, bd);
+    box-shadow: $box-shadow-button;
 
-/* ───────── variants ───────── */
-.btn-primary {
-  @extend %btn;
+    &:hover {
+      background: map.get($map, hover-bg);
 
-  --btn-bg: linear-gradient(180deg, #10877e 0%, #0f766e 100%);
-  --btn-fg: #f8fafc;
-  --btn-bd: #0f766e;
-  --btn-shadow: 0 6px 18px rgb(16 118 110 / 20%);
-
-  &:hover {
-    filter: none;
-
-    --btn-bg: linear-gradient(180deg, #0f7f76 0%, #0b5f59 100%);
-  }
-}
-
-.btn-secondary {
-  @extend %btn;
-
-  --btn-bg: #e9eef3;
-  --btn-fg: #6b7280;
-  --btn-bd: #d7dde3;
-
-  &:hover {
-    background: #e4eaef;
-    filter: none;
-  }
-}
-
-.btn-outline {
-  @extend %btn;
-
-  --btn-bg: transparent;
-  --btn-fg: #475569;
-  --btn-bd: $border-color;
-
-  box-shadow: none;
-
-  &:hover {
-    background: #f6f8fa;
-  }
-}
-
-.btn-ghost {
-  @extend %btn;
-
-  --btn-bg: transparent;
-  --btn-fg: #14b8a6;
-  --btn-bd: transparent;
-
-  box-shadow: none;
-
-  &:hover {
-    background: rgb(15 118 110 / 8%);
-  }
-}
-
-.btn-success {
-  @extend %btn;
-
-  --btn-bg: $success-color;
-  --btn-fg: #000;
-  --btn-bd: $success-color;
-
-  &:hover {
-    filter: brightness(0.96);
-  }
-}
-
-.btn-danger {
-  @extend %btn;
-
-  --btn-bg: $danger-color;
-  --btn-fg: #000;
-  --btn-bd: $danger-color;
-
-  &:hover {
-    filter: brightness(0.96);
-  }
-}
-
-/* ───────── special small icon button (таблиці) ───────── */
-.btn-icon {
-  @extend %btn;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  min-width: 32px;
-  height: 32px;
-  min-height: 32px;
-  padding: 0;
-  border-radius: $radius-sm;
-  box-shadow: none;
-
-  svg {
-    flex-shrink: 0;
-    width: 18px;
-    height: 18px;
-  }
-}
-
-/* Сірий — редагування */
-.btn-icon.btn-secondary {
-  background-color: $muted-color;
-  border: none;
-
-  svg {
-    color: $white-color; // ✏ завжди видно
-  }
-
-  &:hover {
-    background-color: color.scale($muted-color, $lightness: -20%);
-  }
-}
-
-/* Червоний — видалення */
-.btn-icon.btn-danger {
-  background-color: $danger-color;
-  border: none;
-
-  svg {
-    color: $white-color; // 🗑 завжди видно
-  }
-
-  &:hover {
-    filter: brightness(0.9);
+      @include button-shadow-hover;
+    }
   }
 }
 
 /* ───────── sizes ───────── */
 .btn-sm {
+  @extend %btn;
+
   min-height: clamp(36px, 5vw, 40px);
   padding: 0.45rem 0.75rem;
   font-size: 0.92rem;
 }
 
 .btn-lg {
+  @extend %btn;
+
   min-height: clamp(48px, 6vw, 56px);
   padding: 0.9rem 1.35rem;
   font-size: 1.05rem;
 }
 
 .btn-pill {
-  border-radius: 999px;
-}
-
-.btn-chip {
   @extend %btn;
 
-  --btn-bg: #f0f4f5;
-  --btn-fg: $primary-color;
-  --btn-bd: #dbe7e6;
-
-  padding: 0.5rem 0.9rem;
   border-radius: 999px;
-  box-shadow: 0 4px 10px rgb(15 118 110 / 10%);
-
-  &:hover {
-    background: #e8f0ef;
-  }
 }
 
-.btn-solid {
-  @extend .btn-primary;
+/* ───────── icon button ───────── */
+.btn-icon {
+  @extend %btn;
+
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: $radius-sm;
+  box-shadow: none;
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
 }
 
 /* ───────── media ───────── */

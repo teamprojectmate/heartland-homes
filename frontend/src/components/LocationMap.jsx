@@ -1,26 +1,25 @@
 // src/components/LocationMap.jsx
 import React from 'react';
-import BaseMap from '../components/BaseMap';
+import BaseMap from './BaseMap';
 
 const LocationMap = ({ location, city, latitude, longitude }) => {
-  const markers =
+  const items =
     latitude && longitude
       ? [
           {
-            id: 1,
-            lat: latitude,
-            lng: longitude,
-            popup: `${location}, ${city}`
+            id: 'location-marker',
+            latitude,
+            longitude,
+            name: location,
+            city
           }
         ]
       : [];
 
   return (
-    <BaseMap
-      center={[latitude || 50.45, longitude || 30.52]}
-      markers={markers}
-      height="300px"
-    />
+    <div style={{ height: '300px', width: '100%' }}>
+      <BaseMap items={items} highlightedId="location-marker" />
+    </div>
   );
 };
 

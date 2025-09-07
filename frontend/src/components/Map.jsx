@@ -1,16 +1,23 @@
 // src/components/Map.jsx
 import React from 'react';
-import BaseMap from '../components/BaseMap';
+import BaseMap from './BaseMap';
 
 const Map = ({ accommodations = [] }) => {
-  const markers = accommodations.map((a) => ({
-    id: a.id,
-    lat: a.latitude,
-    lng: a.longitude,
-    popup: `${a.location}, ${a.city}`
-  }));
+  const items = accommodations
+    .filter((a) => a.latitude && a.longitude)
+    .map((a) => ({
+      id: a.id,
+      latitude: a.latitude,
+      longitude: a.longitude,
+      name: a.name,
+      city: a.city
+    }));
 
-  return <BaseMap markers={markers} fitToMarkers height="400px" />;
+  return (
+    <div style={{ height: '400px', width: '100%' }}>
+      <BaseMap items={items} />
+    </div>
+  );
 };
 
 export default Map;

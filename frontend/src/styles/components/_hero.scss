@@ -1,6 +1,5 @@
 // src/styles/components/_hero.scss
 @use '../abstract/variables' as *;
-@use 'sass:math';
 
 .hero-section {
   padding: 80px 0;
@@ -21,7 +20,6 @@
   opacity: 0.8;
 }
 
-/* ---- ONE definition only ---- */
 .search-form-container {
   display: flex;
   flex-wrap: wrap;
@@ -30,7 +28,7 @@
   justify-content: space-between;
   padding: 1.5rem;
   color: $text-color;
-  background-color: $white-color;
+  background-color: $surface-color;
   border-radius: $radius;
   box-shadow: $box-shadow-form;
 
@@ -39,9 +37,8 @@
     align-items: stretch;
   }
 
-  /* кнопка в герої */
   .btn-primary {
-    height: 48px;
+    height: 48px; // локальний override
     padding-inline: 1.25rem;
   }
 }

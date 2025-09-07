@@ -1,4 +1,3 @@
-// src/pages/Admin/AdminEditAccommodation.jsx
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Notification from '../../components/Notification';
@@ -6,8 +5,10 @@ import {
   getAccommodationById,
   updateAccommodation
 } from '../../api/accommodations/accommodationService.js';
-import { mapType, mapAmenity } from '../../utils/translations/index.js';
-import '../../styles/components/_admin-form.scss';
+import { mapType, typeTranslations, mapAmenity } from '../../utils/translations/index.js';
+import { getSafeImageUrl } from '../../utils/getSafeImageUrl';
+
+import '../../styles/components/admin/_admin-form.scss';
 
 const AdminEditAccommodation = () => {
   const { id } = useParams();
@@ -25,9 +26,11 @@ const AdminEditAccommodation = () => {
     dailyRate: '',
     image: ''
   });
+
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  // --- завантаження даних ---
   useEffect(() => {
     const fetchAccommodation = async () => {
       setLoading(true);
@@ -46,15 +49,18 @@ const AdminEditAccommodation = () => {
     fetchAccommodation();
   }, [id]);
 
+  // --- обробка змін ---
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // --- сабміт форми ---
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+
     try {
       const payload = {
         ...formData,
@@ -86,17 +92,18 @@ const AdminEditAccommodation = () => {
           <input type="text" name="name" value={formData.name} onChange={handleChange} />
         </div>
 
-        {/* Тип + бейдж превʼю */}
+        {/* Тип */}
         <div className="form-group">
           <label>Тип</label>
           <select name="type" value={formData.type} onChange={handleChange}>
-            <option value="HOUSE">Будинок</option>
-            <option value="APARTMENT">Квартира</option>
-            <option value="HOTEL">Готель</option>
-            <option value="VACATION_HOME">Дім для відпочинку</option>
-            <option value="HOSTEL">Хостел</option>
-            <option value="COTTAGE">Котедж</option>
+            <option value="">— Оберіть тип —</option>
+            {Object.entries(typeTranslations).map(([key, { label }]) => (
+              <option key={key} value={key}>
+                {label}
+              </option>
+            ))}
           </select>
+
           {formData.type && (
             <div className="badge-group" style={{ marginTop: '0.5rem' }}>
               {(() => {
@@ -152,11 +159,16 @@ const AdminEditAccommodation = () => {
 
         {/* Size */}
         <div className="form-group">
-          <label>Розмір</label>
-          <input type="text" name="size" value={formData.size} onChange={handleChange} />
+          <label>Кількість спалень</label>
+          <input
+            type="number"
+            name="size"
+            value={formData.size}
+            onChange={handleChange}
+          />
         </div>
 
-        {/* Amenities + бейджі */}
+        {/* Amenities */}
         <div className="form-group">
           <label>Зручності (через кому)</label>
           <input
@@ -171,10 +183,14 @@ const AdminEditAccommodation = () => {
               .map((a) => a.trim())
               .filter(Boolean)
               .map((a, idx) => {
-                const amenity = mapAmenity(a);
+                const { label, icon, slug, color } = mapAmenity(a);
                 return (
-                  <span key={idx} className={`badge badge-amenity ${amenity.slug}`}>
-                    {amenity.icon} {amenity.label}
+                  <span
+                    key={idx}
+                    className={`badge badge-amenity ${slug}`}
+                    style={{ backgroundColor: color, color: '#fff' }}
+                  >
+                    {icon} {label}
                   </span>
                 );
               })}
@@ -201,6 +217,15 @@ const AdminEditAccommodation = () => {
             value={formData.image}
             onChange={handleChange}
           />
+          {formData.image && (
+            <div className="image-preview">
+              <img
+                src={getSafeImageUrl(formData.image)}
+                alt="Превʼю зображення"
+                className="preview-img"
+              />
+            </div>
+          )}
         </div>
 
         <button type="submit" className="btn-primary" disabled={loading}>
