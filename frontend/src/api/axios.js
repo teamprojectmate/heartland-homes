@@ -4,12 +4,10 @@ import qs from 'qs';
 
 const instance = axios.create({
   baseURL: 'http://localhost:8080',
-  paramsSerializer: (params) => {
-    return qs.stringify(params, { arrayFormat: 'repeat', allowDots: true });
-  }
+  paramsSerializer: (params) =>
+    qs.stringify(params, { arrayFormat: 'repeat', allowDots: true })
 });
 
-// 🔹 Функція для отримання токена з localStorage
 const getAuthData = () => {
   try {
     return JSON.parse(localStorage.getItem('auth')) || null;
@@ -19,32 +17,25 @@ const getAuthData = () => {
   }
 };
 
-// 🔹 Додаємо токен в кожен запит
-instance.interceptors.request.use(
-  (config) => {
-    const auth = getAuthData();
-    const token = auth?.token;
+// 🔹 додаємо токен у кожен запит
+instance.interceptors.request.use((config) => {
+  const auth = getAuthData();
+  const token = auth?.token;
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
-
-// 🔹 Обробка помилок (без refresh flow)
+// 🔹 обробка помилок
 instance.interceptors.response.use(
   (res) => res,
   (err) => {
     if (err.response?.status === 401) {
-      // токен недійсний → чистимо локалку і відправляємо на логін
       localStorage.removeItem('auth');
       localStorage.removeItem('userProfile');
       window.location.href = '/login';
     }
-
     return Promise.reject(err);
   }
 );

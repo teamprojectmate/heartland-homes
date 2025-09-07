@@ -113,3 +113,25 @@
     box-shadow: 0 4px 10px rgb(16 24 40 / 10%);
   }
 }
+
+/* ───────── Google button ───────── */
+.btn-google {
+  @extend %btn;
+
+  width: 100%;
+  margin-top: 1rem; // 🔹 більше повітря
+  background: $white-color;
+  color: $text-color;
+  border: 1px solid $border-color;
+  box-shadow: none; // 🔹 Google guideline – без тіні
+
+  img {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+  }
+
+  &:hover {
+    background: $gray-100;
+  }
+}

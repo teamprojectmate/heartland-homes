@@ -237,6 +237,12 @@ $button-variants: (
     fg: $primary-color,
     bd: #dbe7e6,
     hover-bg: #e8f0ef
+  ),
+   google: (
+    bg: $white-color,
+    fg: $text-color,
+    bd: $border-color,
+    hover-bg: $gray-100
   )
 );
 

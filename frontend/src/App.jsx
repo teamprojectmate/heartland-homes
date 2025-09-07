@@ -15,6 +15,7 @@ import ErrorBoundary from './components/ErrorBoundary.jsx';
 import ProtectedRoute from './pages/Auth/ProtectedRoute.jsx';
 import Login from './pages/Auth/Login.jsx';
 import Register from './pages/Auth/Register.jsx';
+import LoginSuccess from './pages/Auth/LoginSuccess.jsx'; // ✅ додано
 
 // Accommodations
 import Accommodations from './pages/Accommodations/Accommodations.jsx';
@@ -96,7 +97,6 @@ function App() {
       <Header />
 
       <main className="main-content">
-        {/* 🔥 ScrollToTop винесений вище за Routes */}
         <ScrollToTop />
 
         <Suspense fallback={<p className="text-center mt-5">Завантаження...</p>}>
@@ -132,6 +132,14 @@ function App() {
                 element={
                   <PageWrapper title="Вхід">
                     <Login />
+                  </PageWrapper>
+                }
+              />
+              <Route
+                path="/login/success"
+                element={
+                  <PageWrapper title="Вхід успішний">
+                    <LoginSuccess />
                   </PageWrapper>
                 }
               />

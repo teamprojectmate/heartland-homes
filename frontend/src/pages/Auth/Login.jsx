@@ -72,10 +72,10 @@ const Login = () => {
           </button>
         </form>
 
+        {/* 🔹 Google login */}
         <GoogleLoginButton />
       </div>
 
-      {/* 🔹 Додаємо модифікатор login */}
       <div className="auth-side login">
         <FaHome className="auth-icon" />
         <h2 className="auth-title">Ласкаво просимо 👋</h2>
