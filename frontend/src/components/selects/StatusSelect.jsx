@@ -1,19 +1,25 @@
 // src/components/StatusSelect.jsx
 import React from 'react';
-import { statusLabels } from '../../utils/statusLabels';
 import '../../styles/components/_status-select.scss';
 
-const StatusSelect = ({ value, onChange, disabled = false }) => {
+import {
+  bookingStatusLabels,
+  accommodationStatusLabels,
+  paymentStatusLabels
+} from '../../utils/statusLabels';
+
+const StatusSelect = ({ value, onChange, type }) => {
+  let options = {};
+
+  if (type === 'booking') options = bookingStatusLabels;
+  if (type === 'accommodation') options = accommodationStatusLabels;
+  if (type === 'payment') options = paymentStatusLabels;
+
   return (
-    <select
-      className={`status-select ${statusLabels[value]?.className || ''}`}
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      disabled={disabled}
-    >
-      {Object.entries(statusLabels).map(([key, { text }]) => (
+    <select value={value} onChange={(e) => onChange(e.target.value)}>
+      {Object.entries(options).map(([key, label]) => (
         <option key={key} value={key}>
-          {text}
+          {label.text}
         </option>
       ))}
     </select>

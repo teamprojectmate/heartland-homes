@@ -67,8 +67,9 @@ const getColumns = (handleStatusChange) => [
     label: 'Статус',
     render: (acc) => (
       <StatusSelect
+        type="accommodation"
         value={acc.accommodationStatus}
-        onChange={(newStatus) => handleStatusChange(acc.id, newStatus)}
+        onChange={(newStatus) => onStatusChange(acc.id, newStatus)}
       />
     )
   }
