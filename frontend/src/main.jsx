@@ -9,7 +9,7 @@ import App from './App.jsx';
 import './styles/main.scss';
 
 // ⚠️ заміни на свій CLIENT_ID з Google Cloud Console
-const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
