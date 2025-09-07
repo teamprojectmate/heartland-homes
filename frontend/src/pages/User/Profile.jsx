@@ -1,3 +1,4 @@
+// src/pages/User/Profile.jsx
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProfile, updateProfile } from '../../store/slices/userSlice';
@@ -33,41 +34,45 @@ const Profile = () => {
       <div className="profile-card">
         <h1 className="auth-title">Мій профіль</h1>
 
-        {/* ✅ Тепер використовуємо тільки error зі слайсу */}
         {error && <Notification message={error} type="danger" />}
-
         {loading && <p>Завантаження...</p>}
 
         {!loading && profile && (
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className="profile-form">
             <div className="form-group">
-              <label>Електронна пошта</label>
               <input
                 type="email"
                 className="form-control"
                 value={formData.email}
+                placeholder=" "
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               />
+              <label>Електронна пошта</label>
             </div>
+
             <div className="form-group">
-              <label>Ім’я</label>
               <input
                 type="text"
                 className="form-control"
                 value={formData.firstName}
+                placeholder=" "
                 onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
               />
+              <label>Ім’я</label>
             </div>
+
             <div className="form-group">
-              <label>Прізвище</label>
               <input
                 type="text"
                 className="form-control"
                 value={formData.lastName}
+                placeholder=" "
                 onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
               />
+              <label>Прізвище</label>
             </div>
-            <button className="btn-primary" type="submit" disabled={loading}>
+
+            <button className="btn btn-primary" type="submit" disabled={loading}>
               {loading ? 'Збереження...' : 'Редагувати профіль'}
             </button>
           </form>

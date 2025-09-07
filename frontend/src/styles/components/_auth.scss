@@ -1,4 +1,4 @@
-// src/styles/components/_autch.scss
+// src/styles/components/_auth.scss
 @use '../abstract/variables' as *;
 @use '../abstract/mixins' as *;
 @use 'sass:color';
@@ -7,7 +7,7 @@
   display: grid;
   grid-template-columns: 420px 1fr;
   gap: 3rem;
-  align-items: stretch; // 🔑 вирівнює висоту форми і зеленого блоку
+  align-items: stretch;
   width: 100%;
   max-width: 1100px;
   margin: 3rem auto;
@@ -18,24 +18,31 @@
   flex-direction: column;
   width: 100%;
   padding: 2rem;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 16px rgb(0 0 0 / 8%);
+  background: $white-color;
+  border-radius: $radius-md;
+  box-shadow: $box-shadow-card;
 
   .auth-title {
     margin-bottom: 1rem;
     font-size: 1.8rem;
     font-weight: 700;
+    color: $heading-color;
     text-align: center;
   }
 
-  .form-subtitle a {
-    font-weight: 600;
-    color: $primary-color; // 🟢
-    text-decoration: none;
+  .form-subtitle {
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+    color: $muted-color;
+    text-align: center;
 
-    &:hover {
-      text-decoration: underline;
+    a {
+      font-weight: 600;
+      color: $primary-color;
+
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
 
@@ -53,22 +60,22 @@
       top: 50%;
       left: 12px;
       font-size: 1rem;
-      color: #666;
+      color: $muted-color;
       transform: translateY(-50%);
     }
 
     .form-control {
       width: 100%;
-      height: 48px; // 🔑 однакова висота
-      padding-left: 38px; // 🔑 місце під іконку
+      height: 48px;
+      padding-left: 38px;
       font-size: 1rem;
-      border: 1px solid #ddd;
-      border-radius: 8px;
+      border: 1px solid $border-color;
+      border-radius: $radius-sm;
 
       &:focus {
         outline: none;
-        border-color: #0071c2;
-        box-shadow: 0 0 0 2px rgb(0 113 194 / 20%);
+        border-color: $primary-color;
+        box-shadow: $box-shadow-focus;
       }
     }
   }
@@ -79,9 +86,9 @@
     font-weight: 600;
     color: $white-color;
     cursor: pointer;
-    background: $primary-color; // 🟢 зелений
+    background: $primary-color;
     border: none;
-    border-radius: 8px;
+    border-radius: $radius-sm;
     transition: background 0.2s ease;
 
     &:hover {
@@ -90,15 +97,15 @@
   }
 }
 
+/* 🔹 Сайдбар */
 .auth-side {
   display: flex;
   flex-direction: column;
-  justify-content: center; // 🔑 вирівнює по вертикалі
+  justify-content: center;
   padding: 2rem;
-  color: white;
+  color: $white-color;
   text-align: center;
-  background: #05635a;
-  border-radius: 8px;
+  border-radius: $radius-md;
 
   .auth-icon {
     margin-bottom: 1rem;
@@ -115,13 +122,21 @@
     font-size: 1rem;
     line-height: 1.5;
   }
+
+  &.login {
+    background: #05635a;
+  }
+
+  &.register {
+    background: linear-gradient(135deg, #0f766e, #14b8a6);
+  }
 }
 
 footer {
-  padding: 3rem 0 1rem; // 🔑 більше зверху, менше знизу
+  padding: 3rem 0 1rem;
   margin-top: auto;
   font-size: 0.95rem;
-  color: white;
+  color: $white-color;
   background: #05635a;
 
   p {
@@ -129,9 +144,10 @@ footer {
   }
 }
 
+/* 🔹 Mobile */
 @media (width <= 768px) {
   .auth-layout {
-    grid-template-columns: 1fr; // ✅ одна колонка
+    grid-template-columns: 1fr;
     gap: 1.5rem;
     padding: 0 1rem;
     margin: 1.5rem auto;
@@ -143,6 +159,6 @@ footer {
 
   .auth-side {
     padding: 1.5rem;
-    border-radius: 8px;
+    border-radius: $radius-md;
   }
 }

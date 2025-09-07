@@ -31,13 +31,6 @@ export const deleteUser = async (id) => {
 };
 // ----- Оновити бронювання -----
 export const updateBooking = async (id, bookingData) => {
-  // 👀 Логуємо payload перед запитом
-  console.log('📤 PUT /bookings payload:', bookingData);
-
   const response = await api.put(`/bookings/${id}`, bookingData);
-
-  // 👀 Логуємо відповідь сервера
-  console.log('✅ PUT /bookings response:', response.data);
-
   return response.data;
 };

@@ -1,51 +1,51 @@
 // src/styles/main.scss
 
 // 1) abstract
-@use './abstract/variables';
-@use './abstract/mixins';
+@use './abstract/variables' as *;
+@use './abstract/mixins' as *;
 
-// 2) layout
-@use './layout/main-layout';
+// 2) global helpers / shared
+@use './components/badges/index' as *;
+@use './components/buttons' as *;
+@use './components/cards' as *;
+@use './components/filters' as *;
+@use './components/forms' as *;
 
-// 3) components
+// 3) layout
+@use './layout/main-layout' as *;
 
-@use './components/accommodation-details';
-@use './components/accommodation-gallery';
-@use './components/accommodations-map';
-@use './components/admin-accommodations';
-@use './components/admin-booking-details';
-@use './components/admin-bookings';
-@use './components/admin-dashboard';
-@use './components/admin-form';
-@use './components/admin-layout';
-@use './components/admin-users';
-@use './components/admin';
-@use './components/auth';
-@use './components/badges-status';
-@use './components/badges';
-@use './components/booking-card';
-@use './components/booking-details';
-@use './components/booking-form';
-@use './components/bookings';
-@use './components/buttons';
-@use './components/cards';
-@use './components/filters';
-@use './components/footer-extension';
-@use './components/footer';
-@use './components/forms';
-@use './components/header';
-@use './components/hero';
-@use './components/info-pages';
-@use './components/location-map';
-@use './components/map';
-@use './components/modal';
-@use './components/notifications';
-@use './components/offers';
-@use './components/pagination';
-@use './components/payment';
-@use './components/profile';
-@use './components/searchForm';
-@use './components/status-select';
+// 4) components (grouped via entry-points)
+@use './components/accommodation/index' as *;
+@use './components/admin/index' as *;
+@use './components/booking/index' as *;
+@use './components/footer/index' as *;
+@use './components/header/index' as *;
+@use './components/buttons' as *;
+@use './components/cards' as *;
+@use './components/filters' as *;
+@use './components/forms' as *;
+
+// 3) layout
+@use './layout/main-layout' as *;
+
+// 4) components (grouped via entry-points)
+@use './components/accommodation' as *;
+@use './components/admin' as *;
+@use './components/booking' as *;
+@use './components/footer' as *;
+@use './components/header' as *;
+@use './components/hero' as *;
+@use './components/info-pages' as *;
+@use './components/location-map' as *;
+@use './components/map' as *;
+@use './components/modal' as *;
+@use './components/notifications' as *;
+@use './components/offers' as *;
+@use './components/pagination' as *;
+@use './components/payment/index' as *;
+@use './components/profile' as *;
+@use './components/searchForm' as *;
+@use './components/status-select' as *;
 
 // 4) пакетні стилі — імпортуємо як пакет, без шляху до node_modules
 @use '../../node_modules/react-image-gallery/styles/scss/image-gallery';
@@ -62,9 +62,9 @@ html,
 body,
 #root {
   height: 100%;
-  font-family: variables.$font-family-base;
-  font-size: variables.$font-size-base;
-  line-height: variables.$line-height-base;
-  color: variables.$text-color;
-  background-color: variables.$background-color;
+  font-family: $font-family-base;
+  font-size: $font-size-base;
+  line-height: $line-height-base;
+  color: $text-color;
+  background-color: $background-color;
 }

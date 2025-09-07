@@ -38,7 +38,6 @@ const Login = () => {
           Немає акаунта? <Link to="/register">Зареєструватися</Link>
         </p>
 
-        {/* 🔹 Форма email + пароль */}
         <form onSubmit={handleSubmit}>
           <div className="form-group with-icon">
             <FaEnvelope className="input-icon" />
@@ -73,11 +72,11 @@ const Login = () => {
           </button>
         </form>
 
-        {/* 🔹 Кнопка входу через Google */}
         <GoogleLoginButton />
       </div>
 
-      <div className="auth-side">
+      {/* 🔹 Додаємо модифікатор login */}
+      <div className="auth-side login">
         <FaHome className="auth-icon" />
         <h2 className="auth-title">Ласкаво просимо 👋</h2>
         <p className="auth-subtitle">

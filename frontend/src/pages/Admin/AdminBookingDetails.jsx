@@ -1,145 +1,213 @@
+// src/pages/Admin/AdminBookings.jsx
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import BookingForm from '../../components/BookingForm';
-import LocationMap from '../../components/LocationMap';
-import AccommodationGallery from './AccommodationGallery';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  fetchBookings,
+  updateBookingStatus,
+  deleteBooking
+} from '../../store/slices/bookingsSlice';
 import { getAccommodationById } from '../../api/accommodations/accommodationService';
-import { useSelector } from 'react-redux';
-
-// словники
-import { mapType, mapAmenity } from '../../utils/translations';
+import { getAllUsers } from '../../api/user/userService';
+import AdminTable from '../Admin/AdminTable';
+import { TrashIcon } from '@heroicons/react/24/solid';
 
 // стилі
-import '../../styles/components/_accommodation-details.scss';
-import '../../styles/components/_accommodation-gallery.scss';
-import '../../styles/components/_badges.scss';
+import '../../styles/components/badges/_badges.scss';
+import '../../styles/components/admin/_admin-bookings.scss';
+import '../../styles/components/admin/_admin-tables.scss';
 
-const AccommodationDetails = () => {
-  const { id } = useParams();
-  const [accommodation, setAccommodation] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const { isAuthenticated } = useSelector((state) => state.auth);
-
-  useEffect(() => {
-    const fetchAccommodation = async () => {
-      try {
-        const data = await getAccommodationById(id);
-        if (!data) {
-          setError('Помешкання не знайдено.');
-          return;
-        }
-        setAccommodation(data);
-      } catch (err) {
-        console.error('❌ Помилка завантаження житла:', err);
-        setError('Не вдалося завантажити деталі помешкання.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchAccommodation();
-  }, [id]);
-
-  if (loading) return <div className="loading">Завантаження...</div>;
-  if (error) return <div className="error">{error}</div>;
-  if (!accommodation) return <div className="not-found">Помешкання не знайдено.</div>;
-
-  const {
-    label: typeLabel,
-    icon: typeIcon,
-    color: typeColor
-  } = mapType(accommodation.type);
-
+const AdminBookingCard = ({ booking, onStatusChange, onDelete }) => {
   return (
-    <div className="accommodation-details-page">
-      <div className="page-header">
-        <h2 className="page-title">Деталі помешкання</h2>
-        <h3 className="page-subtitle">
-          <strong>{accommodation?.name || 'Без назви'}</strong>
-        </h3>
-        <p className="page-subtitle">
-          {accommodation?.city}, {accommodation?.location}
-        </p>
-      </div>
+    <div className="admin-booking-card">
+      <h3 className="admin-booking-title">
+        {booking.accommodation?.name || 'Без назви'}
+      </h3>
+      <p>
+        <strong>Користувач:</strong>{' '}
+        {booking.user
+          ? `${booking.user.firstName} ${booking.user.lastName} (${booking.user.email})`
+          : booking.userId || '—'}
+      </p>
+      <p>
+        <strong>Дати:</strong> {booking.checkInDate} — {booking.checkOutDate}
+      </p>
+      <p>
+        <strong>Ціна:</strong> {booking.totalPrice ? `${booking.totalPrice} грн` : '—'}
+      </p>
+      <p>
+        <strong>Статус:</strong>{' '}
+        <span className={`badge badge-status ${booking.status.toLowerCase()}`}>
+          {booking.status === 'PENDING' && 'Очікує'}
+          {booking.status === 'CONFIRMED' && 'Підтверджено'}
+          {booking.status === 'CANCELED' && 'Скасовано'}
+          {booking.status === 'EXPIRED' && 'Прострочено'}
+        </span>
+      </p>
 
-      <AccommodationGallery
-        images={
-          accommodation.images || (accommodation.image ? [accommodation.image] : [])
-        }
-      />
-
-      <div className="details-grid">
-        <div className="details-info-section">
-          <div className="details-card">
-            <h4 className="details-section-title">Інформація</h4>
-
-            <div className="characteristics-inline">
-              <span className="badge badge-type" style={{ backgroundColor: typeColor }}>
-                {typeIcon} {typeLabel}
-              </span>
-              <span className="badge badge-size">
-                {accommodation?.size || '—'} Спальні
-              </span>
-            </div>
-
-            <div className="mt-3">
-              <strong>Зручності:</strong>
-              <div className="badge-group mt-2">
-                {accommodation?.amenities?.length > 0 ? (
-                  accommodation.amenities.map((amenity, index) => {
-                    const { label, icon, slug, color } = mapAmenity(amenity);
-                    return (
-                      <span
-                        key={index}
-                        className={`badge badge-amenity ${slug}`}
-                        style={{ backgroundColor: color, color: '#fff' }}
-                      >
-                        {icon} {label}
-                      </span>
-                    );
-                  })
-                ) : (
-                  <span className="text-muted">немає даних</span>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {accommodation?.latitude && accommodation?.longitude && (
-            <div className="location-map-container">
-              <h4 className="details-section-title">Розташування</h4>
-              <LocationMap
-                location={accommodation?.location}
-                city={accommodation?.city}
-                latitude={accommodation?.latitude}
-                longitude={accommodation?.longitude}
-              />
-            </div>
-          )}
-        </div>
-
-        <div className="booking-card">
-          <h5 className="booking-title">Забронювати</h5>
-          <p className="booking-price">
-            {accommodation?.dailyRate || '—'} грн <span>/ доба</span>
-          </p>
-          {isAuthenticated ? (
-            <BookingForm accommodation={accommodation} />
-          ) : (
-            <div className="text-center">
-              <p className="text-muted mb-2">
-                Для бронювання необхідно увійти в систему.
-              </p>
-              <Link to="/login" className="btn btn-primary w-100">
-                Увійти
-              </Link>
-            </div>
-          )}
-        </div>
+      <div className="card-actions">
+        <select
+          value={booking.status}
+          onChange={(e) => onStatusChange(booking, e.target.value)}
+        >
+          <option value="PENDING">Очікує</option>
+          <option value="CONFIRMED">Підтверджено</option>
+          <option value="CANCELED">Скасовано</option>
+          <option value="EXPIRED">Прострочено</option>
+        </select>
+        <button
+          className="btn-icon btn-danger"
+          onClick={() => onDelete(booking.id)}
+          title="Видалити бронювання"
+        >
+          <TrashIcon className="w-4 h-4 text-white" />
+        </button>
       </div>
     </div>
   );
 };
 
-export default AccommodationDetails;
+const AdminBookings = () => {
+  const dispatch = useDispatch();
+  const { bookings, status, error } = useSelector((state) => state.bookings);
+
+  const [usersMap, setUsersMap] = useState({});
+  const [enrichedBookings, setEnrichedBookings] = useState([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  // --- resize listener ---
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // --- завантаження бронювань та користувачів ---
+  useEffect(() => {
+    dispatch(fetchBookings());
+
+    getAllUsers().then((users) => {
+      const map = {};
+      (users?.content || users || []).forEach((u) => {
+        map[u.id] = u;
+      });
+      setUsersMap(map);
+    });
+  }, [dispatch]);
+
+  // --- enrichment житла та користувачів ---
+  useEffect(() => {
+    if (!bookings || bookings.length === 0) return;
+
+    const enrichData = async () => {
+      const results = await Promise.all(
+        bookings.map(async (booking) => {
+          let accommodation = null;
+          let totalPrice = null;
+
+          try {
+            accommodation = await getAccommodationById(booking.accommodationId);
+            if (accommodation && booking.checkInDate && booking.checkOutDate) {
+              const start = new Date(booking.checkInDate);
+              const end = new Date(booking.checkOutDate);
+              const nights = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+              totalPrice = nights * (accommodation.dailyRate || 0);
+            }
+          } catch {
+            console.warn(`Не вдалося завантажити житло id=${booking.accommodationId}`);
+          }
+
+          const user = usersMap[booking.userId];
+          return { ...booking, accommodation, user, totalPrice };
+        })
+      );
+      setEnrichedBookings(results);
+    };
+
+    enrichData();
+  }, [bookings, usersMap]);
+
+  const handleStatusChange = (booking, newStatus) => {
+    dispatch(updateBookingStatus({ booking, status: newStatus }));
+  };
+
+  const handleDelete = (id) => {
+    dispatch(deleteBooking(id));
+  };
+
+  if (status === 'loading') return <p className="text-center">Завантаження...</p>;
+  if (error) return <p className="text-danger text-center">{error}</p>;
+
+  // --- колонки для AdminTable ---
+  const columns = [
+    { key: 'id', label: 'ID' },
+    {
+      key: 'user',
+      label: 'Користувач',
+      render: (b) =>
+        b.user ? `${b.user.firstName} ${b.user.lastName} (${b.user.email})` : b.userId
+    },
+    {
+      key: 'accommodation',
+      label: 'Помешкання',
+      render: (b) => b.accommodation?.name || '—'
+    },
+    { key: 'checkInDate', label: 'Заїзд' },
+    { key: 'checkOutDate', label: 'Виїзд' },
+    {
+      key: 'totalPrice',
+      label: 'Ціна',
+      render: (b) => (b.totalPrice ? `${b.totalPrice} грн` : '—')
+    },
+    {
+      key: 'status',
+      label: 'Статус',
+      render: (b) => (
+        <select
+          value={b.status}
+          onChange={(e) => handleStatusChange(b, e.target.value)}
+          className={`status-select ${b.status.toLowerCase()}`}
+        >
+          <option value="PENDING">Очікує</option>
+          <option value="CONFIRMED">Підтверджено</option>
+          <option value="CANCELED">Скасовано</option>
+          <option value="EXPIRED">Прострочено</option>
+        </select>
+      )
+    }
+  ];
+
+  return (
+    <div className="admin-bookings container admin-page-container">
+      <h1 className="section-heading text-center">Управління бронюваннями</h1>
+
+      {isMobile ? (
+        <div className="admin-bookings-cards">
+          {enrichedBookings.map((booking) => (
+            <AdminBookingCard
+              key={booking.id}
+              booking={booking}
+              onStatusChange={handleStatusChange}
+              onDelete={handleDelete}
+            />
+          ))}
+        </div>
+      ) : (
+        <AdminTable
+          columns={columns}
+          data={enrichedBookings}
+          actions={(b) => (
+            <button
+              className="btn-icon btn-danger"
+              onClick={() => handleDelete(b.id)}
+              title="Видалити бронювання"
+            >
+              <TrashIcon className="w-4 h-4 text-white" />
+            </button>
+          )}
+        />
+      )}
+    </div>
+  );
+};
+
+export default AdminBookings;

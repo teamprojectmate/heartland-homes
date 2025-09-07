@@ -1,3 +1,4 @@
+// src/components/ScrollToTop.jsx
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -5,11 +6,15 @@ function ScrollToTop() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    // Прокручуємо вікно догори при кожній зміні маршруту
-    window.scrollTo(0, 0);
+    // Прокручуємо догори плавно при зміні сторінки
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'smooth'
+    });
   }, [pathname]);
 
-  return null; // Цей компонент нічого не рендерить
+  return null;
 }
 
 export default ScrollToTop;

@@ -1,4 +1,5 @@
 // src/styles/components/_forms.scss
+@use 'sass:map';
 @use 'sass:color';
 @use '../abstract/variables' as *;
 @use '../abstract/mixins' as *;
@@ -10,49 +11,19 @@ fieldset {
   border: none;
 }
 
-.input,
-.form-control,
-input,
-select,
-textarea {
-  box-sizing: border-box;
-  width: 100%;
-  min-width: 0;
-  min-height: clamp($control-height-sm, 5.5vw, 48px);
-  border-radius: 12px;
-}
+/* ============================= */
 
-/* Card / Filters */
-.card,
-.filters-box {
-  padding: clamp(16px, 3.8vw, 24px);
-  border-radius: 14px;
-}
+/* 🔹 Placeholders for reuse      */
 
-/* Form spacing */
-.form-group {
-  margin-bottom: $spacer-sm;
-}
-
-.form-label,
-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-family: $font-family-base;
-  font-size: 0.95rem;
-  font-weight: 500;
-  line-height: 1.4;
-  color: $heading-color;
-}
-
-/* Inputs */
-.form-control {
+/* ============================= */
+%form-control {
   padding: 0.85rem 1rem;
   font-size: 1rem;
-  color: #111827;
+  font-weight: 400;
+  color: map.get(map.get($form-states, default), fg);
   appearance: none;
-  background: $white-color;
-  border: 1px solid $border-color;
+  background: map.get(map.get($form-states, default), bg);
+  border: 1px solid map.get(map.get($form-states, default), bd);
   border-radius: $radius;
   transition:
     border-color 0.15s ease,
@@ -60,21 +31,58 @@ label {
     background-color 0.15s ease;
 
   &:hover {
-    border-color: color.scale($border-color, $lightness: -8%);
+    border-color: map.get(map.get($form-states, hover), bd);
   }
 
   &:focus {
     outline: none;
-    background: $white-color;
-    border-color: $primary-color;
-    box-shadow: $box-shadow-focus;
+    background: map.get(map.get($form-states, focus), bg);
+    border-color: map.get(map.get($form-states, focus), bd);
+    box-shadow: map.get(map.get($form-states, focus), shadow);
   }
 
   &:disabled {
-    color: $muted-color;
+    color: map.get(map.get($form-states, disabled), fg);
     cursor: not-allowed;
-    background: #eef2f6;
+    background: map.get(map.get($form-states, disabled), bg);
   }
+}
+
+%form-group {
+  margin-bottom: $spacer-sm;
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-family: $font-family-base;
+    font-size: 0.95rem;
+    font-weight: 500;
+    line-height: 1.4;
+    color: $heading-color;
+  }
+}
+
+/* ============================= */
+
+/* 🔹 Regular classes (global)   */
+
+/* ============================= */
+.input,
+.form-control,
+input,
+select,
+textarea {
+  @extend %form-control;
+
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: clamp($control-height-sm, 5.5vw, 48px);
+  border-radius: $radius;
+}
+
+.form-group {
+  @extend %form-group;
 }
 
 /* ✅ Input icons */
@@ -118,14 +126,22 @@ label {
   }
 }
 
-/* Profile form */
+/* Profile form override */
 .profile-form {
-  max-width: 420px;
-  padding: 2rem;
-  margin-inline: auto;
-  background: $white-color;
-  border-radius: $radius;
-  box-shadow: $box-shadow-card;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 100%; // форма тепер розтягується на всю картку
+  padding: 0; // прибираємо падінги
+  margin: 0; // прибираємо автоцентрування
+  background: none; // прибираємо білий фон
+  border: none; // прибираємо бордери
+  box-shadow: none; // прибираємо тінь
+
+  .form-group label {
+    display: initial;
+    margin-bottom: 0;
+  }
 }
 
 .button-group {

@@ -1,28 +1,27 @@
+// src/store/slices/paymentsSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import {
   createPayment as createPaymentService,
-  fetchPaymentsByUser as fetchPaymentsByUserServices
-} from '../../api/payments/paymentService'; // ✅ Оновлений імпорт
+  fetchPaymentsByUser as fetchPaymentsByUserService,
+  cancelPayment as cancelPaymentService
+} from '../../api/payments/paymentService';
 
 const initialState = {
   payment: null,
   payments: [],
-  status: 'idle',
+  totalPages: 1,
+  createStatus: 'idle',
+  fetchStatus: 'idle',
+  cancelStatus: 'idle',
   error: null
 };
 
 // ----- Create payment -----
 export const createPayment = createAsyncThunk(
   'payments/createPayment',
-  async ({ bookingId, paymentType = 'CARD' }, { rejectWithValue, getState }) => {
+  async ({ bookingId, paymentType = 'PAYMENT' }, { rejectWithValue }) => {
     try {
-      const { auth } = getState();
-      if (!auth.isAuthenticated || !auth.authData || !auth.authData.token) {
-        return rejectWithValue('Користувач не автентифікований.');
-      }
-      const token = auth.authData.token;
-
-      const response = await createPaymentService(bookingId, paymentType, token);
+      const response = await createPaymentService(bookingId, paymentType);
       return response;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || 'Не вдалося створити платіж');
@@ -33,20 +32,28 @@ export const createPayment = createAsyncThunk(
 // ----- Fetch payments by user -----
 export const fetchPaymentsByUser = createAsyncThunk(
   'payments/fetchByUser',
-  async ({ pageable }, { rejectWithValue, getState }) => {
+  async ({ userId, pageable }, { rejectWithValue }) => {
     try {
-      const { auth } = getState();
-      if (!auth.isAuthenticated || !auth.authData || !auth.authData.token) {
-        return rejectWithValue('Користувач не автентифікований.');
-      }
-      const token = auth.authData.token;
-      const userId = auth.user.id;
-
-      const response = await fetchPaymentsByUserServices(userId, pageable, token);
+      const response = await fetchPaymentsByUserService(userId, pageable);
       return response;
     } catch (err) {
       return rejectWithValue(
         err.response?.data?.message || 'Не вдалося отримати список платежів'
+      );
+    }
+  }
+);
+
+// ----- Cancel payment -----
+export const cancelPayment = createAsyncThunk(
+  'payments/cancelPayment',
+  async (paymentId, { rejectWithValue }) => {
+    try {
+      await cancelPaymentService(paymentId);
+      return paymentId;
+    } catch (err) {
+      return rejectWithValue(
+        err.response?.data?.message || 'Не вдалося скасувати платіж'
       );
     }
   }
@@ -58,36 +65,61 @@ const paymentsSlice = createSlice({
   reducers: {
     resetPayment: (state) => {
       state.payment = null;
-      state.status = 'idle';
+      state.createStatus = 'idle';
+      state.error = null;
+    },
+    resetPaymentsList: (state) => {
+      state.payments = [];
+      state.totalPages = 1;
+      state.fetchStatus = 'idle';
       state.error = null;
     }
   },
   extraReducers: (builder) => {
     builder
+      // ---- createPayment ----
       .addCase(createPayment.pending, (state) => {
-        state.status = 'loading';
+        state.createStatus = 'loading';
       })
       .addCase(createPayment.fulfilled, (state, action) => {
-        state.status = 'succeeded';
+        state.createStatus = 'succeeded';
         state.payment = action.payload;
       })
       .addCase(createPayment.rejected, (state, action) => {
-        state.status = 'failed';
+        state.createStatus = 'failed';
         state.error = action.payload;
       })
+
+      // ---- fetchPaymentsByUser ----
       .addCase(fetchPaymentsByUser.pending, (state) => {
-        state.status = 'loading';
+        state.fetchStatus = 'loading';
       })
       .addCase(fetchPaymentsByUser.fulfilled, (state, action) => {
-        state.status = 'succeeded';
+        state.fetchStatus = 'succeeded';
         state.payments = action.payload.content || [];
+        state.totalPages = action.payload.totalPages || 1;
       })
       .addCase(fetchPaymentsByUser.rejected, (state, action) => {
-        state.status = 'failed';
+        state.fetchStatus = 'failed';
+        state.error = action.payload;
+      })
+
+      // ---- cancelPayment ----
+      .addCase(cancelPayment.pending, (state) => {
+        state.cancelStatus = 'loading';
+      })
+      .addCase(cancelPayment.fulfilled, (state, action) => {
+        state.cancelStatus = 'succeeded';
+        state.payments = state.payments.map((p) =>
+          p.id === action.payload ? { ...p, status: 'CANCELED' } : p
+        );
+      })
+      .addCase(cancelPayment.rejected, (state, action) => {
+        state.cancelStatus = 'failed';
         state.error = action.payload;
       });
   }
 });
 
-export const { resetPayment } = paymentsSlice.actions;
+export const { resetPayment, resetPaymentsList } = paymentsSlice.actions;
 export default paymentsSlice.reducer;

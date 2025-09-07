@@ -2,12 +2,25 @@
 export const fixDropboxUrl = (url) => {
   if (!url) return '';
 
-  // Перевіряємо, чи посилання містить "dl=0"
+  // Якщо є ?dl=0 → замінюємо на raw=1
   if (url.includes('dl=0')) {
-    // Якщо так, замінюємо на "dl=1" для прямого доступу
-    return url.replace('dl=0', 'dl=1');
+    return url.replace('dl=0', 'raw=1');
   }
 
-  // Якщо посилання вже має "raw=1" або інший формат, повертаємо без змін
+  // Якщо є ?dl=1 → замінюємо на raw=1 (стабільніший варіант)
+  if (url.includes('dl=1')) {
+    return url.replace('dl=1', 'raw=1');
+  }
+
+  // Якщо є вже raw=1 → залишаємо
+  if (url.includes('raw=1')) {
+    return url;
+  }
+
+  // Якщо немає жодного параметра → додаємо raw=1
+  if (!url.includes('?')) {
+    return `${url}?raw=1`;
+  }
+
   return url;
 };

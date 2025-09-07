@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { mapType } from '../../utils/translations';
+import { mapType } from '../../utils/translations/index';
 import { getSafeImageUrl } from '../../utils/getSafeImageUrl';
 
 const fallbackImage = '/no-image.png';
@@ -37,7 +37,9 @@ const AccommodationCard = ({ accommodation }) => {
         </div>
 
         <p className="city-label">
-          {accommodation?.city}, {accommodation?.location}
+          {accommodation?.location?.includes(accommodation?.city)
+            ? accommodation?.location
+            : `${accommodation?.city}, ${accommodation?.location}`}
         </p>
 
         <p className="card-price">{accommodation.dailyRate} грн / доба</p>

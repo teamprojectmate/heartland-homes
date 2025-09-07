@@ -1,12 +1,11 @@
 // src/App.jsx
 import React, { Suspense, lazy, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 // Спільні компоненти
 import Header from './components/Header.jsx';
 import Footer from './components/Footer.jsx';
-import Notification from './components/Notification.jsx';
 import PageWrapper from './components/PageWrapper.jsx';
 import ScrollToTop from './components/ScrollToTop.jsx';
 import Home from './pages/Home.jsx';
@@ -39,6 +38,7 @@ const BookingDetails = lazy(() => import('./pages/BookingDetails.jsx'));
 const Payment = lazy(() => import('./pages/User/Payment.jsx'));
 const PaymentSuccess = lazy(() => import('./pages/User/PaymentSuccess.jsx'));
 const PaymentCancel = lazy(() => import('./pages/User/PaymentCancel.jsx'));
+const PaymentsList = lazy(() => import('./pages/User/PaymentsList.jsx'));
 
 // Lazy-loaded Admin
 const AdminLayout = lazy(() => import('./components/AdminLayout.jsx'));
@@ -66,7 +66,6 @@ import authService from './api/auth/authService';
 function App() {
   const dispatch = useDispatch();
 
-  // підтягування профілю з localStorage при старті
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem('auth'));
     if (stored?.token) {
@@ -86,38 +85,21 @@ function App() {
           );
         })
         .catch(() => {
-          // якщо токен не валідний
           localStorage.removeItem('auth');
           localStorage.removeItem('userProfile');
         });
     }
   }, [dispatch]);
 
-  const auth = useSelector((state) => state.auth);
-  const user = useSelector((state) => state.user);
-  const bookings = useSelector((state) => state.bookings);
-  const accommodations = useSelector((state) => state.accommodations);
-  const payments = useSelector((state) => state.payments);
-
-  const errors = [
-    auth?.error,
-    user?.error,
-    bookings?.error,
-    accommodations?.error,
-    payments?.error
-  ].filter(Boolean);
-
   return (
     <div className="main-layout">
       <Header />
 
-      {errors.map((err, idx) => (
-        <Notification key={idx} message={err} type="error" />
-      ))}
-
       <main className="main-content">
+        {/* 🔥 ScrollToTop винесений вище за Routes */}
+        <ScrollToTop />
+
         <Suspense fallback={<p className="text-center mt-5">Завантаження...</p>}>
-          <ScrollToTop />
           <ErrorBoundary>
             <Routes>
               {/* Public routes */}
@@ -219,6 +201,16 @@ function App() {
                   <ProtectedRoute>
                     <PageWrapper title="Оплату скасовано">
                       <PaymentCancel />
+                    </PageWrapper>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/my-payments"
+                element={
+                  <ProtectedRoute>
+                    <PageWrapper title="Мої платежі">
+                      <PaymentsList />
                     </PageWrapper>
                   </ProtectedRoute>
                 }

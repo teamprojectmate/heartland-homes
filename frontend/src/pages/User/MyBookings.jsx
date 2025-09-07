@@ -1,23 +1,27 @@
 // src/pages/User/MyBookings.jsx
-
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Notification from '../../components/Notification';
+
 import {
   fetchMyBookings,
   setPage,
   cancelBooking
 } from '../../store/slices/bookingsSlice';
+
 import { getAccommodationById } from '../../api/accommodations/accommodationService';
-import Pagination from '../../components/Pagination';
-import BookingCard from '../../components/BookingCard';
-import '../../styles/components/_bookings.scss';
+
+// 🔹 централізовано booking-компоненти
+import { BookingList } from '../../components/booking/index';
+
+import '../../styles/components/booking/_bookings.scss';
 import '../../styles/components/_cards.scss';
 
 const MyBookings = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const [notification, setNotification] = useState({ message: '', type: '' });
   const [enrichedBookings, setEnrichedBookings] = useState([]);
 
@@ -34,7 +38,6 @@ const MyBookings = () => {
     dispatch(fetchMyBookings({ page, size: 5 }));
   }, [isAuthenticated, navigate, dispatch, page]);
 
-  // Якщо сторінка пуста після видалення -> перейти на попередню
   useEffect(() => {
     if (status === 'succeeded' && bookings.length === 0 && page > 0) {
       dispatch(setPage(page - 1));
@@ -42,7 +45,6 @@ const MyBookings = () => {
     }
   }, [status, bookings, page, dispatch]);
 
-  // Підвантаження житла
   useEffect(() => {
     const fetchAccommodations = async () => {
       if (!bookings || bookings.length === 0) {
@@ -56,7 +58,7 @@ const MyBookings = () => {
             try {
               const acc = await getAccommodationById(booking.accommodationId);
               return { ...booking, accommodation: acc };
-            } catch (err) {
+            } catch {
               console.warn(`⚠️ Не вдалося отримати житло для bookingId=${booking.id}`);
               return { ...booking, accommodation: null };
             }
@@ -82,14 +84,17 @@ const MyBookings = () => {
         message: 'Бронювання успішно скасовано!',
         type: 'success'
       });
-      // ✅ Оновлюємо стан, щоб прибрати скасоване бронювання
       setEnrichedBookings((prev) => prev.filter((b) => b.id !== bookingId));
-    } catch (err) {
+    } catch {
       setNotification({
         message: 'Не вдалося скасувати бронювання.',
         type: 'danger'
       });
     }
+  };
+
+  const handlePayBooking = (bookingId) => {
+    navigate(`/payment/${bookingId}`);
   };
 
   if (status === 'loading') {
@@ -101,7 +106,6 @@ const MyBookings = () => {
     );
   }
 
-  // ✅ Фільтруємо бронювання, щоб показувати лише активні
   const filteredBookings = enrichedBookings.filter(
     (booking) => booking.status !== 'CANCELED'
   );
@@ -118,26 +122,14 @@ const MyBookings = () => {
       )}
 
       {hasActiveBookingsOnThisPage ? (
-        <>
-          <div className="bookings-row">
-            {filteredBookings.map((booking) => (
-              <BookingCard
-                key={booking.id}
-                booking={booking}
-                onCancel={handleCancelBooking}
-              />
-            ))}
-          </div>
-          {totalPages > 1 && (
-            <div className="pagination-wrapper">
-              <Pagination
-                page={page}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-              />
-            </div>
-          )}
-        </>
+        <BookingList
+          bookings={filteredBookings}
+          onCancel={handleCancelBooking}
+          onPay={handlePayBooking}
+          page={page}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
       ) : (
         <>
           {hasBookings ? (
@@ -153,16 +145,6 @@ const MyBookings = () => {
             </p>
           ) : (
             <p className="text-center mt-5">У вас поки що немає бронювань.</p>
-          )}
-
-          {totalPages > 1 && (
-            <div className="pagination-wrapper">
-              <Pagination
-                page={page}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-              />
-            </div>
           )}
         </>
       )}

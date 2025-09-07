@@ -61,7 +61,7 @@ export const updateAccommodationStatus = async (id, status) => {
     console.log(`📤 PATCH /accommodations/${id}/status →`, status);
 
     const response = await api.patch(`/accommodations/${id}/status`, {
-      status: status // ✅ саме так очікує бекенд
+      status: status
     });
 
     console.log('✅ Відповідь сервера:', response.data);
