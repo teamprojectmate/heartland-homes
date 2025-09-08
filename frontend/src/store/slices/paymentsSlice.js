@@ -3,7 +3,8 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import {
   createPayment as createPaymentService,
   fetchPaymentsByUser as fetchPaymentsByUserService,
-  cancelPayment as cancelPaymentService
+  cancelPayment as cancelPaymentService,
+  getAllPaymentsService
 } from '../../api/payments/paymentService';
 
 const initialState = {
@@ -54,6 +55,21 @@ export const cancelPayment = createAsyncThunk(
     } catch (err) {
       return rejectWithValue(
         err.response?.data?.message || 'Не вдалося скасувати платіж'
+      );
+    }
+  }
+);
+
+// ----- Fetch all payments (admin) -----
+export const fetchAllPayments = createAsyncThunk(
+  'payments/fetchAll',
+  async (params, { rejectWithValue }) => {
+    try {
+      const response = await getAllPaymentsService(params);
+      return response;
+    } catch (err) {
+      return rejectWithValue(
+        err.response?.data?.message || 'Не вдалося отримати всі платежі'
       );
     }
   }
@@ -116,6 +132,20 @@ const paymentsSlice = createSlice({
       })
       .addCase(cancelPayment.rejected, (state, action) => {
         state.cancelStatus = 'failed';
+        state.error = action.payload;
+      })
+
+      // ---- fetchAllPayments (admin) ----
+      .addCase(fetchAllPayments.pending, (state) => {
+        state.fetchStatus = 'loading';
+      })
+      .addCase(fetchAllPayments.fulfilled, (state, action) => {
+        state.fetchStatus = 'succeeded';
+        state.payments = action.payload.content || action.payload || [];
+        state.totalPages = action.payload.totalPages || 1;
+      })
+      .addCase(fetchAllPayments.rejected, (state, action) => {
+        state.fetchStatus = 'failed';
         state.error = action.payload;
       });
   }

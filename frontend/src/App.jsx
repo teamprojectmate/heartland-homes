@@ -15,7 +15,7 @@ import ErrorBoundary from './components/ErrorBoundary.jsx';
 import ProtectedRoute from './pages/Auth/ProtectedRoute.jsx';
 import Login from './pages/Auth/Login.jsx';
 import Register from './pages/Auth/Register.jsx';
-import LoginSuccess from './pages/Auth/LoginSuccess.jsx'; // ✅ додано
+import LoginSuccess from './pages/Auth/LoginSuccess.jsx';
 
 // Accommodations
 import Accommodations from './pages/Accommodations/Accommodations.jsx';
@@ -54,6 +54,7 @@ const AdminEditAccommodation = lazy(
 const AdminBookings = lazy(() => import('./pages/Admin/AdminBookings.jsx'));
 const AdminBookingDetails = lazy(() => import('./pages/Admin/AdminBookingDetails.jsx'));
 const AdminUsers = lazy(() => import('./pages/Admin/AdminUsers.jsx'));
+const AdminPayments = lazy(() => import('./pages/Admin/AdminPayments.jsx')); // 🔹 новий імпорт
 
 // NotFound
 import NotFound from './pages/NotFound.jsx';
@@ -243,6 +244,8 @@ function App() {
                 <Route path="bookings" element={<AdminBookings />} />
                 <Route path="bookings/:id" element={<AdminBookingDetails />} />
                 <Route path="users" element={<AdminUsers />} />
+                <Route path="payments" element={<AdminPayments />} />{' '}
+                {/* 🔹 новий роут */}
               </Route>
 
               {/* Info routes */}

@@ -9,8 +9,10 @@ import {
   setPage,
   cancelBooking
 } from '../../store/slices/bookingsSlice';
+import { fetchPaymentsByUser } from '../../store/slices/paymentsSlice';
 
 import { getAccommodationById } from '../../api/accommodations/accommodationService';
+import { normalizeBooking } from '../../utils/normalizeBooking';
 
 // 🔹 централізовано booking-компоненти
 import { BookingList } from '../../components/booking/index';
@@ -25,19 +27,27 @@ const MyBookings = () => {
   const [notification, setNotification] = useState({ message: '', type: '' });
   const [enrichedBookings, setEnrichedBookings] = useState([]);
 
-  const { isAuthenticated } = useSelector((state) => state.auth);
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
   const { bookings, status, error, page, totalPages, totalElements } = useSelector(
     (state) => state.bookings
   );
+  const { payments } = useSelector((state) => state.payments);
 
+  // завантаження бронювань і платежів
   useEffect(() => {
     if (!isAuthenticated) {
       navigate('/login');
       return;
     }
-    dispatch(fetchMyBookings({ page, size: 5 }));
-  }, [isAuthenticated, navigate, dispatch, page]);
 
+    dispatch(fetchMyBookings({ page, size: 5 }));
+
+    if (user?.id) {
+      dispatch(fetchPaymentsByUser({ userId: user.id, pageable: { page: 0, size: 50 } }));
+    }
+  }, [isAuthenticated, navigate, dispatch, page, user]);
+
+  // якщо бронювань немає на цій сторінці — скинути сторінку назад
   useEffect(() => {
     if (status === 'succeeded' && bookings.length === 0 && page > 0) {
       dispatch(setPage(page - 1));
@@ -45,6 +55,7 @@ const MyBookings = () => {
     }
   }, [status, bookings, page, dispatch]);
 
+  // збагачення бронювань: житло + платежі
   useEffect(() => {
     const fetchAccommodations = async () => {
       if (!bookings || bookings.length === 0) {
@@ -57,10 +68,12 @@ const MyBookings = () => {
           bookings.map(async (booking) => {
             try {
               const acc = await getAccommodationById(booking.accommodationId);
-              return { ...booking, accommodation: acc };
+              const payment = payments.find((p) => p.bookingId === booking.id);
+
+              return normalizeBooking({ ...booking, accommodation: acc, payment });
             } catch {
               console.warn(`⚠️ Не вдалося отримати житло для bookingId=${booking.id}`);
-              return { ...booking, accommodation: null };
+              return normalizeBooking({ ...booking, accommodation: null });
             }
           })
         );
@@ -71,7 +84,7 @@ const MyBookings = () => {
     };
 
     fetchAccommodations();
-  }, [bookings]);
+  }, [bookings, payments]);
 
   const handlePageChange = (newPage) => {
     dispatch(setPage(newPage));
