@@ -1,14 +1,20 @@
+// src/pages/Admin/AdminBookings.jsx
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchBookings, deleteBooking } from '../../store/slices/bookingsSlice';
+import {
+  fetchBookings,
+  updateBookingStatus,
+  deleteBooking
+} from '../../store/slices/bookingsSlice';
+import { fetchAllPayments } from '../../store/slices/paymentsSlice';
 import { getAccommodationById } from '../../api/accommodations/accommodationService';
 import { getAllUsers } from '../../api/user/userService';
 import AdminTable from '../Admin/AdminTable';
 import AdminBookingCard from '../Admin/AdminBookingCard';
 import StatusSelect from '../../components/selects/StatusSelect';
+import { normalizeBooking } from '../../utils/normalizeBooking';
 import { TrashIcon } from '@heroicons/react/24/solid';
 
-// стилі
 import '../../styles/components/badges/_badges.scss';
 import '../../styles/components/admin/_admin-bookings.scss';
 import '../../styles/components/admin/_admin-tables.scss';
@@ -16,21 +22,23 @@ import '../../styles/components/admin/_admin-tables.scss';
 const AdminBookings = () => {
   const dispatch = useDispatch();
   const { bookings, status, error } = useSelector((state) => state.bookings);
+  const { payments } = useSelector((state) => state.payments);
 
   const [usersMap, setUsersMap] = useState({});
   const [enrichedBookings, setEnrichedBookings] = useState([]);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-  // --- resize listener ---
+  // resize listener
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // --- завантаження бронювань та користувачів ---
+  // завантаження бронювань, користувачів та платежів
   useEffect(() => {
     dispatch(fetchBookings());
+    dispatch(fetchAllPayments());
 
     getAllUsers().then((users) => {
       const map = {};
@@ -41,39 +49,52 @@ const AdminBookings = () => {
     });
   }, [dispatch]);
 
-  // --- enrichment житла та користувачів ---
+  // enrichment житла + юзерів + платежів
   useEffect(() => {
     if (!bookings || bookings.length === 0) return;
 
     const enrichData = async () => {
       const results = await Promise.all(
-        bookings.map(async (b) => {
+        bookings.map(async (booking) => {
           let accommodation = null;
           let totalPrice = null;
 
           try {
-            accommodation = await getAccommodationById(b.accommodationId);
-            if (accommodation && b.checkInDate && b.checkOutDate) {
-              const start = new Date(b.checkInDate);
-              const end = new Date(b.checkOutDate);
+            accommodation = await getAccommodationById(booking.accommodationId);
+            if (accommodation && booking.checkInDate && booking.checkOutDate) {
+              const start = new Date(booking.checkInDate);
+              const end = new Date(booking.checkOutDate);
               const nights = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
               totalPrice = nights * (accommodation.dailyRate || 0);
             }
           } catch {
-            console.warn(`Не вдалося завантажити житло id=${b.accommodationId}`);
+            console.warn(`Не вдалося завантажити житло id=${booking.accommodationId}`);
           }
 
-          const user = usersMap[b.userId];
-          return { ...b, accommodation, user, totalPrice };
+          const user = usersMap[booking.userId];
+          const payment = payments.find((p) => p.bookingId === booking.id);
+
+          // 🟢 нормалізуємо тут
+          return normalizeBooking({
+            ...booking,
+            accommodation,
+            user,
+            totalPrice,
+            payment
+          });
         })
       );
       setEnrichedBookings(results);
     };
 
     enrichData();
-  }, [bookings, usersMap]);
+  }, [bookings, usersMap, payments]);
 
-  // --- дії ---
+  // дії
+  const handleStatusChange = (booking, newStatus) => {
+    dispatch(updateBookingStatus({ booking, status: newStatus }));
+  };
+
   const handleDelete = (id) => {
     dispatch(deleteBooking(id));
   };
@@ -81,7 +102,7 @@ const AdminBookings = () => {
   if (status === 'loading') return <p className="text-center">Завантаження...</p>;
   if (error) return <p className="text-danger text-center">{error}</p>;
 
-  // --- колонки для AdminTable ---
+  // колонки
   const columns = [
     { key: 'id', label: 'ID' },
     {
@@ -104,14 +125,30 @@ const AdminBookings = () => {
     },
     {
       key: 'status',
-      label: 'Статус',
+      label: 'Статус бронювання',
       render: (b) => (
         <StatusSelect
-          type="booking"
+          type="booking" // ✅ додав
           value={b.status}
-          onChange={() => {}} // статус змінюється тільки бекендом
+          onChange={(newStatus) => handleStatusChange(b, newStatus)}
         />
       )
+    },
+    {
+      key: 'paymentStatus',
+      label: 'Статус оплати',
+      render: (b) =>
+        b.payment ? (
+          <span
+            className={`badge ${
+              b.payment.status === 'PAID' ? 'badge-status-paid' : 'badge-status-pending'
+            }`}
+          >
+            {b.payment.status === 'PAID' ? 'Оплачено' : 'Очікує оплату'}
+          </span>
+        ) : (
+          '—'
+        )
     }
   ];
 
@@ -121,8 +158,13 @@ const AdminBookings = () => {
 
       {isMobile ? (
         <div className="admin-bookings-cards">
-          {enrichedBookings.map((b) => (
-            <AdminBookingCard key={b.id} booking={b} onDelete={handleDelete} />
+          {enrichedBookings.map((booking) => (
+            <AdminBookingCard
+              key={booking.id}
+              booking={booking}
+              onStatusChange={handleStatusChange}
+              onDelete={handleDelete}
+            />
           ))}
         </div>
       ) : (

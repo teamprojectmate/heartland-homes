@@ -1,5 +1,4 @@
 // src/styles/components/admin/_admin-tables.scss
-// src/styles/components/admin/_admin-tables.scss
 @use '../../abstract/variables' as *;
 @use '../../abstract/mixins' as *;
 @use 'sass:color';
@@ -63,7 +62,7 @@
   }
 }
 
-/* 🔹 Selects */
+/* 🔹 Selects (без кольорів, лише базові стилі) */
 .status-select,
 .role-select {
   display: inline-block;
@@ -71,10 +70,8 @@
   padding: 0.6rem 2rem 0.6rem 0.75rem;
   font-size: $font-size-sm;
   font-weight: 500;
-  color: $text-color;
   appearance: none;
   cursor: pointer;
-  background-color: $surface-color;
   background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 20 20' fill='none' stroke='%23666' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M6 8L10 12L14 8' stroke-width='2'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 0.6rem center;
@@ -184,7 +181,7 @@
   }
 
   .admin-table .actions {
-    flex-flow: row nowrap; // горизонтально
+    flex-flow: row nowrap;
     gap: 0.8rem;
     align-items: center;
     justify-content: flex-start;
@@ -194,7 +191,7 @@
     .btn-icon {
       flex: 0 0 auto;
       width: auto;
-      min-width: 90px; // щоб кнопки з текстом не стискалися
+      min-width: 90px;
     }
   }
 

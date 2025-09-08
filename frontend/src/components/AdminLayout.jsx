@@ -3,6 +3,7 @@ import React from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { HomeIcon, UserIcon, CreditCardIcon } from '@heroicons/react/24/outline';
 import { MdAdminPanelSettings } from 'react-icons/md';
+import { FaMoneyBillWave } from 'react-icons/fa'; // 🔹 додано іконку для платежів
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../store/slices/authSlice';
 
@@ -38,6 +39,11 @@ const AdminLayout = () => {
             <li>
               <Link to="/admin/bookings">
                 <CreditCardIcon className="icon" /> Бронювання
+              </Link>
+            </li>
+            <li>
+              <Link to="/admin/payments">
+                <FaMoneyBillWave className="icon" /> Платежі
               </Link>
             </li>
             <li>

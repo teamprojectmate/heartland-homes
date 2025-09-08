@@ -2,37 +2,33 @@ import api from '../axios';
 
 // ----- Створити платіж -----
 export const createPayment = async (bookingId, paymentType = 'PAYMENT') => {
-  console.log('📤 Відправляю на бекенд:', { bookingId, paymentType });
-  const response = await api.post(
-    '/payments',
-    { bookingId: Number(bookingId), paymentType },
-    {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }
-  );
+  const response = await api.post('/payments', { bookingId, paymentType });
   return response.data;
 };
 
 // ----- Отримати платежі користувача -----
 export const fetchPaymentsByUser = async (userId, pageable) => {
-  const response = await api.get('/payments', {
-    params: { user_id: userId, ...pageable }
+  const response = await api.get(`/payments`, {
+    params: { userId, ...pageable }
   });
   return response.data;
 };
 
 // ----- Скасувати платіж -----
 export const cancelPayment = async (paymentId) => {
-  const response = await api.post(`/payments/${paymentId}/cancel`);
+  const response = await api.get(`/payments/cancel`, { params: { id: paymentId } });
   return response.data;
 };
 
-const paymentService = {
-  createPayment,
-  fetchPaymentsByUser,
-  cancelPayment
+// ----- Отримати всі платежі (адмін) -----
+export const getAllPaymentsService = async (pageable) => {
+  const response = await api.get('/payments', { params: pageable });
+  return response.data;
 };
 
-export default paymentService;
+export default {
+  createPayment,
+  fetchPaymentsByUser,
+  cancelPayment,
+  getAllPaymentsService
+};

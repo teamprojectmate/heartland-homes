@@ -1,6 +1,6 @@
 // src/styles/components/_status-select.scss
 @use '../abstract/variables' as *;
-@use 'sass:color';
+@use 'sass:map';
 
 .status-select {
   padding: 0.4rem 0.75rem;
@@ -9,27 +9,22 @@
   text-align: center;
   appearance: none;
   cursor: pointer;
-  border: none;
+  border: 1px solid transparent;
   border-radius: $radius-sm;
   box-shadow: $box-shadow-sm;
-
-  &.requires-verification {
-    color: $white-color;
-    background-color: color.adjust($warning-color, $lightness: -10%);
-  }
-
-  &.permitted {
-    color: $white-color;
-    background-color: $success-color;
-  }
-
-  &.rejected {
-    color: $white-color;
-    background-color: $danger-color;
-  }
+  transition: all 0.2s ease;
 
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba($primary-color, 0.25);
+    box-shadow: $box-shadow-focus;
+  }
+
+  // 🟢 автоматично генеруємо стилі
+  @each $status, $colors in $badge-status-colors {
+    &.#{$status} {
+      color: map.get($colors, color);
+      background-color: map.get($colors, bg);
+      border-color: map.get($colors, color);
+    }
   }
 }

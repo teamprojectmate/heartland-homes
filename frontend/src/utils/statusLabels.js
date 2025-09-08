@@ -21,16 +21,23 @@ export const accommodationStatusLabels = {
 // --- Статуси платежів ---
 export const paymentStatusLabels = {
   PENDING: { text: 'Очікує оплату', className: 'badge-status-pending' },
-  PAID: { text: 'Оплачено', className: 'badge-status-paid' }
+  PAID: { text: 'Оплачено', className: 'badge-status-paid' },
+  FAILED: { text: 'Помилка', className: 'badge-status-failed' }
 };
 
-// 🔹 Об'єднаний словник для бейджів
+// 🔹 Об'єднаний словник
 const allStatusLabels = {
   ...bookingStatusLabels,
   ...accommodationStatusLabels,
   ...paymentStatusLabels
 };
 
-// 🔹 функція для StatusBadge.jsx
+// --- Статуси бронювань для адмін-панелі ---
+export const adminBookingStatusLabels = {
+  PENDING: { text: 'Очікує підтвердження', className: 'badge-status-pending' },
+  CONFIRMED: { text: 'Підтверджено', className: 'badge-status-confirmed' }
+};
+
+// 🔹 функція для StatusBadge
 export const getStatusLabel = (status) =>
-  allStatusLabels[status] || { text: status, className: '' };
+  allStatusLabels[status] || { text: status, className: 'badge-status-unknown' };

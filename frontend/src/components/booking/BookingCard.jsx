@@ -1,10 +1,10 @@
-// src/components/BookingCard.jsx
+// src/components/booking/BookingCard.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { fixDropboxUrl } from '../../utils/fixDropboxUrl';
 import { TrashIcon } from '@heroicons/react/24/solid';
-import StatusBadge from '../status/StatusBadge';
 import StatusSelect from '../selects/StatusSelect';
+import BookingStatusBlock from '../BookingStatusBlock';
 
 import '../../styles/components/booking/_booking-card.scss';
 
@@ -21,6 +21,8 @@ const BookingCard = ({
   const imageUrl = booking.accommodation?.image
     ? fixDropboxUrl(booking.accommodation.image)
     : fallbackImage;
+
+  const isPaid = booking.payment?.status === 'PAID';
 
   return (
     <div className="booking-card">
@@ -53,9 +55,10 @@ const BookingCard = ({
             Дати: {booking.checkInDate} — {booking.checkOutDate}
           </p>
           <p>ID бронювання: {booking.id}</p>
-          <p className="booking-card-status-text">
-            Статус: <StatusBadge status={booking.status} />
-          </p>
+
+          {/* 🔹 Статуси */}
+          <BookingStatusBlock booking={booking} />
+
           {showAdminControls && booking.user && (
             <p>
               <strong>Користувач:</strong> {booking.user.firstName}{' '}
@@ -78,12 +81,14 @@ const BookingCard = ({
               <Link to={`/my-bookings/${booking.id}`} className="btn btn-primary">
                 Деталі
               </Link>
-              {booking.status === 'PENDING' && (
+              {/* Оплатити тільки якщо PENDING і ще не оплачено */}
+              {booking.status === 'PENDING' && !isPaid && (
                 <button className="btn btn-warning" onClick={() => onPay(booking.id)}>
                   Оплатити
                 </button>
               )}
-              {booking.status !== 'CANCELED' && (
+              {/* Скасувати тільки якщо НЕ оплачено */}
+              {!isPaid && booking.status !== 'CANCELED' && (
                 <button className="btn btn-danger" onClick={() => onCancel(booking.id)}>
                   Скасувати
                 </button>
