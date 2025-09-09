@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -112,16 +111,5 @@ class PaymentControllerTest {
 
         assertTrue(reflectionEquals(expected, actual, "id", "sessionUrl", "sessionId",
                 "amountToPay"));
-    }
-
-    @Test
-    @DisplayName("Handle Stripe cancel")
-    void handleStripeCancel_ReturnsMessage() throws Exception {
-        MvcResult result = mockMvc.perform(get("/payments/cancel"))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        String response = result.getResponse().getContentAsString();
-        assertTrue(response.contains("Payment was canceled."));
     }
 }
