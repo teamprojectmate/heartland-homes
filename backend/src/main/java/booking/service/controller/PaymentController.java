@@ -7,9 +7,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
+import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -56,22 +58,22 @@ public class PaymentController {
     @GetMapping("/success")
     @Operation(summary = "Handle successful Stripe payment",
             description = "Handles redirect from Stripe when payment succeeds")
-    public ResponseEntity<String> handleStripeSuccess(
+    public ResponseEntity<Void> handleStripeSuccess(
             @RequestParam(value = "session_id", required = false) String sessionId
     ) {
         paymentService.markPaymentCompleted(sessionId);
-        return ResponseEntity.ok("Payment was successful"
-                + (sessionId != null ? " (Session ID: " + sessionId + ")" : "") + ".");
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .location(URI.create("http://localhost:5173/my-payments"))
+                .build();
     }
 
     @PermitAll
     @GetMapping("/cancel")
     @Operation(summary = "Handle canceled Stripe payment",
             description = "Informs the user that the payment was canceled")
-    public ResponseEntity<String> handleStripeCancel() {
-        String message = "Payment was canceled. "
-                + "You can complete the payment later using the link, which is valid for 24 hours "
-                + "from the moment the payment session was created.";
-        return ResponseEntity.ok(message);
+    public ResponseEntity<Void> handleStripeCancel() {
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .location(URI.create("http://localhost:5173/my-bookings"))
+                .build();
     }
 }
