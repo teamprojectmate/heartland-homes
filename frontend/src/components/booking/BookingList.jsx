@@ -1,3 +1,4 @@
+// src/components/booking/BookingList.jsx
 import React from 'react';
 import BookingCard from './BookingCard';
 import BookingRow from './BookingRow';
@@ -26,7 +27,7 @@ const BookingList = ({
   return (
     <div className="booking-list">
       {view === 'card' ? (
-        <div className="bookings-row">
+        <div className="booking-card-list">
           {bookings.map((booking) => (
             <BookingCard
               key={booking.id}
@@ -51,7 +52,7 @@ const BookingList = ({
         </div>
       )}
 
-      {totalPages > 1 && (
+      {totalPages > 0 && (
         <div className="pagination-wrapper">
           <Pagination page={page} totalPages={totalPages} onPageChange={onPageChange} />
         </div>

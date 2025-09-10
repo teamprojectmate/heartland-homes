@@ -91,7 +91,8 @@ const AccommodationDetails = ({ id: propId }) => {
                 {typeIcon} {typeLabel}
               </span>
               <span className="badge badge-size">
-                {accommodation?.size || '—'} Спальні
+                {parseInt(accommodation.size, 10)}{' '}
+                {parseInt(accommodation.size, 10) > 1 ? 'Спальні' : 'Спальня'}
               </span>
             </div>
 

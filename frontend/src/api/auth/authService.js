@@ -7,10 +7,17 @@ const register = async (userData) => {
 };
 
 const login = async (userData) => {
-  const response = await api.post('/auth/login', userData);
-  const authData = { token: response.data.token };
-  localStorage.setItem('auth', JSON.stringify(authData));
-  return authData;
+  try {
+    const response = await api.post('/auth/login', userData);
+
+    const authData = { token: response.data.token };
+    localStorage.setItem('auth', JSON.stringify(authData));
+
+    return authData;
+  } catch (err) {
+    // ⚡ прокидаємо помилку далі у slice
+    throw err.response?.data?.message || 'Невірний логін або пароль';
+  }
 };
 
 const logout = () => {
@@ -19,11 +26,7 @@ const logout = () => {
 };
 
 const getProfile = async () => {
-  const stored = JSON.parse(localStorage.getItem('auth'));
-  if (!stored?.token) throw new Error('Нема токена');
-  const response = await api.get('/users/me', {
-    headers: { Authorization: `Bearer ${stored.token}` }
-  });
+  const response = await api.get('/users/me');
   return response.data;
 };
 

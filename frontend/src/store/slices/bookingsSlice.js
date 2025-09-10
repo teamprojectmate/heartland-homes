@@ -13,6 +13,21 @@ const initialState = {
   totalElements: 0
 };
 
+// 🔹 Хелпер: оновлення сторінки/пагінації
+function updatePageState(state, payload) {
+  state.bookings = payload.content || [];
+  state.page = payload.pageable?.pageNumber ?? 0;
+  state.totalPages = payload.totalPages || 0;
+  state.totalElements = payload.totalElements || 0;
+}
+
+// 🔹 Хелпер: видалення бронювання (cancel/delete)
+function removeBooking(state, id) {
+  state.bookings = state.bookings.filter((b) => b.id !== id);
+  state.totalElements = Math.max(0, state.totalElements - 1);
+  state.totalPages = Math.ceil(state.totalElements / 5);
+}
+
 // ----- Create booking -----
 export const createBooking = createAsyncThunk(
   'bookings/createBooking',
@@ -183,28 +198,20 @@ const bookingsSlice = createSlice({
         state.totalPages = Math.ceil(state.totalElements / 5);
       })
       .addCase(fetchBookings.fulfilled, (state, action) => {
-        state.bookings = action.payload.content || [];
-        state.totalPages = action.payload.totalPages || 0;
-        state.totalElements = action.payload.totalElements || 0;
+        updatePageState(state, action.payload);
       })
       .addCase(fetchMyBookings.fulfilled, (state, action) => {
-        state.bookings = action.payload.content || [];
-        state.totalPages = action.payload.totalPages || 0;
-        state.totalElements = action.payload.totalElements || 0;
+        updatePageState(state, action.payload);
       })
       .addCase(changeBookingStatus.fulfilled, (state, action) => {
         const idx = state.bookings.findIndex((b) => b.id === action.payload.id);
         if (idx !== -1) state.bookings[idx] = action.payload;
       })
       .addCase(cancelBooking.fulfilled, (state, action) => {
-        state.bookings = state.bookings.filter((b) => b.id !== action.payload);
-        state.totalElements -= 1;
-        state.totalPages = Math.ceil(state.totalElements / 5);
+        removeBooking(state, action.payload);
       })
       .addCase(deleteBooking.fulfilled, (state, action) => {
-        state.bookings = state.bookings.filter((b) => b.id !== action.payload);
-        state.totalElements -= 1;
-        state.totalPages = Math.ceil(state.totalElements / 5);
+        removeBooking(state, action.payload);
       });
   }
 });

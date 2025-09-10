@@ -129,7 +129,7 @@
 }
 
 /* 📱 Mobile */
-@media (max-width: $breakpoint-lg) {
+@media (max-width: $max-width-2xl) {
   .admin-table,
   .admin-table thead,
   .admin-table tbody,

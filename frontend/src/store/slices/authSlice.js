@@ -1,3 +1,4 @@
+// src/store/slices/authSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import authService from '../../api/auth/authService';
 
@@ -57,7 +58,9 @@ export const login = createAsyncThunk(
     } catch (err) {
       localStorage.removeItem('auth');
       localStorage.removeItem('userProfile');
-      return rejectWithValue(err.response?.data?.message || 'Помилка логіну');
+
+      // ⚡ якщо бекенд нічого не повернув → дефолтне повідомлення
+      return rejectWithValue(err.response?.data?.message || 'Невірний логін або пароль');
     }
   }
 );
@@ -121,10 +124,10 @@ const authSlice = createSlice({
         s.user = payload;
         s.isAuthenticated = !!payload;
       })
-      .addCase(login.rejected, (s, { payload }) => {
+      .addCase(login.rejected, (s, { payload, error }) => {
         s.isLoading = false;
         s.isError = true;
-        s.message = payload;
+        s.message = payload || error?.message || 'Невірний логін або пароль';
         s.user = null;
         s.isAuthenticated = false;
       })
@@ -141,7 +144,7 @@ const authSlice = createSlice({
       .addCase(register.rejected, (s, { payload }) => {
         s.isLoading = false;
         s.isError = true;
-        s.message = payload;
+        s.message = payload || 'Помилка реєстрації';
       })
       .addCase(logout.fulfilled, (s) => {
         s.user = null;
