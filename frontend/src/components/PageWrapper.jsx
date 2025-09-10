@@ -4,39 +4,47 @@ import { useSelector } from 'react-redux';
 import Notification from './Notification';
 
 const PageWrapper = ({ title, children, extraErrors = [] }) => {
+  const authError = useSelector((s) => s.auth.error);
+  const userError = useSelector((s) => s.user.error);
+  const bookingsError = useSelector((s) => s.bookings.error);
+  const accommodationsError = useSelector((s) => s.accommodations.error);
+  const paymentsError = useSelector((s) => s.payments.error);
+
   const errors = [
-    useSelector((s) => s.auth.error),
-    useSelector((s) => s.user.error),
-    useSelector((s) => s.bookings.error),
-    useSelector((s) => s.accommodations.error),
-    useSelector((s) => s.payments.error),
+    authError,
+    userError,
+    bookingsError,
+    accommodationsError,
+    paymentsError,
     ...extraErrors
   ].filter(Boolean);
 
   const [blink, setBlink] = useState(false);
 
+  // toggle blink, тільки коли є errors
   useEffect(() => {
-    let interval;
-    if (errors.length > 0) {
-      interval = setInterval(() => setBlink((p) => !p), 1500);
-    }
-    return () => clearInterval(interval);
-  }, [errors]);
+    if (errors.length === 0) return;
 
+    const interval = setInterval(() => setBlink((prev) => !prev), 1500);
+    return () => clearInterval(interval);
+  }, [errors.length]);
+
+  // update title + favicon
   useEffect(() => {
     const favicon = document.querySelector("link[rel='icon']");
+    const errorMsg = errors[0];
 
     if (errors.length > 0) {
-      // змінюємо заголовок
       document.title = blink
-        ? `⚠️ Помилка: ${errors[0]}`
+        ? `⚠️ Помилка: ${errorMsg}`
         : title
           ? `${title} | Heartland Homes`
           : 'Heartland Homes';
 
-      // змінюємо favicon
       if (favicon) {
-        favicon.href = blink ? '/favicon-error.ico' : '/favicon.ico';
+        favicon.href = blink
+          ? `/favicon-error.ico?v=${Date.now()}`
+          : `/favicon.ico?v=${Date.now()}`;
       }
     } else {
       document.title = title ? `${title} | Heartland Homes` : 'Heartland Homes';

@@ -34,9 +34,14 @@ instance.interceptors.response.use(
   (res) => res,
   (err) => {
     if (err.response?.status === 401) {
-      localStorage.removeItem('auth');
-      localStorage.removeItem('userProfile');
-      window.location.href = '/login';
+      const currentPath = window.location.pathname;
+
+      // ❌ Не редіректимо, якщо вже на сторінці логіну
+      if (currentPath !== '/login') {
+        localStorage.removeItem('auth');
+        localStorage.removeItem('userProfile');
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(err);
   }

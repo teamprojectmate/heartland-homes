@@ -13,7 +13,8 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { isAuthenticated, loading, error } = useSelector((s) => s.auth);
+  // ⚡ беремо правильні поля зі slice
+  const { isAuthenticated, isLoading, isError, message } = useSelector((s) => s.auth);
 
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -65,10 +66,15 @@ const Login = () => {
             />
           </div>
 
-          {error && <p className="form-error">{error}</p>}
+          {/* 🔹 показуємо помилку */}
+          {isError && (
+            <p className="form-error" data-testid="login-error">
+              {message || 'Невірний логін або пароль'}
+            </p>
+          )}
 
-          <button type="submit" disabled={loading}>
-            {loading ? 'Зачекайте...' : 'Увійти'}
+          <button type="submit" disabled={isLoading}>
+            {isLoading ? 'Зачекайте...' : 'Увійти'}
           </button>
         </form>
 

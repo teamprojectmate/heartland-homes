@@ -27,11 +27,6 @@ const AdminLayout = () => {
         <nav>
           <ul>
             <li>
-              <Link to="/admin">
-                <HomeIcon className="icon" /> Головна
-              </Link>
-            </li>
-            <li>
               <Link to="/admin/accommodations">
                 <MdAdminPanelSettings className="icon" /> Помешкання
               </Link>
