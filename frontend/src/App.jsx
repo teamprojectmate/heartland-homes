@@ -54,7 +54,7 @@ const AdminEditAccommodation = lazy(
 const AdminBookings = lazy(() => import('./pages/Admin/AdminBookings.jsx'));
 const AdminBookingDetails = lazy(() => import('./pages/Admin/AdminBookingDetails.jsx'));
 const AdminUsers = lazy(() => import('./pages/Admin/AdminUsers.jsx'));
-const AdminPayments = lazy(() => import('./pages/Admin/AdminPayments.jsx')); // 🔹 новий імпорт
+const AdminPayments = lazy(() => import('./pages/Admin/AdminPayments.jsx'));
 
 // NotFound
 import NotFound from './pages/NotFound.jsx';
@@ -82,7 +82,7 @@ function App() {
             setUser({
               token: stored.token,
               ...profile,
-              cleanRole
+              cleanRole,
             })
           );
         })
@@ -136,14 +136,17 @@ function App() {
                   </PageWrapper>
                 }
               />
+              {/* ✅ Винесли в /auth/success */}
               <Route
-                path="/login/success"
-                element={
-                  <PageWrapper title="Вхід успішний">
-                    <LoginSuccess />
-                  </PageWrapper>
-                }
+                path="/auth/success"
+                element={<LoginSuccess />}
               />
+
+              <Route
+  path="/login/success"
+  element={<LoginSuccess />}
+/>
+
               <Route
                 path="/register"
                 element={
@@ -237,15 +240,11 @@ function App() {
                 <Route index element={<AdminDashboard />} />
                 <Route path="accommodations" element={<AdminAccommodations />} />
                 <Route path="accommodations/new" element={<CreateAccommodation />} />
-                <Route
-                  path="accommodations/edit/:id"
-                  element={<AdminEditAccommodation />}
-                />
+                <Route path="accommodations/edit/:id" element={<AdminEditAccommodation />} />
                 <Route path="bookings" element={<AdminBookings />} />
                 <Route path="bookings/:id" element={<AdminBookingDetails />} />
                 <Route path="users" element={<AdminUsers />} />
-                <Route path="payments" element={<AdminPayments />} />{' '}
-                {/* 🔹 новий роут */}
+                <Route path="payments" element={<AdminPayments />} />
               </Route>
 
               {/* Info routes */}
