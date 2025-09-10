@@ -13,7 +13,6 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // ⚡ беремо правильні поля зі slice
   const { isAuthenticated, isLoading, isError, message } = useSelector((s) => s.auth);
 
   const handleChange = (e) =>
@@ -24,6 +23,7 @@ const Login = () => {
     dispatch(login(formData));
   };
 
+  // 🔹 Якщо користувач вже залогінений → редіректимо
   useEffect(() => {
     if (isAuthenticated) {
       const redirectPath = location.state?.from?.pathname || '/';
@@ -66,7 +66,6 @@ const Login = () => {
             />
           </div>
 
-          {/* 🔹 показуємо помилку */}
           {isError && (
             <p className="form-error" data-testid="login-error">
               {message || 'Невірний логін або пароль'}
@@ -78,7 +77,7 @@ const Login = () => {
           </button>
         </form>
 
-        {/* 🔹 Google login */}
+        {/* Кнопка Google Login */}
         <GoogleLoginButton />
       </div>
 

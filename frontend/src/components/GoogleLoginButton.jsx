@@ -1,9 +1,36 @@
 // src/components/GoogleLoginButton.jsx
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { loginSuccess } from '../store/slices/authSlice';
 
 const GoogleLoginButton = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const handleMessage = (event) => {
+      if (event.data?.type === 'OAUTH_SUCCESS') {
+        const { token } = event.data;
+        localStorage.setItem('auth', JSON.stringify({ token }));
+        dispatch(loginSuccess({ token }));
+        window.location.href = '/my-bookings';
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [dispatch]);
+
   const handleGoogleLogin = () => {
-    window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+    const width = 500;
+    const height = 600;
+    const left = window.screenX + (window.outerWidth - width) / 2;
+    const top = window.screenY + (window.outerHeight - height) / 2;
+
+    window.open(
+      'http://localhost:8080/oauth2/authorization/google',
+      'Google Login',
+      `width=${width},height=${height},left=${left},top=${top}`
+    );
   };
 
   return (
