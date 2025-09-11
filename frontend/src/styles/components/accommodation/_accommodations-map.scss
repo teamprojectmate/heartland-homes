@@ -1,4 +1,3 @@
-// src/styles/components/accommodation/_accommodations-map.scss
 @use '../../abstract/variables' as *;
 @use '../../abstract/mixins' as *;
 
@@ -10,8 +9,8 @@
 
   @media (min-width: $breakpoint-lg) {
     flex-direction: row;
-    height: calc(100vh - 80px); // враховуємо хедер
-    overflow: hidden; // уникаємо подвійних скролів
+    height: calc(100vh - 80px);
+    overflow: hidden;
   }
 
   .accommodations-list-wrapper {
@@ -26,12 +25,12 @@
 
   .accommodations-map-wrapper {
     flex: 1;
-    height: 300px; // мобілка
+    height: 300px;
 
     @media (min-width: $breakpoint-lg) {
       position: sticky;
       top: 0;
-      height: calc(100vh - 80px); // карта рівно по висоті екрану мінус хедер
+      height: calc(100vh - 80px);
     }
 
     .leaflet-container {

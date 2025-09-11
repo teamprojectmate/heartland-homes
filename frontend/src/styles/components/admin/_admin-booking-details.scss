@@ -1,4 +1,3 @@
-// src/styles/components/admin/_admin-booking-details.scss
 @use '../../abstract/variables' as *;
 @use '../../abstract/mixins' as *;
 
@@ -28,7 +27,7 @@
       }
     }
 
-    /* 🔹 Використовуємо глобальний .btn-danger, тільки адаптуємо */
+    // Використовуємо глобальний .btn-danger, тільки адаптуємо
     .btn-danger {
       padding: 0.7rem 1.2rem;
       font-weight: 600;

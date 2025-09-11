@@ -1,4 +1,3 @@
-// src/components/Header.jsx
 import React, { useEffect, useState } from 'react';
 import { NavLink, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
@@ -42,13 +41,13 @@ const Header = () => {
     return () => document.body.classList.remove('no-scroll');
   }, [open]);
 
-  // ✅ визначаємо роль
+  //  визначаємо роль
   const userRole =
     user?.cleanRole || (Array.isArray(user?.roles) ? user.roles[0] : user?.role);
 
   const isManager = userRole === 'MANAGER';
 
-  // ✅ якщо ми в адмінці — автоматично включаємо adminMode
+  // якщо ми в адмінці — автоматично включаємо adminMode
   useEffect(() => {
     if (location.pathname.startsWith('/admin')) {
       setAdminMode(true);

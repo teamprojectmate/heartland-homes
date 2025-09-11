@@ -1,4 +1,3 @@
-// cypress/e2e/login.cy.js
 describe('Форма логіна', () => {
   context('Desktop (≥1024px)', () => {
     beforeEach(() => {
@@ -11,7 +10,7 @@ describe('Форма логіна', () => {
       cy.get('input[name="password"]').type('password123');
       cy.get('button[type="submit"]').click();
 
-      // ✅ Адмін бачить пункт меню "Адмін-панель" у десктопному меню
+      //  Адмін бачить пункт меню "Адмін-панель" у десктопному меню
       cy.get('.nav-desktop').contains('Адмін-панель').should('exist');
     });
 
@@ -20,7 +19,7 @@ describe('Форма логіна', () => {
       cy.get('input[name="password"]').type('password123');
       cy.get('button[type="submit"]').click();
 
-      // ❌ У юзера немає "Адмін-панель"
+      //  У юзера немає "Адмін-панель"
       cy.get('.nav-desktop').contains('Адмін-панель').should('not.exist');
 
       // ✅ Є "Мої бронювання"
@@ -39,10 +38,10 @@ describe('Форма логіна', () => {
       cy.get('input[name="password"]').type('password123');
       cy.get('button[type="submit"]').click();
 
-      // ✅ відкриваємо бургер
+      //  відкриваємо бургер
       cy.get('.burger').click();
 
-      // ✅ Адмін бачить "Адмін-панель" у drawer
+      //  Адмін бачить "Адмін-панель" у drawer
       cy.get('.drawer').contains('Адмін-панель').should('exist');
     });
 
@@ -51,13 +50,13 @@ describe('Форма логіна', () => {
       cy.get('input[name="password"]').type('password123');
       cy.get('button[type="submit"]').click();
 
-      // ✅ відкриваємо бургер
+      //  відкриваємо бургер
       cy.get('.burger').click();
 
-      // ❌ у drawer немає "Адмін-панель"
+      //  у drawer немає "Адмін-панель"
       cy.get('.drawer').contains('Адмін-панель').should('not.exist');
 
-      // ✅ є "Мої бронювання"
+      //  є "Мої бронювання"
       cy.get('.drawer').contains('Мої бронювання').should('exist');
     });
   });

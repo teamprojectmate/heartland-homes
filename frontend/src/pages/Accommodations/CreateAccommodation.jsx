@@ -1,4 +1,3 @@
-// src/pages/Admin/CreateAccommodation.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Notification from '../../components/Notification';

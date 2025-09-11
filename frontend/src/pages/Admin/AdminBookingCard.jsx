@@ -1,4 +1,3 @@
-// src/components/AdminBookingCard.jsx
 import React from 'react';
 import { TrashIcon } from '@heroicons/react/24/solid';
 import StatusSelect from '../../components/selects/StatusSelect';
@@ -47,7 +46,7 @@ const AdminBookingCard = ({ booking, onDelete, onStatusChange }) => {
             {booking.totalPrice ? `${booking.totalPrice} грн` : '—'}
           </p>
 
-          {/* 🔹 Бейджі */}
+          {/*  Бейджі */}
           <p>
             <strong>Статус:</strong>{' '}
             <span

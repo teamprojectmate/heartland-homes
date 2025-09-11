@@ -1,4 +1,3 @@
-// src/pages/Info/Cookies.jsx
 import React from 'react';
 import { Cookie } from 'lucide-react';
 import '../../styles/components/_info-pages.scss';

@@ -1,4 +1,3 @@
-// src/styles/components/admin/_admin-form.scss
 @use '../../abstract/variables' as *;
 @use '../../abstract/mixins' as *;
 
@@ -29,15 +28,15 @@
   }
 }
 
-/* 🔹 Використовуємо глобальні стилі форм з _forms.scss */
+// Використовуємо глобальні стилі форм з _forms.scss
 
-/* 🔹 Кнопки */
+// Кнопки
 .admin-form .btn-primary {
   width: 100%;
   padding: 1rem 1.25rem;
 }
 
-/* 🔹 Анімація */
+// Анімація
 @keyframes fade-in-up {
   from {
     opacity: 0;

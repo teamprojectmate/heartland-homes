@@ -1,5 +1,3 @@
-// utils/auth.js
-
 // Отримати токен з localStorage
 export const getAuthToken = () => {
   try {

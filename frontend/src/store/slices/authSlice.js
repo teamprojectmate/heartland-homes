@@ -28,7 +28,7 @@ const initialState = {
   message: ''
 };
 
-// 🔹 Логін
+//  Логін
 export const login = createAsyncThunk(
   'auth/login',
   async ({ email, password }, { rejectWithValue }) => {
@@ -65,7 +65,7 @@ export const login = createAsyncThunk(
   }
 );
 
-// 🔹 Реєстрація
+//  Реєстрація
 export const register = createAsyncThunk(
   'auth/register',
   async (userData, { rejectWithValue }) => {
@@ -77,7 +77,7 @@ export const register = createAsyncThunk(
   }
 );
 
-// 🔹 Логаут
+//  Логаут
 export const logout = createAsyncThunk('auth/logout', async () => {
   authService.logout();
 });
@@ -97,7 +97,7 @@ const authSlice = createSlice({
       s.user = payload;
       s.isAuthenticated = !!payload;
     },
-    // 🔹 Google Login success
+    //  Google Login success
     loginSuccess: (s, { payload }) => {
       s.user = payload;
       s.isAuthenticated = true;

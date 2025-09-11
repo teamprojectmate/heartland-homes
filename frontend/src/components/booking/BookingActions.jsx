@@ -1,4 +1,3 @@
-// src/components/booking/BookingActions.jsx
 import React from 'react';
 import { normalizeBooking } from '../../utils/normalizeBooking';
 

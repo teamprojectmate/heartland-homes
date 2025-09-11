@@ -1,4 +1,3 @@
-// src/utils/leafletConfig.js
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 

@@ -1,4 +1,3 @@
-// cypress/e2e/admin.cy.js
 describe('Admin flow (safe)', () => {
   beforeEach(() => {
     cy.loginAsAdminSession();

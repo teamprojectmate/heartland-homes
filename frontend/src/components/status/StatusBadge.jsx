@@ -1,4 +1,3 @@
-// src/components/StatusBadge.jsx
 import React from 'react';
 import { getStatusLabel } from '../../utils/statusLabels';
 

@@ -1,5 +1,4 @@
-// src/pages/Admin/AdminAccommodations.jsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
@@ -27,53 +26,6 @@ import '../../styles/components/admin/_admin-tables.scss';
 import '../../styles/components/admin/_admin-accommodations.scss';
 
 const fallbackImage = '/assets/no-image.svg';
-
-const getColumns = (handleStatusChange) => [
-  { key: 'id', label: 'ID' },
-  { key: 'name', label: 'Назва' },
-  { key: 'city', label: 'Місто' },
-  {
-    key: 'type',
-    label: 'Тип',
-    render: (acc) => {
-      const { label, icon, color } = mapType(acc.type);
-      return (
-        <span className="badge badge-type" style={{ backgroundColor: color }}>
-          {icon} {label}
-        </span>
-      );
-    }
-  },
-  {
-    key: 'dailyRate',
-    label: 'Ціна',
-    className: 'price',
-    render: (acc) => <span>{acc.dailyRate} грн</span>
-  },
-  {
-    key: 'image',
-    label: 'Зображення',
-    render: (acc) => (
-      <img
-        src={acc.image ? fixDropboxUrl(acc.image) : fallbackImage}
-        alt={acc.name || 'Зображення помешкання'}
-        className="table-img"
-        onError={(e) => (e.currentTarget.src = fallbackImage)}
-      />
-    )
-  },
-  {
-    key: 'accommodationStatus',
-    label: 'Статус',
-    render: (acc) => (
-      <StatusSelect
-        type="accommodation"
-        value={acc.accommodationStatus}
-        onChange={(newStatus) => onStatusChange(acc.id, newStatus)}
-      />
-    )
-  }
-];
 
 const AdminAccommodations = () => {
   const navigate = useNavigate();
@@ -114,9 +66,57 @@ const AdminAccommodations = () => {
     dispatch(updateAccommodationStatusAsync({ id, status }));
   };
 
-  if (loading) return <p className="text-center mt-5">Завантаження...</p>;
+  const columns = useMemo(
+    () => [
+      { key: 'id', label: 'ID' },
+      { key: 'name', label: 'Назва' },
+      { key: 'city', label: 'Місто' },
+      {
+        key: 'type',
+        label: 'Тип',
+        render: (acc) => {
+          const { label, icon, color } = mapType(acc.type);
+          return (
+            <span className="badge badge-type" style={{ backgroundColor: color }}>
+              {icon} {label}
+            </span>
+          );
+        }
+      },
+      {
+        key: 'dailyRate',
+        label: 'Ціна',
+        className: 'price',
+        render: (acc) => <span>{acc.dailyRate} грн</span>
+      },
+      {
+        key: 'image',
+        label: 'Зображення',
+        render: (acc) => (
+          <img
+            src={acc.image ? fixDropboxUrl(acc.image) : fallbackImage}
+            alt={acc.name || 'Зображення помешкання'}
+            className="table-img"
+            onError={(e) => (e.currentTarget.src = fallbackImage)}
+          />
+        )
+      },
+      {
+        key: 'accommodationStatus',
+        label: 'Статус',
+        render: (acc) => (
+          <StatusSelect
+            type="accommodation"
+            value={acc.accommodationStatus}
+            onChange={(newStatus) => handleStatusChange(acc.id, newStatus)}
+          />
+        )
+      }
+    ],
+    [handleStatusChange]
+  );
 
-  const columns = getColumns(handleStatusChange);
+  if (loading) return <p className="text-center mt-5">Завантаження...</p>;
 
   return (
     <div className="container admin-page-container">

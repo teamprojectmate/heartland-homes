@@ -1,4 +1,3 @@
-// src/components/LocationMap.jsx
 import React from 'react';
 import BaseMap from './BaseMap';
 

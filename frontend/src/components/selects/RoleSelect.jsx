@@ -1,4 +1,3 @@
-// src/components/RoleSelect.jsx
 import React from 'react';
 import { roles } from '../../utils/roles';
 import '../../styles/components/admin/_admin-users.scss';

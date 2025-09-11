@@ -1,4 +1,3 @@
-// src/pages/BookingDetails.jsx
 import React, { useEffect, useState, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { fetchBookingById, cancelBooking } from '../api/bookings/bookingsService';
@@ -28,7 +27,7 @@ const BookingDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // 🔹 завантаження бронювання
+  //  завантаження бронювання
   useEffect(() => {
     const fetchBooking = async () => {
       try {
@@ -58,14 +57,14 @@ const BookingDetails = () => {
     fetchBooking();
   }, [id]);
 
-  // 🔹 завантаження платежів користувача
+  //  завантаження платежів користувача
   useEffect(() => {
     if (user?.id) {
       dispatch(fetchPaymentsByUser({ userId: user.id, pageable: { page: 0, size: 50 } }));
     }
   }, [user, dispatch]);
 
-  // 🔹 об’єднання бронювання з оплатою
+  //  об’єднання бронювання з оплатою
   const enrichedBooking = useMemo(() => {
     if (!booking) return null;
     const payment = payments.find((p) => p.bookingId === booking.id);
@@ -87,7 +86,7 @@ const BookingDetails = () => {
     ? mapStatus(enrichedBooking.status)
     : { label: '—', color: '#ccc' };
 
-  // ✅ Розрахунок ціни
+  //  Розрахунок ціни
   const checkIn = enrichedBooking ? new Date(enrichedBooking.checkInDate) : null;
   const checkOut = enrichedBooking ? new Date(enrichedBooking.checkOutDate) : null;
   const nights = checkIn && checkOut ? (checkOut - checkIn) / (1000 * 60 * 60 * 24) : 0;
@@ -186,7 +185,7 @@ const BookingDetails = () => {
             <span className="currency">грн</span>
           </div>
 
-          {/* ✅ Кнопки з урахуванням оплати */}
+          {/* Кнопки з урахуванням оплати */}
           {!isPaid && enrichedBooking.status === 'PENDING' && (
             <button className="btn btn-success">Оплатити</button>
           )}

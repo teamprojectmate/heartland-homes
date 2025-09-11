@@ -1,4 +1,3 @@
-// src/pages/Admin/AdminAccommodationCard.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaEdit, FaTrash } from 'react-icons/fa';
@@ -31,7 +30,7 @@ const AdminAccommodationCard = ({ acc, onStatusChange, onDelete }) => {
           />
         </div>
 
-        {/* 🔹 Badge типу житла */}
+        {/*  Badge типу житла */}
         <div className="badge badge-type" style={{ backgroundColor: color }}>
           {icon} {label}
         </div>

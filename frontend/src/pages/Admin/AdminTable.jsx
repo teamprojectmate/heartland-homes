@@ -1,4 +1,3 @@
-// src/components/Admin/AdminTable.jsx
 import React from 'react';
 
 /**

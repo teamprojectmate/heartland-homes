@@ -1,4 +1,3 @@
-// src/styles/components/badges/_badges.scss
 @use '../../abstract/variables' as *;
 @use '../../abstract/mixins' as *;
 
@@ -14,7 +13,7 @@
   }
 }
 
-/* 🔹 Автоматична генерація типів житла і зручностей */
+// Автоматична генерація типів житла і зручностей
 @each $name, $color in $badge-colors {
   .badge-type-#{$name},
   .badge-amenity-#{$name} {
@@ -23,7 +22,7 @@
   }
 }
 
-/* 🔹 кількість спалень */
+// кількість спалень
 .badge-size {
   font-weight: 600;
   color: $heading-color;
@@ -36,7 +35,7 @@
   }
 }
 
-/* 🔹 група */
+// група
 .badge-group {
   display: flex;
   flex-wrap: wrap;

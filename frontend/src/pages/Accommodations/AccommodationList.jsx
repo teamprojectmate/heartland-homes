@@ -1,4 +1,3 @@
-// src/pages/Accommodations/AccommodationList.jsx
 import React from 'react';
 import AccommodationCard from './AccommodationCard';
 

@@ -1,4 +1,3 @@
-// src/App.jsx
 import React, { Suspense, lazy, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -82,7 +81,7 @@ function App() {
             setUser({
               token: stored.token,
               ...profile,
-              cleanRole,
+              cleanRole
             })
           );
         })
@@ -136,16 +135,9 @@ function App() {
                   </PageWrapper>
                 }
               />
-              {/* ✅ Винесли в /auth/success */}
-              <Route
-                path="/auth/success"
-                element={<LoginSuccess />}
-              />
+              <Route path="/auth/success" element={<LoginSuccess />} />
 
-              <Route
-  path="/login/success"
-  element={<LoginSuccess />}
-/>
+              <Route path="/login/success" element={<LoginSuccess />} />
 
               <Route
                 path="/register"
@@ -240,7 +232,10 @@ function App() {
                 <Route index element={<AdminDashboard />} />
                 <Route path="accommodations" element={<AdminAccommodations />} />
                 <Route path="accommodations/new" element={<CreateAccommodation />} />
-                <Route path="accommodations/edit/:id" element={<AdminEditAccommodation />} />
+                <Route
+                  path="accommodations/edit/:id"
+                  element={<AdminEditAccommodation />}
+                />
                 <Route path="bookings" element={<AdminBookings />} />
                 <Route path="bookings/:id" element={<AdminBookingDetails />} />
                 <Route path="users" element={<AdminUsers />} />

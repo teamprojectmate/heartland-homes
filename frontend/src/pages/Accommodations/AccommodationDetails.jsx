@@ -14,7 +14,7 @@ import '../../styles/components/accommodation/_accommodation-gallery.scss';
 import '../../styles/components/badges/_badges.scss';
 
 const AccommodationDetails = ({ id: propId }) => {
-  // ✅ або беремо id з props, або з useParams
+  //  або беремо id з props, або з useParams
   const { id: routeId } = useParams();
   const id = propId || routeId;
 

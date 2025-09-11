@@ -1,4 +1,3 @@
-// cypress/support/commands.js
 // ***********************************************
 // This example commands.js shows you how to
 // create various custom commands and overwrite
@@ -25,8 +24,7 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
-// ✅ ДОДАНО: Нова команда для входу через сесію
-// 🔹 User login
+//  User login
 Cypress.Commands.add('loginAsUserSession', () => {
   cy.session('user', () => {
     cy.request('POST', 'http://localhost:8080/auth/login', {
@@ -45,7 +43,7 @@ Cypress.Commands.add('loginAsUserSession', () => {
   });
 });
 
-// 🔹 Admin login (role MANAGER)
+//  Admin login (role MANAGER)
 Cypress.Commands.add('loginAsAdminSession', () => {
   cy.session('admin', () => {
     cy.request('POST', 'http://localhost:8080/auth/login', {
@@ -55,10 +53,10 @@ Cypress.Commands.add('loginAsAdminSession', () => {
       const token = resp.body.token;
       const authData = { token };
 
-      // ✅ кладемо токен
+      //  кладемо токен
       window.localStorage.setItem('auth', JSON.stringify(authData));
 
-      // ✅ одразу тягнемо профіль
+      // одразу тягнемо профіль
       cy.request({
         method: 'GET',
         url: 'http://localhost:8080/users/me',
@@ -71,7 +69,7 @@ Cypress.Commands.add('loginAsAdminSession', () => {
   });
 });
 
-// 🔹 SPA navigation
+//  SPA navigation
 Cypress.Commands.add('goTo', (path) => {
   cy.visit('/');
   cy.window().then((win) => {

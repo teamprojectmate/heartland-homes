@@ -1,4 +1,3 @@
-// src/styles/components/_pagination.scss
 @use '../abstract/mixins' as *;
 @use '../abstract/variables' as *;
 @use './buttons' as *;
@@ -22,7 +21,7 @@
   }
 
   button {
-    @extend .btn-outline; // ✅ стиль з кнопок
+    @extend .btn-outline; //  стиль з кнопок
 
     min-width: 110px;
     font-weight: 600;

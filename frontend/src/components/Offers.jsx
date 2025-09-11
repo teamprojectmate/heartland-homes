@@ -1,4 +1,3 @@
-// src/components/Offers.jsx
 import React, { useState } from 'react';
 import '../styles/components/_offers.scss';
 import '../styles/components/_buttons.scss';

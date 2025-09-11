@@ -1,4 +1,3 @@
-// src/styles/components/_searchForm.scss
 @use '../abstract/variables' as *;
 
 .search-form-container {
@@ -57,7 +56,7 @@
   }
 }
 
-/* 📱 Mobile */
+//  Mobile
 @media (max-width: $breakpoint-md) {
   .search-form-container {
     flex-direction: column;

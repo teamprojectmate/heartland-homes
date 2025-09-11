@@ -1,10 +1,6 @@
-// src/utils/translations/index.js
-
 import { colors } from '../colors';
 
-// -----------------------------
-// 🏠 Типи житла
-// -----------------------------
+//  Типи житла
 export const typeTranslations = {
   HOUSE: { label: 'Будинок', icon: '🏠', color: colors.badge.house },
   APARTMENT: { label: 'Квартира', icon: '🏢', color: colors.badge.apartment },
@@ -18,16 +14,14 @@ export const typeTranslations = {
   COTTAGE: { label: 'Котедж', icon: '🏡', color: colors.badge.cottage }
 };
 
-// 🚀 Мапінг типів житла
+//  Мапінг типів житла
 export const mapType = (type) => {
   if (!type) return { label: 'Невідомо', icon: '❓', color: '#ccc' };
   const key = type.toUpperCase();
   return typeTranslations[key] || { label: type, icon: '❓', color: '#ccc' };
 };
 
-// -----------------------------
-// 🔧 Зручності
-// -----------------------------
+//  Зручності
 export const amenityTranslations = {
   wifi: {
     label: 'Wi-Fi',
@@ -66,7 +60,7 @@ export const amenityTranslations = {
   }
 };
 
-// 🚀 Мапінг зручностей
+//  Мапінг зручностей
 export const mapAmenity = (slug = '') => {
   const lower = slug.toLowerCase();
   for (const key in amenityTranslations) {
@@ -78,9 +72,7 @@ export const mapAmenity = (slug = '') => {
   return { label: slug || 'Інше', icon: '❔', slug: 'other', color: colors.badge.other };
 };
 
-// -----------------------------
-// 📌 Статуси
-// -----------------------------
+//  Статуси
 export const statusTranslations = {
   PENDING: { label: 'Очікує', color: colors.warning, slug: 'pending' },
   PAID: { label: 'Оплачено', color: colors.success, slug: 'paid' },
@@ -96,7 +88,7 @@ export const statusTranslations = {
   REJECTED: { label: 'Відхилено', color: colors.danger, slug: 'rejected' }
 };
 
-// 🚀 Мапінг статусів
+//  Мапінг статусів
 export const mapStatus = (status = '') => {
   const key = status.toUpperCase();
   return (

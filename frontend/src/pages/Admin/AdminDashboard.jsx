@@ -1,4 +1,3 @@
-// src/pages/Admin/AdminPayments.jsx
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAllPayments } from '../../store/slices/paymentsSlice';
@@ -18,7 +17,7 @@ const AdminPayments = () => {
   if (fetchStatus === 'loading') return <p className="text-center">Завантаження...</p>;
   if (error) return <p className="text-danger text-center">{error}</p>;
 
-  // 🔹 колонки таблиці
+  //  колонки таблиці
   const columns = [
     { key: 'id', label: 'ID' },
     { key: 'bookingId', label: 'Бронювання ID' },

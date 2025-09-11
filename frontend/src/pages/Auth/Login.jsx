@@ -1,4 +1,3 @@
-// src/pages/Auth/Login.jsx
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
@@ -23,7 +22,7 @@ const Login = () => {
     dispatch(login(formData));
   };
 
-  // 🔹 Якщо користувач вже залогінений → редіректимо
+  //  Якщо користувач вже залогінений → редіректимо
   useEffect(() => {
     if (isAuthenticated) {
       const redirectPath = location.state?.from?.pathname || '/';

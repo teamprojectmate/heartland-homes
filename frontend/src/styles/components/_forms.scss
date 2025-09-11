@@ -1,4 +1,3 @@
-// src/styles/components/_forms.scss
 @use 'sass:map';
 @use 'sass:color';
 @use '../abstract/variables' as *;
@@ -11,11 +10,7 @@ fieldset {
   border: none;
 }
 
-/* ============================= */
-
-/* 🔹 Placeholders for reuse      */
-
-/* ============================= */
+// Placeholders for reuse
 %form-control {
   padding: 0.85rem 1rem;
   font-size: 1rem;
@@ -62,11 +57,7 @@ fieldset {
   }
 }
 
-/* ============================= */
-
-/* 🔹 Regular classes (global)   */
-
-/* ============================= */
+// Regular classes (global)
 .input,
 .form-control,
 input,
@@ -85,7 +76,7 @@ textarea {
   @extend %form-group;
 }
 
-/* ✅ Input icons */
+//  Input icons
 .with-icon {
   position: relative;
 
@@ -103,7 +94,7 @@ textarea {
   }
 }
 
-/* Checkbox / radio */
+// Checkbox / radio
 .form-check-group {
   display: flex;
   flex-wrap: wrap;
@@ -126,17 +117,17 @@ textarea {
   }
 }
 
-/* Profile form override */
+// Profile form override
 .profile-form {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  max-width: 100%; // форма тепер розтягується на всю картку
-  padding: 0; // прибираємо падінги
-  margin: 0; // прибираємо автоцентрування
-  background: none; // прибираємо білий фон
-  border: none; // прибираємо бордери
-  box-shadow: none; // прибираємо тінь
+  max-width: 100%;
+  padding: 0;
+  margin: 0;
+  background: none;
+  border: none;
+  box-shadow: none;
 
   .form-group label {
     display: initial;

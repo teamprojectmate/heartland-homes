@@ -1,4 +1,3 @@
-// src/pages/User/MyBookings.jsx
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -14,7 +13,7 @@ import { fetchPaymentsByUser } from '../../store/slices/paymentsSlice';
 import { getAccommodationById } from '../../api/accommodations/accommodationService';
 import { normalizeBooking } from '../../utils/normalizeBooking';
 
-// 🔹 централізовано booking-компоненти
+//  централізовано booking-компоненти
 import { BookingList } from '../../components/booking/index';
 
 import '../../styles/components/booking/_bookings.scss';

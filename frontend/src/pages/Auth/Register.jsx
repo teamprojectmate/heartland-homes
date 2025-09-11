@@ -1,4 +1,3 @@
-// src/pages/Auth/Register.jsx
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
@@ -23,7 +22,7 @@ const Register = () => {
 
   const { isLoading, isError, isSuccess, message } = useSelector((state) => state.auth);
 
-  // ✅ Редірект після успішної реєстрації
+  //  Редірект після успішної реєстрації
   useEffect(() => {
     if (isSuccess) {
       navigate('/login');
@@ -141,7 +140,7 @@ const Register = () => {
         </p>
       </div>
 
-      {/* 🔹 Додаємо модифікатор register */}
+      {/*  Додаємо модифікатор register */}
       <div className="auth-side register">
         <span className="auth-icon">✨</span>
         <h2 className="auth-title">Ласкаво просимо!</h2>

@@ -1,10 +1,9 @@
-// src/styles/components/_buttons.scss
 @use '../abstract/variables' as *;
 @use '../abstract/mixins' as *;
 @use 'sass:color';
 @use 'sass:map';
 
-/* ───────── core ───────── */
+// core
 %btn {
   display: inline-flex;
   gap: 0.5rem;
@@ -44,7 +43,7 @@
   }
 }
 
-/* ───────── variants via map (класи) ───────── */
+// variants via map (класи)
 @each $variant, $map in $button-variants {
   .btn-#{$variant} {
     @extend %btn;
@@ -62,7 +61,7 @@
   }
 }
 
-/* ───────── sizes ───────── */
+// sizes
 .btn-sm {
   @extend %btn;
 
@@ -85,7 +84,7 @@
   border-radius: 999px;
 }
 
-/* ───────── icon button ───────── */
+// icon button
 .btn-icon {
   @extend %btn;
 
@@ -101,7 +100,7 @@
   }
 }
 
-/* ───────── media ───────── */
+// media
 @media (prefers-reduced-motion: reduce) {
   .btn {
     transition: none !important;
@@ -114,16 +113,16 @@
   }
 }
 
-/* ───────── Google button ───────── */
+// Google button
 .btn-google {
   @extend %btn;
 
   width: 100%;
-  margin-top: 1rem; // 🔹 більше повітря
+  margin-top: 1rem;
   color: $text-color;
   background: $white-color;
   border: 1px solid $border-color;
-  box-shadow: none; // 🔹 Google guideline – без тіні
+  box-shadow: none;
 
   img {
     width: 20px;

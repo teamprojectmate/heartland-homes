@@ -1,4 +1,3 @@
-// src/styles/components/payment/_payments-list.scss
 @use '../../abstract/variables' as *;
 @use '../../abstract/mixins' as *;
 @use 'sass:color';
@@ -51,9 +50,9 @@
 .payment-card {
   display: flex;
   flex-direction: column;
-  max-width: 400px; // 👈 обмеження ширини самої картки
+  max-width: 400px;
   padding: 1.5rem;
-  margin: 0 auto; // 👈 центруємо картку
+  margin: 0 auto;
   color: $heading-color;
   border-radius: $radius-lg;
   box-shadow: $box-shadow-card;
@@ -66,7 +65,7 @@
     transform: translateY(-4px);
   }
 
-  // 🔹 теми за статусами
+  //  теми за статусами
   &.paid {
     background: linear-gradient(135deg, #d1fae5, #a7f3d0);
   }

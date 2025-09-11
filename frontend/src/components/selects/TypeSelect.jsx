@@ -1,4 +1,3 @@
-// src/components/TypeSelect.jsx
 import React from 'react';
 import { typeTranslations } from '../../utils/translations';
 import '../../styles/components/admin/_admin-form.scss';

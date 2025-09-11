@@ -1,4 +1,3 @@
-// src/components/BookingInfo.jsx
 import React from 'react';
 import { mapStatus } from '../../utils/translations';
 

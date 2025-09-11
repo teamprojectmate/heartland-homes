@@ -1,4 +1,3 @@
-// src/pages/Info/FAQ.jsx
 import React from 'react';
 import { HelpCircle } from 'lucide-react';
 import '../../styles/components/_info-pages.scss';

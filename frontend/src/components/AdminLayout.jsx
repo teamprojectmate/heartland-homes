@@ -1,9 +1,8 @@
-// src/layouts/AdminLayout.jsx
 import React from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
-import { HomeIcon, UserIcon, CreditCardIcon } from '@heroicons/react/24/outline';
+import { UserIcon, CreditCardIcon } from '@heroicons/react/24/outline';
 import { MdAdminPanelSettings } from 'react-icons/md';
-import { FaMoneyBillWave } from 'react-icons/fa'; // 🔹 додано іконку для платежів
+import { FaMoneyBillWave } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../store/slices/authSlice';
 
@@ -16,12 +15,12 @@ const AdminLayout = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate('/login'); // після виходу кидає на логін
+    navigate('/login');
   };
 
   return (
     <div className="admin-layout">
-      {/* 🔹 Sidebar */}
+      {/*  Sidebar */}
       <aside className="admin-sidebar">
         <div className="admin-brand">Heartland Admin</div>
         <nav>
@@ -50,7 +49,7 @@ const AdminLayout = () => {
         </nav>
       </aside>
 
-      {/* 🔹 Content */}
+      {/*  Content */}
       <main className="admin-content">
         <header className="admin-header">
           <h2>Адмін-панель</h2>
