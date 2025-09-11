@@ -1,4 +1,3 @@
-// src/components/BookingRow.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaTrash, FaInfoCircle } from 'react-icons/fa';

@@ -1,4 +1,3 @@
-// src/utils/getSafeImageUrl.js
 import { fixDropboxUrl } from './fixDropboxUrl';
 
 export const getSafeImageUrl = (url) => {

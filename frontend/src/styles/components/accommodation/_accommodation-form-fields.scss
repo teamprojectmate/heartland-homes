@@ -1,4 +1,3 @@
-// src/styles/components/accommodation/_accommodation-form-fields.scss
 @use '../../abstract/variables' as *;
 
 .accommodation-form-fields {
@@ -59,7 +58,7 @@
   }
 }
 
-/* 📱 Mobile */
+// Mobile
 @media (max-width: $breakpoint-md) {
   .accommodation-form-fields {
     .filters-row {

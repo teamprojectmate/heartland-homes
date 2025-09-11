@@ -1,8 +1,6 @@
-// src/styles/components/admin/_admin-bookings.scss
-
 @use '../../abstract/variables' as *;
 
-// 🔹 Статуси для селектів у таблиці
+//  Статуси для селектів у таблиці
 .admin-table {
   .status-select.pending {
     border-color: $warning-color;
@@ -21,7 +19,6 @@
   }
 }
 
-// 🔹 Airbnb-style картки бронювань
 .admin-booking-card {
   display: flex;
   gap: 1rem;
@@ -42,7 +39,6 @@
     border-radius: $radius-md;
     box-shadow: $box-shadow-sm;
 
-    // ✅ Щоб fallback SVG не був розтягнутим
     &[src$='.svg'] {
       padding: 0.5rem;
       object-fit: contain;
@@ -91,8 +87,8 @@
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
-    width: auto; // ❗ не на всю ширину
-    min-width: 140px; // трохи запасу
+    width: auto;
+    min-width: 140px;
     max-width: 180px;
     margin-top: 0.5rem;
 
@@ -107,7 +103,7 @@
   }
 }
 
-/* 📱 Mobile (stacked) */
+// Mobile (stacked)
 @media (max-width: $breakpoint-sm) {
   .admin-booking-card {
     flex-direction: column;

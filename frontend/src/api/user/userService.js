@@ -1,4 +1,3 @@
-// src/api/user/userService.js
 import api from '../axios';
 
 // Поточний користувач
@@ -29,7 +28,7 @@ export const updateUserRole = async ({ id, role }) => {
 export const deleteUser = async (id) => {
   await api.delete(`/users/${id}`);
 };
-// ----- Оновити бронювання -----
+// Оновити бронювання
 export const updateBooking = async (id, bookingData) => {
   const response = await api.put(`/bookings/${id}`, bookingData);
   return response.data;

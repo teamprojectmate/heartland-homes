@@ -1,4 +1,3 @@
-// src/pages/Accommodations/Accommodations.jsx
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -19,7 +18,7 @@ import {
 
 import '../../styles/components/accommodation/_accommodations-map.scss';
 
-// ✅ Простий компонент модалки
+//  Простий компонент модалки
 const Modal = ({ isOpen, onClose, children }) => {
   if (!isOpen) return null;
 
@@ -76,7 +75,7 @@ const Accommodations = () => {
   const accommodationListRef = useRef(null);
   const [highlightedId, setHighlightedId] = useState(null);
 
-  // ✅ Для модалки
+  //  Для модалки
   const [selectedAccommodation, setSelectedAccommodation] = useState(null);
 
   useEffect(() => {
@@ -181,7 +180,7 @@ const Accommodations = () => {
         />
       </div>
 
-      {/* ✅ Модалка з деталями */}
+      {/*  Модалка з деталями */}
       <Modal
         isOpen={!!selectedAccommodation}
         onClose={() => setSelectedAccommodation(null)}

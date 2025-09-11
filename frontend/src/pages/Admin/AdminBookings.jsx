@@ -1,4 +1,3 @@
-// src/pages/Admin/AdminBookings.jsx
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -74,7 +73,7 @@ const AdminBookings = () => {
           const user = usersMap[booking.userId];
           const payment = payments.find((p) => p.bookingId === booking.id);
 
-          // 🟢 нормалізуємо тут
+          //  нормалізуємо тут
           return normalizeBooking({
             ...booking,
             accommodation,
@@ -128,7 +127,7 @@ const AdminBookings = () => {
       label: 'Статус бронювання',
       render: (b) => (
         <StatusSelect
-          type="booking" // ✅ додав
+          type="booking"
           value={b.status}
           onChange={(newStatus) => handleStatusChange(b, newStatus)}
         />

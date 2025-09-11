@@ -1,4 +1,3 @@
-// cypress/e2e/admin_accommodations.cy.js
 describe('Admin – Помешкання', () => {
   beforeEach(() => {
     cy.loginAsAdminSession();

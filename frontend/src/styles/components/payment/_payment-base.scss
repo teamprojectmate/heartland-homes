@@ -1,8 +1,7 @@
-// src/styles/components/payment/_payment-base.scss
 @use '../../abstract/variables' as *;
 @use '../../abstract/mixins' as *;
 
-/* Базова обгортка для Payment */
+// Базова обгортка для Payment
 .payment-section {
   display: flex;
   flex-direction: column;

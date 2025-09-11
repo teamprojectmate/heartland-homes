@@ -1,4 +1,3 @@
-// src/styles/components/admin/_admin-layout.scss
 @use '../../abstract/variables' as *;
 @use '../../abstract/mixins' as *;
 @use '../../components/buttons' as *;
@@ -110,7 +109,7 @@
   padding: 2rem;
 }
 
-/* 📱 Ховаємо sidebar на мобільному і планшеті */
+// Ховаємо sidebar на мобільному і планшеті
 @media (max-width: $breakpoint-lg) {
   .admin-sidebar {
     display: none;

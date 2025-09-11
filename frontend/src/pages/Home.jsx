@@ -1,4 +1,3 @@
-// src/pages/Home.jsx
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { loadAccommodations, setFilters } from '../store/slices/accommodationsSlice';
@@ -36,7 +35,7 @@ const Home = () => {
           <p className="hero-subheading">
             Знаходьте пропозиції готелів, приватних помешкань та багато іншого...
           </p>
-          {/* ✅ Використовуємо компонент SearchForm */}
+          {/*  Використовуємо компонент SearchForm */}
           <SearchForm onSearch={handleSearch} />
         </div>
       </section>

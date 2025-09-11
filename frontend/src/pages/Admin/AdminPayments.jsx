@@ -1,4 +1,3 @@
-// src/pages/Admin/AdminPayments.jsx
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAllPayments } from '../../store/slices/paymentsSlice';
@@ -44,7 +43,7 @@ const AdminPayments = () => {
     <div className="admin-payments container admin-page-container">
       <h1 className="section-heading text-center">Управління платежами</h1>
 
-      {/* 🔹 Фільтр */}
+      {/*  Фільтр */}
       <div className="filter-bar mb-3 text-center">
         <select
           value={statusFilter}
@@ -61,7 +60,7 @@ const AdminPayments = () => {
 
       <AdminTable columns={columns} data={payments} />
 
-      {/* 🔹 Пагінація */}
+      {/*  Пагінація */}
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
     </div>
   );

@@ -1,4 +1,3 @@
-// src/pages/Info/Popular.jsx
 import React from 'react';
 import { MapPin } from 'lucide-react';
 import '../../styles/components/_info-pages.scss';

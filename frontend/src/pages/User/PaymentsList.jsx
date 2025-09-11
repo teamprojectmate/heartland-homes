@@ -1,4 +1,3 @@
-// src/pages/User/PaymentsList.jsx
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPaymentsByUser } from '../../store/slices/paymentsSlice';

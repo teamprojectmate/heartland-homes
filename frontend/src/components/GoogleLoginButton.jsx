@@ -1,8 +1,8 @@
-// src/components/GoogleLoginButton.jsx
 import React from 'react';
 
 const GoogleLoginButton = () => {
   const handleGoogleLogin = () => {
+    // ⚡ Редірект усього вікна на бекенд-ендпоінт
     window.location.href = 'http://localhost:8080/oauth2/authorization/google';
   };
 

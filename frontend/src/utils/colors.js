@@ -1,6 +1,4 @@
-// src/utils/colors.js
-
-// 🎨 Основна палітра (синхронізована з _variables.scss)
+//  Основна палітра (синхронізована з _variables.scss)
 export const colors = {
   primary: '#0f766e',
   primary600: '#0b5f59',

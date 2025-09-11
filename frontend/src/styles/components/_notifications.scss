@@ -1,4 +1,3 @@
-// src/styles/components/_notifications.scss
 @use '../abstract/variables' as *;
 
 .notification {
@@ -46,12 +45,12 @@
 
 .notification-info {
   color: $white-color;
-  background-color: $info-color; // ✅ замість #17a2b8
+  background-color: $info-color;
 }
 
 .notification-warning {
   color: $white-color;
-  background-color: $warning-alt; // ✅ замість #ffc107
+  background-color: $warning-alt;
 }
 
 .fixed-bottom-right {

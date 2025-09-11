@@ -1,4 +1,3 @@
-// src/pages/User/Profile.jsx
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProfile, updateProfile } from '../../store/slices/userSlice';

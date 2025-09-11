@@ -1,4 +1,3 @@
-// src/styles/components/_auth.scss
 @use '../abstract/variables' as *;
 @use '../abstract/mixins' as *;
 @use 'sass:color';
@@ -97,7 +96,7 @@
   }
 }
 
-/* 🔹 Сайдбар */
+// Сайдбар
 .auth-side {
   display: flex;
   flex-direction: column;
@@ -144,7 +143,7 @@ footer {
   }
 }
 
-/* 🔹 Mobile */
+// Mobile
 @media (width <= 768px) {
   .auth-layout {
     grid-template-columns: 1fr;

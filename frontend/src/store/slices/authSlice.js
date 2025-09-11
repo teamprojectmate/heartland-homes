@@ -1,4 +1,3 @@
-// src/store/slices/authSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import authService from '../../api/auth/authService';
 
@@ -8,7 +7,7 @@ const savedProfile = JSON.parse(localStorage.getItem('userProfile'));
 
 let initialUser = null;
 if (savedAuth) {
-  initialUser = { ...savedAuth, ...savedProfile };
+  initialUser = { token: savedAuth.token, ...savedProfile };
 
   // Витягуємо роль
   let rawRole = Array.isArray(initialUser.roles)
@@ -29,13 +28,14 @@ const initialState = {
   message: ''
 };
 
-// 🔹 Логін
+//  Логін
 export const login = createAsyncThunk(
   'auth/login',
   async ({ email, password }, { rejectWithValue }) => {
     try {
       const { token } = await authService.login({ email, password });
 
+      // тимчасово зберігаємо токен
       localStorage.setItem('auth', JSON.stringify({ token }));
 
       const profile = await authService.getProfile();
@@ -51,7 +51,8 @@ export const login = createAsyncThunk(
         cleanRole
       };
 
-      localStorage.setItem('auth', JSON.stringify(userData));
+      // зберігаємо у localStorage
+      localStorage.setItem('auth', JSON.stringify({ token }));
       localStorage.setItem('userProfile', JSON.stringify(profile));
 
       return userData;
@@ -59,13 +60,12 @@ export const login = createAsyncThunk(
       localStorage.removeItem('auth');
       localStorage.removeItem('userProfile');
 
-      // ⚡ якщо бекенд нічого не повернув → дефолтне повідомлення
       return rejectWithValue(err.response?.data?.message || 'Невірний логін або пароль');
     }
   }
 );
 
-// 🔹 Реєстрація
+//  Реєстрація
 export const register = createAsyncThunk(
   'auth/register',
   async (userData, { rejectWithValue }) => {
@@ -77,7 +77,7 @@ export const register = createAsyncThunk(
   }
 );
 
-// 🔹 Логаут
+//  Логаут
 export const logout = createAsyncThunk('auth/logout', async () => {
   authService.logout();
 });
@@ -97,14 +97,15 @@ const authSlice = createSlice({
       s.user = payload;
       s.isAuthenticated = !!payload;
     },
-    // 🔹 Додаємо для Google Login
+    //  Google Login success
     loginSuccess: (s, { payload }) => {
       s.user = payload;
       s.isAuthenticated = true;
       s.isError = false;
       s.isLoading = false;
 
-      localStorage.setItem('auth', JSON.stringify(payload));
+      // зберігаємо у localStorage так само, як у login
+      localStorage.setItem('auth', JSON.stringify({ token: payload.token }));
       if (payload.profile) {
         localStorage.setItem('userProfile', JSON.stringify(payload.profile));
       }

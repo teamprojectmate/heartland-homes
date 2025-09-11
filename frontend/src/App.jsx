@@ -1,4 +1,3 @@
-// src/App.jsx
 import React, { Suspense, lazy, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -54,7 +53,7 @@ const AdminEditAccommodation = lazy(
 const AdminBookings = lazy(() => import('./pages/Admin/AdminBookings.jsx'));
 const AdminBookingDetails = lazy(() => import('./pages/Admin/AdminBookingDetails.jsx'));
 const AdminUsers = lazy(() => import('./pages/Admin/AdminUsers.jsx'));
-const AdminPayments = lazy(() => import('./pages/Admin/AdminPayments.jsx')); // 🔹 новий імпорт
+const AdminPayments = lazy(() => import('./pages/Admin/AdminPayments.jsx'));
 
 // NotFound
 import NotFound from './pages/NotFound.jsx';
@@ -136,14 +135,10 @@ function App() {
                   </PageWrapper>
                 }
               />
-              <Route
-                path="/login/success"
-                element={
-                  <PageWrapper title="Вхід успішний">
-                    <LoginSuccess />
-                  </PageWrapper>
-                }
-              />
+              <Route path="/auth/success" element={<LoginSuccess />} />
+
+              <Route path="/login/success" element={<LoginSuccess />} />
+
               <Route
                 path="/register"
                 element={
@@ -244,8 +239,7 @@ function App() {
                 <Route path="bookings" element={<AdminBookings />} />
                 <Route path="bookings/:id" element={<AdminBookingDetails />} />
                 <Route path="users" element={<AdminUsers />} />
-                <Route path="payments" element={<AdminPayments />} />{' '}
-                {/* 🔹 новий роут */}
+                <Route path="payments" element={<AdminPayments />} />
               </Route>
 
               {/* Info routes */}

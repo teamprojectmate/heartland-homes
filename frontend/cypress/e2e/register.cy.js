@@ -1,5 +1,3 @@
-// cypress/e2e/register.cy.js
-
 describe('Форма реєстрації', () => {
   beforeEach(() => {
     cy.visit('/register');
@@ -15,14 +13,14 @@ describe('Форма реєстрації', () => {
     cy.get('input[name="confirmPassword"]').type('password123');
     cy.get('button[type="submit"]').click();
 
-    // ✅ редірект на сторінку логіна
+    //  редірект на сторінку логіна
     cy.url().should('include', '/login');
   });
 
   it('Помилка якщо email уже зайнятий', () => {
     cy.get('input[name="firstName"]').type('Іван');
     cy.get('input[name="lastName"]').type('Тестовий');
-    cy.get('input[name="email"]').type('admin@booking.com'); // вже існуючий
+    cy.get('input[name="email"]').type('admin@booking.com');
     cy.get('input[name="password"]').type('password123');
     cy.get('input[name="confirmPassword"]').type('password123');
     cy.get('button[type="submit"]').click();

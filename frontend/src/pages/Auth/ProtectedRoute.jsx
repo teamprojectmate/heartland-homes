@@ -1,4 +1,3 @@
-// src/pages/Auth/ProtectedRoute.jsx
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Navigate, useLocation } from 'react-router-dom';
@@ -21,7 +20,7 @@ const ProtectedRoute = ({ children, requiredRole = null }) => {
   if (requiredRole) {
     const roles = Array.isArray(requiredRole) ? requiredRole : [requiredRole];
 
-    // ✅ fallback: cleanRole або roles/role з профілю
+    //  fallback: cleanRole або roles/role з профілю
     const userRole =
       user?.cleanRole || (Array.isArray(user?.roles) ? user.roles[0] : user?.role);
 

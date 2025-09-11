@@ -1,4 +1,3 @@
-// src/store/slices/paymentsSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import {
   createPayment as createPaymentService,
@@ -17,7 +16,7 @@ const initialState = {
   error: null
 };
 
-// ----- Create payment -----
+//  Create payment
 export const createPayment = createAsyncThunk(
   'payments/createPayment',
   async ({ bookingId, paymentType = 'PAYMENT' }, { rejectWithValue }) => {
@@ -30,7 +29,7 @@ export const createPayment = createAsyncThunk(
   }
 );
 
-// ----- Fetch payments by user -----
+//  Fetch payments by user
 export const fetchPaymentsByUser = createAsyncThunk(
   'payments/fetchByUser',
   async ({ userId, pageable }, { rejectWithValue }) => {
@@ -45,7 +44,7 @@ export const fetchPaymentsByUser = createAsyncThunk(
   }
 );
 
-// ----- Cancel payment -----
+//  Cancel payment
 export const cancelPayment = createAsyncThunk(
   'payments/cancelPayment',
   async (paymentId, { rejectWithValue }) => {
@@ -60,7 +59,7 @@ export const cancelPayment = createAsyncThunk(
   }
 );
 
-// ----- Fetch all payments (admin) -----
+//  Fetch all payments (admin)
 export const fetchAllPayments = createAsyncThunk(
   'payments/fetchAll',
   async (params, { rejectWithValue }) => {
@@ -93,7 +92,7 @@ const paymentsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // ---- createPayment ----
+      // createPayment
       .addCase(createPayment.pending, (state) => {
         state.createStatus = 'loading';
       })
@@ -106,7 +105,7 @@ const paymentsSlice = createSlice({
         state.error = action.payload;
       })
 
-      // ---- fetchPaymentsByUser ----
+      // fetchPaymentsByUser
       .addCase(fetchPaymentsByUser.pending, (state) => {
         state.fetchStatus = 'loading';
       })
@@ -120,7 +119,7 @@ const paymentsSlice = createSlice({
         state.error = action.payload;
       })
 
-      // ---- cancelPayment ----
+      //  cancelPayment
       .addCase(cancelPayment.pending, (state) => {
         state.cancelStatus = 'loading';
       })
@@ -135,7 +134,7 @@ const paymentsSlice = createSlice({
         state.error = action.payload;
       })
 
-      // ---- fetchAllPayments (admin) ----
+      // fetchAllPayments (admin)
       .addCase(fetchAllPayments.pending, (state) => {
         state.fetchStatus = 'loading';
       })

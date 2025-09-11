@@ -30,7 +30,7 @@ const AdminEditAccommodation = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // --- завантаження даних ---
+  // завантаження даних
   useEffect(() => {
     const fetchAccommodation = async () => {
       setLoading(true);
@@ -49,13 +49,13 @@ const AdminEditAccommodation = () => {
     fetchAccommodation();
   }, [id]);
 
-  // --- обробка змін ---
+  //  обробка змін
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // --- сабміт форми ---
+  // сабміт форми
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);

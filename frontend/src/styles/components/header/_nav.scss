@@ -1,4 +1,3 @@
-// src/styles/components/header/nav
 @use '../../abstract/variables' as *;
 @use '../../abstract/mixins' as *;
 
@@ -7,10 +6,9 @@
   gap: 1.2rem;
   align-items: center;
 
-  // ❌ було md → ✅ стало lg
   @include media(lg) {
     display: flex;
-    gap: 2rem; // відстань між пунктами
+    gap: 2rem;
     align-items: center;
   }
 }
@@ -39,7 +37,7 @@ ul {
   color: $heading-color;
   text-decoration: none;
 
-  @include underline($primary-color, 3px, 99px, 8px); // ✅ Використовуємо міксин
+  @include underline($primary-color, 3px, 99px, 8px);
 
   &:hover {
     color: $primary-color;

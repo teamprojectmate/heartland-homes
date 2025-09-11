@@ -1,4 +1,3 @@
-// src/pages/User/PaymentSuccess.jsx
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/components/payment/_payment-checkout.scss';
@@ -22,7 +21,8 @@ const PaymentSuccess = () => {
           🎉 Оплату успішно завершено! 🎉
         </h2>
         <p className="payment-subtitle">
-          Дякуємо за вашу оплату. Ви будете перенаправлені на сторінку "Мої платежі".
+          Дякуємо за вашу оплату. Ви будете перенаправлені на сторінку &quot;Мої
+          платежі&quot;.
         </p>
       </div>
     </div>
