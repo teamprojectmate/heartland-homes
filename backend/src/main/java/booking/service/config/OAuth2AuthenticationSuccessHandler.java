@@ -6,11 +6,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccessHandler {
@@ -18,33 +20,35 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
     private final JwtUtil jwtUtil;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+    public void onAuthenticationSuccess(HttpServletRequest request,
+            HttpServletResponse response,
             Authentication authentication) throws IOException {
 
-        OAuth2User authenticationPrincipal = (OAuth2User) authentication.getPrincipal();
-        String email = ((CustomUserPrincipal) authenticationPrincipal).getUsername();
-        String token = jwtUtil.generateToken(email);
+        log.info("OAuth2 authentication success triggered");
+        log.info("Authentication object: {}", authentication);
 
-        response.setContentType("text/html");
-        response.getWriter().write(String.format(
-                """
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>Authentication Success</title>
-                </head>
-                <body>
-                    <script>
-                        window.opener.postMessage({
-                            type: 'OAUTH_SUCCESS',
-                            token: '%s'
-                        }, '*');
-                        window.close();
-                    </script>
-                    <p>Authentication successful! This window will close automatically.</p>
-                </body>
-                </html>
-                """, token));
-        response.getWriter().flush();
+        Object principal = authentication.getPrincipal();
+        String email;
+
+        if (principal instanceof CustomUserPrincipal customUser) {
+            email = customUser.getEmail();
+            log.info("Extracted email from CustomUserPrincipal: {}", email);
+
+        } else if (principal instanceof OAuth2User oauth2User) {
+            email = oauth2User.getAttribute("email");
+            log.warn("Using OAuth2User directly, extracted email: {}", email);
+
+        } else {
+            log.error("Unexpected principal type: {}",
+                    principal != null ? principal.getClass().getName() : "null");
+            throw new IllegalStateException("Authentication principal is not recognized");
+        }
+
+        String token = jwtUtil.generateToken(email);
+        log.info("Generated JWT for {}: {}", email, token);
+
+        String redirectUrl = "http://localhost:5173/auth/success?token=" + token;
+        log.info("Redirecting to frontend: {}", redirectUrl);
+        response.sendRedirect(redirectUrl);
     }
 }

@@ -161,8 +161,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     private BigDecimal calculateAmountToPay(Booking booking, PaymentType type) {
         BigDecimal dailyFee = booking.getAccommodation().getDailyRate();
-        long rentalDays =
-                ChronoUnit.DAYS.between(booking.getCheckInDate(), booking.getCheckOutDate()) + 1;
-        return dailyFee.multiply(BigDecimal.valueOf(rentalDays));
+        long nights = ChronoUnit.DAYS.between(booking.getCheckInDate(), booking.getCheckOutDate());
+        return dailyFee.multiply(BigDecimal.valueOf(nights));
     }
 }

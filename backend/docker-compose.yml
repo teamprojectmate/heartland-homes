@@ -19,7 +19,7 @@ services:
       mysqldb:
         condition: service_healthy
     build: .
-    image: accommodation-booking-service:6.0
+    image: accommodation-booking-service:7.0
     restart: on-failure
     env_file:
       - .env
@@ -38,6 +38,14 @@ services:
           "spring.jackson.deserialization.fail-on-unknown-properties": ${SPRING_JACKSON_FAIL_ON_UNKNOWN_PROPERTIES},
           "jwt.expiration": ${JWT_EXPIRATION},
           "jwt.secret": "${JWT_SECRET}",
-          "spring.application.name": "${SPRING_APPLICATION_NAME}"
+          "spring.application.name": "${SPRING_APPLICATION_NAME}",
+          "spring.security.oauth2.client.registration.google.client-id": "${GOOGLE_CLIENT_ID}",
+          "spring.security.oauth2.client.registration.google.client-secret": "${GOOGLE_CLIENT_SECRET}",
+          "spring.security.oauth2.client.registration.google.scope": ["email", "profile"],
+          "spring.security.oauth2.client.registration.google.redirect-uri": "${GOOGLE_REDIRECT_URI}",
+          "spring.security.oauth2.client.provider.google.authorization-uri": "https://accounts.google.com/o/oauth2/v2/auth",
+          "spring.security.oauth2.client.provider.google.token-uri": "https://oauth2.googleapis.com/token",
+          "spring.security.oauth2.client.provider.google.user-info-uri": "https://www.googleapis.com/oauth2/v3/userinfo",
+          "spring.security.oauth2.client.provider.google.user-name-attribute": "email"
         }
       JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:${DEBUG_PORT}"
