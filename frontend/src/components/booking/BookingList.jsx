@@ -1,4 +1,3 @@
-// src/components/booking/BookingList.jsx
 import React from 'react';
 import BookingCard from './BookingCard';
 import BookingRow from './BookingRow';
@@ -9,7 +8,7 @@ import '../../styles/components/booking/_bookings.scss';
 
 const BookingList = ({
   bookings = [],
-  view = 'card', // 'card' | 'row'
+  view = 'card',
   onCancel,
   onPay,
   onDelete,

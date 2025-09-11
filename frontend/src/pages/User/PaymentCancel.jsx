@@ -1,4 +1,3 @@
-// src/pages/User/PaymentCancel.jsx
 import React from 'react';
 import PageWrapper from '../../components/PageWrapper';
 import { Link } from 'react-router-dom';

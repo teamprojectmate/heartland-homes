@@ -1,4 +1,3 @@
-// src/api/auth/authService.js
 import api from '../axios';
 
 const register = async (userData) => {

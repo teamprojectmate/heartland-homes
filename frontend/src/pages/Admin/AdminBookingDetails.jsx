@@ -1,4 +1,3 @@
-// src/pages/Admin/AdminBookings.jsx
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -74,14 +73,14 @@ const AdminBookings = () => {
   const [enrichedBookings, setEnrichedBookings] = useState([]);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-  // --- resize listener ---
+  // resize listener
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // --- завантаження бронювань та користувачів ---
+  //  завантаження бронювань та користувачів
   useEffect(() => {
     dispatch(fetchBookings());
 
@@ -94,7 +93,7 @@ const AdminBookings = () => {
     });
   }, [dispatch]);
 
-  // --- enrichment житла та користувачів ---
+  //  enrichment житла та користувачів
   useEffect(() => {
     if (!bookings || bookings.length === 0) return;
 
@@ -137,7 +136,7 @@ const AdminBookings = () => {
   if (status === 'loading') return <p className="text-center">Завантаження...</p>;
   if (error) return <p className="text-danger text-center">{error}</p>;
 
-  // --- колонки для AdminTable ---
+  //  колонки для AdminTable
   const columns = [
     { key: 'id', label: 'ID' },
     {

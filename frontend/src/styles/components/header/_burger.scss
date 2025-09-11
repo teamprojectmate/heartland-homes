@@ -1,8 +1,7 @@
-// src/styles/components/header/burger
 @use '../../abstract/variables' as *;
 @use '../../abstract/mixins' as *;
 
-/* Бургер */
+// Бургер
 .burger {
   z-index: $z-header + 1;
   display: inline-flex;

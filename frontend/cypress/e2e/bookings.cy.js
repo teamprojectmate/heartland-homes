@@ -1,4 +1,3 @@
-// cypress/e2e/bookings.cy.js
 describe('Мої бронювання', () => {
   beforeEach(() => {
     cy.loginAsUserSession();

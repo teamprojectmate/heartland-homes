@@ -1,4 +1,3 @@
-// src/components/filters/AccommodationFilters.jsx
 import React, { useState, useEffect } from 'react';
 import { Filter, RotateCcw } from 'lucide-react';
 import AccommodationFormFields from './AccommodationFormFields';
@@ -64,7 +63,7 @@ const AccommodationFilters = ({
             showAmenities={false}
             showLatitude={false}
             showLongitude={false}
-            onlyBasicFields={true} // ми залишаємо тільки city, type, size
+            onlyBasicFields={true}
           />
         </div>
 

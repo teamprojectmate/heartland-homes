@@ -1,7 +1,6 @@
-// cypress/e2e/admin_bookings.cy.js
 describe('Admin – Бронювання', () => {
   beforeEach(() => {
-    cy.viewport(1280, 800); // 💻 примусово десктопний варіант
+    cy.viewport(1280, 800); 
     cy.loginAsAdminSession();
     cy.visit('/');
     cy.goTo('/admin/bookings');

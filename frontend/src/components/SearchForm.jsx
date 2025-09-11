@@ -1,4 +1,3 @@
-// src/components/SearchForm.jsx
 import React, { useState } from 'react';
 import '../styles/components/_forms.scss';
 import '../styles/components/_buttons.scss';

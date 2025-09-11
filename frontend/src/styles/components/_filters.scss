@@ -1,4 +1,3 @@
-// src/styles/components/_filters.scss
 @use '../abstract/variables' as *;
 @use '../abstract/mixins' as *;
 
@@ -25,9 +24,6 @@
 
 .filters-grid {
   display: grid;
-
-  // Створюємо адаптивну сітку, щоб елементи виглядали добре на будь-якому екрані.
-  // Мінімальна ширина стовпця 280px, а потім він розтягується.
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1rem;
 }

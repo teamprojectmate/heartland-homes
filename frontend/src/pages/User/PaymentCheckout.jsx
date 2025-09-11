@@ -1,4 +1,3 @@
-// src/pages/User/PaymentCheckout.jsx
 import React from 'react';
 import '../../styles/components/payment/_payment-checkout.scss';
 

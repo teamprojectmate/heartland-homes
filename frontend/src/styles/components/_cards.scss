@@ -1,8 +1,7 @@
-// src/styles/components/cards.scss
 @use '../abstract/variables' as *;
 @use '../abstract/mixins' as *;
 
-/* ───────── Base ───────── */
+// Base
 %card-base {
   display: flex;
   flex-direction: column;
@@ -17,7 +16,7 @@
     border 0.2s ease;
 }
 
-/* ───────── Grid ───────── */
+// Grid
 .cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -32,7 +31,7 @@
   }
 }
 
-/* ───────── Variants ───────── */
+// Variants
 .card-custom {
   @extend %card-base;
 
@@ -84,7 +83,7 @@
   color: $primary-color;
 }
 
-/* 🔹 Тільки локальний відступ */
+// Тільки локальний відступ
 .card-badges {
   margin: 0.5rem 0 1rem;
 }

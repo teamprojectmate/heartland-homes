@@ -1,4 +1,3 @@
-// cypress/e2e/user.cy.js
 describe('User flow', () => {
   beforeEach(() => {
     cy.loginAsUserSession();
@@ -21,7 +20,7 @@ describe('User flow', () => {
 
  it('не має кнопки "Оплатити" для оплаченого бронювання', () => {
   cy.get('.booking-card')
-    .contains(/оплачено/i)   // ✅ пошук без врахування регістру
+    .contains(/оплачено/i) 
     .parents('.booking-card')
     .within(() => {
       cy.contains('Оплатити').should('not.exist');

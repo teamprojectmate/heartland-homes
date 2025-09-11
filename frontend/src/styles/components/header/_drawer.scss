@@ -1,9 +1,8 @@
-// src/styles/components/header/_drawer.scss
 @use 'sass:color';
 @use '../../abstract/variables' as *;
 @use '../../abstract/mixins' as *;
 
-/* Drawer */
+// Drawer
 .drawer {
   position: fixed;
   inset: 0;
@@ -59,7 +58,7 @@
   transform: translateX(0);
 }
 
-/* Навігація */
+// Навігація
 .drawer-nav {
   display: flex;
   flex-direction: column;
@@ -73,7 +72,7 @@
   }
 }
 
-/* Кнопки */
+// Кнопки
 .drawer-actions {
   display: flex;
   flex-direction: column;
@@ -104,7 +103,7 @@
   }
 }
 
-/* Кнопка закриття */
+// Кнопка закриття
 .drawer-close {
   position: relative;
   display: flex;
@@ -147,7 +146,7 @@
   }
 }
 
-/* Drawer admin-mode */
+// Drawer admin-mode
 .drawer.admin-mode .drawer-content {
   color: $white-color;
   background: $gray-800;

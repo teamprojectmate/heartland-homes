@@ -1,4 +1,3 @@
-// src/components/booking/BookingDetails.jsx
 import React, { useMemo } from 'react';
 import BookingInfo from './BookingInfo';
 import BookingActions from './BookingActions';
@@ -8,11 +7,8 @@ import '../../styles/components/booking/_booking-card.scss';
 import '../../styles/components/booking/_booking-details.scss';
 
 const BookingDetails = ({ booking, onCancel, onDelete, onPay }) => {
-  if (!booking) return null;
-
-  // 🚀 Автофікс статусу (як у MyBookings.jsx)
   const enrichedBooking = useMemo(() => {
-    if (!booking) return booking;
+    if (!booking) return null;
     let fixedStatus = booking.status;
     if (booking.payment?.status === 'PAID' && booking.status === 'PENDING') {
       fixedStatus = 'CONFIRMED';
@@ -20,17 +16,17 @@ const BookingDetails = ({ booking, onCancel, onDelete, onPay }) => {
     return { ...booking, status: fixedStatus };
   }, [booking]);
 
-  const isPaid = enrichedBooking.payment?.status === 'PAID';
+  if (!enrichedBooking) return null;
 
   return (
     <div className="container booking-details-page">
       <h1 className="section-heading">Деталі бронювання</h1>
 
       <div className="details-grid">
-        {/* 🔹 Ліва частина — інформація про бронювання */}
+        {/*  Ліва частина — інформація про бронювання */}
         <BookingInfo booking={enrichedBooking} />
 
-        {/* 🔹 Права частина — статуси та дії */}
+        {/*  Права частина — статуси та дії */}
         <div className="details-actions">
           <BookingStatusBlock booking={enrichedBooking} />
 

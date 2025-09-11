@@ -1,4 +1,3 @@
-// cypress/e2e/admin_payments.cy.js
 describe('Admin – Платежі', () => {
   beforeEach(() => {
     cy.loginAsAdminSession();

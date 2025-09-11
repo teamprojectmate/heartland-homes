@@ -1,12 +1,12 @@
 import api from '../axios';
 
-// ----- Створити бронювання -----
+//  Створити бронювання
 export const createBooking = async (bookingData) => {
   const response = await api.post('/bookings', bookingData);
   return response.data;
 };
 
-// ----- Отримати мої бронювання (поточний користувач, з пагінацією) -----
+// Отримати мої бронювання (поточний користувач, з пагінацією)
 export const fetchMyBookings = async (page = 0, size = 5) => {
   const response = await api.get('/bookings/my', {
     params: { page, size }
@@ -14,7 +14,7 @@ export const fetchMyBookings = async (page = 0, size = 5) => {
   return response.data;
 };
 
-// ----- Отримати всі бронювання (адмін) -----
+// Отримати всі бронювання (адмін)
 export const fetchBookings = async (page = 0, size = 10, userId, status) => {
   const params = { page, size };
   if (userId) params.userId = userId;
@@ -24,13 +24,13 @@ export const fetchBookings = async (page = 0, size = 10, userId, status) => {
   return response.data;
 };
 
-// ----- Отримати бронювання за ID -----
+// Отримати бронювання за ID
 export const fetchBookingById = async (id) => {
   const response = await api.get(`/bookings/${id}`);
   return response.data;
 };
 
-// ----- Оновити бронювання -----
+//  Оновити бронювання
 export const updateBooking = async (id, booking) => {
   const payload = {
     checkInDate: booking.checkInDate,
@@ -44,19 +44,19 @@ export const updateBooking = async (id, booking) => {
   return response.data;
 };
 
-// ----- Скасувати бронювання (правильний DELETE) -----
+// Скасувати бронювання (правильний DELETE)
 export const cancelBooking = async (id) => {
   const response = await api.delete(`/bookings/${id}`);
   return response.data;
 };
 
-// ----- Видалити бронювання (тільки адмін, теж DELETE) -----
+//  Видалити бронювання (тільки адмін, теж DELETE)
 export const deleteBooking = async (id) => {
   const response = await api.delete(`/bookings/${id}`);
   return response.data;
 };
 
-// ✅ НОВЕ: Обробка платежу за бронювання
+//  НОВЕ: Обробка платежу за бронювання
 export const processPayment = async (bookingId) => {
   const response = await api.post(`/bookings/${bookingId}/payment`);
   return response.data;

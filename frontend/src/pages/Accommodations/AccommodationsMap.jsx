@@ -1,4 +1,3 @@
-// src/pages/Accommodations/AccommodationsMap.jsx
 import React from 'react';
 import BaseMap from '../../components/BaseMap';
 import { fixDropboxUrl } from '../../utils/fixDropboxUrl';

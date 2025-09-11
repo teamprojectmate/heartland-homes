@@ -1,4 +1,3 @@
-// src/pages/Info/Support.jsx
 import React from 'react';
 import { Mail, Phone } from 'lucide-react';
 import '../../styles/components/_info-pages.scss';
@@ -7,7 +6,7 @@ const Support = () => (
   <section className="info-page container">
     <div className="info-header">
       <Mail className="info-icon" size={28} />
-      <h1 className="page-title">Зв'язатися з нами</h1>
+      <h1 className="page-title">Зв&apos;язатися з нами</h1>
     </div>
 
     <p className="lead-text">Маєте питання чи потребуєте допомоги? Ми завжди поруч!</p>

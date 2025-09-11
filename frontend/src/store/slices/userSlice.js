@@ -1,4 +1,3 @@
-// src/store/slices/userSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import {
   getCurrentUser,
@@ -17,7 +16,7 @@ const initialState = {
   error: null
 };
 
-// --- Профіль ---
+//  Профіль
 export const fetchProfile = createAsyncThunk(
   'user/fetchProfile',
   async (_, { rejectWithValue }) => {
@@ -31,7 +30,7 @@ export const fetchProfile = createAsyncThunk(
   }
 );
 
-// --- Оновлення профілю ---
+// Оновлення профілю
 export const updateProfile = createAsyncThunk(
   'user/updateProfile',
   async (userData, { rejectWithValue }) => {
@@ -43,7 +42,7 @@ export const updateProfile = createAsyncThunk(
   }
 );
 
-// --- Список користувачів ---
+// Список користувачів
 export const fetchUsers = createAsyncThunk(
   'user/fetchUsers',
   async (_, { rejectWithValue }) => {
@@ -64,7 +63,7 @@ export const fetchUsers = createAsyncThunk(
   }
 );
 
-// --- Оновлення ролі ---
+// Оновлення ролі
 export const updateUserRole = createAsyncThunk(
   'user/updateUserRole',
   async ({ id, role }, { rejectWithValue }) => {
@@ -77,7 +76,7 @@ export const updateUserRole = createAsyncThunk(
   }
 );
 
-// --- Видалення користувача ---
+//  Видалення користувача
 export const removeUser = createAsyncThunk(
   'user/removeUser',
   async (id, { rejectWithValue }) => {

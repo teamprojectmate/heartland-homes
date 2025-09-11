@@ -1,4 +1,3 @@
-// src/styles/components/admin/_admin-tables.scss
 @use '../../abstract/variables' as *;
 @use '../../abstract/mixins' as *;
 @use 'sass:color';
@@ -62,7 +61,7 @@
   }
 }
 
-/* 🔹 Selects (без кольорів, лише базові стилі) */
+// Selects (без кольорів, лише базові стилі)
 .status-select,
 .role-select {
   display: inline-block;
@@ -91,7 +90,7 @@
   }
 }
 
-/* 🔹 Inline buttons */
+// Inline buttons
 .btn-inline {
   display: inline-flex;
   gap: 0.4rem;
@@ -128,7 +127,7 @@
   }
 }
 
-/* 📱 Mobile */
+// Mobile
 @media (max-width: $max-width-2xl) {
   .admin-table,
   .admin-table thead,

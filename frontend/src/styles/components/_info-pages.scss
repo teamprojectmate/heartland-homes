@@ -1,4 +1,3 @@
-// src/styles/components/_info-pages.scss
 @use '../abstract/variables' as *;
 @use '../abstract/mixins' as *;
 
@@ -18,7 +17,7 @@
       padding: 10px;
       color: $white-color;
       background: $primary-color;
-      border-radius: 50%; // ✅ замість $radius-full
+      border-radius: 50%;
       box-shadow: $box-shadow-card;
     }
 
@@ -92,7 +91,7 @@
     }
   }
 
-  /* FAQ */
+  // FAQ
   .faq-grid {
     display: grid;
     gap: 1.5rem;
@@ -103,7 +102,7 @@
   .faq-card {
     padding: 1.2rem 1.5rem;
     background: $surface-color;
-    border-radius: $radius-lg; // ✅ замість radius-xl
+    border-radius: $radius-lg;
     box-shadow: $box-shadow-card;
     transition: all 0.3s ease;
 
@@ -125,7 +124,7 @@
     }
   }
 
-  /* Support */
+  // Support
   .support-box {
     padding: 1.5rem;
     margin-top: 2rem;
@@ -183,7 +182,7 @@
   padding: 1.8rem 1.2rem;
   text-align: center;
   background: $surface-color;
-  border-radius: $radius-lg; // ✅ заміна
+  border-radius: $radius-lg;
   box-shadow: $box-shadow-card;
   transition: all 0.3s ease;
 
@@ -230,7 +229,7 @@
   padding: 1.5rem;
   text-align: center;
   background: $surface-color;
-  border-radius: $radius-lg; // ✅ заміна
+  border-radius: $radius-lg;
   box-shadow: $box-shadow-card;
   transition: all 0.3s ease;
 

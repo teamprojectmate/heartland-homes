@@ -1,4 +1,3 @@
-// src/components/PaymentStatusBadge.jsx
 import React from 'react';
 import StatusBadge from './StatusBadge';
 

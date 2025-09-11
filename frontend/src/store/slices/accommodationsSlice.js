@@ -1,8 +1,7 @@
-// src/store/slices/accommodationsSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import * as accommodationService from '../../api/accommodations/accommodationService';
 
-// ----- Public: завантаження житла -----
+// Public: завантаження житла
 export const loadAccommodations = createAsyncThunk(
   'accommodations/load',
   async (_, { getState, rejectWithValue }) => {
@@ -35,7 +34,7 @@ export const loadAccommodations = createAsyncThunk(
   }
 );
 
-// ----- Admin: завантаження списку -----
+// Admin: завантаження списку
 export const loadAdminAccommodations = createAsyncThunk(
   'accommodations/loadAdmin',
   async ({ page = 0, size = 10 }, { rejectWithValue }) => {
@@ -50,7 +49,7 @@ export const loadAdminAccommodations = createAsyncThunk(
   }
 );
 
-// ----- Admin: видалення житла -----
+//  Admin: видалення житла
 export const removeAccommodation = createAsyncThunk(
   'accommodations/remove',
   async (id, { rejectWithValue }) => {
@@ -63,7 +62,7 @@ export const removeAccommodation = createAsyncThunk(
   }
 );
 
-// ----- Створення житла -----
+// Створення житла
 export const createAccommodationAsync = createAsyncThunk(
   'accommodations/create',
   async (formData, { rejectWithValue }) => {
@@ -77,7 +76,7 @@ export const createAccommodationAsync = createAsyncThunk(
   }
 );
 
-// ----- Admin: оновлення статусу житла -----
+// Admin: оновлення статусу житла
 export const updateAccommodationStatusAsync = createAsyncThunk(
   'accommodations/updateStatus',
   async ({ id, status }, { rejectWithValue }) => {
@@ -92,7 +91,7 @@ export const updateAccommodationStatusAsync = createAsyncThunk(
   }
 );
 
-extraReducers: (builder) => {
+(builder) => {
   builder.addCase(updateAccommodationStatusAsync.fulfilled, (state, { payload }) => {
     const idx = state.items.findIndex((item) => item.id === payload.id);
     if (idx !== -1) state.items[idx] = payload;

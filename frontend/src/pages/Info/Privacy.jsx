@@ -1,4 +1,3 @@
-// src/pages/Info/Privacy.jsx
 import React from 'react';
 import { Shield } from 'lucide-react';
 import '../../styles/components/_info-pages.scss';

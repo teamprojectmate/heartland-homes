@@ -1,4 +1,3 @@
-// src/pages/Info/Partners.jsx
 import React from 'react';
 import { Users } from 'lucide-react';
 import '../../styles/components/_info-pages.scss';

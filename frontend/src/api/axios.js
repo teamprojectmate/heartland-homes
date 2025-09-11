@@ -1,4 +1,3 @@
-// src/api/axios.js
 import axios from 'axios';
 import qs from 'qs';
 
@@ -8,7 +7,7 @@ const instance = axios.create({
     qs.stringify(params, { arrayFormat: 'repeat', allowDots: true })
 });
 
-// 🔹 Функція для отримання токена з localStorage
+//  Функція для отримання токена з localStorage
 const getAuthData = () => {
   try {
     return JSON.parse(localStorage.getItem('auth')) || null;
@@ -18,7 +17,7 @@ const getAuthData = () => {
   }
 };
 
-// 🔹 додаємо токен у кожен запит
+//  додаємо токен у кожен запит
 instance.interceptors.request.use((config) => {
   const auth = getAuthData();
   const token = auth?.token;
@@ -29,7 +28,7 @@ instance.interceptors.request.use((config) => {
   return config;
 });
 
-// 🔹 обробка помилок
+//  обробка помилок
 instance.interceptors.response.use(
   (res) => res,
   (err) => {

@@ -1,4 +1,3 @@
-// src/store/slices/bookingsSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import bookingsService from '../../api/bookings/bookingsService';
 
@@ -13,7 +12,7 @@ const initialState = {
   totalElements: 0
 };
 
-// 🔹 Хелпер: оновлення сторінки/пагінації
+//  Хелпер: оновлення сторінки/пагінації
 function updatePageState(state, payload) {
   state.bookings = payload.content || [];
   state.page = payload.pageable?.pageNumber ?? 0;
@@ -21,14 +20,14 @@ function updatePageState(state, payload) {
   state.totalElements = payload.totalElements || 0;
 }
 
-// 🔹 Хелпер: видалення бронювання (cancel/delete)
+//  Хелпер: видалення бронювання (cancel/delete)
 function removeBooking(state, id) {
   state.bookings = state.bookings.filter((b) => b.id !== id);
   state.totalElements = Math.max(0, state.totalElements - 1);
   state.totalPages = Math.ceil(state.totalElements / 5);
 }
 
-// ----- Create booking -----
+// Create booking
 export const createBooking = createAsyncThunk(
   'bookings/createBooking',
   async (bookingData, { rejectWithValue }) => {
@@ -42,7 +41,7 @@ export const createBooking = createAsyncThunk(
   }
 );
 
-// ----- Fetch all bookings (admin) -----
+//  Fetch all bookings (admin)
 export const fetchBookings = createAsyncThunk(
   'bookings/fetchBookings',
   async ({ page = 0, size = 10, userId, status } = {}, { rejectWithValue }) => {
@@ -83,7 +82,7 @@ export const fetchBookings = createAsyncThunk(
   }
 );
 
-// ----- Fetch my bookings (current user) -----
+//  Fetch my bookings (current user)
 export const fetchMyBookings = createAsyncThunk(
   'bookings/fetchMyBookings',
   async ({ page = 0, size = 5 } = {}, { rejectWithValue }) => {
@@ -124,7 +123,7 @@ export const fetchMyBookings = createAsyncThunk(
   }
 );
 
-// ----- Change booking status (admin) -----
+// Change booking status (admin)
 export const changeBookingStatus = createAsyncThunk(
   'bookings/changeBookingStatus',
   async ({ booking, status }, { rejectWithValue }) => {
@@ -146,7 +145,7 @@ export const changeBookingStatus = createAsyncThunk(
   }
 );
 
-// ----- Cancel booking (user) -----
+// Cancel booking (user)
 export const cancelBooking = createAsyncThunk(
   'bookings/cancelBooking',
   async (id, { rejectWithValue }) => {
@@ -161,7 +160,7 @@ export const cancelBooking = createAsyncThunk(
   }
 );
 
-// ----- Delete booking (admin) -----
+//  Delete booking (admin)
 export const deleteBooking = createAsyncThunk(
   'bookings/deleteBooking',
   async (id, { rejectWithValue }) => {

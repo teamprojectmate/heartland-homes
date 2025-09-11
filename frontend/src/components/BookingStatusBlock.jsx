@@ -1,4 +1,3 @@
-// src/components/BookingStatusBlock.jsx
 import React from 'react';
 import StatusBadge from './status/StatusBadge';
 import { normalizeBooking } from '../utils/normalizeBooking';

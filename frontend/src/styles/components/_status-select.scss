@@ -1,4 +1,3 @@
-// src/styles/components/_status-select.scss
 @use '../abstract/variables' as *;
 @use 'sass:map';
 
@@ -19,7 +18,7 @@
     box-shadow: $box-shadow-focus;
   }
 
-  // 🟢 автоматично генеруємо стилі
+  // автоматично генеруємо стилі
   @each $status, $colors in $badge-status-colors {
     &.#{$status} {
       color: map.get($colors, color);

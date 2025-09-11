@@ -1,14 +1,12 @@
-// src/components/BaseMap.jsx
 import React, { useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import setupLeaflet from '../utils/leafletConfig';
 import 'leaflet/dist/leaflet.css';
 
-// 🔹 виправляємо дефолтні іконки
 setupLeaflet();
 
-// 🔹 завжди створюємо іконки
+//  завжди створюємо іконки
 const defaultIcon = new L.Icon({
   iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
   iconRetinaUrl:
@@ -37,7 +35,7 @@ const highlightedIcon = new L.Icon({
 const BaseMap = ({ items = [], highlightedId = null, renderPopup }) => {
   const mapRef = useRef(null);
 
-  // ✅ підганяємо карту під маркери
+  //  підганяємо карту під маркери
   useEffect(() => {
     if (mapRef.current && items.length > 0) {
       const bounds = items

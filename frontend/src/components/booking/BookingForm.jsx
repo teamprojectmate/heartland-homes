@@ -1,4 +1,3 @@
-// src/components/BookingForm.jsx
 import React, { useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -16,7 +15,7 @@ const BookingForm = ({ accommodation }) => {
   const { status } = useSelector((state) => state.bookings);
   const { isAuthenticated } = useSelector((state) => state.auth);
 
-  // ✅ Розрахунок кількості ночей і загальної ціни (тільки для UI)
+  //  Розрахунок кількості ночей і загальної ціни (тільки для UI)
   const totalPrice = useMemo(() => {
     if (!checkInDate || !checkOutDate) return 0;
 
@@ -48,7 +47,6 @@ const BookingForm = ({ accommodation }) => {
       return;
     }
 
-    // ✅ Відправляємо тільки ті поля, які очікує бекенд
     const bookingData = {
       accommodationId: accommodation.id,
       checkInDate,
@@ -90,7 +88,7 @@ const BookingForm = ({ accommodation }) => {
         />
       </div>
 
-      {/* ✅ Показуємо загальну суму тільки в UI */}
+      {/*  Показуємо загальну суму тільки в UI */}
       {totalPrice > 0 && (
         <p className="total-price">
           Загальна сума: <strong>{totalPrice} грн</strong>

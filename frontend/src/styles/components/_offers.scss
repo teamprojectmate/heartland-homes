@@ -1,4 +1,3 @@
-// src/styles/components/_offers.scss
 @use '../abstract/variables' as *;
 @use '../abstract/mixins' as *;
 
@@ -89,7 +88,7 @@
   }
 }
 
-/* Модальне вікно */
+// Модальне вікно
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -109,7 +108,7 @@
   width: 90%;
   max-width: 600px;
   padding: 2rem;
-  background-color: $surface-color; // ✅ замість #fff
+  background-color: $surface-color;
   border-radius: $radius-lg;
   animation: modal-open 0.4s ease-out;
 
@@ -125,7 +124,7 @@
   top: 15px;
   right: 15px;
   font-size: 1.5rem;
-  color: $muted-color; // ✅ замість #7f8c8d
+  color: $muted-color;
   cursor: pointer;
   background: none;
   border: none;
