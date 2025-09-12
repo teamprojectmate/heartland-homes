@@ -4,7 +4,7 @@ import * as accommodationService from '../../api/accommodations/accommodationSer
 // Public: завантаження житла
 export const loadAccommodations = createAsyncThunk(
   'accommodations/load',
-  async (_, { getState, rejectWithValue }) => {
+  async (params, { getState, rejectWithValue }) => {
     try {
       const state = getState().accommodations;
 
@@ -17,7 +17,7 @@ export const loadAccommodations = createAsyncThunk(
         status: 'PERMITTED'
       };
 
-      const pageable = {
+      const pageable = params?.pageable || {
         page: state.page,
         size: state.size,
         sort: state.sort
@@ -49,7 +49,7 @@ export const loadAdminAccommodations = createAsyncThunk(
   }
 );
 
-//  Admin: видалення житла
+// Admin: видалення житла
 export const removeAccommodation = createAsyncThunk(
   'accommodations/remove',
   async (id, { rejectWithValue }) => {
@@ -90,13 +90,6 @@ export const updateAccommodationStatusAsync = createAsyncThunk(
     }
   }
 );
-
-(builder) => {
-  builder.addCase(updateAccommodationStatusAsync.fulfilled, (state, { payload }) => {
-    const idx = state.items.findIndex((item) => item.id === payload.id);
-    if (idx !== -1) state.items[idx] = payload;
-  });
-};
 
 const accommodationsSlice = createSlice({
   name: 'accommodations',

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import '../styles/components/_forms.scss';
 import '../styles/components/_buttons.scss';
 import '../styles/components/_searchForm.scss';
@@ -28,20 +28,24 @@ const SearchForm = ({ onSearch }) => {
     maxDailyRate: ''
   });
 
-  const handleChange = (e) => {
+  //  Мемоізація, щоб не створювати нові функції на кожен рендер
+  const handleChange = useCallback((e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value
     }));
-  };
+  }, []);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (onSearch) {
-      onSearch(e, formData);
-    }
-  };
+  const handleSubmit = useCallback(
+    (e) => {
+      e.preventDefault();
+      if (onSearch) {
+        onSearch(e, formData);
+      }
+    },
+    [onSearch, formData]
+  );
 
   return (
     <form onSubmit={handleSubmit} className="search-form-container">
@@ -131,4 +135,5 @@ const SearchForm = ({ onSearch }) => {
   );
 };
 
-export default SearchForm;
+//  Обгортаємо у React.memo для оптимізації
+export default React.memo(SearchForm);
