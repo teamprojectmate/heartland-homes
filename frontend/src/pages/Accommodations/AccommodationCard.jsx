@@ -8,7 +8,6 @@ const fallbackImage = '/no-image.png';
 const AccommodationCard = ({ accommodation }) => {
   const imageUrl = getSafeImageUrl(accommodation.image);
 
-  // тип житла (переклад + іконка + колір)
   const { label, icon, color } = mapType(accommodation.type);
 
   return (
@@ -55,4 +54,5 @@ const AccommodationCard = ({ accommodation }) => {
   );
 };
 
-export default AccommodationCard;
+//  мемоізація для запобігання зайвим ререндерам
+export default React.memo(AccommodationCard);

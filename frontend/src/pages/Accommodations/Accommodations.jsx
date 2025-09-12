@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import AccommodationList from './AccommodationList';
@@ -17,9 +17,10 @@ import {
 } from '../../store/slices/accommodationsSlice';
 
 import '../../styles/components/accommodation/_accommodations-map.scss';
+import '../../styles/components/accommodation/_accommodations-list.scss';
 
-//  Простий компонент модалки
-const Modal = ({ isOpen, onClose, children }) => {
+// Простий компонент модалки
+const Modal = React.memo(({ isOpen, onClose, children }) => {
   if (!isOpen) return null;
 
   return (
@@ -63,7 +64,7 @@ const Modal = ({ isOpen, onClose, children }) => {
       </div>
     </div>
   );
-};
+});
 
 const Accommodations = () => {
   const dispatch = useDispatch();
@@ -72,12 +73,12 @@ const Accommodations = () => {
   const { items, loading, error, filters, page, totalPages } = useSelector(
     (state) => state.accommodations
   );
+
   const accommodationListRef = useRef(null);
   const [highlightedId, setHighlightedId] = useState(null);
-
-  //  Для модалки
   const [selectedAccommodation, setSelectedAccommodation] = useState(null);
 
+  // Зчитування фільтрів з URL
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const newFilters = {};
@@ -89,30 +90,48 @@ const Accommodations = () => {
     dispatch(setFilters(newFilters));
   }, [dispatch, location.search]);
 
+  // Завантаження даних
   useEffect(() => {
     dispatch(loadAccommodations());
   }, [dispatch, filters, page]);
 
-  const handleApplyFilters = (e, formData) => {
-    e.preventDefault();
-    const newFilters = Object.fromEntries(
-      Object.entries(formData).filter(([_, v]) => v !== null && v !== '')
-    );
-    navigate(`/accommodations?${newFilters ? new URLSearchParams(newFilters) : ''}`);
-  };
+  // Скидання фільтрів і сторінки при виході зі сторінки
+  useEffect(() => {
+    return () => {
+      dispatch(resetFilters());
+      dispatch(setPage(0));
+    };
+  }, [dispatch]);
 
-  const handleResetFilters = () => {
+  //  Мемоізація queryParams
+  const queryParams = useMemo(
+    () => new URLSearchParams(filters).toString(),
+    [filters]
+  );
+
+  const handleApplyFilters = useCallback(
+    (e, formData) => {
+      e.preventDefault();
+      const newFilters = Object.fromEntries(
+        Object.entries(formData).filter(([_, v]) => v !== null && v !== '')
+      );
+      navigate(`/accommodations?${new URLSearchParams(newFilters)}`);
+    },
+    [navigate]
+  );
+
+  const handleResetFilters = useCallback(() => {
     dispatch(resetFilters());
     dispatch(setPage(0));
     navigate('/accommodations');
-  };
+  }, [dispatch, navigate]);
 
-  const handleCardHover = (id) => {
+  const handleCardHover = useCallback((id) => {
     setHighlightedId(id);
-  };
+  }, []);
 
   return (
-    <div className="accommodations-page-container">
+    <div className="accommodations-page-container accommodations-list-page">
       <div className="accommodations-list-wrapper">
         <div className="container mt-4">
           <h2 ref={accommodationListRef} className="section-heading mt-5">
@@ -171,7 +190,7 @@ const Accommodations = () => {
                   cursor: 'pointer'
                 }}
                 onError={(e) => (e.currentTarget.src = '/no-image.png')}
-                onClick={() => setSelectedAccommodation(acc)} // ✅ відкриваємо модалку
+                onClick={() => setSelectedAccommodation(acc)}
               />
               <strong>{acc.name}</strong>
               <div>{acc.city}</div>
@@ -180,15 +199,17 @@ const Accommodations = () => {
         />
       </div>
 
-      {/*  Модалка з деталями */}
+      {/* Модалка */}
       <Modal
         isOpen={!!selectedAccommodation}
         onClose={() => setSelectedAccommodation(null)}
       >
-        {selectedAccommodation && <AccommodationDetails id={selectedAccommodation.id} />}
+        {selectedAccommodation && (
+          <AccommodationDetails id={selectedAccommodation.id} />
+        )}
       </Modal>
     </div>
   );
 };
 
-export default Accommodations;
+export default React.memo(Accommodations);
