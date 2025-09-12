@@ -10,9 +10,13 @@ const LoginSuccess = () => {
     const token = params.get('token');
 
     if (token) {
+      // зберігаємо токен у localStorage
       localStorage.setItem('auth', JSON.stringify({ token }));
-      navigate('/profile', { replace: true });
+
+      // редірект на головну
+      navigate('/', { replace: true });
     } else {
+      // якщо токена немає → назад на логін
       navigate('/login', { replace: true });
     }
   }, [location, navigate]);
