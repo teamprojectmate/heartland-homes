@@ -22,7 +22,8 @@ public class AccommodationUtil {
                 .setAmenities(List.of("Wi-Fi", "Кондиціонер", "Пральна машина"))
                 .setDailyRate(BigDecimal.valueOf(2500.00))
                 .setImage("https://www.dropbox.com/scl/fi/rbh8v6jjkhd3txxyhrfhg/photo1.jpg?rlkey=a4lrfbg4pz7zef6fv8jhcq12e&st=w0pq32wx&dl=0")
-                .setAccommodationStatus(AccommodationStatus.PERMITTED);
+                .setAccommodationStatus(AccommodationStatus.PERMITTED)
+                .setOwnerEmail("test@example.com");
     }
 
     public static List<Accommodation> createListOfAccommodations() {

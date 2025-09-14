@@ -128,7 +128,7 @@ class AccommodationControllerTest {
         AccommodationDto actual = objectMapper.readValue(
                 result.getResponse().getContentAsString(),
                 AccommodationDto.class);
-        assertTrue(reflectionEquals(expected, actual, "dailyRate"));
+        assertTrue(reflectionEquals(expected, actual, "dailyRate", "ownerEmail"));
     }
 
     @WithMockCustomUser(id = 1L, username = "test@example.com", roles = {"MANAGER"})
@@ -183,9 +183,7 @@ class AccommodationControllerTest {
         AccommodationDto actual = objectMapper.readValue(
                 result.getResponse().getContentAsString(),
                 AccommodationDto.class);
-        System.out.println(expected);
-        System.out.println(actual);
-        assertTrue(reflectionEquals(expected, actual));
+        assertTrue(reflectionEquals(expected, actual, "ownerEmail"));
     }
 
     @WithMockUser(username = "manager", roles = {"MANAGER"})

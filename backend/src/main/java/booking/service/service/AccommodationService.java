@@ -23,4 +23,6 @@ public interface AccommodationService {
     Page<AccommodationDto> search(AccommodationSearchParametersDto params, Pageable pageable);
 
     AccommodationDto updateStatus(Long id, UpdateAccommodationStatusDto requestDto);
+
+    Page<AccommodationDto> getMyAccommodations(Authentication authentication, Pageable pageable);
 }

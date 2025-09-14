@@ -10,7 +10,6 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 public class AccommodationDto {
-
     private Long id;
     private String name;
     private AccommodationType type;
@@ -23,4 +22,5 @@ public class AccommodationDto {
     private BigDecimal dailyRate;
     private String image;
     private AccommodationStatus accommodationStatus;
+    private String ownerEmail;
 }

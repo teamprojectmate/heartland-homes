@@ -32,12 +32,16 @@ public class AccommodationServiceImpl implements AccommodationService {
     public AccommodationDto save(CreateAccommodationRequestDto requestDto,
             Authentication authentication) {
         User currentUser = (User) authentication.getPrincipal();
+
         Accommodation accommodation = accommodationMapper.toEntity(requestDto);
+        accommodation.setOwner(currentUser);
+
         if (isManager(currentUser)) {
             accommodation.setAccommodationStatus(AccommodationStatus.PERMITTED);
         } else {
             accommodation.setAccommodationStatus(AccommodationStatus.REQUIRES_VERIFICATION);
         }
+
         return accommodationMapper.toDto(accommodationRepository.save(accommodation));
     }
 
@@ -91,6 +95,15 @@ public class AccommodationServiceImpl implements AccommodationService {
         accommodation.setAccommodationStatus(requestDto.getStatus());
         accommodationRepository.save(accommodation);
         return accommodationMapper.toDto(accommodation);
+    }
+
+    @Override
+    public Page<AccommodationDto> getMyAccommodations(Authentication authentication,
+            Pageable pageable) {
+        User currentUser = (User) authentication.getPrincipal();
+
+        return accommodationRepository.findByOwner(currentUser, pageable)
+                .map(accommodationMapper::toDto);
     }
 
     private boolean isManager(User user) {

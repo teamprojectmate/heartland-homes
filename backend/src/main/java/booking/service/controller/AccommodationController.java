@@ -89,4 +89,11 @@ public class AccommodationController {
             @RequestBody @Valid UpdateAccommodationStatusDto requestDto) {
         return accommodationService.updateStatus(id, requestDto);
     }
+
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'MANAGER')")
+    @GetMapping("/me")
+    public Page<AccommodationDto> getMyAccommodations(Authentication authentication,
+            Pageable pageable) {
+        return accommodationService.getMyAccommodations(authentication, pageable);
+    }
 }

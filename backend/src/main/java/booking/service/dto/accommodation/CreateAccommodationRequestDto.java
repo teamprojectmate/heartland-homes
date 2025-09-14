@@ -12,6 +12,7 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 public class CreateAccommodationRequestDto {
+
     @NotNull
     private String name;
 

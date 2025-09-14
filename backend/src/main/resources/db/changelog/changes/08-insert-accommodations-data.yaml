@@ -17,6 +17,7 @@ databaseChangeLog:
               - column: { name: image, value: "https://www.dropbox.com/scl/fi/rbh8v6jjkhd3txxyhrfhg/photo1.jpg?rlkey=a4lrfbg4pz7zef6fv8jhcq12e&st=gykqx3xj&dl=0" }
               - column: { name: is_deleted, valueNumeric: 0 }
               - column: { name: accommodation_status, value: PERMITTED }
+              - column: { name: owner_id, valueNumeric: 1 }
 
         - insert:
             tableName: accommodations
@@ -32,6 +33,7 @@ databaseChangeLog:
               - column: { name: image, value: "https://www.dropbox.com/scl/fi/72shzge7jjptym0m4lqpb/photo2.jpg?rlkey=6fq88kcxwwysv0epfj25oxs92&st=b38i6yrv&dl=0" }
               - column: { name: is_deleted, valueNumeric: 0 }
               - column: { name: accommodation_status, value: PERMITTED }
+              - column: { name: owner_id, valueNumeric: 1 }
 
         - insert:
             tableName: accommodations
@@ -47,6 +49,7 @@ databaseChangeLog:
               - column: { name: image, value: "https://www.dropbox.com/scl/fi/kp6w4a02drpbembtsxd7l/photo3.jpg?rlkey=dsnglnv4gejqkza4hvu7zmrt7&st=zgl9fqbe&dl=0" }
               - column: { name: is_deleted, valueNumeric: 0 }
               - column: { name: accommodation_status, value: PERMITTED }
+              - column: { name: owner_id, valueNumeric: 1 }
 
         - insert:
             tableName: accommodations
@@ -62,6 +65,7 @@ databaseChangeLog:
               - column: { name: image, value: "https://www.dropbox.com/scl/fi/nq2hgr5sn16je0yaepr7w/photo4.jpeg?rlkey=03ug8ay3t233tk3zmbd5nfm5q&st=ddr5kxpk&dl=0" }
               - column: { name: is_deleted, valueNumeric: 0 }
               - column: { name: accommodation_status, value: PERMITTED }
+              - column: { name: owner_id, valueNumeric: 1 }
 
         - insert:
             tableName: accommodations
@@ -77,6 +81,7 @@ databaseChangeLog:
               - column: { name: image, value: "https://www.dropbox.com/scl/fi/e6javskrvdbqop0bcsbpq/photo5.jpg?rlkey=erawyll6abv7jizqgxkmlcy9y&st=o74pvxt9&dl=0" }
               - column: { name: is_deleted, valueNumeric: 0 }
               - column: { name: accommodation_status, value: PERMITTED }
+              - column: { name: owner_id, valueNumeric: 1 }
 
         - insert:
             tableName: accommodations
@@ -92,3 +97,4 @@ databaseChangeLog:
               - column: { name: image, value: "https://www.dropbox.com/scl/fi/ic23pvv6yhv0zh9sckh8t/photo6.jpg?rlkey=p7h9micywcam5jouh4oipau9p&st=2zh21gh5&dl=0" }
               - column: { name: is_deleted, valueNumeric: 0 }
               - column: { name: accommodation_status, value: PERMITTED }
+              - column: { name: owner_id, valueNumeric: 1 }

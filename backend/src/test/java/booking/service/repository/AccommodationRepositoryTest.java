@@ -20,11 +20,21 @@ class AccommodationRepositoryTest {
 
     @Test
     @Sql(scripts = {
+            "classpath:database/delete-users-and-roles.sql",
+            "classpath:database/insert-users-and-roles.sql",
             "classpath:database/delete-accommodations.sql",
-            "classpath:database/insert-accommodations.sql"
+            "classpath:database/insert-accommodations.sql",
+            "classpath:database/delete-bookings.sql",
+            "classpath:database/insert-bookings.sql",
+            "classpath:database/delete-payments.sql",
+            "classpath:database/insert-payments.sql"
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "classpath:database/delete-accommodations.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Sql(scripts = {
+            "classpath:database/delete-payments.sql",
+            "classpath:database/delete-bookings.sql",
+            "classpath:database/delete-accommodations.sql",
+            "classpath:database/delete-users-and-roles.sql"
+    }, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void findAll_shouldReturnInsertedAccommodations() {
         List<Accommodation> accommodations = accommodationRepository.findAll();
         assertEquals(4, accommodations.size());
