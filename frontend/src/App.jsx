@@ -44,9 +44,6 @@ const PaymentsList = lazy(() => import('./pages/User/PaymentsList.jsx'));
 const AdminLayout = lazy(() => import('./components/AdminLayout.jsx'));
 const AdminDashboard = lazy(() => import('./pages/Admin/AdminDashboard.jsx'));
 const AdminAccommodations = lazy(() => import('./pages/Admin/AdminAccommodations.jsx'));
-const CreateAccommodation = lazy(
-  () => import('./pages/Accommodations/CreateAccommodation.jsx')
-);
 const AdminEditAccommodation = lazy(
   () => import('./pages/Admin/AdminEditAccommodation.jsx')
 );
@@ -54,6 +51,16 @@ const AdminBookings = lazy(() => import('./pages/Admin/AdminBookings.jsx'));
 const AdminBookingDetails = lazy(() => import('./pages/Admin/AdminBookingDetails.jsx'));
 const AdminUsers = lazy(() => import('./pages/Admin/AdminUsers.jsx'));
 const AdminPayments = lazy(() => import('./pages/Admin/AdminPayments.jsx'));
+
+// Shared: Create accommodation (CUSTOMER + MANAGER)
+const CreateAccommodation = lazy(
+  () => import('./pages/Accommodations/CreateAccommodation.jsx')
+);
+
+// My Accommodations (CUSTOMER + MANAGER)
+const MyAccommodations = lazy(
+  () => import('./pages/Accommodations/MyAccommodations.jsx')
+);
 
 // NotFound
 import NotFound from './pages/NotFound.jsx';
@@ -95,10 +102,8 @@ function App() {
   return (
     <div className="main-layout">
       <Header />
-
       <main className="main-content">
         <ScrollToTop />
-
         <Suspense fallback={<p className="text-center mt-5">Завантаження...</p>}>
           <ErrorBoundary>
             <Routes>
@@ -127,6 +132,32 @@ function App() {
                   </PageWrapper>
                 }
               />
+
+              {/* Create accommodation (CUSTOMER + MANAGER) */}
+              <Route
+                path="/accommodations/new"
+                element={
+                  <ProtectedRoute requiredRole={['CUSTOMER', 'MANAGER']}>
+                    <PageWrapper title="Створити помешкання">
+                      <CreateAccommodation />
+                    </PageWrapper>
+                  </ProtectedRoute>
+                }
+              />
+
+              {/*  My accommodations (CUSTOMER + MANAGER) */}
+              <Route
+                path="/my-accommodations"
+                element={
+                  <ProtectedRoute requiredRole={['CUSTOMER', 'MANAGER']}>
+                    <PageWrapper title="Мої помешкання">
+                      <MyAccommodations />
+                    </PageWrapper>
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Auth */}
               <Route
                 path="/login"
                 element={
@@ -136,9 +167,7 @@ function App() {
                 }
               />
               <Route path="/auth/success" element={<LoginSuccess />} />
-
               <Route path="/login/success" element={<LoginSuccess />} />
-
               <Route
                 path="/register"
                 element={
@@ -220,7 +249,7 @@ function App() {
                 }
               />
 
-              {/* Admin routes */}
+              {/* Admin routes (MANAGER only) */}
               <Route
                 path="/admin/*"
                 element={
@@ -231,7 +260,6 @@ function App() {
               >
                 <Route index element={<AdminDashboard />} />
                 <Route path="accommodations" element={<AdminAccommodations />} />
-                <Route path="accommodations/new" element={<CreateAccommodation />} />
                 <Route
                   path="accommodations/edit/:id"
                   element={<AdminEditAccommodation />}
@@ -329,7 +357,6 @@ function App() {
           </ErrorBoundary>
         </Suspense>
       </main>
-
       <Footer />
     </div>
   );

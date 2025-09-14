@@ -23,10 +23,8 @@ const BookingDetails = ({ booking, onCancel, onDelete, onPay }) => {
       <h1 className="section-heading">Деталі бронювання</h1>
 
       <div className="details-grid">
-        {/*  Ліва частина — інформація про бронювання */}
         <BookingInfo booking={enrichedBooking} />
 
-        {/*  Права частина — статуси та дії */}
         <div className="details-actions">
           <BookingStatusBlock booking={enrichedBooking} />
 

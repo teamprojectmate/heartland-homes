@@ -51,9 +51,11 @@ const BookingCard = ({
 
         <div className="booking-card-info">
           <p>
-            Дати: {booking.checkInDate} — {booking.checkOutDate}
+            <strong>Дата заїзду:</strong> {booking.checkInDate}
           </p>
-          <p>ID бронювання: {booking.id}</p>
+          <p>
+            <strong>Дата виїзду:</strong> {booking.checkOutDate}
+          </p>
 
           {/* 🔹 Статуси */}
           <BookingStatusBlock booking={booking} />
@@ -80,13 +82,11 @@ const BookingCard = ({
               <Link to={`/my-bookings/${booking.id}`} className="btn btn-primary">
                 Деталі
               </Link>
-              {/* Оплатити тільки якщо PENDING і ще не оплачено */}
               {booking.status === 'PENDING' && !isPaid && (
                 <button className="btn btn-warning" onClick={() => onPay(booking.id)}>
                   Оплатити
                 </button>
               )}
-              {/* Скасувати тільки якщо НЕ оплачено */}
               {!isPaid && booking.status !== 'CANCELED' && (
                 <button className="btn btn-danger" onClick={() => onCancel(booking.id)}>
                   Скасувати

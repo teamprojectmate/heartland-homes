@@ -9,12 +9,6 @@ const ACCOMMODATION_TYPES = [
   { value: 'HOSTEL', label: 'Хостел' }
 ];
 
-const ACCOMMODATION_SIZES = [
-  { value: 'SMALL', label: 'Маленький' },
-  { value: 'MEDIUM', label: 'Середній' },
-  { value: 'LARGE', label: 'Великий' }
-];
-
 const AccommodationFormFields = ({
   formData,
   handleChange,
@@ -50,23 +44,6 @@ const AccommodationFormFields = ({
         >
           <option value="">Будь-який</option>
           {ACCOMMODATION_TYPES.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="form-group">
-        <label>Розмір</label>
-        <select
-          name="size"
-          value={formData.size}
-          onChange={handleChange}
-          className="form-control"
-        >
-          <option value="">Будь-який</option>
-          {ACCOMMODATION_SIZES.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
             </option>

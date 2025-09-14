@@ -12,23 +12,15 @@ const ACCOMMODATION_TYPES = [
   { value: 'HOSTEL', label: 'Хостел' }
 ];
 
-// Опції для розміру
-const ACCOMMODATION_SIZES = [
-  { value: 'SMALL', label: 'Маленький' },
-  { value: 'MEDIUM', label: 'Середній' },
-  { value: 'LARGE', label: 'Великий' }
-];
-
 const SearchForm = ({ onSearch }) => {
   const [formData, setFormData] = useState({
     city: '',
     type: '',
-    size: '',
     minDailyRate: '',
     maxDailyRate: ''
   });
 
-  //  Мемоізація, щоб не створювати нові функції на кожен рендер
+  // Мемоізація, щоб не створювати нові функції на кожен рендер
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -82,25 +74,6 @@ const SearchForm = ({ onSearch }) => {
         </select>
       </div>
 
-      {/* Розмір */}
-      <div className="search-input-group">
-        <label htmlFor="size">Розмір</label>
-        <select
-          id="size"
-          name="size"
-          className="form-control"
-          value={formData.size}
-          onChange={handleChange}
-        >
-          <option value="">Будь-який</option>
-          {ACCOMMODATION_SIZES.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </div>
-
       {/* Ціна від */}
       <div className="search-input-group">
         <label htmlFor="minDailyRate">Ціна від</label>
@@ -135,5 +108,5 @@ const SearchForm = ({ onSearch }) => {
   );
 };
 
-//  Обгортаємо у React.memo для оптимізації
+// Обгортаємо у React.memo для оптимізації
 export default React.memo(SearchForm);

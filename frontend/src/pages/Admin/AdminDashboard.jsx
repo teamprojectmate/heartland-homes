@@ -1,46 +1,51 @@
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchAllPayments } from '../../store/slices/paymentsSlice';
-import AdminTable from '../../pages/Admin/AdminTable';
-import StatusBadge from '../../components/status/StatusBadge';
+import { useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { FaClipboardList, FaUsers, FaBuilding, FaMoneyBillWave } from 'react-icons/fa';
+import '../../styles/components/admin/_admin-dashboard.scss';
 
-import '../../styles/components/admin/_admin-tables.scss';
-
-const AdminPayments = () => {
-  const dispatch = useDispatch();
-  const { payments, fetchStatus, error } = useSelector((state) => state.payments);
+const AdminDashboard = () => {
+  const navigate = useNavigate();
+  const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    dispatch(fetchAllPayments());
-  }, [dispatch]);
-
-  if (fetchStatus === 'loading') return <p className="text-center">Завантаження...</p>;
-  if (error) return <p className="text-danger text-center">{error}</p>;
-
-  //  колонки таблиці
-  const columns = [
-    { key: 'id', label: 'ID' },
-    { key: 'bookingId', label: 'Бронювання ID' },
-    {
-      key: 'amountToPay',
-      label: 'Сума',
-      render: (p) => `${p.amountToPay} грн`
-    },
-    { key: 'paymentType', label: 'Тип' },
-    {
-      key: 'status',
-      label: 'Статус',
-      render: (p) => <StatusBadge status={p.status} />
+    if (!user || user.cleanRole !== 'MANAGER') {
+      navigate('/');
     }
-  ];
+  }, [user, navigate]);
 
   return (
-    <div className="admin-payments container admin-page-container">
-      <h1 className="section-heading text-center">Управління платежами</h1>
+    <div className="container page admin-dashboard">
+      <div className="dashboard-grid mt-5">
+        <Link to="/admin/accommodations" className="dashboard-card accent-green fade-in">
+          <FaBuilding className="dashboard-icon" />
+          <h3>Помешкання</h3>
+          <p>Керуйте всіма доступними об’єктами</p>
+        </Link>
 
-      <AdminTable columns={columns} data={payments} />
+        <Link to="/admin/bookings" className="dashboard-card accent-blue fade-in delay-1">
+          <FaClipboardList className="dashboard-icon" />
+          <h3>Бронювання</h3>
+          <p>Перегляд і підтвердження заявок</p>
+        </Link>
+
+        <Link
+          to="/admin/payments"
+          className="dashboard-card accent-orange fade-in delay-2"
+        >
+          <FaMoneyBillWave className="dashboard-icon" />
+          <h3>Платежі</h3>
+          <p>Перегляд та управління оплатами</p>
+        </Link>
+
+        <Link to="/admin/users" className="dashboard-card accent-purple fade-in delay-3">
+          <FaUsers className="dashboard-icon" />
+          <h3>Користувачі</h3>
+          <p>Управління правами доступу</p>
+        </Link>
+      </div>
     </div>
   );
 };
 
-export default AdminPayments;
+export default AdminDashboard;

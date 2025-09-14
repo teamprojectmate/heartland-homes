@@ -16,13 +16,19 @@ const ProtectedRoute = ({ children, requiredRole = null }) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Якщо є вимога до ролі
+  // Витягуємо роль користувача
+  let rawRole =
+    user?.cleanRole || (Array.isArray(user?.roles) ? user.roles[0] : user?.role);
+
+  // Нормалізація (видаляємо префікс ROLE_)
+  const userRole = rawRole?.startsWith('ROLE_') ? rawRole.replace('ROLE_', '') : rawRole;
+
+  // ✅ Лог для відладки
+  console.log('🔑 User role:', userRole, 'Required:', requiredRole);
+
+  // Перевірка ролі (якщо є вимога)
   if (requiredRole) {
     const roles = Array.isArray(requiredRole) ? requiredRole : [requiredRole];
-
-    //  fallback: cleanRole або roles/role з профілю
-    const userRole =
-      user?.cleanRole || (Array.isArray(user?.roles) ? user.roles[0] : user?.role);
 
     if (!roles.includes(userRole)) {
       return (
@@ -38,6 +44,7 @@ const ProtectedRoute = ({ children, requiredRole = null }) => {
     }
   }
 
+  // Якщо всі перевірки пройдені → пропускаємо далі
   return children;
 };
 

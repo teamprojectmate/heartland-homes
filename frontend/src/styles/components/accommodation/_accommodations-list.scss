@@ -1,4 +1,5 @@
 @use '../../abstract/variables' as *;
+@use '../sections' as *;
 
 .accommodations-list-grid {
   display: grid;
@@ -14,14 +15,16 @@
   .card-custom {
     max-width: 100%;
     margin: 0 auto;
-    border-radius: $radius;
     background: $white-color;
+    border-radius: $radius;
     box-shadow: $box-shadow-card;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
 
     &:hover {
-      transform: translateY(-4px);
       box-shadow: $box-shadow-card-hover;
+      transform: translateY(-4px);
     }
 
     .card-img-top-custom {
@@ -32,10 +35,10 @@
     }
 
     .card-body {
-      padding: 1.25rem;
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
+      padding: 1.25rem;
     }
   }
 }
