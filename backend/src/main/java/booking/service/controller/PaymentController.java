@@ -9,6 +9,7 @@ import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class PaymentController {
 
     private final PaymentService paymentService;
+
+    @Value("${app.frontend.base-url}")
+    private String frontendBaseUrl;
 
     @PreAuthorize("hasAnyRole('CUSTOMER', 'MANAGER')")
     @PostMapping
@@ -63,7 +67,7 @@ public class PaymentController {
     ) {
         paymentService.markPaymentCompleted(sessionId);
         return ResponseEntity.status(HttpStatus.FOUND)
-                .location(URI.create("http://localhost:5173/my-payments"))
+                .location(URI.create(frontendBaseUrl + "/my-payments"))
                 .build();
     }
 
@@ -73,7 +77,7 @@ public class PaymentController {
             description = "Informs the user that the payment was canceled")
     public ResponseEntity<Void> handleStripeCancel() {
         return ResponseEntity.status(HttpStatus.FOUND)
-                .location(URI.create("http://localhost:5173/my-bookings"))
+                .location(URI.create(frontendBaseUrl + "/my-bookings"))
                 .build();
     }
 }

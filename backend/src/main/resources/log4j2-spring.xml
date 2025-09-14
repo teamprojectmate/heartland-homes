@@ -7,15 +7,15 @@
 
         <RollingFile name="FileLogger"
           fileName="logs/app.log"
-          filePattern="logs/app-%d{yyyy-MM-dd}.log.gz"
-          append="true">
+          filePattern="logs/app-%d{yyyy-MM-dd}.log"
+          append="false">
             <PatternLayout>
                 <Pattern>[%d{yyyy-MM-dd HH:mm:ss}] [%-5p] %c{1} - %m%n</Pattern>
             </PatternLayout>
             <Policies>
-                <TimeBasedTriggeringPolicy interval="7" modulate="true"/>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
             </Policies>
-            <DefaultRolloverStrategy max="7"/>
+            <DefaultRolloverStrategy max="0"/>
         </RollingFile>
     </Appenders>
 

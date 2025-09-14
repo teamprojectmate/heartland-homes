@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -18,6 +19,9 @@ import org.springframework.stereotype.Component;
 public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtUtil jwtUtil;
+
+    @Value("${app.auth.redirect-url}")
+    private String redirectBaseUrl;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
@@ -47,7 +51,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         String token = jwtUtil.generateToken(email);
         log.info("Generated JWT for {}: {}", email, token);
 
-        String redirectUrl = "http://localhost:5173/auth/success?token=" + token;
+        String redirectUrl = redirectBaseUrl + "?token=" + token;
         log.info("Redirecting to frontend: {}", redirectUrl);
         response.sendRedirect(redirectUrl);
     }
