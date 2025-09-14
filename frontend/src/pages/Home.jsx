@@ -1,6 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { loadAccommodations, setFilters } from '../store/slices/accommodationsSlice';
+import {
+  loadAccommodations,
+  setFilters,
+  resetFilters
+} from '../store/slices/accommodationsSlice';
 import { useNavigate, Link } from 'react-router-dom';
 import SearchForm from '../components/SearchForm';
 import Offers from '../components/Offers';
@@ -12,19 +16,29 @@ const Home = () => {
   const { items, loading, error } = useSelector((state) => state.accommodations);
 
   useEffect(() => {
+    //  Скидаємо фільтри і підвантажуємо топ-4 помешкання
+    dispatch(resetFilters());
     dispatch(loadAccommodations({ pageable: { page: 0, size: 4 } }));
   }, [dispatch]);
 
-  const handleSearch = (e, formData) => {
-    e.preventDefault();
-    dispatch(setFilters(formData));
-    const queryParams = new URLSearchParams(
-      Object.fromEntries(
-        Object.entries(formData).filter(([_, v]) => v !== null && v !== '')
-      )
-    ).toString();
-    navigate(`/accommodations?${queryParams}`);
-  };
+  const handleSearch = useCallback(
+    (e, formData) => {
+      e.preventDefault();
+      dispatch(setFilters(formData));
+
+      const queryParams = new URLSearchParams(
+        Object.fromEntries(
+          Object.entries(formData).filter(([_, v]) => v !== null && v !== '')
+        )
+      ).toString();
+
+      navigate(`/accommodations?${queryParams}`);
+    },
+    [dispatch, navigate]
+  );
+
+  //  Формуємо підрізані помешкання тільки коли items змінюється
+  const topAccommodations = useMemo(() => items.slice(0, 4), [items]);
 
   return (
     <div className="home-page">
@@ -35,7 +49,6 @@ const Home = () => {
           <p className="hero-subheading">
             Знаходьте пропозиції готелів, приватних помешкань та багато іншого...
           </p>
-          {/*  Використовуємо компонент SearchForm */}
           <SearchForm onSearch={handleSearch} />
         </div>
       </section>
@@ -59,7 +72,7 @@ const Home = () => {
           {error && <p className="text-center text-danger">{error}</p>}
           {!loading && !error && (
             <>
-              <AccommodationList accommodations={items.slice(0, 4)} />
+              <AccommodationList accommodations={topAccommodations} />
               <div className="text-center mt-4">
                 <Link to="/accommodations" className="btn btn-secondary">
                   Переглянути всі помешкання →
@@ -73,4 +86,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default React.memo(Home);
