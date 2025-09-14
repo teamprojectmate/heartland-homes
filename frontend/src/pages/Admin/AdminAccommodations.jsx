@@ -125,7 +125,7 @@ const AdminAccommodations = () => {
       {error && <Notification message={error} type="danger" />}
 
       <div className="text-end mb-3">
-        <Link to="/admin/accommodations/new" className="btn-primary">
+        <Link to="/accommodations/new" className="btn-primary">
           <FaPlus /> Додати помешкання
         </Link>
       </div>

@@ -65,9 +65,16 @@
 }
 
 .card-title {
+  display: -webkit-box;
+  min-height: calc(1.25rem * 1.4 * 2);
   margin-bottom: 0.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 2;
   font-size: 1.25rem;
   font-weight: 600;
+  line-height: 1.4;
+  -webkit-box-orient: vertical;
 }
 
 .city-label {

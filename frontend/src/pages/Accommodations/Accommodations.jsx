@@ -104,10 +104,7 @@ const Accommodations = () => {
   }, [dispatch]);
 
   //  Мемоізація queryParams
-  const queryParams = useMemo(
-    () => new URLSearchParams(filters).toString(),
-    [filters]
-  );
+  const queryParams = useMemo(() => new URLSearchParams(filters).toString(), [filters]);
 
   const handleApplyFilters = useCallback(
     (e, formData) => {
@@ -204,9 +201,7 @@ const Accommodations = () => {
         isOpen={!!selectedAccommodation}
         onClose={() => setSelectedAccommodation(null)}
       >
-        {selectedAccommodation && (
-          <AccommodationDetails id={selectedAccommodation.id} />
-        )}
+        {selectedAccommodation && <AccommodationDetails id={selectedAccommodation.id} />}
       </Modal>
     </div>
   );

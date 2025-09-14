@@ -99,3 +99,21 @@ export const mapStatus = (status = '') => {
     }
   );
 };
+
+// Типи платежів
+export const paymentTypeTranslations = {
+  PAYMENT: { label: 'Оплата', slug: 'payment', icon: '💳' },
+  REFUND: { label: 'Повернення', slug: 'refund', icon: '↩️' }
+};
+
+// Мапінг типів платежів
+export const mapPaymentType = (type = '') => {
+  const key = type.toUpperCase();
+  return (
+    paymentTypeTranslations[key] || {
+      label: type || 'Невідомо',
+      slug: 'unknown',
+      icon: '❔'
+    }
+  );
+};

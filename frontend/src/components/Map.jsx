@@ -1,3 +1,4 @@
+// src/components/Map.jsx
 import React from 'react';
 import BaseMap from './BaseMap';
 

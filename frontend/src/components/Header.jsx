@@ -11,7 +11,8 @@ import {
   FaClipboardList,
   FaUserPlus,
   FaCreditCard,
-  FaUserCog
+  FaUserCog,
+  FaBuilding
 } from 'react-icons/fa';
 
 import '../styles/components/header/_index.scss';
@@ -41,11 +42,12 @@ const Header = () => {
     return () => document.body.classList.remove('no-scroll');
   }, [open]);
 
-  //  визначаємо роль
+  // роль користувача
   const userRole =
     user?.cleanRole || (Array.isArray(user?.roles) ? user.roles[0] : user?.role);
 
   const isManager = userRole === 'MANAGER';
+  const isCustomer = userRole === 'CUSTOMER';
 
   // якщо ми в адмінці — автоматично включаємо adminMode
   useEffect(() => {
@@ -88,6 +90,16 @@ const Header = () => {
                   <FaCreditCard className="nav-icon" /> Мої платежі
                 </NavLink>
               </li>
+
+              {/* ✅ Мої помешкання тільки для CUSTOMER */}
+              {isCustomer && (
+                <li>
+                  <NavLink to="/my-accommodations" className="nav-link">
+                    <FaBuilding className="nav-icon" /> Мої помешкання
+                  </NavLink>
+                </li>
+              )}
+
               {isManager && (
                 <li>
                   <NavLink to="/admin" className="nav-link">
@@ -199,6 +211,16 @@ const Header = () => {
                     <FaCreditCard className="nav-icon" /> Мої платежі
                   </NavLink>
                 </li>
+
+                {/* ✅ у Drawer теж */}
+                {isCustomer && (
+                  <li>
+                    <NavLink onClick={closeDrawer} to="/my-accommodations">
+                      <FaBuilding className="nav-icon" /> Мої помешкання
+                    </NavLink>
+                  </li>
+                )}
+
                 {isManager && (
                   <li>
                     <NavLink onClick={closeDrawer} to="/admin">

@@ -1,14 +1,53 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { createPayment } from '../../store/slices/paymentsSlice';
+import { fetchBookingById } from '../../api/bookings/bookingsService';
+import { getAccommodationById } from '../../api/accommodations/accommodationService';
 import Notification from '../../components/Notification';
 import '../../styles/components/payment/_payment-checkout.scss';
 
 const Payment = () => {
   const dispatch = useDispatch();
   const { bookingId } = useParams();
+
   const { payment, createStatus, error } = useSelector((s) => s.payments);
+
+  const [booking, setBooking] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // завантаження бронювання + помешкання
+  useEffect(() => {
+    const loadBooking = async () => {
+      try {
+        const data = await fetchBookingById(bookingId);
+
+        let accommodation = null;
+        try {
+          accommodation = await getAccommodationById(data.accommodationId);
+        } catch (err) {
+          console.warn('⚠️ Не вдалося отримати помешкання', err);
+        }
+
+        // 🔹 розрахунок кількості ночей
+        const checkIn = new Date(data.checkInDate);
+        const checkOut = new Date(data.checkOutDate);
+        const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+
+        // 🔹 якщо totalPrice немає в API → рахуємо самі
+        const calculatedPrice =
+          data.totalPrice ||
+          (accommodation?.dailyRate ? accommodation.dailyRate * nights : 0);
+
+        setBooking({ ...data, accommodation, totalPrice: calculatedPrice });
+      } catch (err) {
+        console.error('❌ Помилка завантаження бронювання', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadBooking();
+  }, [bookingId]);
 
   const handlePay = () => {
     dispatch(createPayment({ bookingId, paymentType: 'PAYMENT' }));
@@ -20,13 +59,12 @@ const Payment = () => {
     }
   }, [payment]);
 
+  if (loading) return <p className="text-center">Завантаження...</p>;
+
   return (
     <div className="payment-page">
       <div className="payment-card payment-checkout">
-        {/* Заголовок */}
-        <h2 className="payment-title">
-          <span className="icon">💳</span> Оплата бронювання
-        </h2>
+        <h2 className="payment-title">💳 Оплата бронювання</h2>
         <p className="payment-subtitle">
           🔒 Захищена оплата через банківську систему. Перевірте дані перед
           підтвердженням.
@@ -37,14 +75,18 @@ const Payment = () => {
         {/* Інформація */}
         <div className="payment-info">
           <p>
-            <strong>ID бронювання:</strong> <span className="badge-id">#{bookingId}</span>
+            <strong>Помешкання:</strong> {booking?.accommodation?.name || '—'},{' '}
+            {booking?.accommodation?.city || '—'}
           </p>
-          {payment?.amountToPay && (
-            <p className="payment-amount">
-              <span className="icon">💰</span> {payment.amountToPay} ₴
-              <img src="/assets/visa.svg" alt="Visa" className="system-logo" />
-            </p>
-          )}
+          <p>
+            <strong>Адреса:</strong> {booking?.accommodation?.location || '—'}
+          </p>
+          <p>
+            <strong>Дати:</strong> {booking?.checkInDate} → {booking?.checkOutDate}
+          </p>
+          <p className="payment-amount">
+            <span className="icon">💰</span> {booking?.totalPrice || '—'} ₴
+          </p>
         </div>
 
         {/* Кнопка */}

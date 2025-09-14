@@ -6,9 +6,6 @@ const BookingInfo = ({ booking }) => {
 
   return (
     <div className="booking-info">
-      <p>
-        <strong>ID:</strong> {booking.id}
-      </p>
       {booking.user && (
         <p>
           <strong>Користувач:</strong> {booking.user.firstName} {booking.user.lastName} (
@@ -22,10 +19,10 @@ const BookingInfo = ({ booking }) => {
         </p>
       )}
       <p>
-        <strong>Заїзд:</strong> {booking.checkInDate}
+        <strong>Дата заїзду:</strong> {booking.checkInDate}
       </p>
       <p>
-        <strong>Виїзд:</strong> {booking.checkOutDate}
+        <strong>Дата виїзду:</strong> {booking.checkOutDate}
       </p>
       <p>
         <strong>Статус:</strong>{' '}
