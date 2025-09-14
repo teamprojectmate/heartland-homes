@@ -11,7 +11,6 @@ export const loadAccommodations = createAsyncThunk(
       const filters = {
         city: state.filters.city || undefined,
         type: state.filters.type || undefined,
-        accommodationSize: state.filters.accommodationSize || undefined,
         minDailyRate: state.filters.minDailyRate ?? undefined,
         maxDailyRate: state.filters.maxDailyRate ?? undefined,
         status: 'PERMITTED'
@@ -44,6 +43,21 @@ export const loadAdminAccommodations = createAsyncThunk(
     } catch (err) {
       return rejectWithValue(
         err.response?.data?.message || 'Помилка при завантаженні житла (адмін)'
+      );
+    }
+  }
+);
+
+//  Customer: завантаження своїх помешкань
+export const loadMyAccommodations = createAsyncThunk(
+  'accommodations/loadMy',
+  async ({ page = 0, size = 10 }, { rejectWithValue }) => {
+    try {
+      const data = await accommodationService.fetchMyAccommodations(page, size);
+      return data;
+    } catch (err) {
+      return rejectWithValue(
+        err.response?.data?.message || 'Помилка при завантаженні ваших помешкань'
       );
     }
   }
@@ -105,11 +119,11 @@ const accommodationsSlice = createSlice({
     filters: {
       city: null,
       type: null,
-      accommodationSize: null,
       minDailyRate: null,
       maxDailyRate: null
     },
-    adminMode: false
+    adminMode: false,
+    myMode: false
   },
   reducers: {
     setFilters(state, action) {
@@ -120,7 +134,6 @@ const accommodationsSlice = createSlice({
       state.filters = {
         city: null,
         type: null,
-        accommodationSize: null,
         minDailyRate: null,
         maxDailyRate: null
       };
@@ -143,6 +156,7 @@ const accommodationsSlice = createSlice({
         s.totalPages = payload.totalPages || 0;
         s.totalElements = payload.totalElements || 0;
         s.adminMode = false;
+        s.myMode = false;
       })
       .addCase(loadAccommodations.rejected, (s, { payload }) => {
         s.loading = false;
@@ -155,6 +169,16 @@ const accommodationsSlice = createSlice({
         s.totalPages = payload.totalPages || 0;
         s.totalElements = payload.totalElements || 0;
         s.adminMode = true;
+        s.myMode = false;
+      })
+
+      //  My accommodations load
+      .addCase(loadMyAccommodations.fulfilled, (s, { payload }) => {
+        s.items = payload.content || [];
+        s.totalPages = payload.totalPages || 0;
+        s.totalElements = payload.totalElements || 0;
+        s.myMode = true;
+        s.adminMode = false;
       })
 
       // Admin remove

@@ -8,15 +8,9 @@ const AccommodationList = ({ accommodations, onCardHover }) => {
   }
 
   //  мемоізуємо обробники
-  const handleMouseEnter = useCallback(
-    (id) => () => onCardHover(id),
-    [onCardHover]
-  );
+  const handleMouseEnter = useCallback((id) => () => onCardHover(id), [onCardHover]);
 
-  const handleMouseLeave = useCallback(
-    () => onCardHover(null),
-    [onCardHover]
-  );
+  const handleMouseLeave = useCallback(() => onCardHover(null), [onCardHover]);
 
   return (
     <div className="accommodations-list-grid">

@@ -9,7 +9,6 @@ import '../../styles/components/accommodation/_accommodation-form-fields.scss';
 const AccommodationFilters = ({
   city,
   type,
-  size,
   minDailyRate,
   maxDailyRate,
   onApplyFilters,
@@ -18,7 +17,6 @@ const AccommodationFilters = ({
   const [localFilters, setLocalFilters] = useState({
     city: city || '',
     type: type || '',
-    size: size || '',
     minDailyRate: minDailyRate || '',
     maxDailyRate: maxDailyRate || ''
   });
@@ -27,11 +25,10 @@ const AccommodationFilters = ({
     setLocalFilters({
       city: city || '',
       type: type || '',
-      size: size || '',
       minDailyRate: minDailyRate || '',
       maxDailyRate: maxDailyRate || ''
     });
-  }, [city, type, size, minDailyRate, maxDailyRate]);
+  }, [city, type, minDailyRate, maxDailyRate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

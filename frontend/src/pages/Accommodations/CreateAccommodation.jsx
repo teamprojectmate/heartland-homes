@@ -4,6 +4,36 @@ import Notification from '../../components/Notification';
 import { createAccommodation } from '../../api/accommodations/accommodationService';
 import { mapType, mapAmenity } from '../../utils/translations';
 import { getSafeImageUrl } from '../../utils/getSafeImageUrl';
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import L from 'leaflet';
+import setupLeaflet from '../../utils/leafletConfig';
+import 'leaflet/dist/leaflet.css';
+
+setupLeaflet();
+
+// Стандартна іконка
+const defaultIcon = new L.Icon({
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  iconRetinaUrl:
+    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  shadowUrl:
+    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41]
+});
+
+// компонент для кліку по карті
+const LocationPicker = ({ setCoordinates }) => {
+  useMapEvents({
+    click(e) {
+      setCoordinates({
+        latitude: e.latlng.lat.toFixed(6),
+        longitude: e.latlng.lng.toFixed(6)
+      });
+    }
+  });
+  return null;
+};
 
 const CreateAccommodation = () => {
   const navigate = useNavigate();
@@ -15,7 +45,6 @@ const CreateAccommodation = () => {
     city: '',
     latitude: '',
     longitude: '',
-    size: '',
     amenities: '',
     dailyRate: '',
     image: ''
@@ -32,6 +61,14 @@ const CreateAccommodation = () => {
     }));
   };
 
+  const setCoordinates = ({ latitude, longitude }) => {
+    setFormData((prev) => ({
+      ...prev,
+      latitude,
+      longitude
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -45,8 +82,9 @@ const CreateAccommodation = () => {
           .filter(Boolean),
         dailyRate: Number(formData.dailyRate)
       };
+
       await createAccommodation(payload);
-      navigate('/admin/accommodations');
+      navigate('/accommodations');
     } catch (err) {
       setError(err.response?.data?.message || 'Помилка при створенні');
     } finally {
@@ -66,7 +104,7 @@ const CreateAccommodation = () => {
           <input type="text" name="name" value={formData.name} onChange={handleChange} />
         </div>
 
-        {/* Тип + бейдж превʼю */}
+        {/* Тип */}
         <div className="form-group">
           <label>Тип</label>
           <select name="type" value={formData.type} onChange={handleChange}>
@@ -77,18 +115,6 @@ const CreateAccommodation = () => {
             <option value="HOSTEL">Хостел</option>
             <option value="COTTAGE">Котедж</option>
           </select>
-          {formData.type && (
-            <div className="badge-group" style={{ marginTop: '0.5rem' }}>
-              {(() => {
-                const type = mapType(formData.type);
-                return (
-                  <span className={`badge badge-type-${formData.type.toLowerCase()}`}>
-                    {type.icon} {type.label}
-                  </span>
-                );
-              })()}
-            </div>
-          )}
         </div>
 
         {/* Локація */}
@@ -108,35 +134,36 @@ const CreateAccommodation = () => {
           <input type="text" name="city" value={formData.city} onChange={handleChange} />
         </div>
 
-        {/* Latitude */}
+        {/* Карта */}
         <div className="form-group">
-          <label>Широта (Latitude)</label>
-          <input
-            type="text"
-            name="latitude"
-            value={formData.latitude}
-            onChange={handleChange}
-          />
+          <label>Виберіть розташування на карті</label>
+          <div style={{ height: '300px', width: '100%', marginBottom: '1rem' }}>
+            <MapContainer
+              center={[49, 31]}
+              zoom={6}
+              style={{ height: '100%', width: '100%' }}
+            >
+              <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution="&copy; OpenStreetMap contributors"
+              />
+              <LocationPicker setCoordinates={setCoordinates} />
+              {formData.latitude && formData.longitude && (
+                <Marker
+                  position={[formData.latitude, formData.longitude]}
+                  icon={defaultIcon}
+                />
+              )}
+            </MapContainer>
+          </div>
+          {formData.latitude && formData.longitude && (
+            <p>
+              📍 Обрані координати: {formData.latitude}, {formData.longitude}
+            </p>
+          )}
         </div>
 
-        {/* Longitude */}
-        <div className="form-group">
-          <label>Довгота (Longitude)</label>
-          <input
-            type="text"
-            name="longitude"
-            value={formData.longitude}
-            onChange={handleChange}
-          />
-        </div>
-
-        {/* Size */}
-        <div className="form-group">
-          <label>Розмір</label>
-          <input type="text" name="size" value={formData.size} onChange={handleChange} />
-        </div>
-
-        {/* Amenities + бейджі */}
+        {/* Amenities */}
         <div className="form-group">
           <label>Зручності (через кому)</label>
           <input
@@ -146,20 +173,6 @@ const CreateAccommodation = () => {
             onChange={handleChange}
             placeholder="Wi-Fi, кухня, кондиціонер..."
           />
-          <div className="badge-group" style={{ marginTop: '0.5rem' }}>
-            {formData.amenities
-              .split(',')
-              .map((a) => a.trim())
-              .filter(Boolean)
-              .map((a, idx) => {
-                const amenity = mapAmenity(a);
-                return (
-                  <span key={idx} className={`badge badge-amenity ${amenity.slug}`}>
-                    {amenity.icon} {amenity.label}
-                  </span>
-                );
-              })}
-          </div>
         </div>
 
         {/* Daily rate */}
@@ -173,7 +186,7 @@ const CreateAccommodation = () => {
           />
         </div>
 
-        {/* Image + превʼю */}
+        {/* Image */}
         <div className="form-group">
           <label>URL зображення</label>
           <input

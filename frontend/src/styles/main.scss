@@ -12,26 +12,15 @@
 // 3) layout
 @use './layout/main-layout' as *;
 
-// 4) components (grouped via entry-points)
+// 4) базові секції
+@use './components/sections' as *;
+
+// 5) components
 @use './components/accommodation/index' as *;
 @use './components/admin/index' as *;
 @use './components/booking/index' as *;
 @use './components/footer/index' as *;
 @use './components/header/index' as *;
-@use './components/buttons' as *;
-@use './components/cards' as *;
-@use './components/filters' as *;
-@use './components/forms' as *;
-
-// 3) layout
-@use './layout/main-layout' as *;
-
-// 4) components (grouped via entry-points)
-@use './components/accommodation' as *;
-@use './components/admin' as *;
-@use './components/booking' as *;
-@use './components/footer' as *;
-@use './components/header' as *;
 @use './components/hero' as *;
 @use './components/info-pages' as *;
 @use './components/location-map' as *;
@@ -45,9 +34,10 @@
 @use './components/searchForm' as *;
 @use './components/status-select' as *;
 
-// 4) пакетні стилі — імпортуємо як пакет, без шляху до node_modules
+// 6) сторонні стилі
 @use '../../node_modules/react-image-gallery/styles/scss/image-gallery';
 
+// reset / базове
 *,
 *::before,
 *::after {
