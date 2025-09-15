@@ -62,6 +62,11 @@ const MyAccommodations = lazy(
   () => import('./pages/Accommodations/MyAccommodations.jsx')
 );
 
+// Edit My Accommodation (CUSTOMER + MANAGER)
+const EditMyAccommodation = lazy(
+  () => import('./pages/Accommodations/EditMyAccommodation.jsx')
+);
+
 // NotFound
 import NotFound from './pages/NotFound.jsx';
 
@@ -145,13 +150,35 @@ function App() {
                 }
               />
 
-              {/*  My accommodations (CUSTOMER + MANAGER) */}
+              {/* My accommodations (CUSTOMER + MANAGER) */}
               <Route
                 path="/my-accommodations"
                 element={
                   <ProtectedRoute requiredRole={['CUSTOMER', 'MANAGER']}>
                     <PageWrapper title="Мої помешкання">
                       <MyAccommodations />
+                    </PageWrapper>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/my-accommodations/edit/:id"
+                element={
+                  <ProtectedRoute requiredRole={['CUSTOMER', 'MANAGER']}>
+                    <PageWrapper title="Редагувати моє помешкання">
+                      <EditMyAccommodation />
+                    </PageWrapper>
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Admin accommodations (MANAGER only) */}
+              <Route
+                path="/admin/accommodations"
+                element={
+                  <ProtectedRoute requiredRole="MANAGER">
+                    <PageWrapper title="Усі помешкання">
+                      <AdminAccommodations />
                     </PageWrapper>
                   </ProtectedRoute>
                 }
@@ -259,7 +286,6 @@ function App() {
                 }
               >
                 <Route index element={<AdminDashboard />} />
-                <Route path="accommodations" element={<AdminAccommodations />} />
                 <Route
                   path="accommodations/edit/:id"
                   element={<AdminEditAccommodation />}

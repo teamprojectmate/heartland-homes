@@ -1,6 +1,6 @@
 import api from '../axios';
 
-// Пошук житла з фільтрами (GET)
+// 🔍 Пошук житла з фільтрами (GET)
 export const fetchAccommodations = async (params = {}) => {
   const cleanedParams = Object.fromEntries(
     Object.entries(params).filter(
@@ -15,43 +15,49 @@ export const fetchAccommodations = async (params = {}) => {
   return response.data;
 };
 
-// Отримати деталі житла
+// 📄 Отримати деталі житла
 export const getAccommodationById = async (id) => {
   const response = await api.get(`/accommodations/${id}`);
   return response.data;
 };
 
-// Створити житло
+// ➕ Створити житло (для користувача / менеджера)
 export const createAccommodation = async (formData) => {
   const response = await api.post('/accommodations', formData);
   return response.data;
 };
 
-// Оновити житло (повний PUT)
+// ✏️ Оновити житло (адмін редагує будь-яке)
 export const updateAccommodation = async (id, formData) => {
   const response = await api.put(`/accommodations/${id}`, formData);
   return response.data;
 };
 
-// Для адміна (список без фільтрів, пагінація)
+// ✏️ Оновити моє житло (користувач / менеджер редагує своє)
+export const updateMyAccommodation = async (id, formData) => {
+  const response = await api.put(`/accommodations/me/${id}`, formData);
+  return response.data;
+};
+
+// 📋 Для адміна (список без фільтрів, пагінація)
 export const fetchAdminAccommodations = async (page = 0, size = 10) => {
   const response = await api.get('/accommodations', { params: { page, size } });
   return response.data;
 };
 
-//  Для користувача (мої помешкання)
+// 📋 Для користувача (мої помешкання)
 export const fetchMyAccommodations = async (page = 0, size = 10) => {
-  const response = await api.get('/accommodations/my', { params: { page, size } });
+  const response = await api.get('/accommodations/me', { params: { page, size } });
   return response.data;
 };
 
-// Видалити житло (admin only)
+// ❌ Видалити житло (адмін)
 export const deleteAccommodation = async (id) => {
   const response = await api.delete(`/accommodations/${id}`);
   return response.data;
 };
 
-// Оновити статус житла (PATCH /accommodations/{id}/status)
+// 🔄 Оновити статус житла (PATCH /accommodations/{id}/status)
 export const updateAccommodationStatus = async (id, status) => {
   const response = await api.patch(`/accommodations/${id}/status`, { status });
   return response.data;
