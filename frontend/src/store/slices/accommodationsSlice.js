@@ -38,8 +38,7 @@ export const loadAdminAccommodations = createAsyncThunk(
   'accommodations/loadAdmin',
   async ({ page = 0, size = 10 }, { rejectWithValue }) => {
     try {
-      const data = await accommodationService.fetchAdminAccommodations(page, size);
-      return data;
+      return await accommodationService.fetchAdminAccommodations(page, size);
     } catch (err) {
       return rejectWithValue(
         err.response?.data?.message || 'Помилка при завантаженні житла (адмін)'
@@ -53,8 +52,7 @@ export const loadMyAccommodations = createAsyncThunk(
   'accommodations/loadMy',
   async ({ page = 0, size = 10 }, { rejectWithValue }) => {
     try {
-      const data = await accommodationService.fetchMyAccommodations(page, size);
-      return data;
+      return await accommodationService.fetchMyAccommodations(page, size);
     } catch (err) {
       return rejectWithValue(
         err.response?.data?.message || 'Помилка при завантаженні ваших помешкань'
@@ -164,21 +162,39 @@ const accommodationsSlice = createSlice({
       })
 
       // Admin load
+      .addCase(loadAdminAccommodations.pending, (s) => {
+        s.loading = true;
+        s.error = null;
+      })
       .addCase(loadAdminAccommodations.fulfilled, (s, { payload }) => {
+        s.loading = false;
         s.items = payload.content || [];
         s.totalPages = payload.totalPages || 0;
         s.totalElements = payload.totalElements || 0;
         s.adminMode = true;
         s.myMode = false;
       })
+      .addCase(loadAdminAccommodations.rejected, (s, { payload }) => {
+        s.loading = false;
+        s.error = payload;
+      })
 
       //  My accommodations load
+      .addCase(loadMyAccommodations.pending, (s) => {
+        s.loading = true;
+        s.error = null;
+      })
       .addCase(loadMyAccommodations.fulfilled, (s, { payload }) => {
+        s.loading = false;
         s.items = payload.content || [];
         s.totalPages = payload.totalPages || 0;
         s.totalElements = payload.totalElements || 0;
         s.myMode = true;
         s.adminMode = false;
+      })
+      .addCase(loadMyAccommodations.rejected, (s, { payload }) => {
+        s.loading = false;
+        s.error = payload;
       })
 
       // Admin remove

@@ -59,7 +59,7 @@ const MyAccommodations = () => {
                 <td>{acc.accommodationStatus}</td>
                 <td>
                   <Link
-                    to={`/accommodations/edit/${acc.id}`}
+                    to={`/my-accommodations/edit/${acc.id}`}
                     className="btn-icon btn-secondary"
                   >
                     <FaEdit />
