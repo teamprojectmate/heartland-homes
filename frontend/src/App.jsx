@@ -44,20 +44,28 @@ const PaymentsList = lazy(() => import('./pages/User/PaymentsList.jsx'));
 const AdminLayout = lazy(() => import('./components/AdminLayout.jsx'));
 const AdminDashboard = lazy(() => import('./pages/Admin/AdminDashboard.jsx'));
 const AdminAccommodations = lazy(() => import('./pages/Admin/AdminAccommodations.jsx'));
-const AdminEditAccommodation = lazy(() => import('./pages/Admin/AdminEditAccommodation.jsx'));
+const AdminEditAccommodation = lazy(
+  () => import('./pages/Admin/AdminEditAccommodation.jsx')
+);
 const AdminBookings = lazy(() => import('./pages/Admin/AdminBookings.jsx'));
 const AdminBookingDetails = lazy(() => import('./pages/Admin/AdminBookingDetails.jsx'));
 const AdminUsers = lazy(() => import('./pages/Admin/AdminUsers.jsx'));
 const AdminPayments = lazy(() => import('./pages/Admin/AdminPayments.jsx'));
 
 // Shared: Create accommodation (CUSTOMER + MANAGER)
-const CreateAccommodation = lazy(() => import('./pages/Accommodations/CreateAccommodation.jsx'));
+const CreateAccommodation = lazy(
+  () => import('./pages/Accommodations/CreateAccommodation.jsx')
+);
 
 // My Accommodations (CUSTOMER + MANAGER)
-const MyAccommodations = lazy(() => import('./pages/Accommodations/MyAccommodations.jsx'));
+const MyAccommodations = lazy(
+  () => import('./pages/Accommodations/MyAccommodations.jsx')
+);
 
 // Edit My Accommodation (CUSTOMER + MANAGER)
-const EditMyAccommodation = lazy(() => import('./pages/Accommodations/EditMyAccommodation.jsx'));
+const EditMyAccommodation = lazy(
+  () => import('./pages/Accommodations/EditMyAccommodation.jsx')
+);
 
 // NotFound
 import NotFound from './pages/NotFound.jsx';
@@ -85,7 +93,7 @@ function App() {
             setUser({
               token: stored.token,
               ...profile,
-              cleanRole,
+              cleanRole
             })
           );
         })
@@ -278,7 +286,10 @@ function App() {
                 }
               >
                 <Route index element={<AdminDashboard />} />
-                <Route path="accommodations/edit/:id" element={<AdminEditAccommodation />} />
+                <Route
+                  path="accommodations/edit/:id"
+                  element={<AdminEditAccommodation />}
+                />
                 <Route path="bookings" element={<AdminBookings />} />
                 <Route path="bookings/:id" element={<AdminBookingDetails />} />
                 <Route path="users" element={<AdminUsers />} />

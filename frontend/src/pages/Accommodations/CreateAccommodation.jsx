@@ -167,12 +167,7 @@ const CreateAccommodation = () => {
         {/* Місто */}
         <div className="form-group">
           <label>Місто</label>
-          <input
-            type="text"
-            name="city"
-            value={formData.city}
-            onChange={handleChange}
-          />
+          <input type="text" name="city" value={formData.city} onChange={handleChange} />
         </div>
 
         {/* Розмір */}

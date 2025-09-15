@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Notification from '../../components/Notification';
 import {
   getAccommodationById,
-  updateMyAccommodation 
+  updateMyAccommodation
 } from '../../api/accommodations/accommodationService';
 
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
@@ -109,7 +109,12 @@ const EditMyAccommodation = () => {
         {/* Назва */}
         <div className="form-group">
           <label>Назва</label>
-          <input type="text" name="name" value={formData.name || ''} onChange={handleChange} />
+          <input
+            type="text"
+            name="name"
+            value={formData.name || ''}
+            onChange={handleChange}
+          />
         </div>
 
         {/* Тип */}
@@ -138,13 +143,23 @@ const EditMyAccommodation = () => {
         {/* Місто */}
         <div className="form-group">
           <label>Місто</label>
-          <input type="text" name="city" value={formData.city || ''} onChange={handleChange} />
+          <input
+            type="text"
+            name="city"
+            value={formData.city || ''}
+            onChange={handleChange}
+          />
         </div>
 
         {/* Розмір */}
         <div className="form-group">
           <label>Розмір (наприклад, 50м²)</label>
-          <input type="text" name="size" value={formData.size || ''} onChange={handleChange} />
+          <input
+            type="text"
+            name="size"
+            value={formData.size || ''}
+            onChange={handleChange}
+          />
         </div>
 
         {/* Карта */}
@@ -162,7 +177,10 @@ const EditMyAccommodation = () => {
               />
               <LocationPicker setCoordinates={setCoordinates} />
               {formData.latitude && formData.longitude && (
-                <Marker position={[formData.latitude, formData.longitude]} icon={defaultIcon} />
+                <Marker
+                  position={[formData.latitude, formData.longitude]}
+                  icon={defaultIcon}
+                />
               )}
             </MapContainer>
           </div>
