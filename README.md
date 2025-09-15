@@ -58,7 +58,6 @@
 ## локально
 ```bash
 VITE_API_URL=http://localhost:8080
-VITE_STRIPE_PUBLISHABLE_KEY=pk_test_XXXXXXXXXXXXXXXXXXXXXXXX
 ```
 
 ## продакшен (на Vercel)
@@ -71,7 +70,7 @@ VITE_STRIPE_PUBLISHABLE_KEY=pk_test_XXXXXXXXXXXXXXXXXXXXXXXX
 SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/booking
 SPRING_DATASOURCE_USERNAME=postgres
 SPRING_DATASOURCE_PASSWORD=postgres
-STRIPE_SECRET_KEY=sk_test_XXXXXXXXXXXXXXXXXXXXXXXX
+STRIPE_SECRET_KEY=stripe_secret_key_placeholder
 CORS_ALLOWED_ORIGINS=http://localhost:5173
 JWT_SECRET=your-secret
 ```
