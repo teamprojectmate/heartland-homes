@@ -133,12 +133,16 @@ class AccommodationServiceTest {
         Accommodation accommodation = createAccommodation2(id);
         AccommodationDto updatedDto = createAccommodationDto2(id);
 
+        User currentUser = createUser(1L);
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getPrincipal()).thenReturn(currentUser);
+
         when(accommodationRepository.findById(id)).thenReturn(Optional.of(accommodation));
         doNothing().when(accommodationMapper).updateAccommodationFromDto(requestDto, accommodation);
         when(accommodationRepository.save(accommodation)).thenReturn(accommodation);
         when(accommodationMapper.toDto(accommodation)).thenReturn(updatedDto);
 
-        AccommodationDto result = accommodationService.update(id, requestDto);
+        AccommodationDto result = accommodationService.update(id, requestDto, authentication);
 
         assertEquals(updatedDto, result);
         verify(accommodationRepository).findById(id);
@@ -152,10 +156,15 @@ class AccommodationServiceTest {
     void update_notFound_throwsException() {
         Long id = 1L;
         CreateAccommodationRequestDto requestDto = createAccommodationRequestDto2();
+
+        User currentUser = createUser(1L);
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getPrincipal()).thenReturn(currentUser);
+
         when(accommodationRepository.findById(id)).thenReturn(Optional.empty());
 
         EntityNotFoundException ex = assertThrows(EntityNotFoundException.class,
-                () -> accommodationService.update(id, requestDto));
+                () -> accommodationService.update(id, requestDto, authentication));
 
         assertEquals("Can't find accommodation by id: " + id, ex.getMessage());
         verify(accommodationRepository).findById(id);

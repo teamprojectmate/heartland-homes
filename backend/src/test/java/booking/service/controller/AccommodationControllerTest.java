@@ -154,7 +154,7 @@ class AccommodationControllerTest {
         assertEquals(requestDto.getType(), actual.getType());
     }
 
-    @WithMockUser(username = "manager", roles = {"MANAGER"})
+    @WithMockCustomUser(roles = {"MANAGER"})
     @Test
     @DisplayName("Update accommodation by id")
     void update_WithValidIdAndDto_ReturnsUpdatedAccommodation() throws Exception {
@@ -202,7 +202,7 @@ class AccommodationControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-    @WithMockUser(username = "manager", roles = {"MANAGER"})
+    @WithMockCustomUser(roles = {"MANAGER"})
     @Test
     @DisplayName("Update accommodation by non-existing id")
     void update_WithInvalidId_ReturnsNotFound() throws Exception {

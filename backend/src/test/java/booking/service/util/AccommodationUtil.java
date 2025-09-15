@@ -1,10 +1,13 @@
 package booking.service.util;
 
+import static booking.service.util.UserUtil.createUser;
+
 import booking.service.dto.accommodation.AccommodationDto;
 import booking.service.dto.accommodation.CreateAccommodationRequestDto;
 import booking.service.model.Accommodation;
 import booking.service.model.AccommodationStatus;
 import booking.service.model.AccommodationType;
+import booking.service.model.User;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -125,6 +128,8 @@ public class AccommodationUtil {
     }
 
     public static Accommodation createAccommodation2(Long id) {
+        User owner = createUser(1L);
+
         return new Accommodation()
                 .setId(id)
                 .setType(AccommodationType.VACATION_HOME)
@@ -134,7 +139,8 @@ public class AccommodationUtil {
                 .setAmenities(List.of("Wi-Fi", "Кухня"))
                 .setDailyRate(BigDecimal.valueOf(3000.00))
                 .setImage("https://www.dropbox.com/scl/fi/kp6w4a02drpbembtsxd7l/photo3.jpg?rlkey=dsnglnv4gejqkza4hvu7zmrt7&st=irkh4lf4&dl=0")
-                .setDeleted(false);
+                .setDeleted(false)
+                .setOwner(owner);
     }
 
     public static AccommodationDto createAccommodationDto2(Long id) {

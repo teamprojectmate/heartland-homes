@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -60,12 +61,23 @@ public class AccommodationServiceImpl implements AccommodationService {
     }
 
     @Override
-    public AccommodationDto update(Long id, CreateAccommodationRequestDto requestDto) {
+    public AccommodationDto update(Long id, CreateAccommodationRequestDto requestDto,
+            Authentication authentication) {
+        User currentUser = (User) authentication.getPrincipal();
+
         Accommodation accommodation = accommodationRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Can't find accommodation by id: " + id)
         );
+
+        if (!isManager(currentUser)
+                && !accommodation.getOwner().getId().equals(currentUser.getId())) {
+            throw new AccessDeniedException("You don't have permission to update "
+                    + "this accommodation");
+        }
+
         accommodationMapper.updateAccommodationFromDto(requestDto, accommodation);
         accommodationRepository.save(accommodation);
+
         return accommodationMapper.toDto(accommodation);
     }
 

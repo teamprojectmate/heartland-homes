@@ -16,7 +16,8 @@ public interface AccommodationService {
 
     AccommodationDto findById(Long id);
 
-    AccommodationDto update(Long id, CreateAccommodationRequestDto requestDto);
+    AccommodationDto update(Long id, CreateAccommodationRequestDto requestDto,
+            Authentication authentication);
 
     void deleteById(Long id);
 

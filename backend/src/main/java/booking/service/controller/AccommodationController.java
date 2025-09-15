@@ -57,12 +57,13 @@ public class AccommodationController {
         return accommodationService.findById(id);
     }
 
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'MANAGER')")
     @PutMapping("/{id}")
     @Operation(summary = "Update accommodation", description = "Update accommodation details by id")
     public AccommodationDto update(@PathVariable Long id,
-            @RequestBody @Valid CreateAccommodationRequestDto requestDto) {
-        return accommodationService.update(id, requestDto);
+            @RequestBody @Valid CreateAccommodationRequestDto requestDto,
+            Authentication authentication) {
+        return accommodationService.update(id, requestDto, authentication);
     }
 
     @PreAuthorize("hasRole('MANAGER')")
