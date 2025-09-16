@@ -35,7 +35,7 @@ export const updateAccommodation = async (id, formData) => {
 
 // ✏️ Оновити моє житло (користувач / менеджер редагує своє)
 export const updateMyAccommodation = async (id, formData) => {
-  const response = await api.put(`/accommodations/me/${id}`, formData);
+  const response = await api.put(`/accommodations/${id}`, formData);
   return response.data;
 };
 
