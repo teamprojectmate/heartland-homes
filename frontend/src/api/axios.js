@@ -7,7 +7,7 @@ const instance = axios.create({
     qs.stringify(params, { arrayFormat: 'repeat', allowDots: true })
 });
 
-// 🔑 Функція для отримання токена з localStorage
+//  Функція для отримання токена з localStorage
 const getAuthData = () => {
   try {
     return JSON.parse(localStorage.getItem('auth')) || null;
@@ -17,7 +17,7 @@ const getAuthData = () => {
   }
 };
 
-// 🚀 додаємо токен у кожен запит
+//  додаємо токен у кожен запит
 instance.interceptors.request.use((config) => {
   const auth = getAuthData();
   const token = auth?.token;
@@ -28,14 +28,14 @@ instance.interceptors.request.use((config) => {
   return config;
 });
 
-// ⚠️ обробка помилок
+//  обробка помилок
 instance.interceptors.response.use(
   (res) => res,
   (err) => {
     if (err.response?.status === 401) {
       const currentPath = window.location.pathname;
 
-      // ❌ Не редіректимо, якщо вже на сторінці логіну
+      //  Не редіректимо, якщо вже на сторінці логіну
       if (currentPath !== '/login') {
         localStorage.removeItem('auth');
         localStorage.removeItem('userProfile');
