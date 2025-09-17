@@ -8,7 +8,7 @@
 ## 🌍 Демо
 
 - **Frontend (Vercel):** [https://heartland-homes.vercel.app](https://heartland-homes.vercel.app)  
-- **Backend (буде доступний після деплою):** https://api.heartland-homes.com  
+- **Backend (Microsoft Azure):** [https://accommodation-booking-service.azurewebsites.net](https://accommodation-booking-service.azurewebsites.net)
 
 ---
 
