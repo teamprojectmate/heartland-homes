@@ -2,7 +2,7 @@ import axios from 'axios';
 import qs from 'qs';
 
 const instance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080',
+  baseURL: import.meta.env.VITE_API_URL,
   paramsSerializer: (params) =>
     qs.stringify(params, { arrayFormat: 'repeat', allowDots: true })
 });
