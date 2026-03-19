@@ -1,7 +1,9 @@
 import { TrashIcon } from '@heroicons/react/24/solid';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getAllUsers } from '../../api/user/userService';
+import ErrorState from '../../components/ErrorState';
 import StatusSelect from '../../components/selects/StatusSelect';
+import { TableSkeleton } from '../../components/skeletons';
 import { useEnrichedBookings } from '../../hooks/useEnrichedBookings';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
@@ -77,8 +79,8 @@ const AdminBookings = () => {
 		[dispatch],
 	);
 
-	if (status === 'loading') return <p className="text-center">Завантаження...</p>;
-	if (error) return <p className="text-danger text-center">{error}</p>;
+	if (status === 'loading') return <TableSkeleton rows={5} columns={7} />;
+	if (error) return <ErrorState message={error} />;
 
 	const columns = [
 		{ key: 'id', label: 'ID' },

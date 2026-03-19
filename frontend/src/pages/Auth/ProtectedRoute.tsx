@@ -1,5 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import Notification from '../../components/Notification';
+import { PageSkeleton } from '../../components/skeletons';
 import { useAppSelector } from '../../store/hooks';
 
 const ProtectedRoute = ({ children, requiredRole = null }) => {
@@ -7,7 +8,7 @@ const ProtectedRoute = ({ children, requiredRole = null }) => {
 	const location = useLocation();
 
 	if (isLoading) {
-		return <p className="text-center">⏳ Перевірка доступу...</p>;
+		return <PageSkeleton />;
 	}
 
 	// Якщо користувач не авторизований → редірект на /login

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { BookingList } from '../../components/booking/index';
 import Notification from '../../components/Notification';
+import { CardSkeleton } from '../../components/skeletons';
 import { useEnrichedBookings } from '../../hooks/useEnrichedBookings';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { cancelBooking, fetchMyBookings, setPage } from '../../store/slices/bookingsSlice';
@@ -73,7 +74,11 @@ const MyBookings = () => {
 		return (
 			<div className="container page">
 				<h1 className="text-center">{t('booking.myBookings')}</h1>
-				<p className="text-center">{t('common.loading')}</p>
+				<div className="page-skeleton__grid">
+					<CardSkeleton />
+					<CardSkeleton />
+					<CardSkeleton />
+				</div>
 			</div>
 		);
 	}

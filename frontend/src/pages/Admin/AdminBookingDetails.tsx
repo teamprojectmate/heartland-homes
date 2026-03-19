@@ -2,6 +2,8 @@ import { TrashIcon } from '@heroicons/react/24/solid';
 import { useEffect, useState } from 'react';
 import { getAccommodationById } from '../../api/accommodations/accommodationService';
 import { getAllUsers } from '../../api/user/userService';
+import ErrorState from '../../components/ErrorState';
+import { TableSkeleton } from '../../components/skeletons';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
 	deleteBooking,
@@ -129,8 +131,8 @@ const AdminBookings = () => {
 		dispatch(deleteBooking(id));
 	};
 
-	if (status === 'loading') return <p className="text-center">Завантаження...</p>;
-	if (error) return <p className="text-danger text-center">{error}</p>;
+	if (status === 'loading') return <TableSkeleton rows={5} columns={7} />;
+	if (error) return <ErrorState message={error} />;
 
 	//  колонки для AdminTable
 	const columns = [
