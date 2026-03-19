@@ -1,41 +1,37 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import '../styles/components/_notifications.scss';
 
 const Notification = ({ message, type = 'success', duration = 3000, onClose }) => {
-  const [visible, setVisible] = useState(true);
+	const [visible, setVisible] = useState(true);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setVisible(false);
-      onClose?.();
-    }, duration);
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			setVisible(false);
+			onClose?.();
+		}, duration);
 
-    return () => clearTimeout(timer);
-  }, [duration, onClose]);
+		return () => clearTimeout(timer);
+	}, [duration, onClose]);
 
-  if (!visible || !message) return null;
+	if (!visible || !message) return null;
 
-  const notificationClass = `notification notification-${type}`;
+	const notificationClass = `notification notification-${type}`;
 
-  return (
-    <div
-      className={`${notificationClass}`}
-      role="alert"
-      aria-live="assertive"
-      aria-atomic="true"
-    >
-      <span>{message}</span>
-      <button
-        className="close-btn"
-        onClick={() => {
-          setVisible(false);
-          onClose?.();
-        }}
-      >
-        ×
-      </button>
-    </div>
-  );
+	return (
+		<div className={`${notificationClass}`} role="alert" aria-live="assertive" aria-atomic="true">
+			<span>{message}</span>
+			<button
+				type="button"
+				className="close-btn"
+				onClick={() => {
+					setVisible(false);
+					onClose?.();
+				}}
+			>
+				×
+			</button>
+		</div>
+	);
 };
 
 export default Notification;
