@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import BaseMap from '../../components/BaseMap';
 import Notification from '../../components/Notification';
@@ -14,74 +14,10 @@ import { getSafeImageUrl } from '../../utils/getSafeImageUrl';
 import AccommodationDetails from './AccommodationDetails';
 import AccommodationFilters from './AccommodationFilters';
 import AccommodationList from './AccommodationList';
+import AccommodationModal from './AccommodationModal';
 
 import '../../styles/components/accommodation/_accommodations-map.scss';
 import '../../styles/components/accommodation/_accommodations-list.scss';
-
-// Простий компонент модалки
-const Modal = React.memo(
-	({
-		isOpen,
-		onClose,
-		children,
-	}: {
-		isOpen: boolean;
-		onClose: () => void;
-		children: React.ReactNode;
-	}) => {
-		if (!isOpen) return null;
-
-		return (
-			<div
-				style={{
-					position: 'fixed',
-					inset: 0,
-					backgroundColor: 'rgba(0,0,0,0.6)',
-					display: 'flex',
-					justifyContent: 'center',
-					alignItems: 'center',
-					zIndex: 2000,
-				}}
-				onClick={onClose}
-				onKeyDown={(e) => {
-					if (e.key === 'Escape') onClose();
-				}}
-				role="dialog"
-				aria-modal="true"
-			>
-				<div
-					style={{
-						background: '#fff',
-						borderRadius: '12px',
-						width: '90%',
-						maxWidth: '1000px',
-						maxHeight: '90vh',
-						overflowY: 'auto',
-						padding: '1rem',
-					}}
-					onClick={(e) => e.stopPropagation()}
-					onKeyDown={(e) => e.stopPropagation()}
-					role="document"
-				>
-					<button
-						type="button"
-						onClick={onClose}
-						style={{
-							float: 'right',
-							border: 'none',
-							background: 'transparent',
-							fontSize: '1.5rem',
-							cursor: 'pointer',
-						}}
-					>
-						✖
-					</button>
-					{children}
-				</div>
-			</div>
-		);
-	},
-);
 
 const Accommodations = () => {
 	const dispatch = useAppDispatch();
@@ -92,10 +28,12 @@ const Accommodations = () => {
 	);
 
 	const accommodationListRef = useRef(null);
-	const [highlightedId, setHighlightedId] = useState(null);
-	const [selectedAccommodation, setSelectedAccommodation] = useState<any>(null);
+	const [highlightedId, setHighlightedId] = useState<number | null>(null);
+	const [selectedAccommodation, setSelectedAccommodation] = useState<{
+		id: number;
+		name?: string;
+	} | null>(null);
 
-	// Зчитування фільтрів з URL
 	useEffect(() => {
 		const queryParams = new URLSearchParams(location.search);
 		const newFilters: Record<string, string> = {};
@@ -107,12 +45,10 @@ const Accommodations = () => {
 		dispatch(setFilters(newFilters));
 	}, [dispatch, location.search]);
 
-	// Завантаження даних
 	useEffect(() => {
 		dispatch(loadAccommodations({}) as any);
 	}, [dispatch]);
 
-	// Скидання фільтрів і сторінки при виході зі сторінки
 	useEffect(() => {
 		return () => {
 			dispatch(resetFilters());
@@ -120,14 +56,8 @@ const Accommodations = () => {
 		};
 	}, [dispatch]);
 
-	//  Мемоізація queryParams
-	const _queryParams = useMemo(
-		() => new URLSearchParams(filters as Record<string, string>).toString(),
-		[filters],
-	);
-
 	const handleApplyFilters = useCallback(
-		(e, formData) => {
+		(e: React.FormEvent, formData: Record<string, string>) => {
 			e.preventDefault();
 			const newFilters = Object.fromEntries(
 				Object.entries(formData).filter(([_, v]) => v !== null && v !== ''),
@@ -143,7 +73,7 @@ const Accommodations = () => {
 		navigate('/accommodations');
 	}, [dispatch, navigate]);
 
-	const handleCardHover = useCallback((id) => {
+	const handleCardHover = useCallback((id: number | null) => {
 		setHighlightedId(id);
 	}, []);
 
@@ -163,10 +93,11 @@ const Accommodations = () => {
 						onResetFilters={handleResetFilters}
 					/>
 
-					{loading && <p className="text-center">Завантаження...</p>}
 					{error && <Notification message={error} type="danger" />}
 
-					{!loading && !error && items.length > 0 ? (
+					{loading ? (
+						<p className="text-center">Завантаження...</p>
+					) : items.length > 0 ? (
 						<>
 							<AccommodationList accommodations={items} onCardHover={handleCardHover} />
 							<Pagination
@@ -176,7 +107,7 @@ const Accommodations = () => {
 							/>
 						</>
 					) : (
-						<p className="text-center">Помешкань не знайдено</p>
+						!error && <p className="text-center">Помешкань не знайдено</p>
 					)}
 				</div>
 			</div>
@@ -209,12 +140,14 @@ const Accommodations = () => {
 				/>
 			</div>
 
-			{/* Модалка */}
-			<Modal isOpen={!!selectedAccommodation} onClose={() => setSelectedAccommodation(null)}>
+			<AccommodationModal
+				isOpen={!!selectedAccommodation}
+				onClose={() => setSelectedAccommodation(null)}
+			>
 				{selectedAccommodation && <AccommodationDetails id={selectedAccommodation.id} />}
-			</Modal>
+			</AccommodationModal>
 		</div>
 	);
 };
 
-export default React.memo(Accommodations);
+export default Accommodations;

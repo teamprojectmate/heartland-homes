@@ -1,8 +1,8 @@
 import { TrashIcon } from '@heroicons/react/24/solid';
-import { useEffect, useState } from 'react';
-import { getAccommodationById } from '../../api/accommodations/accommodationService';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getAllUsers } from '../../api/user/userService';
 import StatusSelect from '../../components/selects/StatusSelect';
+import { useEnrichedBookings } from '../../hooks/useEnrichedBookings';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
 	deleteBooking,
@@ -10,144 +10,119 @@ import {
 	updateBookingStatus,
 } from '../../store/slices/bookingsSlice';
 import { fetchAllPayments } from '../../store/slices/paymentsSlice';
-import { normalizeBooking } from '../../utils/normalizeBooking';
-import AdminBookingCard from '../Admin/AdminBookingCard';
-import AdminTable from '../Admin/AdminTable';
+import type { User } from '../../types';
+import AdminBookingCard from './AdminBookingCard';
+import AdminTable from './AdminTable';
 
 import '../../styles/components/badges/_badges.scss';
 import '../../styles/components/admin/_admin-bookings.scss';
 import '../../styles/components/admin/_admin-tables.scss';
+
+type EnrichedBookingRow = {
+	id: number;
+	userId?: number;
+	user?: User | null;
+	accommodation?: { name?: string } | null;
+	checkInDate: string;
+	checkOutDate: string;
+	totalPrice?: number | null;
+	status: string;
+	payment?: { status?: string } | null;
+};
 
 const AdminBookings = () => {
 	const dispatch = useAppDispatch();
 	const { bookings, status, error } = useAppSelector((state) => state.bookings);
 	const { payments } = useAppSelector((state) => state.payments);
 
-	const [usersMap, setUsersMap] = useState({});
-	const [enrichedBookings, setEnrichedBookings] = useState([]);
+	const [usersMap, setUsersMap] = useState<Record<string, User>>({});
 	const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-	// resize listener
+	const enrichedBookings = useEnrichedBookings(bookings, payments, usersMap);
+
 	useEffect(() => {
 		const handleResize = () => setIsMobile(window.innerWidth < 768);
 		window.addEventListener('resize', handleResize);
 		return () => window.removeEventListener('resize', handleResize);
 	}, []);
 
-	// завантаження бронювань, користувачів та платежів
 	useEffect(() => {
 		dispatch(fetchBookings({}) as any);
 		dispatch(fetchAllPayments({}) as any);
 
-		getAllUsers().then((users) => {
-			const map = {};
-			(users?.content || users || []).forEach((u) => {
-				map[u.id] = u;
+		getAllUsers()
+			.then((users: any) => {
+				const map: Record<string, User> = {};
+				for (const u of users?.content || users || []) {
+					map[u.id] = u;
+				}
+				setUsersMap(map);
+			})
+			.catch(() => {
+				// users load failed — enrichment will show IDs instead of names
 			});
-			setUsersMap(map);
-		});
 	}, [dispatch]);
 
-	// enrichment житла + юзерів + платежів
-	useEffect(() => {
-		if (!bookings || bookings.length === 0) return;
+	const handleStatusChange = useCallback(
+		(booking: EnrichedBookingRow, newStatus: string) => {
+			dispatch(updateBookingStatus({ booking, status: newStatus }));
+		},
+		[dispatch],
+	);
 
-		const enrichData = async () => {
-			const results = await Promise.all(
-				bookings.map(async (booking) => {
-					let accommodation = null;
-					let totalPrice = null;
-
-					try {
-						accommodation = await getAccommodationById(booking.accommodationId);
-						if (accommodation && booking.checkInDate && booking.checkOutDate) {
-							const start = new Date(booking.checkInDate);
-							const end = new Date(booking.checkOutDate);
-							const nights = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
-							totalPrice = nights * (accommodation.dailyRate || 0);
-						}
-					} catch {
-						console.warn(`Не вдалося завантажити житло id=${booking.accommodationId}`);
-					}
-
-					const user = usersMap[booking.userId];
-					const payment = payments.find((p) => p.bookingId === booking.id);
-
-					//  нормалізуємо тут
-					return normalizeBooking({
-						...booking,
-						accommodation,
-						user,
-						totalPrice,
-						payment,
-					});
-				}),
-			);
-			setEnrichedBookings(results);
-		};
-
-		enrichData();
-	}, [bookings, usersMap, payments]);
-
-	// дії
-	const handleStatusChange = (booking, newStatus) => {
-		dispatch(updateBookingStatus({ booking, status: newStatus }));
-	};
-
-	const handleDelete = (id) => {
-		dispatch(deleteBooking(id));
-	};
+	const handleDelete = useCallback(
+		(id: number) => {
+			dispatch(deleteBooking(id));
+		},
+		[dispatch],
+	);
 
 	if (status === 'loading') return <p className="text-center">Завантаження...</p>;
 	if (error) return <p className="text-danger text-center">{error}</p>;
 
-	// колонки
 	const columns = [
 		{ key: 'id', label: 'ID' },
 		{
 			key: 'user',
 			label: 'Користувач',
-			render: (b) =>
+			render: (b: EnrichedBookingRow) =>
 				b.user ? `${b.user.firstName} ${b.user.lastName} (${b.user.email})` : b.userId,
 		},
 		{
 			key: 'accommodation',
 			label: 'Помешкання',
-			render: (b) => b.accommodation?.name || '—',
+			render: (b: EnrichedBookingRow) => b.accommodation?.name || '—',
 		},
 		{ key: 'checkInDate', label: 'Заїзд' },
 		{ key: 'checkOutDate', label: 'Виїзд' },
 		{
 			key: 'totalPrice',
 			label: 'Ціна',
-			render: (b) => (b.totalPrice ? `${b.totalPrice} грн` : '—'),
+			render: (b: EnrichedBookingRow) => (b.totalPrice ? `${b.totalPrice} грн` : '—'),
 		},
 		{
 			key: 'status',
 			label: 'Статус бронювання',
-			render: (b) => (
+			render: (b: EnrichedBookingRow) => (
 				<StatusSelect
 					type="booking"
 					value={b.status}
-					onChange={(newStatus) => handleStatusChange(b, newStatus)}
+					onChange={(newStatus: string) => handleStatusChange(b, newStatus)}
 				/>
 			),
 		},
 		{
 			key: 'paymentStatus',
 			label: 'Статус оплати',
-			render: (b) =>
-				b.payment ? (
-					<span
-						className={`badge ${
-							b.payment.status === 'PAID' ? 'badge-status-paid' : 'badge-status-pending'
-						}`}
-					>
-						{b.payment.status === 'PAID' ? 'Оплачено' : 'Очікує оплату'}
+			render: (b: EnrichedBookingRow) => {
+				if (!b.payment) return '—';
+				const isPaid = b.payment.status === 'PAID';
+				return (
+					<span className={`badge ${isPaid ? 'badge-status-paid' : 'badge-status-pending'}`}>
+						{isPaid ? 'Оплачено' : 'Очікує оплату'}
 					</span>
-				) : (
-					'—'
-				),
+				);
+			},
 		},
 	];
 
@@ -170,7 +145,7 @@ const AdminBookings = () => {
 				<AdminTable
 					columns={columns}
 					data={enrichedBookings}
-					actions={(b) => (
+					actions={(b: EnrichedBookingRow) => (
 						<button
 							type="button"
 							className="btn-inline btn-danger"

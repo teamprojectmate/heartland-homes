@@ -2,18 +2,18 @@ import { lazy, Suspense, useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import ErrorBoundary from './components/ErrorBoundary';
 import Footer from './components/Footer';
-// Спільні компоненти
 import Header from './components/Header';
 import PageWrapper from './components/PageWrapper';
 import ScrollToTop from './components/ScrollToTop';
 import Login from './pages/Auth/Login';
 import LoginSuccess from './pages/Auth/LoginSuccess';
-// Auth (легкі — можна лишити не-lazy, як у тебе)
 import ProtectedRoute from './pages/Auth/ProtectedRoute';
 import Register from './pages/Auth/Register';
 import { useAppDispatch } from './store/hooks';
 
-// 👇 Ледачимо важкі/вторинні сторінки
+// ── Lazy-loaded pages ────────────────────────────────────────────────
+
+// Public
 const Home = lazy(() => import('./pages/Home'));
 const Accommodations = lazy(() => import('./pages/Accommodations/Accommodations'));
 const AccommodationDetails = lazy(() => import('./pages/Accommodations/AccommodationDetails'));
@@ -27,7 +27,12 @@ const PaymentSuccess = lazy(() => import('./pages/User/PaymentSuccess'));
 const PaymentCancel = lazy(() => import('./pages/User/PaymentCancel'));
 const PaymentsList = lazy(() => import('./pages/User/PaymentsList'));
 
-// Admin
+// Accommodations management (CUSTOMER + MANAGER)
+const CreateAccommodation = lazy(() => import('./pages/Accommodations/CreateAccommodation'));
+const MyAccommodations = lazy(() => import('./pages/Accommodations/MyAccommodations'));
+const EditMyAccommodation = lazy(() => import('./pages/Accommodations/EditMyAccommodation'));
+
+// Admin (MANAGER only)
 const AdminLayout = lazy(() => import('./components/AdminLayout'));
 const AdminDashboard = lazy(() => import('./pages/Admin/AdminDashboard'));
 const AdminAccommodations = lazy(() => import('./pages/Admin/AdminAccommodations'));
@@ -37,12 +42,7 @@ const AdminBookingDetails = lazy(() => import('./pages/Admin/AdminBookingDetails
 const AdminUsers = lazy(() => import('./pages/Admin/AdminUsers'));
 const AdminPayments = lazy(() => import('./pages/Admin/AdminPayments'));
 
-// Shared
-const CreateAccommodation = lazy(() => import('./pages/Accommodations/CreateAccommodation'));
-const MyAccommodations = lazy(() => import('./pages/Accommodations/MyAccommodations'));
-const EditMyAccommodation = lazy(() => import('./pages/Accommodations/EditMyAccommodation'));
-
-// Info pages (раніше були eager)
+// Info pages
 const FAQ = lazy(() => import('./pages/Info/FAQ'));
 const Support = lazy(() => import('./pages/Info/Support'));
 const About = lazy(() => import('./pages/Info/About'));
@@ -55,11 +55,14 @@ const Cookies = lazy(() => import('./pages/Info/Cookies'));
 
 const NotFound = lazy(() => import('./pages/NotFound'));
 
+// ── Styles & services ────────────────────────────────────────────────
+
 import './styles/main.scss';
 
 import authService from './api/auth/authService';
-// Redux
 import { setUser } from './store/slices/authSlice';
+
+// ── App ──────────────────────────────────────────────────────────────
 
 function App() {
 	const dispatch = useAppDispatch();
@@ -90,7 +93,7 @@ function App() {
 				<ErrorBoundary>
 					<Suspense fallback={<p className="text-center mt-5">Завантаження...</p>}>
 						<Routes>
-							{/* Public routes */}
+							{/* ── Public routes ──────────────────────────── */}
 							<Route
 								path="/"
 								element={
@@ -116,7 +119,27 @@ function App() {
 								}
 							/>
 
-							{/* Create accommodation (CUSTOMER + MANAGER) */}
+							{/* ── Auth routes ────────────────────────────── */}
+							<Route
+								path="/login"
+								element={
+									<PageWrapper title="Вхід">
+										<Login />
+									</PageWrapper>
+								}
+							/>
+							<Route path="/auth/success" element={<LoginSuccess />} />
+							<Route path="/login/success" element={<LoginSuccess />} />
+							<Route
+								path="/register"
+								element={
+									<PageWrapper title="Реєстрація">
+										<Register />
+									</PageWrapper>
+								}
+							/>
+
+							{/* ── Accommodation management (CUSTOMER + MANAGER) ── */}
 							<Route
 								path="/accommodations/new"
 								element={
@@ -127,8 +150,6 @@ function App() {
 									</ProtectedRoute>
 								}
 							/>
-
-							{/* My accommodations (CUSTOMER + MANAGER) */}
 							<Route
 								path="/my-accommodations"
 								element={
@@ -150,39 +171,7 @@ function App() {
 								}
 							/>
 
-							{/* Admin accommodations (MANAGER only) */}
-							<Route
-								path="/admin/accommodations"
-								element={
-									<ProtectedRoute requiredRole="MANAGER">
-										<PageWrapper title="Усі помешкання">
-											<AdminAccommodations />
-										</PageWrapper>
-									</ProtectedRoute>
-								}
-							/>
-
-							{/* Auth */}
-							<Route
-								path="/login"
-								element={
-									<PageWrapper title="Вхід">
-										<Login />
-									</PageWrapper>
-								}
-							/>
-							<Route path="/auth/success" element={<LoginSuccess />} />
-							<Route path="/login/success" element={<LoginSuccess />} />
-							<Route
-								path="/register"
-								element={
-									<PageWrapper title="Реєстрація">
-										<Register />
-									</PageWrapper>
-								}
-							/>
-
-							{/* User routes */}
+							{/* ── User routes (authenticated) ────────────── */}
 							<Route
 								path="/my-bookings"
 								element={
@@ -254,7 +243,17 @@ function App() {
 								}
 							/>
 
-							{/* Admin routes (MANAGER only) */}
+							{/* ── Admin routes (MANAGER only) ────────────── */}
+							<Route
+								path="/admin/accommodations"
+								element={
+									<ProtectedRoute requiredRole="MANAGER">
+										<PageWrapper title="Усі помешкання">
+											<AdminAccommodations />
+										</PageWrapper>
+									</ProtectedRoute>
+								}
+							/>
 							<Route
 								path="/admin/*"
 								element={
@@ -271,7 +270,7 @@ function App() {
 								<Route path="payments" element={<AdminPayments />} />
 							</Route>
 
-							{/* Info routes */}
+							{/* ── Info / static pages ─────────────────────── */}
 							<Route
 								path="/faq"
 								element={
@@ -345,7 +344,7 @@ function App() {
 								}
 							/>
 
-							{/* Catch-all */}
+							{/* ── Catch-all ──────────────────────────────── */}
 							<Route
 								path="*"
 								element={
