@@ -65,7 +65,7 @@
   flex: 1;
   flex-direction: column;
   font-size: $font-size-md;
-  background: $background-light;
+  background: var(--bg-primary);
 }
 
 .admin-header {
@@ -73,14 +73,14 @@
   align-items: center;
   justify-content: space-between;
   padding: 1.5rem 2rem;
-  background: $surface-color;
-  border-bottom: 1px solid $gray-200;
-  box-shadow: $box-shadow-sm;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
 
   h2 {
     font-size: $font-size-xl;
     font-weight: 700;
-    color: $heading-color;
+    color: var(--text-heading);
   }
 
   .admin-user-actions {
@@ -90,7 +90,7 @@
 
     .admin-user {
       font-weight: 600;
-      color: $text-color;
+      color: var(--text-primary);
     }
 
     .btn-logout {

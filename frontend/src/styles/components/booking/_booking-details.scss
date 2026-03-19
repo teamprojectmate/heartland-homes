@@ -9,7 +9,7 @@
     margin-bottom: $spacer-lg;
     font-size: $font-size-xxl;
     font-weight: 700;
-    color: $heading-color;
+    color: var(--text-heading);
     text-align: center;
   }
 }
@@ -30,7 +30,7 @@
   @include card-shadow;
 
   padding: $spacer;
-  background-color: $white-color;
+  background-color: var(--bg-surface);
   border-radius: $radius;
 }
 
@@ -50,7 +50,7 @@
   .card-subtitle {
     margin-bottom: $spacer;
     font-size: $font-size-base;
-    color: $muted-color;
+    color: var(--text-muted);
   }
 
   .booking-details-content {
@@ -62,7 +62,7 @@
       margin-top: $spacer-sm;
       font-size: $font-size-lg;
       font-weight: 600;
-      color: $primary-color;
+      color: var(--color-primary);
     }
   }
 }
@@ -82,19 +82,19 @@
     .label {
       font-size: $font-size-base;
       font-weight: 600;
-      color: $muted-color;
+      color: var(--text-muted);
     }
 
     .price {
       font-size: $font-size-xl;
       font-weight: 700;
-      color: $primary-color;
+      color: var(--color-primary);
     }
 
     .currency {
       font-size: $font-size-md;
       font-weight: 600;
-      color: $primary-color;
+      color: var(--color-primary);
     }
   }
 

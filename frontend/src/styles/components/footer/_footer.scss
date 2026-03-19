@@ -18,11 +18,11 @@
   //  блок для пропозиції (auth-only)
   &__property {
     padding: $spacer-lg;
-    color: $text-color;
+    color: var(--footer-property-color);
     text-align: center;
-    background-color: $white-color;
+    background-color: var(--footer-property-bg);
     border-radius: $radius-lg;
-    box-shadow: $box-shadow-sm;
+    box-shadow: var(--shadow-sm);
 
     &__title {
       margin-bottom: $spacer-sm;

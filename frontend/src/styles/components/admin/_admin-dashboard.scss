@@ -25,11 +25,11 @@
   width: 100%;
   max-width: 320px;
   padding: 2.5rem 2rem;
-  color: $heading-color;
+  color: var(--text-heading);
   text-decoration: none;
-  background: $surface-color;
+  background: var(--bg-surface);
   border-radius: $radius-lg;
-  box-shadow: $box-shadow-card;
+  box-shadow: var(--shadow-card);
   transition:
     transform 0.25s ease,
     box-shadow 0.25s ease;
@@ -49,7 +49,7 @@
   p {
     margin: 0;
     font-size: $font-size-sm;
-    color: $muted-color;
+    color: var(--text-muted);
   }
 }
 
@@ -70,7 +70,7 @@
 }
 
 .accent-blue .dashboard-icon {
-  color: $primary-color;
+  color: var(--color-primary);
 }
 
 .accent-purple .dashboard-icon {

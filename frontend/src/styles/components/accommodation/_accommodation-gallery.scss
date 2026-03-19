@@ -8,7 +8,7 @@
   height: 420px;
   margin-bottom: $spacer;
   overflow: hidden;
-  background: $gray-200;
+  background: var(--bg-surface-hover);
   border-radius: $radius;
 
   @include card-shadow;
@@ -32,11 +32,11 @@
 
   .swiper-button-prev,
   .swiper-button-next {
-    color: $primary-color;
+    color: var(--color-primary);
   }
 
   .swiper-pagination-bullet {
-    background: $primary-color;
+    background: var(--color-primary);
   }
 }
 

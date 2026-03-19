@@ -1,3 +1,6 @@
+// 0) theme (CSS custom properties — must be first)
+@use './abstract/theme';
+
 // 1) abstract
 @use './abstract/variables' as *;
 @use './abstract/mixins' as *;
@@ -12,7 +15,7 @@
 // 3) layout
 @use './layout/main-layout' as *;
 
-// 4) базові секції
+// 4) base sections
 @use './components/sections' as *;
 
 // 5) components
@@ -35,10 +38,13 @@
 @use './components/skeleton' as *;
 @use './components/status-select' as *;
 
-// 6) сторонні стилі
+// 6) settings bar (theme/language switcher)
+@use './components/settings-bar' as *;
+
+// 7) third-party styles
 @use '../../node_modules/react-image-gallery/styles/scss/image-gallery';
 
-// reset / базове
+// reset / base
 *,
 *::before,
 *::after {
@@ -54,6 +60,6 @@ body,
   font-family: $font-family-base;
   font-size: $font-size-base;
   line-height: $line-height-base;
-  color: $text-color;
-  background-color: $background-color;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
 }

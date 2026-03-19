@@ -17,27 +17,27 @@
   flex-direction: column;
   width: 100%;
   padding: 2rem;
-  background: $white-color;
+  background: var(--bg-surface);
   border-radius: $radius-md;
-  box-shadow: $box-shadow-card;
+  box-shadow: var(--shadow-card);
 
   .auth-title {
     margin-bottom: 1rem;
     font-size: 1.8rem;
     font-weight: 700;
-    color: $heading-color;
+    color: var(--text-heading);
     text-align: center;
   }
 
   .form-subtitle {
     margin-bottom: 1rem;
     font-size: 0.95rem;
-    color: $muted-color;
+    color: var(--text-muted);
     text-align: center;
 
     a {
       font-weight: 600;
-      color: $primary-color;
+      color: var(--color-primary);
 
       &:hover {
         text-decoration: underline;
@@ -59,7 +59,7 @@
       top: 50%;
       left: 12px;
       font-size: 1rem;
-      color: $muted-color;
+      color: var(--text-muted);
       transform: translateY(-50%);
     }
 
@@ -68,12 +68,12 @@
       height: 48px;
       padding-left: 38px;
       font-size: 1rem;
-      border: 1px solid $border-color;
+      border: 1px solid var(--border-color);
       border-radius: $radius-sm;
 
       &:focus {
         outline: none;
-        border-color: $primary-color;
+        border-color: var(--color-primary);
         box-shadow: $box-shadow-focus;
       }
     }

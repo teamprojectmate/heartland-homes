@@ -10,12 +10,11 @@ body.no-scroll {
   position: sticky;
   top: 0;
   z-index: $z-header;
-  background: rgba($white-color, 0.9);
-  border-bottom: 1px solid rgba($border-color, 0.8);
-  box-shadow: $box-shadow-sm;
+  background: var(--header-bg);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
 
   @supports (backdrop-filter: blur(8px)) {
-    background: rgba($white-color, 0.72);
     backdrop-filter: saturate(180%) blur(10px);
   }
 

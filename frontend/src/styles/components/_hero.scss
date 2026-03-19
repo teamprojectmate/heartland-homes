@@ -26,10 +26,10 @@
   align-items: flex-end;
   justify-content: space-between;
   padding: 1.5rem;
-  color: $text-color;
-  background-color: $surface-color;
+  color: var(--text-primary);
+  background-color: var(--bg-surface);
   border-radius: $radius;
-  box-shadow: $box-shadow-form;
+  box-shadow: var(--shadow-sm);
 
   @media (max-width: $breakpoint-md) {
     flex-direction: column;
@@ -51,7 +51,7 @@
     margin-bottom: 0.5rem;
     font-size: 0.8rem;
     font-weight: 700;
-    color: $muted-color;
+    color: var(--text-muted);
   }
 }
 

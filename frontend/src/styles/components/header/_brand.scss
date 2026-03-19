@@ -6,7 +6,7 @@
   align-items: center;
   font-size: $font-size-lg;
   font-weight: 800;
-  color: $primary-color;
+  color: var(--color-primary);
   text-decoration: none;
 
   svg {

@@ -18,13 +18,13 @@
       color: $white-color;
       background: $primary-color;
       border-radius: 50%;
-      box-shadow: $box-shadow-card;
+      box-shadow: var(--shadow-card);
     }
 
     .page-title {
       font-size: clamp(1.8rem, 2.4vw, 2.4rem);
       font-weight: 800;
-      color: $heading-color;
+      color: var(--text-heading);
       letter-spacing: -0.02em;
     }
   }
@@ -36,18 +36,18 @@
     margin-inline: auto;
     font-size: 1.1rem;
     line-height: 1.75;
-    color: $text-color;
+    color: var(--text-primary);
 
     p {
       padding: 1.2rem 1.5rem;
-      background: $surface-color;
-      border-left: 4px solid $primary-color;
+      background: var(--bg-surface);
+      border-left: 4px solid var(--color-primary);
       border-radius: $radius-lg;
-      box-shadow: $box-shadow-card;
+      box-shadow: var(--shadow-card);
       transition: all 0.3s ease;
 
       &:hover {
-        box-shadow: $box-shadow-card-hover;
+        box-shadow: var(--shadow-md);
         transform: translateY(-4px);
       }
     }
@@ -70,13 +70,13 @@
       li {
         position: relative;
         padding: 1rem 1.2rem 1rem 2.5rem;
-        background: $surface-color;
+        background: var(--bg-surface);
         border-radius: $radius-lg;
-        box-shadow: $box-shadow-card;
+        box-shadow: var(--shadow-card);
         transition: all 0.3s ease;
 
         &:hover {
-          box-shadow: $box-shadow-card-hover;
+          box-shadow: var(--shadow-md);
           transform: translateY(-3px);
         }
 
@@ -84,7 +84,7 @@
           position: absolute;
           left: 1rem;
           font-weight: 700;
-          color: $primary-color;
+          color: var(--color-primary);
           content: '✔';
         }
       }
@@ -101,13 +101,13 @@
 
   .faq-card {
     padding: 1.2rem 1.5rem;
-    background: $surface-color;
+    background: var(--bg-surface);
     border-radius: $radius-lg;
-    box-shadow: $box-shadow-card;
+    box-shadow: var(--shadow-card);
     transition: all 0.3s ease;
 
     &:hover {
-      box-shadow: $box-shadow-card-hover;
+      box-shadow: var(--shadow-md);
       transform: translateY(-3px);
     }
 
@@ -115,12 +115,12 @@
       margin-bottom: 0.6rem;
       font-size: 1.25rem;
       font-weight: 700;
-      color: $heading-color;
+      color: var(--text-heading);
     }
 
     .faq-answer {
       font-size: 1rem;
-      color: $muted-color;
+      color: var(--text-muted);
     }
   }
 
@@ -128,10 +128,10 @@
   .support-box {
     padding: 1.5rem;
     margin-top: 2rem;
-    background: $surface-color;
-    border-left: 4px solid $primary-color;
+    background: var(--bg-surface);
+    border-left: 4px solid var(--color-primary);
     border-radius: $radius-lg;
-    box-shadow: $box-shadow-card;
+    box-shadow: var(--shadow-card);
 
     p {
       display: flex;
@@ -139,16 +139,16 @@
       align-items: center;
       margin-bottom: 0.6rem;
       font-weight: 500;
-      color: $text-color;
+      color: var(--text-primary);
 
       svg {
-        color: $primary-color;
+        color: var(--color-primary);
       }
     }
 
     a {
       font-weight: 600;
-      color: $primary-color;
+      color: var(--color-primary);
       text-decoration: none;
 
       &:hover {
@@ -164,7 +164,7 @@
   font-size: clamp(1.1rem, 1.3vw, 1.3rem);
   font-weight: 400;
   line-height: 1.8;
-  color: $text-color;
+  color: var(--text-primary);
 }
 
 /* Highlights */
@@ -181,9 +181,9 @@
 .highlight-card {
   padding: 1.8rem 1.2rem;
   text-align: center;
-  background: $surface-color;
+  background: var(--bg-surface);
   border-radius: $radius-lg;
-  box-shadow: $box-shadow-card;
+  box-shadow: var(--shadow-card);
   transition: all 0.3s ease;
 
   &:hover {
@@ -194,19 +194,19 @@
   .highlight-icon {
     margin-bottom: 0.8rem;
     font-size: 2rem;
-    color: $primary-color;
+    color: var(--color-primary);
   }
 
   h3 {
     margin-bottom: 0.5rem;
     font-size: 1.25rem;
     font-weight: 700;
-    color: $heading-color;
+    color: var(--text-heading);
   }
 
   p {
     font-size: 0.95rem;
-    color: $muted-color;
+    color: var(--text-muted);
   }
 }
 
@@ -228,9 +228,9 @@
 .offer-card {
   padding: 1.5rem;
   text-align: center;
-  background: $surface-color;
+  background: var(--bg-surface);
   border-radius: $radius-lg;
-  box-shadow: $box-shadow-card;
+  box-shadow: var(--shadow-card);
   transition: all 0.3s ease;
 
   &:hover {
@@ -241,18 +241,18 @@
   .offer-icon {
     margin-bottom: 1rem;
     font-size: 2rem;
-    color: $primary-color;
+    color: var(--color-primary);
   }
 
   h3 {
     margin-bottom: 0.5rem;
     font-size: 1.15rem;
     font-weight: 700;
-    color: $heading-color;
+    color: var(--text-heading);
   }
 
   p {
     font-size: 0.95rem;
-    color: $muted-color;
+    color: var(--text-muted);
   }
 }

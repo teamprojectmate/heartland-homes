@@ -12,13 +12,13 @@
     text-align: center;
 
     .page-title {
-      @include heading($font-size-xl, 700, $heading-color);
+      @include heading($font-size-xl, 700, var(--text-heading));
 
       margin-bottom: 0.6rem;
     }
 
     .page-subtitle {
-      @include heading($font-size-lg, 400, $muted-color);
+      @include heading($font-size-lg, 400, var(--text-muted));
     }
   }
 
@@ -49,14 +49,14 @@
 
   .details-card {
     padding: $spacer;
-    background: $white-color;
+    background: var(--bg-surface);
     border-radius: $radius;
 
     @include card-shadow;
   }
 
   .details-section-title {
-    @include heading($font-size-lg, 600, $heading-color);
+    @include heading($font-size-lg, 600, var(--text-heading));
 
     margin-bottom: $spacer-md;
   }
@@ -66,7 +66,7 @@
     flex-wrap: wrap;
     gap: 0.75rem 1.25rem;
     font-size: $font-size-md;
-    color: $text-color;
+    color: var(--text-primary);
   }
 
   .location-map-full {
@@ -87,7 +87,7 @@
     position: sticky;
     top: $spacer;
     padding: $spacer;
-    background: $white-color;
+    background: var(--bg-surface);
     border-radius: $radius;
 
     @include card-shadow;
@@ -97,7 +97,7 @@
     }
 
     .booking-title {
-      @include heading($font-size-lg, 700, $heading-color);
+      @include heading($font-size-lg, 700, var(--text-heading));
 
       margin-bottom: $spacer-sm;
     }
@@ -114,20 +114,20 @@
       .price {
         font-size: 2rem;
         font-weight: 700;
-        color: $primary-color;
+        color: var(--color-primary);
       }
 
       .currency {
         font-size: $font-size-xl;
         font-weight: 600;
-        color: $primary-color;
+        color: var(--color-primary);
       }
 
       .per-night {
         margin-top: -0.25rem;
         font-size: $font-size-md;
         font-weight: 400;
-        color: $muted-color;
+        color: var(--text-muted);
       }
     }
   }

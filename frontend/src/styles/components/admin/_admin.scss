@@ -4,12 +4,12 @@
 .admin-page-container {
   min-height: 100vh;
   padding: 2rem 1rem;
-  background-color: $background-light;
+  background-color: var(--bg-primary);
 }
 
 .table-wrapper {
   overflow-x: auto;
-  background-color: $surface-color;
+  background-color: var(--bg-surface);
   border-radius: $radius-md;
 
   @include card-shadow;
@@ -20,30 +20,30 @@
 .admin-bookings-table {
   width: 100%;
   font-size: $font-size-sm;
-  color: $text-color;
+  color: var(--text-primary);
   border-collapse: collapse;
 
   th,
   td {
     padding: 1.1rem 1rem;
     text-align: left;
-    border-bottom: 1px solid $gray-200;
+    border-bottom: 1px solid var(--table-border);
   }
 
   th {
     font-weight: 600;
-    color: $heading-color;
+    color: var(--text-heading);
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    background: $gray-100;
+    background: var(--table-header-bg);
   }
 
   tbody tr:nth-child(even) {
-    background-color: $background-light;
+    background-color: var(--table-row-alt);
   }
 
   tbody tr:hover {
-    background-color: $gray-100;
+    background-color: var(--table-row-hover);
     transition: background-color 0.2s ease;
   }
 
