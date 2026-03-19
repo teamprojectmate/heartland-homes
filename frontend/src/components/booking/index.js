@@ -7,11 +7,11 @@ import BookingList from './BookingList';
 import BookingRow from './BookingRow';
 
 export {
-  BookingActions,
-  BookingCard,
-  BookingDetails,
-  BookingForm,
-  BookingInfo,
-  BookingList,
-  BookingRow
+	BookingActions,
+	BookingCard,
+	BookingDetails,
+	BookingForm,
+	BookingInfo,
+	BookingList,
+	BookingRow,
 };
