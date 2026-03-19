@@ -7,7 +7,7 @@ import {
 } from '../../utils/statusLabels';
 
 //  функція для нормалізації ключів у css-класи
-const normalizeClass = (value) =>
+const normalizeClass = (value: string) =>
 	value ? value.toLowerCase().replace(/_/g, '-').replace(/\s+/g, '-') : '';
 
 type StatusSelectProps = {

@@ -4,7 +4,11 @@ import '../styles/components/_forms.scss';
 import '../styles/components/_buttons.scss';
 import '../styles/components/_searchForm.scss';
 
-const SearchForm = ({ onSearch }) => {
+type SearchFormProps = {
+	onSearch: (e: React.FormEvent, formData: Record<string, string>) => void;
+};
+
+const SearchForm = ({ onSearch }: SearchFormProps) => {
 	const { t } = useTranslation();
 
 	const ACCOMMODATION_TYPES = [
@@ -22,7 +26,7 @@ const SearchForm = ({ onSearch }) => {
 		maxDailyRate: '',
 	});
 
-	const handleChange = useCallback((e) => {
+	const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
 		const { name, value } = e.target;
 		setFormData((prev) => ({
 			...prev,
@@ -31,7 +35,7 @@ const SearchForm = ({ onSearch }) => {
 	}, []);
 
 	const handleSubmit = useCallback(
-		(e) => {
+		(e: React.FormEvent) => {
 			e.preventDefault();
 			if (onSearch) {
 				onSearch(e, formData);

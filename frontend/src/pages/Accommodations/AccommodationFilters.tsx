@@ -1,4 +1,5 @@
 import { Filter, RotateCcw } from 'lucide-react';
+import type React from 'react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import AccommodationFormFields from './AccommodationFormFields';
@@ -7,6 +8,15 @@ import '../../styles/components/_forms.scss';
 import '../../styles/components/_buttons.scss';
 import '../../styles/components/accommodation/_accommodation-form-fields.scss';
 
+type AccommodationFiltersProps = {
+	city: string;
+	type: string;
+	minDailyRate: string;
+	maxDailyRate: string;
+	onApplyFilters: (e: React.FormEvent, filters: Record<string, string>) => void;
+	onResetFilters: () => void;
+};
+
 const AccommodationFilters = ({
 	city,
 	type,
@@ -14,7 +24,7 @@ const AccommodationFilters = ({
 	maxDailyRate,
 	onApplyFilters,
 	onResetFilters,
-}) => {
+}: AccommodationFiltersProps) => {
 	const { t } = useTranslation();
 	const [localFilters, setLocalFilters] = useState({
 		city: city || '',
@@ -32,7 +42,7 @@ const AccommodationFilters = ({
 		});
 	}, [city, type, minDailyRate, maxDailyRate]);
 
-	const handleChange = (e) => {
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
 		const { name, value } = e.target;
 		setLocalFilters((prev) => ({
 			...prev,
@@ -40,7 +50,7 @@ const AccommodationFilters = ({
 		}));
 	};
 
-	const handleApply = (e) => {
+	const handleApply = (e: React.FormEvent) => {
 		e.preventDefault();
 		if (onApplyFilters) {
 			onApplyFilters(e, localFilters);

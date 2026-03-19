@@ -2,7 +2,11 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import SearchForm from '../SearchForm';
 
-const HeroSection = ({ onSearch }) => {
+type HeroSectionProps = {
+	onSearch: (e: React.FormEvent, formData: Record<string, string>) => void;
+};
+
+const HeroSection = ({ onSearch }: HeroSectionProps) => {
 	const { t } = useTranslation();
 
 	return (

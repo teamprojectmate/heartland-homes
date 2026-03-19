@@ -1,7 +1,14 @@
 import BaseMap from '../../components/BaseMap';
+import type { Accommodation } from '../../types';
 import { fixDropboxUrl } from '../../utils/fixDropboxUrl';
 
-const AccommodationsMap = ({ accommodations = [], highlightedId }) => {
+const AccommodationsMap = ({
+	accommodations = [],
+	highlightedId,
+}: {
+	accommodations?: Accommodation[];
+	highlightedId: number | null;
+}) => {
 	return (
 		<BaseMap
 			items={accommodations}
@@ -9,7 +16,7 @@ const AccommodationsMap = ({ accommodations = [], highlightedId }) => {
 			renderPopup={(a) => (
 				<div style={{ textAlign: 'center' }}>
 					<img
-						src={fixDropboxUrl(a.image || a.images?.[0])}
+						src={fixDropboxUrl((a.image as string) || (a.images as string[])?.[0])}
 						alt={a.name}
 						style={{
 							width: '120px',

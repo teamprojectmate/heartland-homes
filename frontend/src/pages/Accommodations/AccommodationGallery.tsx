@@ -6,7 +6,7 @@ import 'swiper/css/pagination';
 
 import { getSafeImageUrl } from '../../utils/getSafeImageUrl';
 
-const AccommodationGallery = ({ images }) => {
+const AccommodationGallery = ({ images }: { images: string[] }) => {
 	if (!images || images.length === 0) {
 		return (
 			<div className="gallery-fallback">
@@ -32,7 +32,7 @@ const AccommodationGallery = ({ images }) => {
 				loop={true}
 				className="gallery-swiper"
 			>
-				{images.map((img, idx) => (
+				{images.map((img: string, idx: number) => (
 					<SwiperSlide key={img}>
 						<img src={getSafeImageUrl(img)} alt={`Фото ${idx + 1}`} />
 					</SwiperSlide>

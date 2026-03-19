@@ -17,7 +17,17 @@ const PaymentsList = () => {
 	const { isAuthenticated, user } = useAppSelector((state) => state.auth);
 
 	const [page, setPage] = useState(0);
-	const [enrichedPayments, setEnrichedPayments] = useState([]);
+	type EnrichedPayment = {
+		id: number;
+		status: string;
+		amountToPay: number;
+		paymentType: string;
+		sessionUrl?: string;
+		accommodation?: { name?: string; location?: string };
+		bookingId: number;
+		[key: string]: unknown;
+	};
+	const [enrichedPayments, setEnrichedPayments] = useState<EnrichedPayment[]>([]);
 	const size = 5;
 
 	const pageable = useMemo(() => ({ page, size, sort: ['id,desc'] }), [page]);
@@ -29,9 +39,9 @@ const PaymentsList = () => {
 				const data = action.payload?.content || [];
 
 				const enriched = await Promise.all(
-					data.map(async (p) => {
+					data.map(async (p: Record<string, unknown>) => {
 						try {
-							const booking = await fetchBookingById(p.bookingId);
+							const booking = await fetchBookingById(p.bookingId as number);
 							const accommodation = await getAccommodationById(booking.accommodationId);
 							return { ...p, booking, accommodation };
 						} catch {
@@ -118,7 +128,7 @@ const PaymentsList = () => {
 					<Pagination
 						page={page}
 						totalPages={totalPages}
-						onPageChange={(newPage) => setPage(newPage)}
+						onPageChange={(newPage: number) => setPage(newPage)}
 					/>
 				</>
 			)}

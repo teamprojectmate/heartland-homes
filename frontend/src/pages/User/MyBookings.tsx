@@ -25,7 +25,10 @@ const MyBookings = () => {
 	);
 	const { payments } = useAppSelector((state) => state.payments);
 
-	const enrichedBookings = useEnrichedBookings(bookings, payments);
+	const enrichedBookings = useEnrichedBookings(
+		bookings as unknown as import('../../types').Booking[],
+		payments as unknown as import('../../types').Payment[],
+	);
 
 	useEffect(() => {
 		if (!isAuthenticated) {

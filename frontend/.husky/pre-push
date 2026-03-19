@@ -1,0 +1,1 @@
+cd frontend && npx tsc -b && npx biome check src/ && npm run build

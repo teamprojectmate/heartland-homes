@@ -2,10 +2,17 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import AccommodationList from '../../pages/Accommodations/AccommodationList';
+import type { Accommodation } from '../../types';
 import Notification from '../Notification';
 import { CardSkeleton } from '../skeletons';
 
-const AccommodationsSection = ({ loading, error, accommodations }) => {
+type AccommodationsSectionProps = {
+	loading: boolean;
+	error: string | null;
+	accommodations: Accommodation[];
+};
+
+const AccommodationsSection = ({ loading, error, accommodations }: AccommodationsSectionProps) => {
 	const { t } = useTranslation();
 
 	return (

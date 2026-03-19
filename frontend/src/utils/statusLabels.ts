@@ -37,5 +37,8 @@ export const adminBookingStatusLabels = {
 };
 
 //  функція для StatusBadge
-export const getStatusLabel = (status) =>
-	allStatusLabels[status] || { text: status, className: 'badge-status-unknown' };
+export const getStatusLabel = (status: string) =>
+	(allStatusLabels as Record<string, { text: string; className: string }>)[status] || {
+		text: status,
+		className: 'badge-status-unknown',
+	};

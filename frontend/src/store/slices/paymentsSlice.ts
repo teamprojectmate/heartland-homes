@@ -7,7 +7,17 @@ import {
 } from '../../api/payments/paymentService';
 import { getApiErrorMessage } from '../../utils/accommodationPayload';
 
-const initialState = {
+type PaymentsState = {
+	payment: Record<string, unknown> | null;
+	payments: Record<string, unknown>[];
+	totalPages: number;
+	createStatus: string;
+	fetchStatus: string;
+	cancelStatus: string;
+	error: string | null;
+};
+
+const initialState: PaymentsState = {
 	payment: null,
 	payments: [],
 	totalPages: 1,
@@ -104,7 +114,7 @@ const paymentsSlice = createSlice({
 			})
 			.addCase(createPayment.rejected, (state, action) => {
 				state.createStatus = 'failed';
-				state.error = action.payload;
+				state.error = action.payload as string;
 			})
 
 			// fetchPaymentsByUser
@@ -118,7 +128,7 @@ const paymentsSlice = createSlice({
 			})
 			.addCase(fetchPaymentsByUser.rejected, (state, action) => {
 				state.fetchStatus = 'failed';
-				state.error = action.payload;
+				state.error = action.payload as string;
 			})
 
 			//  cancelPayment
@@ -133,7 +143,7 @@ const paymentsSlice = createSlice({
 			})
 			.addCase(cancelPayment.rejected, (state, action) => {
 				state.cancelStatus = 'failed';
-				state.error = action.payload;
+				state.error = action.payload as string;
 			})
 
 			// fetchAllPayments (admin)
@@ -147,7 +157,7 @@ const paymentsSlice = createSlice({
 			})
 			.addCase(fetchAllPayments.rejected, (state, action) => {
 				state.fetchStatus = 'failed';
-				state.error = action.payload;
+				state.error = action.payload as string;
 			});
 	},
 });

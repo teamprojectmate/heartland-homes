@@ -1,6 +1,6 @@
 import { getStatusLabel } from '../../utils/statusLabels';
 
-const StatusBadge = ({ status, floating = false }) => {
+const StatusBadge = ({ status, floating = false }: { status: string; floating?: boolean }) => {
 	const label = getStatusLabel(status);
 
 	return (

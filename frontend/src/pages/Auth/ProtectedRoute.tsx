@@ -1,9 +1,15 @@
+import type React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import Notification from '../../components/Notification';
 import { PageSkeleton } from '../../components/skeletons';
 import { useAppSelector } from '../../store/hooks';
 
-const ProtectedRoute = ({ children, requiredRole = null }) => {
+type ProtectedRouteProps = {
+	children: React.ReactNode;
+	requiredRole?: string | string[] | null;
+};
+
+const ProtectedRoute = ({ children, requiredRole = null }: ProtectedRouteProps) => {
 	const { isAuthenticated, isLoading, user } = useAppSelector((state) => state.auth);
 	const location = useLocation();
 

@@ -44,13 +44,13 @@ const BookingDetails = () => {
 				let accommodation = null;
 				try {
 					accommodation = await getAccommodationById(bookingData.accommodationId);
-				} catch (err) {
-					console.warn('Could not load accommodation:', err);
+				} catch (_err) {
+					/* error handled silently */
 				}
 
 				setBooking({ ...bookingData, accommodation });
-			} catch (err) {
-				console.error('Error loading booking:', err);
+			} catch (_err) {
+				/* error handled silently */
 				setError(t('booking.loadError'));
 			} finally {
 				setLoading(false);
@@ -102,9 +102,11 @@ const BookingDetails = () => {
 		if (window.confirm(t('booking.cancelConfirm'))) {
 			try {
 				await cancelBooking(Number(id));
-				setBooking((prev) => ({ ...prev, status: 'CANCELED' }));
-			} catch (err) {
-				console.error('Error cancelling booking:', err);
+				setBooking((prev: Record<string, unknown> | null) =>
+					prev ? { ...prev, status: 'CANCELED' } : prev,
+				);
+			} catch (_err) {
+				/* error handled silently */
 				setError(t('booking.cancelError'));
 			}
 		}
@@ -115,8 +117,8 @@ const BookingDetails = () => {
 			try {
 				await dispatch(deleteBooking(Number(id))).unwrap();
 				navigate('/my-bookings');
-			} catch (err) {
-				console.error('Error deleting booking:', err);
+			} catch (_err) {
+				/* error handled silently */
 				setError(t('booking.deleteError'));
 			}
 		}

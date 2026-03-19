@@ -1,6 +1,13 @@
+import type React from 'react';
 import '../styles/components/_info-pages.scss';
 
-const InfoLayout = ({ title, icon: Icon, children }) => {
+type InfoLayoutProps = {
+	title: string;
+	icon?: React.ComponentType<{ size: number; className?: string }>;
+	children: React.ReactNode;
+};
+
+const InfoLayout = ({ title, icon: Icon, children }: InfoLayoutProps) => {
 	return (
 		<section className="info-page container">
 			<div className="info-header">

@@ -16,7 +16,7 @@ const MyAccommodations = () => {
 		dispatch(loadMyAccommodations({ page: 0, size: 10 }));
 	}, [dispatch]);
 
-	const handleDelete = (id) => {
+	const handleDelete = (id: number) => {
 		if (window.confirm(t('accommodations.deleteConfirm'))) {
 			dispatch(removeAccommodation(id));
 		}

@@ -6,11 +6,12 @@ import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { createBooking } from '../../store/slices/bookingsSlice';
 import '../../styles/components/booking/_booking-form.scss';
+import type { Accommodation } from '../../types';
 import { calcNights } from '../../utils/dateCalc';
 import { type BookingFormData, bookingSchema } from '../../validation/schemas';
 import Notification from '../Notification';
 
-const BookingForm = ({ accommodation }) => {
+const BookingForm = ({ accommodation }: { accommodation: Accommodation }) => {
 	const { t } = useTranslation();
 	const {
 		register,

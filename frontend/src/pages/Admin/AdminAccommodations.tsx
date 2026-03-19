@@ -51,14 +51,14 @@ const AdminAccommodations = () => {
 		dispatch(loadAdminAccommodations({ page }));
 	}, [user, navigate, dispatch, page]);
 
-	const handleDelete = (id) => {
+	const handleDelete = (id: number) => {
 		if (window.confirm(t('admin.deleteAccommodation'))) {
 			dispatch(removeAccommodation(id));
 		}
 	};
 
 	const handleStatusChange = useCallback(
-		(id, status) => {
+		(id: number, status: string) => {
 			dispatch(updateAccommodationStatusAsync({ id, status }));
 		},
 		[dispatch],
@@ -72,8 +72,8 @@ const AdminAccommodations = () => {
 			{
 				key: 'type',
 				label: t('admin.type'),
-				render: (acc) => {
-					const { label, icon, color } = mapType(acc.type);
+				render: (acc: Record<string, unknown>) => {
+					const { label, icon, color } = mapType(acc.type as string);
 					return (
 						<span className="badge badge-type" style={{ backgroundColor: color }}>
 							{icon} {label}
@@ -85,19 +85,19 @@ const AdminAccommodations = () => {
 				key: 'dailyRate',
 				label: t('admin.price'),
 				className: 'price',
-				render: (acc) => (
+				render: (acc: Record<string, unknown>) => (
 					<span>
-						{acc.dailyRate} {t('common.currency')}
+						{String(acc.dailyRate)} {t('common.currency')}
 					</span>
 				),
 			},
 			{
 				key: 'image',
 				label: t('admin.image'),
-				render: (acc) => (
+				render: (acc: Record<string, unknown>) => (
 					<img
-						src={acc.image ? fixDropboxUrl(acc.image) : fallbackImage}
-						alt={acc.name || t('accommodations.imageAlt')}
+						src={acc.image ? fixDropboxUrl(acc.image as string) : fallbackImage}
+						alt={(acc.name as string) || t('accommodations.imageAlt')}
 						className="table-img"
 						onError={(e) => (e.currentTarget.src = fallbackImage)}
 					/>
@@ -106,11 +106,11 @@ const AdminAccommodations = () => {
 			{
 				key: 'accommodationStatus',
 				label: t('admin.status'),
-				render: (acc) => (
+				render: (acc: Record<string, unknown>) => (
 					<StatusSelect
 						type="accommodation"
-						value={acc.accommodationStatus}
-						onChange={(newStatus) => handleStatusChange(acc.id, newStatus)}
+						value={acc.accommodationStatus as string}
+						onChange={(newStatus: string) => handleStatusChange(acc.id as number, newStatus)}
 					/>
 				),
 			},
@@ -161,7 +161,7 @@ const AdminAccommodations = () => {
 									<button
 										type="button"
 										className="btn-icon btn-danger"
-										onClick={() => handleDelete(acc.id)}
+										onClick={() => handleDelete(acc.id as number)}
 										title={t('common.delete')}
 									>
 										<FaTrash />
@@ -174,7 +174,7 @@ const AdminAccommodations = () => {
 					<Pagination
 						page={page}
 						totalPages={totalPages}
-						onPageChange={(newPage) => dispatch(setPage(newPage))}
+						onPageChange={(newPage: number) => dispatch(setPage(newPage))}
 					/>
 				</>
 			) : (

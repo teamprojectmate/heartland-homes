@@ -1,7 +1,13 @@
 import { typeTranslations } from '../../utils/translations';
 import '../../styles/components/admin/_admin-form.scss';
 
-const TypeSelect = ({ value, onChange, disabled = false }) => {
+type TypeSelectProps = {
+	value: string;
+	onChange: (value: string) => void;
+	disabled?: boolean;
+};
+
+const TypeSelect = ({ value, onChange, disabled = false }: TypeSelectProps) => {
 	return (
 		<select
 			className="type-select"

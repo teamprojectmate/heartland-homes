@@ -1,6 +1,12 @@
 import '../../styles/components/payment/_payment-checkout.scss';
 
-const PaymentCheckout = ({ bookingId, amount = 5000 }) => {
+const PaymentCheckout = ({
+	bookingId,
+	amount = 5000,
+}: {
+	bookingId: number | string;
+	amount?: number;
+}) => {
 	return (
 		<div className="payment-page">
 			<div className="payment-card payment-checkout">

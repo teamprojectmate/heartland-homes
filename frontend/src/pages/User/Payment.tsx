@@ -27,8 +27,8 @@ const Payment = () => {
 				let accommodation = null;
 				try {
 					accommodation = await getAccommodationById(data.accommodationId);
-				} catch (err) {
-					console.warn('Could not load accommodation', err);
+				} catch (_err) {
+					/* error handled silently */
 				}
 
 				const nights = calcNights(data.checkInDate, data.checkOutDate);
@@ -37,8 +37,8 @@ const Payment = () => {
 					data.totalPrice || (accommodation?.dailyRate ? accommodation.dailyRate * nights : 0);
 
 				setBooking({ ...data, accommodation, totalPrice: calculatedPrice });
-			} catch (err) {
-				console.error('Error loading booking', err);
+			} catch (_err) {
+				/* error handled silently */
 			} finally {
 				setLoading(false);
 			}
@@ -53,9 +53,9 @@ const Payment = () => {
 	useEffect(() => {
 		if (payment?.sessionUrl) {
 			try {
-				const url = new URL(payment.sessionUrl);
+				const url = new URL(payment.sessionUrl as string);
 				if (url.protocol === 'https:') {
-					window.location.href = payment.sessionUrl;
+					window.location.href = payment.sessionUrl as string;
 				}
 			} catch {
 				/* invalid URL — ignore */

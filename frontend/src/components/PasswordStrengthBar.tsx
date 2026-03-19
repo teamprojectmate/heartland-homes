@@ -1,4 +1,4 @@
-const PasswordStrengthBar = ({ password }) => {
+const PasswordStrengthBar = ({ password }: { password: string }) => {
 	if (!password) return null;
 
 	const hasLetters = /[a-zA-Z]/.test(password);

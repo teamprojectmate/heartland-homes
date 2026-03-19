@@ -1,6 +1,6 @@
-const PaymentStatusBadge = ({ status }) => {
+const PaymentStatusBadge = ({ status }: { status: string }) => {
 	// Кастомні переклади саме для платежів
-	const labels = {
+	const labels: Record<string, { text: string; className: string }> = {
 		PAID: { text: 'Оплачено', className: 'success' },
 		PENDING: { text: 'Очікує', className: 'warning' },
 		FAILED: { text: 'Помилка', className: 'danger' },

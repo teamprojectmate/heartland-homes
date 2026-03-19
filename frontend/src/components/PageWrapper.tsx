@@ -1,9 +1,16 @@
+import type React from 'react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppSelector } from '../store/hooks';
 import Notification from './Notification';
 
-const PageWrapper = ({ title, children, extraErrors = [] }) => {
+type PageWrapperProps = {
+	title?: string;
+	children: React.ReactNode;
+	extraErrors?: string[];
+};
+
+const PageWrapper = ({ title, children, extraErrors = [] }: PageWrapperProps) => {
 	const { t } = useTranslation();
 	const authError = useAppSelector((s) =>
 		s.auth.message && s.auth.isError ? s.auth.message : null,

@@ -1,6 +1,12 @@
 import { useTranslation } from 'react-i18next';
 
-const Pagination = ({ page, totalPages, onPageChange }) => {
+type PaginationProps = {
+	page: number;
+	totalPages: number;
+	onPageChange: (page: number) => void;
+};
+
+const Pagination = ({ page, totalPages, onPageChange }: PaginationProps) => {
 	const { t } = useTranslation();
 
 	if (totalPages <= 1) return null;

@@ -129,7 +129,7 @@ const Accommodations = () => {
 					renderPopup={(acc) => (
 						<div style={{ width: '150px' }}>
 							<img
-								src={acc.image ? getSafeImageUrl(acc.image) : '/no-image.png'}
+								src={acc.image ? getSafeImageUrl(acc.image as string) : '/no-image.png'}
 								alt={acc.name || t('accommodations.accommodation')}
 								style={{
 									width: '100%',

@@ -1,10 +1,11 @@
 import { useTranslation } from 'react-i18next';
+import type { Booking } from '../types';
 import { normalizeBooking } from '../utils/normalizeBooking';
 import StatusBadge from './status/StatusBadge';
 
-const BookingStatusBlock = ({ booking }) => {
+const BookingStatusBlock = ({ booking }: { booking: Booking }) => {
 	const { t } = useTranslation();
-	const enrichedBooking = normalizeBooking(booking);
+	const enrichedBooking = normalizeBooking(booking as Record<string, unknown>) as Booking;
 
 	if (!enrichedBooking) return null;
 

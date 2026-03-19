@@ -19,7 +19,26 @@ import '../../styles/components/badges/_badges.scss';
 import '../../styles/components/admin/_admin-bookings.scss';
 import '../../styles/components/admin/_admin-tables.scss';
 
-const AdminBookingCard = ({ booking, onStatusChange, onDelete }) => {
+type BookingRow = Record<string, unknown> & {
+	id: number;
+	accommodation?: { name?: string } | null;
+	user?: { firstName: string; lastName: string; email: string } | null;
+	userId?: number;
+	checkInDate: string;
+	checkOutDate: string;
+	totalPrice?: number | null;
+	status: string;
+};
+
+const AdminBookingCard = ({
+	booking,
+	onStatusChange,
+	onDelete,
+}: {
+	booking: BookingRow;
+	onStatusChange: (booking: BookingRow, status: string) => void;
+	onDelete: (id: number) => void;
+}) => {
 	return (
 		<div className="admin-booking-card">
 			<h3 className="admin-booking-title">{booking.accommodation?.name || 'Без назви'}</h3>
@@ -69,18 +88,22 @@ const AdminBookings = () => {
 	const dispatch = useAppDispatch();
 	const { bookings, status, error } = useAppSelector((state) => state.bookings);
 
-	const [usersMap, setUsersMap] = useState({});
-	const [enrichedBookings, setEnrichedBookings] = useState([]);
+	const [usersMap, setUsersMap] = useState<Record<string, Record<string, unknown>>>({});
+	const [enrichedBookings, setEnrichedBookings] = useState<BookingRow[]>([]);
 	const isMobile = useIsMobile();
 
 	//  завантаження бронювань та користувачів
 	useEffect(() => {
 		dispatch(fetchBookings());
 
-		getAllUsers().then((users) => {
-			const map = {};
-			(users?.content || users || []).forEach((u) => {
-				map[u.id] = u;
+		getAllUsers().then((users: Record<string, unknown>[]) => {
+			const map: Record<string, Record<string, unknown>> = {};
+			(
+				(users as unknown as { content?: Record<string, unknown>[] })?.content ||
+				users ||
+				[]
+			).forEach((u: Record<string, unknown>) => {
+				map[u.id as string] = u;
 			});
 			setUsersMap(map);
 		});
@@ -94,21 +117,21 @@ const AdminBookings = () => {
 			const results = await Promise.all(
 				bookings.map(async (booking) => {
 					let accommodation = null;
-					let totalPrice = null;
+					let totalPrice: number | null = null;
 
 					try {
-						accommodation = await getAccommodationById(booking.accommodationId);
+						accommodation = await getAccommodationById(booking.accommodationId as number);
 						if (accommodation && booking.checkInDate && booking.checkOutDate) {
 							totalPrice =
-								calcNights(booking.checkInDate, booking.checkOutDate) *
+								calcNights(booking.checkInDate as string, booking.checkOutDate as string) *
 								(accommodation.dailyRate || 0);
 						}
 					} catch {
 						/* accommodation not found */
 					}
 
-					const user = usersMap[booking.userId];
-					return { ...booking, accommodation, user, totalPrice };
+					const user = usersMap[booking.userId as string];
+					return { ...booking, accommodation, user, totalPrice } as BookingRow;
 				}),
 			);
 			setEnrichedBookings(results);
@@ -117,11 +140,11 @@ const AdminBookings = () => {
 		enrichData();
 	}, [bookings, usersMap]);
 
-	const handleStatusChange = (booking, newStatus) => {
+	const handleStatusChange = (booking: BookingRow, newStatus: string) => {
 		dispatch(updateBookingStatus({ booking, status: newStatus }));
 	};
 
-	const handleDelete = (id) => {
+	const handleDelete = (id: number) => {
 		dispatch(deleteBooking(id));
 	};
 
@@ -134,29 +157,33 @@ const AdminBookings = () => {
 		{
 			key: 'user',
 			label: 'Користувач',
-			render: (b) =>
-				b.user ? `${b.user.firstName} ${b.user.lastName} (${b.user.email})` : b.userId,
+			render: (b: Record<string, unknown>) => {
+				const user = b.user as { firstName: string; lastName: string; email: string } | null;
+				return user
+					? `${user.firstName} ${user.lastName} (${user.email})`
+					: String(b.userId || '—');
+			},
 		},
 		{
 			key: 'accommodation',
 			label: 'Помешкання',
-			render: (b) => b.accommodation?.name || '—',
+			render: (b: Record<string, unknown>) => (b.accommodation as { name?: string })?.name || '—',
 		},
 		{ key: 'checkInDate', label: 'Заїзд' },
 		{ key: 'checkOutDate', label: 'Виїзд' },
 		{
 			key: 'totalPrice',
 			label: 'Ціна',
-			render: (b) => (b.totalPrice ? `${b.totalPrice} грн` : '—'),
+			render: (b: Record<string, unknown>) => (b.totalPrice ? `${b.totalPrice} грн` : '—'),
 		},
 		{
 			key: 'status',
 			label: 'Статус',
-			render: (b) => (
+			render: (b: Record<string, unknown>) => (
 				<select
-					value={b.status}
-					onChange={(e) => handleStatusChange(b, e.target.value)}
-					className={`status-select ${b.status.toLowerCase()}`}
+					value={b.status as string}
+					onChange={(e) => handleStatusChange(b as unknown as BookingRow, e.target.value)}
+					className={`status-select ${(b.status as string).toLowerCase()}`}
 				>
 					<option value="PENDING">Очікує</option>
 					<option value="CONFIRMED">Підтверджено</option>
@@ -190,7 +217,7 @@ const AdminBookings = () => {
 						<button
 							type="button"
 							className="btn-icon btn-danger"
-							onClick={() => handleDelete(b.id)}
+							onClick={() => handleDelete(b.id as number)}
 							title="Видалити бронювання"
 						>
 							<TrashIcon className="w-4 h-4 text-white" />

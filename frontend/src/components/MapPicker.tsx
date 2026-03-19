@@ -22,7 +22,7 @@ interface ClickHandlerProps {
 	onSelect: (coords: Coordinates) => void;
 }
 
-const ClickHandler = ({ onSelect }: ClickHandlerProps) => {
+const ClickHandler = ({ onSelect }: ClickHandlerProps): null => {
 	useMapEvents({
 		click(e) {
 			onSelect({

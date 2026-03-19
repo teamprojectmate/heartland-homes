@@ -30,9 +30,9 @@ const Profile = () => {
 	useEffect(() => {
 		if (profile) {
 			reset({
-				email: profile.email || '',
-				firstName: profile.firstName || '',
-				lastName: profile.lastName || '',
+				email: (profile.email as string) || '',
+				firstName: (profile.firstName as string) || '',
+				lastName: (profile.lastName as string) || '',
 			});
 		}
 	}, [profile, reset]);

@@ -10,7 +10,14 @@ import { getApiErrorMessage } from '../../utils/accommodationPayload';
 
 const savedProfile = sessionStorage.getItem('userProfile');
 
-const initialState = {
+type UserState = {
+	profile: Record<string, unknown> | null;
+	items: Record<string, unknown>[];
+	loading: boolean;
+	error: string | null;
+};
+
+const initialState: UserState = {
 	profile: savedProfile ? JSON.parse(savedProfile) : null,
 	items: [],
 	loading: false,
@@ -49,7 +56,7 @@ export const fetchUsers = createAsyncThunk(
 			const users = await getAllUsers();
 
 			// нормалізація ролей
-			return users.map((u) => {
+			return users.map((u: Record<string, unknown>) => {
 				let role = u.role || (Array.isArray(u.roles) ? u.roles[0] : null);
 				if (role?.startsWith('ROLE_')) role = role.replace('ROLE_', '');
 				return { ...u, role };
@@ -109,7 +116,7 @@ const userSlice = createSlice({
 			})
 			.addCase(fetchProfile.rejected, (s, { payload }) => {
 				s.loading = false;
-				s.error = payload;
+				s.error = payload as string;
 			})
 
 			// USERS

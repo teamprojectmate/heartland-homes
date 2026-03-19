@@ -41,6 +41,9 @@ export type Accommodation = {
 	description?: string;
 	userId?: number;
 	size?: number;
+	location?: string;
+	images?: string[];
+	accommodationStatus?: string;
 };
 
 export type Booking = {

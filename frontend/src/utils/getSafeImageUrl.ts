@@ -1,12 +1,12 @@
 import { fixDropboxUrl } from './fixDropboxUrl';
 
-export const getSafeImageUrl = (url) => {
+export const getSafeImageUrl = (url: string) => {
 	if (!url) return '/no-image.png'; // fallback якщо url немає
 	try {
 		const fixed = fixDropboxUrl(url);
 		return fixed || '/no-image.png';
-	} catch (err) {
-		console.error('❌ Помилка обробки URL:', err);
+	} catch (_err) {
+		/* error handled silently */
 		return '/no-image.png';
 	}
 };

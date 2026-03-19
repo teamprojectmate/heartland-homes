@@ -1,14 +1,21 @@
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import StatusSelect from '../../components/selects/StatusSelect';
+import type { Accommodation } from '../../types';
 import { fixDropboxUrl } from '../../utils/fixDropboxUrl';
 import { mapType } from '../../utils/translations';
 
 const fallbackImage = '/assets/no-image.svg';
 
-const AdminAccommodationCard = ({ acc, onStatusChange, onDelete }) => {
+type AdminAccommodationCardProps = {
+	acc: Accommodation;
+	onStatusChange: (id: number, status: string) => void;
+	onDelete: (id: number) => void;
+};
+
+const AdminAccommodationCard = ({ acc, onStatusChange, onDelete }: AdminAccommodationCardProps) => {
 	const image = acc.image ? fixDropboxUrl(acc.image) : fallbackImage;
-	const { label, icon, color } = mapType(acc.type);
+	const { label, icon, color } = mapType(acc.type as string);
 
 	return (
 		<div className="admin-accommodation-card">
@@ -24,7 +31,7 @@ const AdminAccommodationCard = ({ acc, onStatusChange, onDelete }) => {
 					<h3 className="accommodation-title">{acc.name}</h3>
 					<StatusSelect
 						type="accommodation"
-						value={acc.accommodationStatus}
+						value={acc.accommodationStatus || ''}
 						onChange={(newStatus) => onStatusChange(acc.id, newStatus)}
 					/>
 				</div>

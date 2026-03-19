@@ -16,16 +16,23 @@
     "rules": {
       "recommended": true,
       "correctness": {
-        "noUnusedImports": "warn",
-        "noUnusedVariables": "warn",
+        "noUnusedImports": "error",
+        "noUnusedVariables": "error",
         "useExhaustiveDependencies": "warn"
       },
       "style": {
-        "noNonNullAssertion": "off",
-        "useImportType": "warn"
+        "noNonNullAssertion": "warn",
+        "useImportType": "error",
+        "useConst": "error"
       },
       "suspicious": {
-        "noExplicitAny": "warn"
+        "noExplicitAny": "error",
+        "noDoubleEquals": "error"
+      },
+      "a11y": {
+        "useButtonType": "error",
+        "useAltText": "error",
+        "useKeyWithClickEvents": "warn"
       }
     }
   },
