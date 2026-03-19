@@ -30,17 +30,17 @@ const highlightedIcon = new L.Icon({
 });
 
 type MapItem = {
-	id: any;
+	id: number;
 	latitude: number;
 	longitude: number;
 	name?: string;
 	city?: string;
-	[key: string]: any;
+	[key: string]: unknown;
 };
 
 type BaseMapProps = {
 	items?: MapItem[];
-	highlightedId?: any;
+	highlightedId?: number | null;
 	renderPopup?: (item: MapItem) => React.ReactNode;
 };
 

@@ -9,12 +9,14 @@ import '../../styles/components/booking/_booking-card.scss';
 
 const fallbackImage = '/no-image.png';
 
+import type { Booking } from '../../types';
+
 type BookingCardProps = {
-	booking: any;
-	onCancel?: (id: any) => void;
-	onPay?: (id: any) => void;
-	onStatusChange?: (booking: any, status: string) => void;
-	onDelete?: (id: any) => void;
+	booking: Booking;
+	onCancel?: (id: number) => void;
+	onPay?: (id: number) => void;
+	onStatusChange?: (booking: Booking, status: string) => void;
+	onDelete?: (id: number) => void;
 	showAdminControls?: boolean;
 };
 

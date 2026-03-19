@@ -4,7 +4,14 @@ import bookingsService from '../../api/bookings/bookingsService';
 import { getApiErrorMessage } from '../../utils/accommodationPayload';
 import { calcNights } from '../../utils/dateCalc';
 
-const enrichBookings = async (bookings: any[]) =>
+type RawBooking = {
+	accommodationId: number;
+	checkInDate?: string;
+	checkOutDate?: string;
+	[key: string]: unknown;
+};
+
+const enrichBookings = async (bookings: RawBooking[]) =>
 	Promise.all(
 		bookings.map(async (b) => {
 			let accommodation = null;
@@ -50,7 +57,7 @@ function removeBooking(state, id) {
 // Create booking
 export const createBooking = createAsyncThunk(
 	'bookings/createBooking',
-	async (bookingData: any, { rejectWithValue }) => {
+	async (bookingData: Record<string, unknown>, { rejectWithValue }) => {
 		try {
 			return await bookingsService.createBooking(bookingData);
 		} catch (err: unknown) {
@@ -97,7 +104,10 @@ export const fetchMyBookings = createAsyncThunk(
 // Change booking status (admin)
 export const changeBookingStatus = createAsyncThunk(
 	'bookings/changeBookingStatus',
-	async ({ booking, status }: { booking: any; status: string }, { rejectWithValue }) => {
+	async (
+		{ booking, status }: { booking: Record<string, unknown>; status: string },
+		{ rejectWithValue },
+	) => {
 		try {
 			const updatedBooking = {
 				checkInDate: booking.checkInDate,

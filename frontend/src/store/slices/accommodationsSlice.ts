@@ -11,7 +11,8 @@ export const loadAccommodations = createAsyncThunk(
 		{ getState, rejectWithValue },
 	) => {
 		try {
-			const state = (getState() as { accommodations: any }).accommodations;
+			// biome-ignore lint/suspicious/noExplicitAny: getState() returns unknown in RTK, accommodations slice shape is internal
+			const state = (getState() as any).accommodations;
 
 			const filters = {
 				city: state.filters.city || undefined,
@@ -78,7 +79,7 @@ export const removeAccommodation = createAsyncThunk(
 // Створення житла
 export const createAccommodationAsync = createAsyncThunk(
 	'accommodations/create',
-	async (formData: any, { rejectWithValue }) => {
+	async (formData: Record<string, unknown>, { rejectWithValue }) => {
 		try {
 			return await accommodationService.createAccommodation(formData);
 		} catch (err: unknown) {

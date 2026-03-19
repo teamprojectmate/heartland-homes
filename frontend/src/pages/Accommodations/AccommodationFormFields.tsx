@@ -1,17 +1,24 @@
-import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
+
+type FilterFormData = {
+	city: string;
+	type: string;
+	minDailyRate: string;
+	maxDailyRate: string;
+};
+
+type AccommodationFormFieldsProps = {
+	formData: FilterFormData;
+	handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+	showDailyRateRange?: boolean;
+	[key: string]: unknown;
+};
 
 const AccommodationFormFields = ({
 	formData,
 	handleChange,
 	showDailyRateRange = false,
-	...rest
-}: {
-	formData: any;
-	handleChange: any;
-	showDailyRateRange?: boolean;
-	[key: string]: any;
-}) => {
+}: AccommodationFormFieldsProps) => {
 	const { t } = useTranslation();
 
 	const ACCOMMODATION_TYPES = [
@@ -85,12 +92,6 @@ const AccommodationFormFields = ({
 			)}
 		</>
 	);
-};
-
-AccommodationFormFields.propTypes = {
-	formData: PropTypes.object.isRequired,
-	handleChange: PropTypes.func.isRequired,
-	showDailyRateRange: PropTypes.bool,
 };
 
 export default AccommodationFormFields;

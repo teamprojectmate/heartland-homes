@@ -37,6 +37,7 @@ export type Accommodation = {
 	dailyRate: number;
 	amenities: string[];
 	imageUrl: string;
+	image?: string;
 	description?: string;
 	userId?: number;
 	size?: number;

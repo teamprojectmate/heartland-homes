@@ -48,9 +48,9 @@ const AdminBookings = () => {
 		dispatch(fetchAllPayments());
 
 		getAllUsers()
-			.then((users: any) => {
+			.then((users: { content?: User[] } & User[]) => {
 				const map: Record<string, User> = {};
-				for (const u of users?.content || users || []) {
+				for (const u of (users as { content?: User[] })?.content || users || []) {
 					map[u.id] = u;
 				}
 				setUsersMap(map);
