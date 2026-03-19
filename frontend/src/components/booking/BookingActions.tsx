@@ -1,37 +1,36 @@
+import { useTranslation } from 'react-i18next';
 import { normalizeBooking } from '../../utils/normalizeBooking';
 
 const BookingActions = ({ booking, onCancel, onPay, onDelete }) => {
+	const { t } = useTranslation();
 	const enrichedBooking = normalizeBooking(booking);
 	const isPaid = enrichedBooking.payment?.status === 'PAID';
 
 	return (
 		<div className="booking-actions">
-			{/* Оплатити */}
 			{!isPaid && enrichedBooking.status === 'PENDING' && (
 				<button type="button" className="btn btn-success" onClick={() => onPay(enrichedBooking.id)}>
-					Оплатити
+					{t('booking.pay')}
 				</button>
 			)}
 
-			{/* Скасувати */}
 			{!isPaid && enrichedBooking.status !== 'CANCELED' && (
 				<button
 					type="button"
 					className="btn btn-danger"
 					onClick={() => onCancel(enrichedBooking.id)}
 				>
-					Скасувати
+					{t('booking.cancelBooking')}
 				</button>
 			)}
 
-			{/* Видалити */}
 			{enrichedBooking.status === 'CANCELED' && (
 				<button
 					type="button"
 					className="btn btn-secondary"
 					onClick={() => onDelete(enrichedBooking.id)}
 				>
-					Видалити
+					{t('booking.deleteBooking')}
 				</button>
 			)}
 		</div>

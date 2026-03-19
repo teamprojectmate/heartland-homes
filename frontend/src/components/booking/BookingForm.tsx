@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { createBooking } from '../../store/slices/bookingsSlice';
@@ -9,6 +10,7 @@ import { type BookingFormData, bookingSchema } from '../../validation/schemas';
 import Notification from '../Notification';
 
 const BookingForm = ({ accommodation }) => {
+	const { t } = useTranslation();
 	const {
 		register,
 		handleSubmit,
@@ -31,7 +33,6 @@ const BookingForm = ({ accommodation }) => {
 	const checkInDate = watch('checkInDate');
 	const checkOutDate = watch('checkOutDate');
 
-	//  Розрахунок кількості ночей і загальної ціни (тільки для UI)
 	const totalPrice = useMemo(() => {
 		if (!checkInDate || !checkOutDate) return 0;
 
@@ -46,7 +47,7 @@ const BookingForm = ({ accommodation }) => {
 
 	const onSubmit = async (data: BookingFormData) => {
 		if (!isAuthenticated) {
-			setError('root', { message: 'Будь ласка, увійдіть, щоб забронювати помешкання.' });
+			setError('root', { message: t('booking.loginRequired') });
 			return;
 		}
 
@@ -70,7 +71,7 @@ const BookingForm = ({ accommodation }) => {
 	return (
 		<form onSubmit={handleSubmit(onSubmit)} className="booking-form">
 			<div className="form-group">
-				<label htmlFor="check-in-date">Дата заїзду</label>
+				<label htmlFor="check-in-date">{t('booking.checkInDate')}</label>
 				<input
 					type="date"
 					className="form-control"
@@ -81,7 +82,7 @@ const BookingForm = ({ accommodation }) => {
 			</div>
 
 			<div className="form-group form-group-spacing">
-				<label htmlFor="check-out-date">Дата виїзду</label>
+				<label htmlFor="check-out-date">{t('booking.checkOutDate')}</label>
 				<input
 					type="date"
 					className="form-control"
@@ -91,17 +92,19 @@ const BookingForm = ({ accommodation }) => {
 				{errors.checkOutDate && <span className="form-error">{errors.checkOutDate.message}</span>}
 			</div>
 
-			{/*  Показуємо загальну суму тільки в UI */}
 			{totalPrice > 0 && (
 				<p className="total-price">
-					Загальна сума: <strong>{totalPrice} грн</strong>
+					{t('booking.totalAmount')}:{' '}
+					<strong>
+						{totalPrice} {t('common.currency')}
+					</strong>
 				</p>
 			)}
 
 			{errors.root && <Notification message={errors.root.message} type="danger" />}
 
 			<button type="submit" className="btn-primary" disabled={status === 'loading'}>
-				{status === 'loading' ? 'Бронювання...' : 'Забронювати'}
+				{status === 'loading' ? t('booking.booking') : t('booking.bookNow')}
 			</button>
 		</form>
 	);

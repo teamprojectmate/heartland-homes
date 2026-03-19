@@ -1,36 +1,39 @@
+import { useTranslation } from 'react-i18next';
 import { mapStatus } from '../../utils/translations';
 
 const BookingInfo = ({ booking }) => {
+	const { t } = useTranslation();
 	const { label, color, slug } = mapStatus(booking.status);
 
 	return (
 		<div className="booking-info">
 			{booking.user && (
 				<p>
-					<strong>Користувач:</strong> {booking.user.firstName} {booking.user.lastName} (
+					<strong>{t('booking.user')}:</strong> {booking.user.firstName} {booking.user.lastName} (
 					{booking.user.email})
 				</p>
 			)}
 			{booking.accommodation && (
 				<p>
-					<strong>Помешкання:</strong> {booking.accommodation.name} ({booking.accommodation.city})
+					<strong>{t('accommodations.accommodation')}:</strong> {booking.accommodation.name} (
+					{booking.accommodation.city})
 				</p>
 			)}
 			<p>
-				<strong>Дата заїзду:</strong> {booking.checkInDate}
+				<strong>{t('booking.checkInDate')}:</strong> {booking.checkInDate}
 			</p>
 			<p>
-				<strong>Дата виїзду:</strong> {booking.checkOutDate}
+				<strong>{t('booking.checkOutDate')}:</strong> {booking.checkOutDate}
 			</p>
 			<p>
-				<strong>Статус:</strong>{' '}
+				<strong>{t('booking.status')}:</strong>{' '}
 				<span className={`status-badge status-${slug}`} style={{ backgroundColor: color }}>
 					{label}
 				</span>
 			</p>
 			{booking.totalPrice && (
 				<p>
-					<strong>Ціна:</strong> {booking.totalPrice} грн
+					<strong>{t('admin.price')}:</strong> {booking.totalPrice} {t('common.currency')}
 				</p>
 			)}
 		</div>

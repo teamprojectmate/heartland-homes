@@ -1,3 +1,4 @@
+import './i18n';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import React from 'react';
 import ReactDOM from 'react-dom/client';

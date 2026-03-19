@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FaEdit, FaPlus, FaTrash } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import Notification from '../../components/Notification';
@@ -25,6 +26,7 @@ import '../../styles/components/admin/_admin-accommodations.scss';
 const fallbackImage = '/assets/no-image.svg';
 
 const AdminAccommodations = () => {
+	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const dispatch = useAppDispatch();
 
@@ -54,7 +56,7 @@ const AdminAccommodations = () => {
 	}, []);
 
 	const handleDelete = (id) => {
-		if (window.confirm('Видалити помешкання?')) {
+		if (window.confirm(t('admin.deleteAccommodation'))) {
 			dispatch(removeAccommodation(id));
 		}
 	};
@@ -69,11 +71,11 @@ const AdminAccommodations = () => {
 	const columns = useMemo(
 		() => [
 			{ key: 'id', label: 'ID' },
-			{ key: 'name', label: 'Назва' },
-			{ key: 'city', label: 'Місто' },
+			{ key: 'name', label: t('admin.name') },
+			{ key: 'city', label: t('admin.city') },
 			{
 				key: 'type',
-				label: 'Тип',
+				label: t('admin.type'),
 				render: (acc) => {
 					const { label, icon, color } = mapType(acc.type);
 					return (
@@ -85,17 +87,21 @@ const AdminAccommodations = () => {
 			},
 			{
 				key: 'dailyRate',
-				label: 'Ціна',
+				label: t('admin.price'),
 				className: 'price',
-				render: (acc) => <span>{acc.dailyRate} грн</span>,
+				render: (acc) => (
+					<span>
+						{acc.dailyRate} {t('common.currency')}
+					</span>
+				),
 			},
 			{
 				key: 'image',
-				label: 'Зображення',
+				label: t('admin.image'),
 				render: (acc) => (
 					<img
 						src={acc.image ? fixDropboxUrl(acc.image) : fallbackImage}
-						alt={acc.name || 'Зображення помешкання'}
+						alt={acc.name || t('accommodations.imageAlt')}
 						className="table-img"
 						onError={(e) => (e.currentTarget.src = fallbackImage)}
 					/>
@@ -103,7 +109,7 @@ const AdminAccommodations = () => {
 			},
 			{
 				key: 'accommodationStatus',
-				label: 'Статус',
+				label: t('admin.status'),
 				render: (acc) => (
 					<StatusSelect
 						type="accommodation"
@@ -116,17 +122,17 @@ const AdminAccommodations = () => {
 		[handleStatusChange],
 	);
 
-	if (loading) return <p className="text-center mt-5">Завантаження...</p>;
+	if (loading) return <p className="text-center mt-5">{t('common.loading')}</p>;
 
 	return (
 		<div className="container admin-page-container">
-			<h1 className="section-heading text-center">Управління помешканнями</h1>
+			<h1 className="section-heading text-center">{t('accommodations.manageTitle')}</h1>
 
 			{error && <Notification message={error} type="danger" />}
 
 			<div className="text-end mb-3">
 				<Link to="/accommodations/new" className="btn-primary">
-					<FaPlus /> Додати помешкання
+					<FaPlus /> {t('accommodations.addAccommodation')}
 				</Link>
 			</div>
 
@@ -152,7 +158,7 @@ const AdminAccommodations = () => {
 									<Link
 										to={`/admin/accommodations/edit/${acc.id}`}
 										className="btn-icon btn-secondary"
-										title="Редагувати"
+										title={t('common.edit')}
 									>
 										<FaEdit />
 									</Link>
@@ -160,7 +166,7 @@ const AdminAccommodations = () => {
 										type="button"
 										className="btn-icon btn-danger"
 										onClick={() => handleDelete(acc.id)}
-										title="Видалити"
+										title={t('common.delete')}
 									>
 										<FaTrash />
 									</button>
@@ -176,7 +182,7 @@ const AdminAccommodations = () => {
 					/>
 				</>
 			) : (
-				<p className="text-center">Помешкань ще немає.</p>
+				<p className="text-center">{t('accommodations.noAccommodationsYet')}</p>
 			)}
 		</div>
 	);

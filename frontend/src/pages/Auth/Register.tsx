@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { Trans, useTranslation } from 'react-i18next';
 import { FaEnvelope, FaLock, FaUser } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import Notification from '../../components/Notification';
@@ -10,6 +11,7 @@ import '../../styles/components/_auth.scss';
 import { type RegisterFormData, registerSchema } from '../../validation/schemas';
 
 const Register = () => {
+	const { t } = useTranslation();
 	const {
 		register,
 		handleSubmit,
@@ -23,7 +25,6 @@ const Register = () => {
 
 	const { isLoading, isError, isSuccess, message } = useAppSelector((state) => state.auth);
 
-	//  Редірект після успішної реєстрації
 	useEffect(() => {
 		if (isSuccess) {
 			navigate('/login');
@@ -39,12 +40,10 @@ const Register = () => {
 	return (
 		<div className="auth-layout">
 			<div className="auth-card">
-				<h2 className="auth-title">Реєстрація</h2>
+				<h2 className="auth-title">{t('auth.registerTitle')}</h2>
 
 				{isError && <Notification message={message} type="error" />}
-				{isSuccess && (
-					<Notification message="Реєстрація успішна! Тепер ви можете увійти." type="success" />
-				)}
+				{isSuccess && <Notification message={t('auth.registerSuccess')} type="success" />}
 
 				<form onSubmit={handleSubmit(onSubmit)}>
 					<div className="form-group with-icon">
@@ -53,7 +52,7 @@ const Register = () => {
 							type="text"
 							id="firstName"
 							className="form-control"
-							placeholder="Ім'я"
+							placeholder={t('auth.firstName')}
 							{...register('firstName')}
 						/>
 						{errors.firstName && <span className="form-error">{errors.firstName.message}</span>}
@@ -65,7 +64,7 @@ const Register = () => {
 							type="text"
 							id="lastName"
 							className="form-control"
-							placeholder="Прізвище"
+							placeholder={t('auth.lastName')}
 							{...register('lastName')}
 						/>
 						{errors.lastName && <span className="form-error">{errors.lastName.message}</span>}
@@ -77,7 +76,7 @@ const Register = () => {
 							type="email"
 							id="email"
 							className="form-control"
-							placeholder="Електронна пошта"
+							placeholder={t('auth.email')}
 							{...register('email')}
 						/>
 						{errors.email && <span className="form-error">{errors.email.message}</span>}
@@ -89,7 +88,7 @@ const Register = () => {
 							type="password"
 							id="password"
 							className="form-control"
-							placeholder="Пароль"
+							placeholder={t('auth.password')}
 							{...register('password')}
 						/>
 						{errors.password && <span className="form-error">{errors.password.message}</span>}
@@ -101,7 +100,7 @@ const Register = () => {
 							type="password"
 							id="confirmPassword"
 							className="form-control"
-							placeholder="Підтвердіть пароль"
+							placeholder={t('auth.confirmPassword')}
 							{...register('confirmPassword')}
 						/>
 						{errors.confirmPassword && (
@@ -110,21 +109,20 @@ const Register = () => {
 					</div>
 
 					<button type="submit" className="btn btn-primary" disabled={isLoading}>
-						{isLoading ? 'Реєстрація...' : 'Зареєструватися'}
+						{isLoading ? t('auth.registering') : t('auth.registerLink')}
 					</button>
 				</form>
 
 				<p className="form-subtitle text-center">
-					Вже маєте акаунт? <Link to="/login">Увійти</Link>
+					{t('auth.haveAccount')} <Link to="/login">{t('auth.loginLink')}</Link>
 				</p>
 			</div>
 
-			{/*  Додаємо модифікатор register */}
 			<div className="auth-side register">
 				<span className="auth-icon">✨</span>
-				<h2 className="auth-title">Ласкаво просимо!</h2>
+				<h2 className="auth-title">{t('auth.welcomeTitle')}!</h2>
 				<p className="auth-subtitle">
-					Зареєструйтесь, щоб знайти свій ідеальний дім разом з <strong>Heartland Homes</strong>.
+					<Trans i18nKey="auth.welcomeRegisterSubtitle" components={{ strong: <strong /> }} />
 				</p>
 			</div>
 		</div>

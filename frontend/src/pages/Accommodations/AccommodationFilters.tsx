@@ -1,5 +1,6 @@
 import { Filter, RotateCcw } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import AccommodationFormFields from './AccommodationFormFields';
 
 import '../../styles/components/_forms.scss';
@@ -14,6 +15,7 @@ const AccommodationFilters = ({
 	onApplyFilters,
 	onResetFilters,
 }) => {
+	const { t } = useTranslation();
 	const [localFilters, setLocalFilters] = useState({
 		city: city || '',
 		type: type || '',
@@ -48,7 +50,6 @@ const AccommodationFilters = ({
 	return (
 		<section className="filters-section">
 			<form onSubmit={handleApply} className="accommodation-form-fields two-rows">
-				{/* 1-й рядок */}
 				<div className="filters-row">
 					<AccommodationFormFields
 						formData={localFilters}
@@ -64,11 +65,10 @@ const AccommodationFilters = ({
 					/>
 				</div>
 
-				{/* 2-й рядок */}
 				<div className="filters-row">
 					<div className="price-range-group">
 						<div className="form-group">
-							<label htmlFor="filter-minRate">Ціна від</label>
+							<label htmlFor="filter-minRate">{t('filters.priceFrom')}</label>
 							<input
 								id="filter-minRate"
 								type="number"
@@ -76,11 +76,11 @@ const AccommodationFilters = ({
 								value={localFilters.minDailyRate}
 								onChange={handleChange}
 								className="form-control"
-								placeholder="грн"
+								placeholder={t('filters.pricePlaceholder')}
 							/>
 						</div>
 						<div className="form-group">
-							<label htmlFor="filter-maxRate">Ціна до</label>
+							<label htmlFor="filter-maxRate">{t('filters.priceTo')}</label>
 							<input
 								id="filter-maxRate"
 								type="number"
@@ -88,17 +88,17 @@ const AccommodationFilters = ({
 								value={localFilters.maxDailyRate}
 								onChange={handleChange}
 								className="form-control"
-								placeholder="грн"
+								placeholder={t('filters.pricePlaceholder')}
 							/>
 						</div>
 					</div>
 
 					<div className="filters-actions">
 						<button className="btn-primary btn-with-icon" type="submit">
-							<Filter size={18} /> Застосувати
+							<Filter size={18} /> {t('filters.apply')}
 						</button>
 						<button className="btn-outline btn-with-icon" type="button" onClick={onResetFilters}>
-							<RotateCcw size={18} /> Скинути
+							<RotateCcw size={18} /> {t('filters.reset')}
 						</button>
 					</div>
 				</div>

@@ -1,18 +1,20 @@
 import React, { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import '../styles/components/_forms.scss';
 import '../styles/components/_buttons.scss';
 import '../styles/components/_searchForm.scss';
 
-// Опції для типів житла
-const ACCOMMODATION_TYPES = [
-	{ value: 'HOUSE', label: 'Будинок' },
-	{ value: 'APARTMENT', label: 'Квартира' },
-	{ value: 'HOTEL', label: 'Готель' },
-	{ value: 'VACATION_HOME', label: 'Дім для відпочинку' },
-	{ value: 'HOSTEL', label: 'Хостел' },
-];
-
 const SearchForm = ({ onSearch }) => {
+	const { t } = useTranslation();
+
+	const ACCOMMODATION_TYPES = [
+		{ value: 'HOUSE', label: t('accommodationType.house') },
+		{ value: 'APARTMENT', label: t('accommodationType.apartment') },
+		{ value: 'HOTEL', label: t('accommodationType.hotel') },
+		{ value: 'VACATION_HOME', label: t('accommodationType.vacationHome') },
+		{ value: 'HOSTEL', label: t('accommodationType.hostel') },
+	];
+
 	const [formData, setFormData] = useState({
 		city: '',
 		type: '',
@@ -20,7 +22,6 @@ const SearchForm = ({ onSearch }) => {
 		maxDailyRate: '',
 	});
 
-	// Мемоізація, щоб не створювати нові функції на кожен рендер
 	const handleChange = useCallback((e) => {
 		const { name, value } = e.target;
 		setFormData((prev) => ({
@@ -41,23 +42,21 @@ const SearchForm = ({ onSearch }) => {
 
 	return (
 		<form onSubmit={handleSubmit} className="search-form-container">
-			{/* Місто */}
 			<div className="search-input-group">
-				<label htmlFor="city">Місто</label>
+				<label htmlFor="city">{t('searchForm.city')}</label>
 				<input
 					type="text"
 					id="city"
 					name="city"
-					placeholder="Наприклад, Київ"
+					placeholder={t('searchForm.cityPlaceholder')}
 					className="form-control"
 					value={formData.city}
 					onChange={handleChange}
 				/>
 			</div>
 
-			{/* Тип житла */}
 			<div className="search-input-group">
-				<label htmlFor="type">Тип житла</label>
+				<label htmlFor="type">{t('searchForm.type')}</label>
 				<select
 					id="type"
 					name="type"
@@ -65,7 +64,7 @@ const SearchForm = ({ onSearch }) => {
 					value={formData.type}
 					onChange={handleChange}
 				>
-					<option value="">— Оберіть тип —</option>
+					<option value="">{t('searchForm.selectType')}</option>
 					{ACCOMMODATION_TYPES.map((option) => (
 						<option key={option.value} value={option.value}>
 							{option.label}
@@ -74,9 +73,8 @@ const SearchForm = ({ onSearch }) => {
 				</select>
 			</div>
 
-			{/* Ціна від */}
 			<div className="search-input-group">
-				<label htmlFor="minDailyRate">Ціна від</label>
+				<label htmlFor="minDailyRate">{t('searchForm.priceFrom')}</label>
 				<input
 					type="number"
 					id="minDailyRate"
@@ -87,9 +85,8 @@ const SearchForm = ({ onSearch }) => {
 				/>
 			</div>
 
-			{/* Ціна до */}
 			<div className="search-input-group">
-				<label htmlFor="maxDailyRate">Ціна до</label>
+				<label htmlFor="maxDailyRate">{t('searchForm.priceTo')}</label>
 				<input
 					type="number"
 					id="maxDailyRate"
@@ -100,13 +97,11 @@ const SearchForm = ({ onSearch }) => {
 				/>
 			</div>
 
-			{/* Кнопка */}
 			<button className="btn-primary" type="submit">
-				🔍 Шукати
+				{t('searchForm.search')}
 			</button>
 		</form>
 	);
 };
 
-// Обгортаємо у React.memo для оптимізації
 export default React.memo(SearchForm);

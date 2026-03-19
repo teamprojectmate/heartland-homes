@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
 	FaBuilding,
 	FaClipboardList,
@@ -16,8 +17,10 @@ import { logout } from '../store/slices/authSlice';
 
 import '../styles/components/header/_index.scss';
 import '../styles/components/_buttons.scss';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const Header = () => {
+	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 	const location = useLocation();
@@ -41,13 +44,11 @@ const Header = () => {
 		return () => document.body.classList.remove('no-scroll');
 	}, [open]);
 
-	// роль користувача
 	const userRole = user?.cleanRole || (Array.isArray(user?.roles) ? user.roles[0] : user?.role);
 
 	const isManager = userRole === 'MANAGER';
 	const isCustomer = userRole === 'CUSTOMER';
 
-	// якщо ми в адмінці — автоматично включаємо adminMode
 	useEffect(() => {
 		if (location.pathname.startsWith('/admin')) {
 			setAdminMode(true);
@@ -71,29 +72,28 @@ const Header = () => {
 					</Link>
 
 					{/* Desktop nav */}
-					<nav className="nav-desktop" aria-label="Головна навігація">
+					<nav className="nav-desktop" aria-label={t('nav.mainNav')}>
 						<ul>
 							<li>
 								<NavLink to="/" end className="nav-link">
-									<FaHome className="nav-icon" /> Головна
+									<FaHome className="nav-icon" /> {t('nav.home')}
 								</NavLink>
 							</li>
 							<li>
 								<NavLink to="/my-bookings" className="nav-link">
-									<FaClipboardList className="nav-icon" /> Мої бронювання
+									<FaClipboardList className="nav-icon" /> {t('nav.myBookings')}
 								</NavLink>
 							</li>
 							<li>
 								<NavLink to="/my-payments" className="nav-link">
-									<FaCreditCard className="nav-icon" /> Мої платежі
+									<FaCreditCard className="nav-icon" /> {t('nav.myPayments')}
 								</NavLink>
 							</li>
 
-							{/* ✅ Мої помешкання тільки для CUSTOMER */}
 							{isCustomer && (
 								<li>
 									<NavLink to="/my-accommodations" className="nav-link">
-										<FaBuilding className="nav-icon" /> Мої помешкання
+										<FaBuilding className="nav-icon" /> {t('nav.myAccommodations')}
 									</NavLink>
 								</li>
 							)}
@@ -101,30 +101,32 @@ const Header = () => {
 							{isManager && (
 								<li>
 									<NavLink to="/admin" className="nav-link">
-										<FaUserCog className="nav-icon" /> Адмін-панель
+										<FaUserCog className="nav-icon" /> {t('nav.adminPanel')}
 									</NavLink>
 								</li>
 							)}
 							<li>
 								<NavLink to="/profile" className="nav-link">
-									<FaUser className="nav-icon" /> Профіль
+									<FaUser className="nav-icon" /> {t('nav.profile')}
 								</NavLink>
 							</li>
 						</ul>
 
 						{isAuthenticated ? (
 							<div className="nav-actions">
+								<LanguageSwitcher />
 								<button type="button" className="btn-chip logout" onClick={handleLogout}>
-									<FaSignOutAlt className="nav-icon" /> Вийти
+									<FaSignOutAlt className="nav-icon" /> {t('nav.logout')}
 								</button>
 							</div>
 						) : (
 							<div className="nav-actions">
+								<LanguageSwitcher />
 								<NavLink to="/login" className="btn-chip primary">
-									<FaSignInAlt className="nav-icon" /> Увійти
+									<FaSignInAlt className="nav-icon" /> {t('nav.login')}
 								</NavLink>
 								<NavLink to="/register" className="btn-chip secondary">
-									<FaUserPlus className="nav-icon" /> Реєстрація
+									<FaUserPlus className="nav-icon" /> {t('nav.register')}
 								</NavLink>
 							</div>
 						)}
@@ -134,7 +136,7 @@ const Header = () => {
 					<button
 						type="button"
 						className={`burger ${open ? 'open' : ''}`}
-						aria-label="Меню"
+						aria-label={t('nav.menu')}
 						aria-controls="mobile-drawer"
 						aria-expanded={open}
 						onClick={() => setOpen((v) => !v)}
@@ -152,44 +154,45 @@ const Header = () => {
 				className={`drawer ${open ? 'open' : ''} ${adminMode ? 'admin-mode' : ''}`}
 				role="dialog"
 				aria-modal="true"
-				aria-label="Мобільне меню"
+				aria-label={t('nav.mobileMenu')}
 			>
 				<div className={`drawer-content ${open ? 'open' : ''}`}>
 					<button
 						type="button"
 						className="drawer-close"
-						aria-label="Закрити меню"
+						aria-label={t('nav.closeMenu')}
 						onClick={closeDrawer}
 					/>
 
 					{adminMode ? (
 						<>
-							<h2>Адмін-панель</h2>
+							<h2>{t('nav.adminPanel')}</h2>
 							<ul className="drawer-nav">
 								<li>
 									<NavLink onClick={closeDrawer} to="/admin">
-										<FaHome className="nav-icon" /> Головна
+										<FaHome className="nav-icon" /> {t('nav.home')}
 									</NavLink>
 								</li>
 								<li>
 									<NavLink onClick={closeDrawer} to="/admin/accommodations">
-										<FaClipboardList className="nav-icon" /> Помешкання
+										<FaClipboardList className="nav-icon" /> {t('nav.accommodations')}
 									</NavLink>
 								</li>
 								<li>
 									<NavLink onClick={closeDrawer} to="/admin/bookings">
-										<FaCreditCard className="nav-icon" /> Бронювання
+										<FaCreditCard className="nav-icon" /> {t('admin.bookings')}
 									</NavLink>
 								</li>
 								<li>
 									<NavLink onClick={closeDrawer} to="/admin/users">
-										<FaUser className="nav-icon" /> Користувачі
+										<FaUser className="nav-icon" /> {t('admin.users')}
 									</NavLink>
 								</li>
 							</ul>
 							<div className="drawer-actions">
+								<LanguageSwitcher />
 								<NavLink to="/" onClick={() => setOpen(false)} className="btn-primary">
-									← На головну
+									{t('nav.backToHome')}
 								</NavLink>
 							</div>
 						</>
@@ -198,25 +201,24 @@ const Header = () => {
 							<ul className="drawer-nav">
 								<li>
 									<NavLink onClick={closeDrawer} to="/" end>
-										<FaHome className="nav-icon" /> Головна
+										<FaHome className="nav-icon" /> {t('nav.home')}
 									</NavLink>
 								</li>
 								<li>
 									<NavLink onClick={closeDrawer} to="/my-bookings">
-										<FaClipboardList className="nav-icon" /> Мої бронювання
+										<FaClipboardList className="nav-icon" /> {t('nav.myBookings')}
 									</NavLink>
 								</li>
 								<li>
 									<NavLink onClick={closeDrawer} to="/my-payments">
-										<FaCreditCard className="nav-icon" /> Мої платежі
+										<FaCreditCard className="nav-icon" /> {t('nav.myPayments')}
 									</NavLink>
 								</li>
 
-								{/* ✅ у Drawer теж */}
 								{isCustomer && (
 									<li>
 										<NavLink onClick={closeDrawer} to="/my-accommodations">
-											<FaBuilding className="nav-icon" /> Мої помешкання
+											<FaBuilding className="nav-icon" /> {t('nav.myAccommodations')}
 										</NavLink>
 									</li>
 								)}
@@ -224,30 +226,32 @@ const Header = () => {
 								{isManager && (
 									<li>
 										<NavLink onClick={closeDrawer} to="/admin">
-											<FaUserCog className="nav-icon" /> Адмін-панель
+											<FaUserCog className="nav-icon" /> {t('nav.adminPanel')}
 										</NavLink>
 									</li>
 								)}
 								<li>
 									<NavLink onClick={closeDrawer} to="/profile">
-										<FaUser className="nav-icon" /> Профіль
+										<FaUser className="nav-icon" /> {t('nav.profile')}
 									</NavLink>
 								</li>
 							</ul>
 
 							{isAuthenticated ? (
 								<div className="drawer-actions">
+									<LanguageSwitcher />
 									<button type="button" className="btn-primary" onClick={handleLogout}>
-										<FaSignOutAlt className="nav-icon" /> Вийти
+										<FaSignOutAlt className="nav-icon" /> {t('nav.logout')}
 									</button>
 								</div>
 							) : (
 								<div className="drawer-actions">
+									<LanguageSwitcher />
 									<NavLink onClick={closeDrawer} to="/login" className="btn-primary">
-										<FaSignInAlt className="nav-icon" /> Увійти
+										<FaSignInAlt className="nav-icon" /> {t('nav.login')}
 									</NavLink>
 									<NavLink onClick={closeDrawer} to="/register" className="btn-secondary">
-										<FaUserPlus className="nav-icon" /> Реєстрація
+										<FaUserPlus className="nav-icon" /> {t('nav.register')}
 									</NavLink>
 								</div>
 							)}
@@ -259,7 +263,7 @@ const Header = () => {
 					type="button"
 					className="drawer-backdrop"
 					onClick={closeDrawer}
-					aria-label="Закрити меню"
+					aria-label={t('nav.closeMenu')}
 				/>
 			</div>
 		</>

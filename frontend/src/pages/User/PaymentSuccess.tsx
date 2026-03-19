@@ -1,12 +1,13 @@
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/components/payment/_payment-checkout.scss';
 
 const PaymentSuccess = () => {
+	const { t } = useTranslation();
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		// перенаправлення через 2 секунди
 		const timer = setTimeout(() => {
 			navigate('/my-payments');
 		}, 2000);
@@ -18,11 +19,9 @@ const PaymentSuccess = () => {
 		<div className="payment-page">
 			<div className="payment-card payment-checkout">
 				<h2 className="payment-title" style={{ color: '#16a34a' }}>
-					🎉 Оплату успішно завершено! 🎉
+					{t('payment.successTitle')}
 				</h2>
-				<p className="payment-subtitle">
-					Дякуємо за вашу оплату. Ви будете перенаправлені на сторінку &quot;Мої платежі&quot;.
-				</p>
+				<p className="payment-subtitle">{t('payment.successSubtitle')}</p>
 			</div>
 		</div>
 	);

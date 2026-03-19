@@ -1,4 +1,8 @@
+import { useTranslation } from 'react-i18next';
+
 const GoogleLoginButton = () => {
+	const { t } = useTranslation();
+
 	const handleGoogleLogin = () => {
 		const api = import.meta.env.VITE_API_URL;
 		window.location.href = `${api}/oauth2/authorization/google`;
@@ -13,7 +17,7 @@ const GoogleLoginButton = () => {
 				height="20"
 				style={{ marginRight: 8 }}
 			/>
-			Увійти через Google
+			{t('nav.loginViaGoogle')}
 		</button>
 	);
 };

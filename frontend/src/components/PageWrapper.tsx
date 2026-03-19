@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAppSelector } from '../store/hooks';
 import Notification from './Notification';
 
 const PageWrapper = ({ title, children, extraErrors = [] }) => {
+	const { t } = useTranslation();
 	const authError = useAppSelector((s) =>
 		s.auth.message && s.auth.isError ? s.auth.message : null,
 	);
@@ -37,7 +39,7 @@ const PageWrapper = ({ title, children, extraErrors = [] }) => {
 
 		if (errors.length > 0) {
 			document.title = blink
-				? `⚠️ Помилка: ${errorMsg}`
+				? `${t('common.errorPrefix', { message: errorMsg })}`
 				: title
 					? `${title} | Heartland Homes`
 					: 'Heartland Homes';

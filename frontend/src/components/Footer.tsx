@@ -1,63 +1,61 @@
 import { FacebookIcon, InstagramIcon, Mail, MapPin, Phone, TwitterIcon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useAppSelector } from '../store/hooks';
 import '../styles/components/footer/_footer.scss';
 
-const footerLinks = [
-	{
-		heading: 'Підтримка',
-		links: [
-			{ to: '/faq', label: 'FAQ' },
-			{ to: '/support', label: "Зв'язатися з нами" },
-			{ to: '/about', label: 'Про нас' },
-		],
-	},
-	{
-		heading: 'Пропозиції',
-		links: [
-			{ to: '/offers', label: 'Акції та знижки' },
-			{ to: '/popular', label: 'Популярні напрямки' },
-			{ to: '/partners', label: 'Партнери' },
-		],
-	},
-	{
-		heading: 'Інформація',
-		links: [
-			{ to: '/terms', label: 'Умови використання' },
-			{ to: '/privacy', label: 'Політика конфіденційності' },
-			{ to: '/cookies', label: 'Файли Cookie' },
-		],
-	},
-];
-
-const socialLinks = [
-	{ href: 'https://facebook.com', icon: <FacebookIcon />, label: 'Facebook' },
-	{ href: 'https://instagram.com', icon: <InstagramIcon />, label: 'Instagram' },
-	{ href: 'https://twitter.com', icon: <TwitterIcon />, label: 'Twitter' },
-];
-
 const Footer = () => {
+	const { t } = useTranslation();
 	const { isAuthenticated } = useAppSelector((state) => state.auth);
+
+	const footerLinks = [
+		{
+			heading: t('footer.support'),
+			links: [
+				{ to: '/faq', label: 'FAQ' },
+				{ to: '/support', label: t('footer.contactUs') },
+				{ to: '/about', label: t('footer.aboutUs') },
+			],
+		},
+		{
+			heading: t('footer.proposals'),
+			links: [
+				{ to: '/offers', label: t('footer.offersDiscounts') },
+				{ to: '/popular', label: t('footer.popularDestinations') },
+				{ to: '/partners', label: t('footer.partners') },
+			],
+		},
+		{
+			heading: t('footer.information'),
+			links: [
+				{ to: '/terms', label: t('footer.terms') },
+				{ to: '/privacy', label: t('footer.privacy') },
+				{ to: '/cookies', label: t('footer.cookies') },
+			],
+		},
+	];
+
+	const socialLinks = [
+		{ href: 'https://facebook.com', icon: <FacebookIcon />, label: 'Facebook' },
+		{ href: 'https://instagram.com', icon: <InstagramIcon />, label: 'Instagram' },
+		{ href: 'https://twitter.com', icon: <TwitterIcon />, label: 'Twitter' },
+	];
 
 	return (
 		<footer className="footer" role="contentinfo">
 			<div className="footer__inner">
 				{isAuthenticated && (
 					<section className="footer__property">
-						<h5 className="footer__property__title">Зареєструвати своє помешкання</h5>
-						<p className="footer__property__text">
-							Отримайте доступ до мільйонів потенційних гостей по всьому світу.
-						</p>
+						<h5 className="footer__property__title">{t('footer.registerProperty')}</h5>
+						<p className="footer__property__text">{t('footer.registerPropertyDesc')}</p>
 						<Link to="/accommodations/new" className="btn-secondary footer__property__btn">
-							Розпочати
+							{t('footer.getStarted')}
 						</Link>
 					</section>
 				)}
 
-				{/* Основна сітка */}
 				<div className="footer__main">
-					{/* 1. Інформативні блоки */}
-					<nav className="footer__links" aria-label="Корисні посилання">
+					<nav className="footer__links" aria-label={t('footer.usefulLinks')}>
 						{footerLinks.map((col) => (
 							<div key={col.heading} className="footer__column">
 								<h5 className="footer__column__title">{col.heading}</h5>
@@ -74,8 +72,7 @@ const Footer = () => {
 						))}
 					</nav>
 
-					{/* 2. Контакти */}
-					<address className="footer__contacts" aria-label="Контактна інформація">
+					<address className="footer__contacts" aria-label={t('footer.contactInfo')}>
 						<a href="tel:+380671234567" className="footer__contacts__link">
 							<Phone size={18} /> +380 67 123 45 67
 						</a>
@@ -88,11 +85,10 @@ const Footer = () => {
 							rel="noopener noreferrer"
 							className="footer__contacts__link"
 						>
-							<MapPin size={18} /> Київ, вул. Хрещатик, 12
+							<MapPin size={18} /> {t('footer.address')}
 						</a>
 					</address>
 
-					{/* 3. Соцмережі */}
 					<div className="footer__social">
 						{socialLinks.map((social) => (
 							<a
@@ -109,10 +105,9 @@ const Footer = () => {
 					</div>
 				</div>
 
-				{/* 4. Копірайт */}
 				<div className="footer__copyright">
 					<p className="footer__copyright__text">
-						Heartland Homes © {new Date().getFullYear()}. Проєкт створено для навчання.
+						{t('footer.copyright', { year: new Date().getFullYear() })}
 					</p>
 				</div>
 			</div>

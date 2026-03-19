@@ -1,37 +1,40 @@
 import { Home } from 'lucide-react';
+import { Trans, useTranslation } from 'react-i18next';
 import '../../styles/components/_info-pages.scss';
 
-const About = () => (
-	<section className="info-page container">
-		<div className="info-header">
-			<Home className="info-icon" size={28} />
-			<h1 className="page-title">Про нас</h1>
-		</div>
+const About = () => {
+	const { t } = useTranslation();
 
-		<p className="lead-text">
-			<strong>Heartland Homes</strong> — сервіс для бронювання житла, який поєднує людей із
-			затишними помешканнями по всій Україні. Ми прагнемо зробити подорожі доступними та комфортними
-			для кожного.
-		</p>
+	return (
+		<section className="info-page container">
+			<div className="info-header">
+				<Home className="info-icon" size={28} />
+				<h1 className="page-title">{t('info.aboutTitle')}</h1>
+			</div>
 
-		<div className="about-highlights">
-			<div className="highlight-card">
-				<Home className="highlight-icon" size={36} />
-				<h3>Затишні будинки</h3>
-				<p>Вибір серед сотень перевірених варіантів житла.</p>
+			<p className="lead-text">
+				<Trans i18nKey="info.aboutText" components={{ strong: <strong /> }} />
+			</p>
+
+			<div className="about-highlights">
+				<div className="highlight-card">
+					<Home className="highlight-icon" size={36} />
+					<h3>{t('info.cozyHomes')}</h3>
+					<p>{t('info.cozyHomesDesc')}</p>
+				</div>
+				<div className="highlight-card">
+					<Home className="highlight-icon" size={36} />
+					<h3>{t('info.affordablePrices')}</h3>
+					<p>{t('info.affordablePricesDesc')}</p>
+				</div>
+				<div className="highlight-card">
+					<Home className="highlight-icon" size={36} />
+					<h3>{t('info.easyBooking')}</h3>
+					<p>{t('info.easyBookingDesc')}</p>
+				</div>
 			</div>
-			<div className="highlight-card">
-				<Home className="highlight-icon" size={36} />
-				<h3>Доступні ціни</h3>
-				<p>Пропонуємо варіанти для будь-якого бюджету.</p>
-			</div>
-			<div className="highlight-card">
-				<Home className="highlight-icon" size={36} />
-				<h3>Зручне бронювання</h3>
-				<p>Швидкий та простий процес пошуку і бронювання.</p>
-			</div>
-		</div>
-	</section>
-);
+		</section>
+	);
+};
 
 export default About;

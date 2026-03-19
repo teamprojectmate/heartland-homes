@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import { getAccommodationById } from '../../api/accommodations/accommodationService';
 import BaseMap from '../../components/BaseMap';
@@ -14,7 +15,7 @@ import '../../styles/components/accommodation/_accommodation-gallery.scss';
 import '../../styles/components/badges/_badges.scss';
 
 const AccommodationDetails = ({ id: propId }: { id?: any }) => {
-	//  або беремо id з props, або з useParams
+	const { t } = useTranslation();
 	const { id: routeId } = useParams();
 	const id = propId || routeId;
 
@@ -30,42 +31,39 @@ const AccommodationDetails = ({ id: propId }: { id?: any }) => {
 			try {
 				const data = await getAccommodationById(id);
 				if (!data) {
-					setError('Помешкання не знайдено.');
+					setError(t('accommodations.notFoundError'));
 					return;
 				}
 				setAccommodation(data);
 			} catch (err) {
-				console.error('❌ Помилка завантаження житла:', err);
-				setError('Не вдалося завантажити деталі помешкання.');
+				console.error('Error loading accommodation:', err);
+				setError(t('accommodations.errorLoadingDetails'));
 			} finally {
 				setLoading(false);
 			}
 		};
 		fetchAccommodation();
-	}, [id]);
+	}, [id, t]);
 
-	if (loading) return <div className="loading">Завантаження...</div>;
+	if (loading) return <div className="loading">{t('common.loading')}</div>;
 	if (error) return <div className="error">{error}</div>;
-	if (!accommodation) return <div className="not-found">Помешкання не знайдено.</div>;
+	if (!accommodation) return <div className="not-found">{t('accommodations.notFoundError')}</div>;
 
 	const { label: typeLabel, icon: typeIcon, color: typeColor } = mapType(accommodation.type);
 
 	return (
 		<div className="accommodation-details-page">
-			{/* Заголовок */}
 			<div className="page-header">
-				<h2 className="page-title">Деталі помешкання</h2>
+				<h2 className="page-title">{t('accommodations.detailsTitle')}</h2>
 				<h3 className="page-subtitle">
-					<strong>{accommodation?.name || 'Без назви'}</strong>
+					<strong>{accommodation?.name || t('accommodations.noName')}</strong>
 				</h3>
 				<p className="page-subtitle">
 					{accommodation?.city}, {accommodation?.location}
 				</p>
 			</div>
 
-			{/* Контент */}
 			<div className="details-grid">
-				{/* Ліва частина */}
 				<div className="left-column">
 					<div className="gallery-wrapper">
 						<AccommodationGallery
@@ -80,7 +78,7 @@ const AccommodationDetails = ({ id: propId }: { id?: any }) => {
 					</div>
 
 					<div className="details-card">
-						<h4 className="details-section-title">Інформація</h4>
+						<h4 className="details-section-title">{t('accommodations.information')}</h4>
 
 						<div className="characteristics-inline">
 							<span className="badge badge-type" style={{ backgroundColor: typeColor }}>
@@ -88,12 +86,14 @@ const AccommodationDetails = ({ id: propId }: { id?: any }) => {
 							</span>
 							<span className="badge badge-size">
 								{parseInt(accommodation.size, 10)}{' '}
-								{parseInt(accommodation.size, 10) > 1 ? 'Спальні' : 'Спальня'}
+								{parseInt(accommodation.size, 10) > 1
+									? t('accommodations.bedrooms_other')
+									: t('accommodations.bedrooms_one')}
 							</span>
 						</div>
 
 						<div className="mt-3">
-							<strong>Зручності:</strong>
+							<strong>{t('accommodations.amenities')}:</strong>
 							<div className="badge-group mt-2">
 								{accommodation?.amenities?.length > 0 ? (
 									accommodation.amenities.map((amenity) => {
@@ -109,33 +109,32 @@ const AccommodationDetails = ({ id: propId }: { id?: any }) => {
 										);
 									})
 								) : (
-									<span className="text-muted">немає даних</span>
+									<span className="text-muted">{t('accommodations.noAmenities')}</span>
 								)}
 							</div>
 						</div>
 					</div>
 				</div>
 
-				{/* Права частина */}
 				<div className="right-column">
 					<div className="booking-details-card">
-						<h5 className="booking-title">Забронювати</h5>
+						<h5 className="booking-title">{t('accommodations.book')}</h5>
 
 						<div className="booking-price">
 							<div className="price-row">
 								<span className="price">{accommodation?.dailyRate || '—'}</span>
-								<span className="currency">грн</span>
+								<span className="currency">{t('common.currency')}</span>
 							</div>
-							<div className="per-night">/ доба</div>
+							<div className="per-night">{t('common.perNight')}</div>
 						</div>
 
 						{isAuthenticated ? (
 							<BookingForm accommodation={accommodation} />
 						) : (
 							<div className="text-center">
-								<p className="text-muted mb-2">Для бронювання необхідно увійти в систему.</p>
+								<p className="text-muted mb-2">{t('accommodations.loginToBook')}</p>
 								<Link to="/login" className="btn btn-primary w-100">
-									Увійти
+									{t('nav.login')}
 								</Link>
 							</div>
 						)}
@@ -143,10 +142,9 @@ const AccommodationDetails = ({ id: propId }: { id?: any }) => {
 				</div>
 			</div>
 
-			{/* Карта вниз на всю ширину */}
 			{accommodation?.latitude && accommodation?.longitude && (
 				<div className="location-map-full">
-					<h4 className="details-section-title">Розташування</h4>
+					<h4 className="details-section-title">{t('accommodations.location')}</h4>
 					<BaseMap
 						items={[accommodation]}
 						renderPopup={(acc) => (
