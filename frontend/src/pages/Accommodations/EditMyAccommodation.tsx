@@ -1,5 +1,7 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import L from 'leaflet';
 import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -8,6 +10,10 @@ import {
 } from '../../api/accommodations/accommodationService';
 import Notification from '../../components/Notification';
 import setupLeaflet from '../../utils/leafletConfig';
+import {
+	type EditMyAccommodationFormData,
+	editMyAccommodationSchema,
+} from '../../validation/schemas';
 import 'leaflet/dist/leaflet.css';
 
 setupLeaflet();
@@ -105,9 +111,33 @@ const EditMyAccommodation = () => {
 	const { id } = useParams();
 	const navigate = useNavigate();
 
-	const [formData, setFormData] = useState(null);
-	const [error, setError] = useState(null);
+	const {
+		register,
+		handleSubmit,
+		setValue,
+		watch,
+		reset,
+		formState: { errors },
+	} = useForm<EditMyAccommodationFormData>({
+		resolver: zodResolver(editMyAccommodationSchema),
+		defaultValues: {
+			name: '',
+			type: 'HOUSE',
+			region: '',
+			city: '',
+			location: '',
+			size: '',
+			latitude: '',
+			longitude: '',
+			amenities: '',
+			dailyRate: '',
+			image: '',
+		},
+	});
+
+	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
+	const [dataLoaded, setDataLoaded] = useState(false);
 
 	// Завантаження + парсинг області та вулиці
 	useEffect(() => {
@@ -115,62 +145,55 @@ const EditMyAccommodation = () => {
 			.then((data) => {
 				const { region, rest } = stripRegionFromLocation(data.location || '');
 				const streetOnly = normalizeStreetOnly(rest, data.city || '', region || '');
-				setFormData({
-					...data,
+				const amenitiesStr = Array.isArray(data.amenities)
+					? data.amenities.join(', ')
+					: data.amenities || '';
+				reset({
+					name: data.name || '',
+					type: data.type || 'HOUSE',
 					region: region || '',
+					city: data.city || '',
 					location: streetOnly || '',
+					size: data.size || '',
+					latitude: String(data.latitude || ''),
+					longitude: String(data.longitude || ''),
+					amenities: amenitiesStr,
+					dailyRate: String(data.dailyRate ?? ''),
+					image: data.image || '',
 				});
+				setDataLoaded(true);
 			})
 			.catch(() => setError('Не вдалося завантажити помешкання'));
-	}, [id]);
+	}, [id, reset]);
 
-	const handleChange = (e) => {
-		const { name, value } = e.target;
-		setFormData((prev) => ({ ...prev, [name]: value }));
+	const setCoordinates = ({ latitude, longitude }: { latitude: string; longitude: string }) => {
+		setValue('latitude', latitude);
+		setValue('longitude', longitude);
 	};
 
-	const setCoordinates = ({ latitude, longitude }) => {
-		setFormData((prev) => ({ ...prev, latitude, longitude }));
+	const normalizeFormAddress = () => {
+		const region = watch('region');
+		const city = watch('city');
+		const location = watch('location');
+		setValue('region', normalizeRegion(region || ''));
+		setValue('location', normalizeStreetOnly(location || '', city || '', region || ''));
 	};
 
-	const normalizeFormAddress = () =>
-		setFormData((prev) => ({
-			...prev,
-			region: normalizeRegion(prev.region || ''),
-			location: normalizeStreetOnly(prev.location || '', prev.city || '', prev.region || ''),
-		}));
-
-	const handleSubmit = async (e) => {
-		e.preventDefault();
+	const onSubmit = async (formData: EditMyAccommodationFormData) => {
 		setLoading(true);
 		setError(null);
 
 		try {
-			// проста фронт-валідцація dailyRate (>0)
-			const rate =
-				formData.dailyRate === '' || formData.dailyRate == null
-					? undefined
-					: Number(formData.dailyRate);
-
-			if (rate === undefined || Number.isNaN(rate) || rate <= 0) {
-				setError('Ціна за добу має бути більшою за 0');
-				setLoading(false);
-				return;
-			}
-
 			const locationFull = buildLocation({
 				region: formData.region,
 				city: formData.city,
 				street: formData.location,
 			});
 
-			// гарантуємо масив рядків для amenities
-			const amenities = Array.isArray(formData.amenities)
-				? formData.amenities
-				: String(formData.amenities || '')
-						.split(',')
-						.map((a) => a.trim())
-						.filter(Boolean);
+			const amenities = String(formData.amenities || '')
+				.split(',')
+				.map((a) => a.trim())
+				.filter(Boolean);
 
 			const payload = {
 				name: (formData.name || '').trim(),
@@ -181,58 +204,54 @@ const EditMyAccommodation = () => {
 				longitude: String(formData.longitude || ''),
 				size: (formData.size || '—').trim(),
 				amenities,
-				dailyRate: rate,
+				dailyRate: Number(formData.dailyRate),
 				image: (formData.image || '').trim(),
 			};
 
 			await updateMyAccommodation(id, payload);
 			navigate('/my-accommodations');
-		} catch (err) {
-			setError(err.response?.data?.message || 'Помилка при оновленні');
+		} catch (err: unknown) {
+			const message = (err as { response?: { data?: { message?: string } } })?.response?.data
+				?.message;
+			setError(message || 'Помилка при оновленні');
 		} finally {
 			setLoading(false);
 		}
 	};
 
-	if (!formData) return <p>Завантаження...</p>;
+	if (!dataLoaded && !error) return <p>Завантаження...</p>;
 
-	const lat = Number(formData.latitude);
-	const lng = Number(formData.longitude);
-	const hasPoint = Number.isFinite(lat) && Number.isFinite(lng);
+	const latValue = watch('latitude');
+	const lngValue = watch('longitude');
+	const lat = Number(latValue);
+	const lng = Number(lngValue);
+	const hasPoint =
+		Number.isFinite(lat) && Number.isFinite(lng) && latValue !== '' && lngValue !== '';
 
 	return (
 		<div className="container page">
-			<form onSubmit={handleSubmit} className="admin-form">
+			<form onSubmit={handleSubmit(onSubmit)} className="admin-form">
 				<h1>✨ ✏️ Редагувати моє помешкання</h1>
 				{error && <Notification message={error} type="danger" />}
 
 				{/* Назва */}
 				<div className="form-group">
 					<label htmlFor="edit-name">Назва</label>
-					<input
-						type="text"
-						id="edit-name"
-						name="name"
-						value={formData.name || ''}
-						onChange={handleChange}
-					/>
+					<input type="text" id="edit-name" {...register('name')} />
+					{errors.name && <span className="form-error">{errors.name.message}</span>}
 				</div>
 
 				{/* Тип */}
 				<div className="form-group">
 					<label htmlFor="edit-type">Тип</label>
-					<select
-						id="edit-type"
-						name="type"
-						value={formData.type || 'HOUSE'}
-						onChange={handleChange}
-					>
+					<select id="edit-type" {...register('type')}>
 						<option value="HOUSE">Будинок</option>
 						<option value="APARTMENT">Квартира</option>
 						<option value="HOTEL">Готель</option>
 						<option value="VACATION_HOME">Дім для відпочинку</option>
 						<option value="HOSTEL">Хостел</option>
 					</select>
+					{errors.type && <span className="form-error">{errors.type.message}</span>}
 				</div>
 
 				{/* Область */}
@@ -241,10 +260,8 @@ const EditMyAccommodation = () => {
 					<input
 						type="text"
 						id="edit-region"
-						name="region"
 						placeholder="Івано-Франківська область"
-						value={formData.region || ''}
-						onChange={handleChange}
+						{...register('region')}
 						onBlur={normalizeFormAddress}
 					/>
 				</div>
@@ -255,12 +272,11 @@ const EditMyAccommodation = () => {
 					<input
 						type="text"
 						id="edit-city"
-						name="city"
 						placeholder="Київ"
-						value={formData.city || ''}
-						onChange={handleChange}
+						{...register('city')}
 						onBlur={normalizeFormAddress}
 					/>
+					{errors.city && <span className="form-error">{errors.city.message}</span>}
 				</div>
 
 				{/* Локація (вулиця/будинок/кв.) */}
@@ -269,10 +285,8 @@ const EditMyAccommodation = () => {
 					<input
 						type="text"
 						id="edit-location"
-						name="location"
 						placeholder="вул. Центральна, 15, кв. 3"
-						value={formData.location || ''}
-						onChange={handleChange}
+						{...register('location')}
 						onBlur={normalizeFormAddress}
 					/>
 				</div>
@@ -280,13 +294,7 @@ const EditMyAccommodation = () => {
 				{/* Кількість спалень / розмір */}
 				<div className="form-group">
 					<label htmlFor="edit-size">Кількість спален (наприклад, 1)</label>
-					<input
-						type="text"
-						id="edit-size"
-						name="size"
-						value={formData.size || ''}
-						onChange={handleChange}
-					/>
+					<input type="text" id="edit-size" {...register('size')} />
 				</div>
 
 				{/* Карта */}
@@ -316,39 +324,14 @@ const EditMyAccommodation = () => {
 				{/* Зручності */}
 				<div className="form-group">
 					<label htmlFor="edit-amenities">Зручності (через кому)</label>
-					<input
-						type="text"
-						id="edit-amenities"
-						name="amenities"
-						value={
-							Array.isArray(formData.amenities)
-								? formData.amenities.join(', ')
-								: formData.amenities || ''
-						}
-						onChange={(e) =>
-							setFormData((prev) => ({
-								...prev,
-								amenities: e.target.value
-									.split(',')
-									.map((a) => a.trim())
-									.filter(Boolean),
-							}))
-						}
-					/>
+					<input type="text" id="edit-amenities" {...register('amenities')} />
 				</div>
 
 				{/* Ціна за добу */}
 				<div className="form-group">
 					<label htmlFor="edit-dailyRate">Ціна за добу</label>
-					<input
-						type="number"
-						min="1"
-						step="1"
-						id="edit-dailyRate"
-						name="dailyRate"
-						value={formData.dailyRate ?? ''}
-						onChange={handleChange}
-					/>
+					<input type="number" min="1" step="1" id="edit-dailyRate" {...register('dailyRate')} />
+					{errors.dailyRate && <span className="form-error">{errors.dailyRate.message}</span>}
 				</div>
 
 				{/* URL зображення */}
@@ -357,10 +340,8 @@ const EditMyAccommodation = () => {
 					<input
 						type="text"
 						id="edit-image"
-						name="image"
-						value={formData.image || ''}
-						onChange={handleChange}
 						placeholder="https://example.com/image.jpg"
+						{...register('image')}
 					/>
 				</div>
 

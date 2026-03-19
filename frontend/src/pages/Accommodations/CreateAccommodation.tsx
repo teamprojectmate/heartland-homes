@@ -1,10 +1,13 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import L from 'leaflet';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet';
 import { useNavigate } from 'react-router-dom';
 import { createAccommodation } from '../../api/accommodations/accommodationService';
 import Notification from '../../components/Notification';
 import setupLeaflet from '../../utils/leafletConfig';
+import { type AccommodationFormData, accommodationSchema } from '../../validation/schemas';
 import 'leaflet/dist/leaflet.css';
 
 setupLeaflet();
@@ -62,52 +65,44 @@ const buildLocation = ({ region, city, street, houseNumber, apartment }) => {
 const CreateAccommodation = () => {
 	const navigate = useNavigate();
 
-	const [formData, setFormData] = useState({
-		name: '',
-		type: 'HOUSE',
-		region: '',
-		city: '',
-		street: '',
-		houseNumber: '',
-		apartment: '',
-		size: '',
-		latitude: '',
-		longitude: '',
-		amenities: '',
-		dailyRate: '',
-		image: '',
+	const {
+		register,
+		handleSubmit,
+		setValue,
+		watch,
+		formState: { errors },
+	} = useForm<AccommodationFormData>({
+		resolver: zodResolver(accommodationSchema),
+		defaultValues: {
+			name: '',
+			type: 'HOUSE',
+			region: '',
+			city: '',
+			street: '',
+			houseNumber: '',
+			apartment: '',
+			size: '',
+			latitude: '',
+			longitude: '',
+			amenities: '',
+			dailyRate: '',
+			image: '',
+		},
 	});
 
-	const [error, setError] = useState(null);
+	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
 
-	const handleChange = (e) => {
-		const { name, value } = e.target;
-		setFormData((prev) => ({ ...prev, [name]: value }));
+	const setCoordinates = ({ latitude, longitude }: { latitude: string; longitude: string }) => {
+		setValue('latitude', latitude);
+		setValue('longitude', longitude);
 	};
 
-	const setCoordinates = ({ latitude, longitude }) => {
-		setFormData((prev) => ({ ...prev, latitude, longitude }));
-	};
-
-	const handleSubmit = async (e) => {
-		e.preventDefault();
+	const onSubmit = async (formData: AccommodationFormData) => {
 		setLoading(true);
 		setError(null);
 
 		try {
-			// базова фронт-валідцація
-			const rate =
-				formData.dailyRate === '' || formData.dailyRate == null
-					? undefined
-					: Number(formData.dailyRate);
-
-			if (rate === undefined || Number.isNaN(rate) || rate <= 0) {
-				setError('Ціна за добу має бути більшою за 0');
-				setLoading(false);
-				return;
-			}
-
 			const location = buildLocation({
 				region: formData.region,
 				city: formData.city,
@@ -128,97 +123,89 @@ const CreateAccommodation = () => {
 					.split(',')
 					.map((a) => a.trim())
 					.filter(Boolean),
-				dailyRate: rate,
+				dailyRate: Number(formData.dailyRate),
 				image: (formData.image || '').trim(),
 			};
 
 			await createAccommodation(payload);
 			navigate('/accommodations');
-		} catch (err) {
-			setError(err.response?.data?.message || 'Помилка при створенні');
+		} catch (err: unknown) {
+			const message = (err as { response?: { data?: { message?: string } } })?.response?.data
+				?.message;
+			setError(message || 'Помилка при створенні');
 		} finally {
 			setLoading(false);
 		}
 	};
 
-	const lat = Number(formData.latitude);
-	const lng = Number(formData.longitude);
-	const hasPoint = Number.isFinite(lat) && Number.isFinite(lng);
+	const latValue = watch('latitude');
+	const lngValue = watch('longitude');
+	const lat = Number(latValue);
+	const lng = Number(lngValue);
+	const hasPoint =
+		Number.isFinite(lat) && Number.isFinite(lng) && latValue !== '' && lngValue !== '';
 
 	return (
 		<div className="container page">
-			<form onSubmit={handleSubmit} className="admin-form">
+			<form onSubmit={handleSubmit(onSubmit)} className="admin-form">
 				<h1>✨ Створити помешкання</h1>
 				{error && <Notification message={error} type="danger" />}
 
 				{/* Назва */}
 				<div className="form-group">
 					<label htmlFor="create-name">Назва</label>
-					<input id="create-name" name="name" value={formData.name} onChange={handleChange} />
+					<input id="create-name" {...register('name')} />
+					{errors.name && <span className="form-error">{errors.name.message}</span>}
 				</div>
 
 				{/* Тип */}
 				<div className="form-group">
 					<label htmlFor="create-type">Тип</label>
-					<select id="create-type" name="type" value={formData.type} onChange={handleChange}>
+					<select id="create-type" {...register('type')}>
 						<option value="HOUSE">Будинок</option>
 						<option value="APARTMENT">Квартира</option>
 						<option value="HOTEL">Готель</option>
 						<option value="VACATION_HOME">Дім для відпочинку</option>
 						<option value="HOSTEL">Хостел</option>
 					</select>
+					{errors.type && <span className="form-error">{errors.type.message}</span>}
 				</div>
 
 				{/* Область */}
 				<div className="form-group">
 					<label htmlFor="create-region">Область</label>
-					<input
-						id="create-region"
-						name="region"
-						placeholder="Київська область"
-						value={formData.region}
-						onChange={handleChange}
-					/>
+					<input id="create-region" placeholder="Київська область" {...register('region')} />
 				</div>
 
 				{/* Місто */}
 				<div className="form-group">
 					<label htmlFor="create-city">Місто</label>
-					<input id="create-city" name="city" value={formData.city} onChange={handleChange} />
+					<input id="create-city" {...register('city')} />
+					{errors.city && <span className="form-error">{errors.city.message}</span>}
 				</div>
 
 				{/* Вулиця */}
 				<div className="form-group">
 					<label htmlFor="create-street">Вулиця / район</label>
-					<input id="create-street" name="street" value={formData.street} onChange={handleChange} />
+					<input id="create-street" {...register('street')} />
 				</div>
 
 				{/* Номер будинку */}
 				<div className="form-group">
 					<label htmlFor="create-houseNumber">Номер будинку</label>
-					<input
-						id="create-houseNumber"
-						name="houseNumber"
-						value={formData.houseNumber}
-						onChange={handleChange}
-					/>
+					<input id="create-houseNumber" {...register('houseNumber')} />
 				</div>
 
 				{/* Квартира */}
 				<div className="form-group">
 					<label htmlFor="create-apartment">Квартира / офіс</label>
-					<input
-						id="create-apartment"
-						name="apartment"
-						value={formData.apartment}
-						onChange={handleChange}
-					/>
+					<input id="create-apartment" {...register('apartment')} />
 				</div>
 
 				{/* Розмір */}
 				<div className="form-group">
 					<label htmlFor="create-size">Кількість спален (наприклад, 1)</label>
-					<input id="create-size" name="size" value={formData.size} onChange={handleChange} />
+					<input id="create-size" {...register('size')} />
 				</div>
 
 				{/* Карта */}
@@ -250,25 +237,16 @@ const CreateAccommodation = () => {
 					<label htmlFor="create-amenities">Зручності (через кому)</label>
 					<input
 						id="create-amenities"
-						name="amenities"
-						value={formData.amenities}
-						onChange={handleChange}
 						placeholder="Wi-Fi, кухня, кондиціонер…"
+						{...register('amenities')}
 					/>
 				</div>
 
 				{/* Ціна */}
 				<div className="form-group">
 					<label htmlFor="create-dailyRate">Ціна за добу</label>
-					<input
-						type="number"
-						id="create-dailyRate"
-						name="dailyRate"
-						min="1"
-						step="1"
-						value={formData.dailyRate}
-						onChange={handleChange}
-					/>
+					<input type="number" id="create-dailyRate" min="1" step="1" {...register('dailyRate')} />
+					{errors.dailyRate && <span className="form-error">{errors.dailyRate.message}</span>}
 				</div>
 
 				{/* Зображення */}
@@ -276,10 +254,8 @@ const CreateAccommodation = () => {
 					<label htmlFor="create-image">URL зображення</label>
 					<input
 						id="create-image"
-						name="image"
-						value={formData.image}
-						onChange={handleChange}
 						placeholder="https://example.com/image.jpg"
+						{...register('image')}
 					/>
 				</div>
 

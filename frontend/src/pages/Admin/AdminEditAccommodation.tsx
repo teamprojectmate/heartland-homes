@@ -1,4 +1,6 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
 	getAccommodationById,
@@ -7,6 +9,10 @@ import {
 import Notification from '../../components/Notification';
 import { getSafeImageUrl } from '../../utils/getSafeImageUrl';
 import { mapAmenity, mapType, typeTranslations } from '../../utils/translations/index';
+import {
+	type AdminAccommodationFormData,
+	adminAccommodationSchema,
+} from '../../validation/schemas';
 
 import '../../styles/components/admin/_admin-form.scss';
 
@@ -14,20 +20,29 @@ const AdminEditAccommodation = () => {
 	const { id } = useParams();
 	const navigate = useNavigate();
 
-	const [formData, setFormData] = useState({
-		name: '',
-		type: '',
-		location: '',
-		city: '',
-		latitude: '',
-		longitude: '',
-		size: '',
-		amenities: '',
-		dailyRate: '',
-		image: '',
+	const {
+		register,
+		handleSubmit,
+		watch,
+		reset,
+		formState: { errors },
+	} = useForm<AdminAccommodationFormData>({
+		resolver: zodResolver(adminAccommodationSchema),
+		defaultValues: {
+			name: '',
+			type: '',
+			location: '',
+			city: '',
+			latitude: '',
+			longitude: '',
+			size: '',
+			amenities: '',
+			dailyRate: '',
+			image: '',
+		},
 	});
 
-	const [error, setError] = useState(null);
+	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
 
 	// завантаження даних
@@ -36,9 +51,10 @@ const AdminEditAccommodation = () => {
 			setLoading(true);
 			try {
 				const data = await getAccommodationById(id);
-				setFormData({
+				reset({
 					...data,
 					amenities: data.amenities?.join(', ') || '',
+					dailyRate: String(data.dailyRate ?? ''),
 				});
 			} catch {
 				setError('Не вдалося завантажити дані помешкання');
@@ -47,23 +63,16 @@ const AdminEditAccommodation = () => {
 			}
 		};
 		fetchAccommodation();
-	}, [id]);
+	}, [id, reset]);
 
-	//  обробка змін
-	const handleChange = (e) => {
-		const { name, value } = e.target;
-		setFormData((prev) => ({ ...prev, [name]: value }));
-	};
-
-	// сабміт форми
-	const handleSubmit = async (e) => {
-		e.preventDefault();
+	const onSubmit = async (formData: AdminAccommodationFormData) => {
 		setLoading(true);
 		setError(null);
 
 		try {
 			const payload = {
 				...formData,
+				dailyRate: Number(formData.dailyRate),
 				amenities: formData.amenities
 					.split(',')
 					.map((a) => a.trim())
@@ -71,37 +80,38 @@ const AdminEditAccommodation = () => {
 			};
 			await updateAccommodation(id, payload);
 			navigate('/admin/accommodations');
-		} catch (err) {
-			setError(err.response?.data?.message || 'Помилка при оновленні');
+		} catch (err: unknown) {
+			const message = (err as { response?: { data?: { message?: string } } })?.response?.data
+				?.message;
+			setError(message || 'Помилка при оновленні');
 		} finally {
 			setLoading(false);
 		}
 	};
 
+	const typeValue = watch('type');
+	const amenitiesValue = watch('amenities');
+	const imageValue = watch('image');
+
 	if (loading) return <p className="text-center">⏳ Завантаження...</p>;
 
 	return (
 		<div className="container page">
-			<form onSubmit={handleSubmit} className="admin-form">
+			<form onSubmit={handleSubmit(onSubmit)} className="admin-form">
 				<h1>Редагувати помешкання</h1>
 				{error && <Notification message={error} type="danger" />}
 
 				{/* Назва */}
 				<div className="form-group">
 					<label htmlFor="admin-edit-name">Назва</label>
-					<input
-						type="text"
-						id="admin-edit-name"
-						name="name"
-						value={formData.name}
-						onChange={handleChange}
-					/>
+					<input type="text" id="admin-edit-name" {...register('name')} />
+					{errors.name && <span className="form-error">{errors.name.message}</span>}
 				</div>
 
 				{/* Тип */}
 				<div className="form-group">
 					<label htmlFor="admin-edit-type">Тип</label>
-					<select id="admin-edit-type" name="type" value={formData.type} onChange={handleChange}>
+					<select id="admin-edit-type" {...register('type')}>
 						<option value="">— Оберіть тип —</option>
 						{Object.entries(typeTranslations).map(([key, { label }]) => (
 							<option key={key} value={key}>
@@ -109,13 +119,14 @@ const AdminEditAccommodation = () => {
 							</option>
 						))}
 					</select>
+					{errors.type && <span className="form-error">{errors.type.message}</span>}
 
-					{formData.type && (
+					{typeValue && (
 						<div className="badge-group" style={{ marginTop: '0.5rem' }}>
 							{(() => {
-								const type = mapType(formData.type);
+								const type = mapType(typeValue);
 								return (
-									<span className={`badge badge-type-${formData.type.toLowerCase()}`}>
+									<span className={`badge badge-type-${typeValue.toLowerCase()}`}>
 										{type.icon} {type.label}
 									</span>
 								);
@@ -127,79 +138,44 @@ const AdminEditAccommodation = () => {
 				{/* Локація */}
 				<div className="form-group">
 					<label htmlFor="admin-edit-location">Локація</label>
-					<input
-						type="text"
-						id="admin-edit-location"
-						name="location"
-						value={formData.location}
-						onChange={handleChange}
-					/>
+					<input type="text" id="admin-edit-location" {...register('location')} />
 				</div>
 
 				{/* Місто */}
 				<div className="form-group">
 					<label htmlFor="admin-edit-city">Місто</label>
-					<input
-						type="text"
-						id="admin-edit-city"
-						name="city"
-						value={formData.city}
-						onChange={handleChange}
-					/>
+					<input type="text" id="admin-edit-city" {...register('city')} />
+					{errors.city && <span className="form-error">{errors.city.message}</span>}
 				</div>
 
 				{/* Latitude */}
 				<div className="form-group">
 					<label htmlFor="admin-edit-latitude">Широта (Latitude)</label>
-					<input
-						type="text"
-						id="admin-edit-latitude"
-						name="latitude"
-						value={formData.latitude}
-						onChange={handleChange}
-					/>
+					<input type="text" id="admin-edit-latitude" {...register('latitude')} />
 				</div>
 
 				{/* Longitude */}
 				<div className="form-group">
 					<label htmlFor="admin-edit-longitude">Довгота (Longitude)</label>
-					<input
-						type="text"
-						id="admin-edit-longitude"
-						name="longitude"
-						value={formData.longitude}
-						onChange={handleChange}
-					/>
+					<input type="text" id="admin-edit-longitude" {...register('longitude')} />
 				</div>
 
 				{/* Size */}
 				<div className="form-group">
 					<label htmlFor="admin-edit-size">Кількість спалень</label>
-					<input
-						type="number"
-						id="admin-edit-size"
-						name="size"
-						value={formData.size}
-						onChange={handleChange}
-					/>
+					<input type="number" id="admin-edit-size" {...register('size')} />
 				</div>
 
 				{/* Amenities */}
 				<div className="form-group">
 					<label htmlFor="admin-edit-amenities">Зручності (через кому)</label>
-					<input
-						type="text"
-						id="admin-edit-amenities"
-						name="amenities"
-						value={formData.amenities}
-						onChange={handleChange}
-					/>
+					<input type="text" id="admin-edit-amenities" {...register('amenities')} />
 					<div className="badge-group" style={{ marginTop: '0.5rem' }}>
-						{formData.amenities
+						{(amenitiesValue || '')
 							.split(',')
 							.map((a) => a.trim())
 							.filter(Boolean)
-							.map((a, _idx) => {
+							.map((a) => {
 								const { label, icon, slug, color } = mapAmenity(a);
 								return (
 									<span
@@ -217,29 +193,18 @@ const AdminEditAccommodation = () => {
 				{/* Daily rate */}
 				<div className="form-group">
 					<label htmlFor="admin-edit-dailyRate">Ціна за добу</label>
-					<input
-						type="number"
-						id="admin-edit-dailyRate"
-						name="dailyRate"
-						value={formData.dailyRate}
-						onChange={handleChange}
-					/>
+					<input type="number" id="admin-edit-dailyRate" {...register('dailyRate')} />
+					{errors.dailyRate && <span className="form-error">{errors.dailyRate.message}</span>}
 				</div>
 
 				{/* Image */}
 				<div className="form-group">
 					<label htmlFor="admin-edit-image">URL зображення</label>
-					<input
-						type="text"
-						id="admin-edit-image"
-						name="image"
-						value={formData.image}
-						onChange={handleChange}
-					/>
-					{formData.image && (
+					<input type="text" id="admin-edit-image" {...register('image')} />
+					{imageValue && (
 						<div className="image-preview">
 							<img
-								src={getSafeImageUrl(formData.image)}
+								src={getSafeImageUrl(imageValue)}
 								alt="Превʼю зображення"
 								className="preview-img"
 							/>
