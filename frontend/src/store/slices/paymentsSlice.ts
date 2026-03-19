@@ -36,7 +36,10 @@ export const createPayment = createAsyncThunk(
 //  Fetch payments by user
 export const fetchPaymentsByUser = createAsyncThunk(
 	'payments/fetchByUser',
-	async ({ userId, pageable }: { userId: number; pageable: any }, { rejectWithValue }) => {
+	async (
+		{ userId, pageable }: { userId: number; pageable: Record<string, unknown> },
+		{ rejectWithValue },
+	) => {
 		try {
 			const response = await fetchPaymentsByUserService(userId, pageable);
 			return response;

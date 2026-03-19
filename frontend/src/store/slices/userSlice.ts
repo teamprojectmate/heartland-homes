@@ -32,7 +32,7 @@ export const fetchProfile = createAsyncThunk(
 // Оновлення профілю
 export const updateProfile = createAsyncThunk(
 	'user/updateProfile',
-	async (userData: any, { rejectWithValue }) => {
+	async (userData: Record<string, unknown>, { rejectWithValue }) => {
 		try {
 			return await apiUpdateProfile(userData);
 		} catch (err: unknown) {

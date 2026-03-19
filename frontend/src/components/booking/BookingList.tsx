@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import type { Booking } from '../../types';
 import Notification from '../Notification';
 import Pagination from '../Pagination';
 import BookingCard from './BookingCard';
@@ -7,11 +8,11 @@ import BookingRow from './BookingRow';
 import '../../styles/components/booking/_bookings.scss';
 
 type BookingListProps = {
-	bookings?: any[];
+	bookings?: Booking[];
 	view?: string;
-	onCancel?: (id: any) => void;
-	onPay?: (id: any) => void;
-	onDelete?: (id: any) => void;
+	onCancel?: (id: number) => void;
+	onPay?: (id: number) => void;
+	onDelete?: (id: number) => void;
 	page?: number;
 	totalPages?: number;
 	onPageChange?: (page: number) => void;

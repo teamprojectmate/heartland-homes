@@ -16,7 +16,7 @@ export const fetchMyBookings = async (page = 0, size = 5) => {
 
 // Отримати всі бронювання (адмін)
 export const fetchBookings = async (page = 0, size = 10, userId?: number, status?: string) => {
-	const params: Record<string, any> = { page, size };
+	const params: Record<string, string | number> = { page, size };
 	if (userId) params.userId = userId;
 	if (status) params.status = status;
 

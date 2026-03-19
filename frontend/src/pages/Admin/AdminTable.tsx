@@ -4,10 +4,17 @@
  * @param {Array} data - масив об'єктів (рядків таблиці)
  * @param {Function} actions - функція для додаткових дій (кнопки тощо)
  */
+type Column = {
+	key: string;
+	label: string;
+	className?: string;
+	render?: (row: Record<string, unknown>) => React.ReactNode;
+};
+
 type AdminTableProps = {
-	columns: any[];
-	data: any[];
-	actions?: (row: any) => React.ReactNode;
+	columns: Column[];
+	data: Record<string, unknown>[];
+	actions?: (row: Record<string, unknown>) => React.ReactNode;
 };
 
 const AdminTable = ({ columns, data, actions }: AdminTableProps) => {
@@ -27,10 +34,10 @@ const AdminTable = ({ columns, data, actions }: AdminTableProps) => {
 				<tbody>
 					{data && data.length > 0 ? (
 						data.map((row, idx) => (
-							<tr key={row.id || idx}>
+							<tr key={(row.id as string | number) || idx}>
 								{columns.map((col) => (
 									<td key={col.key} className={col.className || ''}>
-										{col.render ? col.render(row) : row[col.key]}
+										{col.render ? col.render(row) : String(row[col.key] ?? '')}
 									</td>
 								))}
 								{actions && <td className="actions">{actions(row)}</td>}

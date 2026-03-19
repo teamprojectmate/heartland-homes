@@ -1,13 +1,14 @@
 import { FaInfoCircle, FaTrash } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import type { Booking } from '../../types';
 import { mapStatus } from '../../utils/translations';
 
 type BookingRowProps = {
-	booking: any;
-	onCancel?: (id: any) => void;
-	onPay?: (id: any) => void;
-	onStatusChange?: (id: any, status: string) => void;
-	onDelete?: (id: any) => void;
+	booking: Booking;
+	onCancel?: (id: number) => void;
+	onPay?: (id: number) => void;
+	onStatusChange?: (id: number, status: string) => void;
+	onDelete?: (id: number) => void;
 };
 
 const BookingRow = ({ booking, onStatusChange, onDelete }: BookingRowProps) => {

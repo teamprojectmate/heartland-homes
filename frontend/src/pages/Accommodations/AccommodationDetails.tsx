@@ -14,7 +14,7 @@ import '../../styles/components/accommodation/_accommodation-details.scss';
 import '../../styles/components/accommodation/_accommodation-gallery.scss';
 import '../../styles/components/badges/_badges.scss';
 
-const AccommodationDetails = ({ id: propId }: { id?: any }) => {
+const AccommodationDetails = ({ id: propId }: { id?: number | string }) => {
 	const { t } = useTranslation();
 	const { id: routeId } = useParams();
 	const id = propId || routeId;

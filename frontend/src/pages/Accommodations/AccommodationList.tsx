@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import type { Accommodation } from '../../types';
 import AccommodationCard from './AccommodationCard';
 import '../../styles/components/accommodation/_accommodations-list.scss';
 
@@ -6,10 +7,10 @@ const AccommodationList = ({
 	accommodations,
 	onCardHover,
 }: {
-	accommodations: any[];
-	onCardHover?: (id: any) => void;
+	accommodations: Accommodation[];
+	onCardHover?: (id: number | null) => void;
 }) => {
-	const handleMouseEnter = useCallback((id: any) => () => onCardHover?.(id), [onCardHover]);
+	const handleMouseEnter = useCallback((id: number) => () => onCardHover?.(id), [onCardHover]);
 
 	const handleMouseLeave = useCallback(() => onCardHover?.(null), [onCardHover]);
 
