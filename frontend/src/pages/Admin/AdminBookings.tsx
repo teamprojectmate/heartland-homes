@@ -1,11 +1,11 @@
 import { TrashIcon } from '@heroicons/react/24/solid';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { getAllUsers } from '../../api/user/userService';
-import { useIsMobile } from '../../hooks/useIsMobile';
 import ErrorState from '../../components/ErrorState';
 import StatusSelect from '../../components/selects/StatusSelect';
 import { TableSkeleton } from '../../components/skeletons';
 import { useEnrichedBookings } from '../../hooks/useEnrichedBookings';
+import { useIsMobile } from '../../hooks/useIsMobile';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
 	deleteBooking,

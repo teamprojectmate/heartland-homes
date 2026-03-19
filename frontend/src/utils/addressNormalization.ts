@@ -3,8 +3,7 @@
  * Used by CreateAccommodation and EditMyAccommodation forms.
  */
 
-const STREET_PREFIX_RE =
-	/(вул\.|вулиця|просп\.|проспект|бульвар|пров\.|провулок|street|str\.)/i;
+const STREET_PREFIX_RE = /(вул\.|вулиця|просп\.|проспект|бульвар|пров\.|провулок|street|str\.)/i;
 
 export const hasStreetPrefix = (s = ''): boolean => STREET_PREFIX_RE.test(s);
 
@@ -16,9 +15,7 @@ export const normalizeRegion = (r = ''): string => {
 	return `${s} область`;
 };
 
-export const stripRegionFromLocation = (
-	loc = '',
-): { region: string; rest: string } => {
+export const stripRegionFromLocation = (loc = ''): { region: string; rest: string } => {
 	if (!loc) return { region: '', rest: '' };
 	let s = loc.trim();
 
@@ -81,12 +78,7 @@ export const buildLocation = ({
 	const housePart = (houseNumber || '').trim();
 	const aptPart = (apartment || '').trim() ? `кв. ${apartment.trim()}` : '';
 
-	return [
-		regionPart,
-		cityPart,
-		[streetPart, housePart].filter(Boolean).join(' '),
-		aptPart,
-	]
+	return [regionPart, cityPart, [streetPart, housePart].filter(Boolean).join(' '), aptPart]
 		.filter(Boolean)
 		.join(', ')
 		.replace(/\s+,/g, ',')

@@ -53,7 +53,7 @@ const PageWrapper = ({ title, children, extraErrors = [] }) => {
 			document.title = title ? `${title} | Heartland Homes` : 'Heartland Homes';
 			if (favicon) favicon.href = '/favicon.ico';
 		}
-	}, [blink, errors, title]);
+	}, [blink, errors, title, t]);
 
 	return (
 		<>

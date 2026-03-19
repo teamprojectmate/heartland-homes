@@ -1,11 +1,11 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { getApiErrorMessage } from '../../utils/accommodationPayload';
 import {
 	cancelPayment as cancelPaymentService,
 	createPayment as createPaymentService,
 	fetchPaymentsByUser as fetchPaymentsByUserService,
 	getAllPaymentsService,
 } from '../../api/payments/paymentService';
+import { getApiErrorMessage } from '../../utils/accommodationPayload';
 
 const initialState = {
 	payment: null,
@@ -62,6 +62,7 @@ export const cancelPayment = createAsyncThunk(
 //  Fetch all payments (admin)
 export const fetchAllPayments = createAsyncThunk(
 	'payments/fetchAll',
+	// biome-ignore lint/suspicious/noConfusingVoidType: RTK requires void for optional thunk args
 	async (params: Record<string, unknown> | void, { rejectWithValue }) => {
 		try {
 			const response = await getAllPaymentsService(params || {});

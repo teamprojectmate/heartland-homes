@@ -1,8 +1,8 @@
 import { TrashIcon } from '@heroicons/react/24/solid';
 import { useEffect } from 'react';
-import { useIsMobile } from '../../hooks/useIsMobile';
 import Notification from '../../components/Notification';
 import RoleSelect from '../../components/selects/RoleSelect';
+import { useIsMobile } from '../../hooks/useIsMobile';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { fetchUsers, removeUser, updateUserRole } from '../../store/slices/userSlice';
 import AdminTable from '../Admin/AdminTable';

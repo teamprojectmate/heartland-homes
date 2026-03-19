@@ -3,10 +3,10 @@ import { useTranslation } from 'react-i18next';
 import { FaEdit, FaPlus, FaTrash } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import Notification from '../../components/Notification';
-import { useIsMobile } from '../../hooks/useIsMobile';
 import Pagination from '../../components/Pagination';
 import StatusSelect from '../../components/selects/StatusSelect';
 import { TableSkeleton } from '../../components/skeletons';
+import { useIsMobile } from '../../hooks/useIsMobile';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
 	loadAdminAccommodations,
@@ -115,7 +115,7 @@ const AdminAccommodations = () => {
 				),
 			},
 		],
-		[handleStatusChange],
+		[handleStatusChange, t],
 	);
 
 	if (loading) return <TableSkeleton rows={5} columns={6} />;

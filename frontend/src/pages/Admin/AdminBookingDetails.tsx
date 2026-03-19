@@ -2,9 +2,9 @@ import { TrashIcon } from '@heroicons/react/24/solid';
 import { useEffect, useState } from 'react';
 import { getAccommodationById } from '../../api/accommodations/accommodationService';
 import { getAllUsers } from '../../api/user/userService';
-import { useIsMobile } from '../../hooks/useIsMobile';
 import ErrorState from '../../components/ErrorState';
 import { TableSkeleton } from '../../components/skeletons';
+import { useIsMobile } from '../../hooks/useIsMobile';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
 	deleteBooking,
@@ -99,7 +99,9 @@ const AdminBookings = () => {
 					try {
 						accommodation = await getAccommodationById(booking.accommodationId);
 						if (accommodation && booking.checkInDate && booking.checkOutDate) {
-							totalPrice = calcNights(booking.checkInDate, booking.checkOutDate) * (accommodation.dailyRate || 0);
+							totalPrice =
+								calcNights(booking.checkInDate, booking.checkOutDate) *
+								(accommodation.dailyRate || 0);
 						}
 					} catch {
 						/* accommodation not found */

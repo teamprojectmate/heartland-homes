@@ -66,7 +66,7 @@ const AdminEditAccommodation = () => {
 			}
 		};
 		fetchAccommodation();
-	}, [id, reset]);
+	}, [id, reset, t]);
 
 	const onSubmit = async (formData: AdminAccommodationFormData) => {
 		setLoading(true);

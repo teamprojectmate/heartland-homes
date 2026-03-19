@@ -146,10 +146,7 @@ const CreateAccommodation = () => {
 
 				<div className="form-group">
 					<span>{t('accommodationForm.selectLocation')}</span>
-					<MapPicker
-						position={hasPoint ? { lat, lng } : null}
-						onSelect={handleMapSelect}
-					/>
+					<MapPicker position={hasPoint ? { lat, lng } : null} onSelect={handleMapSelect} />
 					{hasPoint && (
 						<p>{t('common.selectedCoordinates', { lat: String(lat), lng: String(lng) })}</p>
 					)}

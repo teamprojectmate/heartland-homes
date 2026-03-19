@@ -1,11 +1,15 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { getApiErrorMessage } from '../../utils/accommodationPayload';
 import * as accommodationService from '../../api/accommodations/accommodationService';
+import { getApiErrorMessage } from '../../utils/accommodationPayload';
 
 // Public: завантаження житла
 export const loadAccommodations = createAsyncThunk(
 	'accommodations/load',
-	async (params: { pageable?: { page?: number; size?: number; sort?: string } } | void, { getState, rejectWithValue }) => {
+	async (
+		// biome-ignore lint/suspicious/noConfusingVoidType: RTK requires void for optional thunk args
+		params: { pageable?: { page?: number; size?: number; sort?: string } } | void,
+		{ getState, rejectWithValue },
+	) => {
 		try {
 			const state = (getState() as { accommodations: any }).accommodations;
 
@@ -41,9 +45,7 @@ export const loadAdminAccommodations = createAsyncThunk(
 		try {
 			return await accommodationService.fetchAdminAccommodations(page, size);
 		} catch (err: unknown) {
-			return rejectWithValue(
-				getApiErrorMessage(err, 'Помилка при завантаженні житла (адмін)'),
-			);
+			return rejectWithValue(getApiErrorMessage(err, 'Помилка при завантаженні житла (адмін)'));
 		}
 	},
 );
@@ -55,9 +57,7 @@ export const loadMyAccommodations = createAsyncThunk(
 		try {
 			return await accommodationService.fetchMyAccommodations(page, size);
 		} catch (err: unknown) {
-			return rejectWithValue(
-				getApiErrorMessage(err, 'Помилка при завантаженні ваших помешкань'),
-			);
+			return rejectWithValue(getApiErrorMessage(err, 'Помилка при завантаженні ваших помешкань'));
 		}
 	},
 );

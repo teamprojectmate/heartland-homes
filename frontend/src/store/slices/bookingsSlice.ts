@@ -63,6 +63,7 @@ export const createBooking = createAsyncThunk(
 export const fetchBookings = createAsyncThunk(
 	'bookings/fetchBookings',
 	async (
+		// biome-ignore lint/suspicious/noConfusingVoidType: RTK requires void for optional thunk args
 		args: { page?: number; size?: number; userId?: number; status?: string } | void,
 		{ rejectWithValue },
 	) => {
@@ -72,9 +73,7 @@ export const fetchBookings = createAsyncThunk(
 			const enriched = await enrichBookings(response.content || []);
 			return { ...response, content: enriched };
 		} catch (err: unknown) {
-			return rejectWithValue(
-				getApiErrorMessage(err, 'Не вдалося отримати список бронювань.'),
-			);
+			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося отримати список бронювань.'));
 		}
 	},
 );
@@ -82,19 +81,15 @@ export const fetchBookings = createAsyncThunk(
 //  Fetch my bookings (current user)
 export const fetchMyBookings = createAsyncThunk(
 	'bookings/fetchMyBookings',
-	async (
-		args: { page?: number; size?: number } | void,
-		{ rejectWithValue },
-	) => {
+	// biome-ignore lint/suspicious/noConfusingVoidType: RTK requires void for optional thunk args
+	async (args: { page?: number; size?: number } | void, { rejectWithValue }) => {
 		const { page = 0, size = 5 } = args || {};
 		try {
 			const response = await bookingsService.fetchMyBookings(page, size);
 			const enriched = await enrichBookings(response.content || []);
 			return { ...response, content: enriched };
 		} catch (err: unknown) {
-			return rejectWithValue(
-				getApiErrorMessage(err, 'Не вдалося завантажити мої бронювання.'),
-			);
+			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося завантажити мої бронювання.'));
 		}
 	},
 );
@@ -114,9 +109,7 @@ export const changeBookingStatus = createAsyncThunk(
 			const response = await bookingsService.updateBooking(booking.id, updatedBooking);
 			return response;
 		} catch (err: unknown) {
-			return rejectWithValue(
-				getApiErrorMessage(err, 'Не вдалося змінити статус бронювання.'),
-			);
+			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося змінити статус бронювання.'));
 		}
 	},
 );

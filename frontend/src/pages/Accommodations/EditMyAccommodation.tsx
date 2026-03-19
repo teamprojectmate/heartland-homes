@@ -79,7 +79,7 @@ const EditMyAccommodation = () => {
 				setDataLoaded(true);
 			})
 			.catch(() => setError(t('accommodations.errorLoading')));
-	}, [id, reset]);
+	}, [id, reset, t]);
 
 	const handleMapSelect = ({ latitude, longitude }: { latitude: string; longitude: string }) => {
 		setValue('latitude', latitude);
@@ -201,10 +201,7 @@ const EditMyAccommodation = () => {
 
 				<div className="form-group">
 					<span>{t('accommodationForm.selectLocation')}</span>
-					<MapPicker
-						position={hasPoint ? { lat, lng } : null}
-						onSelect={handleMapSelect}
-					/>
+					<MapPicker position={hasPoint ? { lat, lng } : null} onSelect={handleMapSelect} />
 					{hasPoint && (
 						<p>{t('common.selectedCoordinates', { lat: String(lat), lng: String(lng) })}</p>
 					)}

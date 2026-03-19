@@ -49,24 +49,17 @@ const MapPicker = ({
 	height = 300,
 	onSelect,
 }: MapPickerProps) => {
-	const mapCenter: [number, number] =
-		position ? [position.lat, position.lng] : center;
+	const mapCenter: [number, number] = position ? [position.lat, position.lng] : center;
 
 	return (
 		<div style={{ height, width: '100%' }}>
-			<MapContainer
-				center={mapCenter}
-				zoom={zoom}
-				style={{ height: '100%', width: '100%' }}
-			>
+			<MapContainer center={mapCenter} zoom={zoom} style={{ height: '100%', width: '100%' }}>
 				<TileLayer
 					url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 					attribution="&copy; OpenStreetMap contributors"
 				/>
 				<ClickHandler onSelect={onSelect} />
-				{position && (
-					<Marker position={[position.lat, position.lng]} icon={defaultIcon} />
-				)}
+				{position && <Marker position={[position.lat, position.lng]} icon={defaultIcon} />}
 			</MapContainer>
 		</div>
 	);

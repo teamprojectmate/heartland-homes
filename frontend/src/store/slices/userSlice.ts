@@ -1,5 +1,4 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { getApiErrorMessage } from '../../utils/accommodationPayload';
 import {
 	updateProfile as apiUpdateProfile,
 	updateUserRole as apiUpdateUserRole,
@@ -7,6 +6,7 @@ import {
 	getAllUsers,
 	getCurrentUser,
 } from '../../api/user/userService';
+import { getApiErrorMessage } from '../../utils/accommodationPayload';
 
 const savedProfile = sessionStorage.getItem('userProfile');
 
@@ -20,7 +20,7 @@ const initialState = {
 //  Профіль
 export const fetchProfile = createAsyncThunk(
 	'user/fetchProfile',
-	async (_: void, { rejectWithValue }) => {
+	async (_: undefined, { rejectWithValue }) => {
 		try {
 			return await getCurrentUser();
 		} catch (err: unknown) {
@@ -44,7 +44,7 @@ export const updateProfile = createAsyncThunk(
 // Список користувачів
 export const fetchUsers = createAsyncThunk(
 	'user/fetchUsers',
-	async (_: void, { rejectWithValue }) => {
+	async (_: undefined, { rejectWithValue }) => {
 		try {
 			const users = await getAllUsers();
 
