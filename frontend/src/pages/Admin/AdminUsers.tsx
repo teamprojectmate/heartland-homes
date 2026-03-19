@@ -1,7 +1,9 @@
 import { TrashIcon } from '@heroicons/react/24/solid';
 import { useEffect } from 'react';
+import ErrorState from '../../components/ErrorState';
 import Notification from '../../components/Notification';
 import RoleSelect from '../../components/selects/RoleSelect';
+import { TableSkeleton } from '../../components/skeletons';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { fetchUsers, removeUser, updateUserRole } from '../../store/slices/userSlice';
@@ -31,7 +33,8 @@ const AdminUsers = () => {
 		}
 	};
 
-	if (loading) return <p className="text-center mt-4">⏳ Завантаження...</p>;
+	if (loading) return <TableSkeleton />;
+	if (error) return <ErrorState message={String(error)} onRetry={() => dispatch(fetchUsers())} />;
 
 	const columns = [
 		{ key: 'id', label: 'ID' },

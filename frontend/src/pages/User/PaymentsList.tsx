@@ -2,8 +2,10 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getAccommodationById } from '../../api/accommodations/accommodationService';
 import { fetchBookingById } from '../../api/bookings/bookingsService';
+import ErrorState from '../../components/ErrorState';
 import Notification from '../../components/Notification';
 import Pagination from '../../components/Pagination';
+import { CardSkeleton } from '../../components/skeletons';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { fetchPaymentsByUser } from '../../store/slices/paymentsSlice';
 import '../../styles/components/payment/_payments-list.scss';
@@ -45,7 +47,17 @@ const PaymentsList = () => {
 		loadPayments();
 	}, [dispatch, isAuthenticated, user, pageable]);
 
-	if (fetchStatus === 'loading') return <p className="text-center">{t('common.loading')}</p>;
+	if (fetchStatus === 'loading')
+		return (
+			<div className="container page">
+				<div className="cards-grid">
+					<CardSkeleton />
+					<CardSkeleton />
+					<CardSkeleton />
+				</div>
+			</div>
+		);
+	if (fetchStatus === 'failed' && error) return <ErrorState message={String(error)} />;
 	if (error) return <Notification message={error} type="danger" />;
 
 	return (

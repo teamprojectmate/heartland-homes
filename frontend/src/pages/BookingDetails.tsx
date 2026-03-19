@@ -4,7 +4,8 @@ import { FaTrash } from 'react-icons/fa';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { getAccommodationById } from '../api/accommodations/accommodationService';
 import { cancelBooking, fetchBookingById } from '../api/bookings/bookingsService';
-import Notification from '../components/Notification';
+import ErrorState from '../components/ErrorState';
+import { FormSkeleton } from '../components/skeletons';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { deleteBooking } from '../store/slices/bookingsSlice';
 import { fetchPaymentsByUser } from '../store/slices/paymentsSlice';
@@ -134,8 +135,8 @@ const BookingDetails = () => {
 		});
 	};
 
-	if (loading) return <p className="text-center">{t('common.loading')}</p>;
-	if (error) return <Notification message={error} type="danger" />;
+	if (loading) return <FormSkeleton />;
+	if (error) return <ErrorState message={String(error)} />;
 	if (!enrichedBooking) return <p className="text-center">{t('booking.notFoundError')}</p>;
 
 	return (
