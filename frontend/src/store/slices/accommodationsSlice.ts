@@ -1,12 +1,13 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { getApiErrorMessage } from '../../utils/accommodationPayload';
 import * as accommodationService from '../../api/accommodations/accommodationService';
 
 // Public: завантаження житла
 export const loadAccommodations = createAsyncThunk(
 	'accommodations/load',
-	async (params: any, { getState, rejectWithValue }: any) => {
+	async (params: { pageable?: { page?: number; size?: number; sort?: string } } | void, { getState, rejectWithValue }) => {
 		try {
-			const state = getState().accommodations;
+			const state = (getState() as { accommodations: any }).accommodations;
 
 			const filters = {
 				city: state.filters.city || undefined,
@@ -16,7 +17,7 @@ export const loadAccommodations = createAsyncThunk(
 				status: 'PERMITTED',
 			};
 
-			const pageable = params?.pageable || {
+			const pageable = (params && 'pageable' in params ? params.pageable : null) || {
 				page: state.page,
 				size: state.size,
 				sort: state.sort,
@@ -27,8 +28,8 @@ export const loadAccommodations = createAsyncThunk(
 				...pageable,
 			});
 			return data;
-		} catch (err: any) {
-			return rejectWithValue(err.response?.data?.message || 'Помилка при завантаженні');
+		} catch (err: unknown) {
+			return rejectWithValue(getApiErrorMessage(err, 'Помилка при завантаженні'));
 		}
 	},
 );
@@ -36,12 +37,12 @@ export const loadAccommodations = createAsyncThunk(
 // Admin: завантаження списку
 export const loadAdminAccommodations = createAsyncThunk(
 	'accommodations/loadAdmin',
-	async ({ page = 0, size = 10 }: { page?: number; size?: number }, { rejectWithValue }: any) => {
+	async ({ page = 0, size = 10 }: { page?: number; size?: number }, { rejectWithValue }) => {
 		try {
 			return await accommodationService.fetchAdminAccommodations(page, size);
-		} catch (err: any) {
+		} catch (err: unknown) {
 			return rejectWithValue(
-				err.response?.data?.message || 'Помилка при завантаженні житла (адмін)',
+				getApiErrorMessage(err, 'Помилка при завантаженні житла (адмін)'),
 			);
 		}
 	},
@@ -50,12 +51,12 @@ export const loadAdminAccommodations = createAsyncThunk(
 //  Customer: завантаження своїх помешкань
 export const loadMyAccommodations = createAsyncThunk(
 	'accommodations/loadMy',
-	async ({ page = 0, size = 10 }: { page?: number; size?: number }, { rejectWithValue }: any) => {
+	async ({ page = 0, size = 10 }: { page?: number; size?: number }, { rejectWithValue }) => {
 		try {
 			return await accommodationService.fetchMyAccommodations(page, size);
-		} catch (err: any) {
+		} catch (err: unknown) {
 			return rejectWithValue(
-				err.response?.data?.message || 'Помилка при завантаженні ваших помешкань',
+				getApiErrorMessage(err, 'Помилка при завантаженні ваших помешкань'),
 			);
 		}
 	},
@@ -64,12 +65,12 @@ export const loadMyAccommodations = createAsyncThunk(
 // Admin: видалення житла
 export const removeAccommodation = createAsyncThunk(
 	'accommodations/remove',
-	async (id: number, { rejectWithValue }: any) => {
+	async (id: number, { rejectWithValue }) => {
 		try {
 			await accommodationService.deleteAccommodation(id);
 			return id;
-		} catch (err: any) {
-			return rejectWithValue(err.response?.data?.message || 'Не вдалося видалити житло');
+		} catch (err: unknown) {
+			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося видалити житло'));
 		}
 	},
 );
@@ -77,11 +78,11 @@ export const removeAccommodation = createAsyncThunk(
 // Створення житла
 export const createAccommodationAsync = createAsyncThunk(
 	'accommodations/create',
-	async (formData: any, { rejectWithValue }: any) => {
+	async (formData: any, { rejectWithValue }) => {
 		try {
 			return await accommodationService.createAccommodation(formData);
-		} catch (err: any) {
-			return rejectWithValue(err.response?.data?.message || 'Помилка при створенні житла');
+		} catch (err: unknown) {
+			return rejectWithValue(getApiErrorMessage(err, 'Помилка при створенні житла'));
 		}
 	},
 );
@@ -89,12 +90,12 @@ export const createAccommodationAsync = createAsyncThunk(
 // Admin: оновлення статусу житла
 export const updateAccommodationStatusAsync = createAsyncThunk(
 	'accommodations/updateStatus',
-	async ({ id, status }: { id: number; status: string }, { rejectWithValue }: any) => {
+	async ({ id, status }: { id: number; status: string }, { rejectWithValue }) => {
 		try {
 			const response = await accommodationService.updateAccommodationStatus(id, status);
 			return { id, accommodationStatus: response.accommodationStatus };
-		} catch (err: any) {
-			return rejectWithValue(err.response?.data?.message || 'Не вдалося оновити статус житла');
+		} catch (err: unknown) {
+			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося оновити статус житла'));
 		}
 	},
 );

@@ -14,7 +14,7 @@ export const fetchPaymentsByUser = async (userId, pageable) => {
 	return response.data;
 };
 
-// Скасувати платіж
+// Скасувати платіж (backend uses GET for this — REST anti-pattern, not fixable on FE side)
 export const cancelPayment = async (paymentId) => {
 	const response = await api.get(`/payments/cancel`, { params: { id: paymentId } });
 	return response.data;

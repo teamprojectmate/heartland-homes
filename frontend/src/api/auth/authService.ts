@@ -6,22 +6,13 @@ const register = async (userData) => {
 };
 
 const login = async (userData) => {
-	try {
-		const response = await api.post('/auth/login', userData);
-
-		const authData = { token: response.data.token };
-		localStorage.setItem('auth', JSON.stringify(authData));
-
-		return authData;
-	} catch (err) {
-		// ⚡ прокидаємо помилку далі у slice
-		throw err.response?.data?.message || 'Невірний логін або пароль';
-	}
+	const response = await api.post('/auth/login', userData);
+	return { token: response.data.token };
 };
 
 const logout = () => {
-	localStorage.removeItem('auth');
-	localStorage.removeItem('userProfile');
+	sessionStorage.removeItem('auth');
+	sessionStorage.removeItem('userProfile');
 };
 
 const getProfile = async () => {

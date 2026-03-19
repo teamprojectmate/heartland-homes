@@ -1,67 +1,14 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import L from 'leaflet';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet';
 import { useNavigate } from 'react-router-dom';
 import { createAccommodation } from '../../api/accommodations/accommodationService';
+import MapPicker from '../../components/MapPicker';
 import Notification from '../../components/Notification';
-import setupLeaflet from '../../utils/leafletConfig';
+import { getApiErrorMessage, parseAmenities } from '../../utils/accommodationPayload';
+import { buildLocation } from '../../utils/addressNormalization';
 import { type AccommodationFormData, accommodationSchema } from '../../validation/schemas';
-import 'leaflet/dist/leaflet.css';
-
-setupLeaflet();
-
-const defaultIcon = new L.Icon({
-	iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-	iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-	shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-	iconSize: [25, 41],
-	iconAnchor: [12, 41],
-});
-
-// клік по карті
-const LocationPicker = ({ setCoordinates }) => {
-	useMapEvents({
-		click(e) {
-			setCoordinates({
-				latitude: e.latlng.lat.toFixed(6),
-				longitude: e.latlng.lng.toFixed(6),
-			});
-		},
-	});
-	return null;
-};
-
-// допоміжні нормалізації
-const hasStreetPrefix = (s = '') =>
-	/(вул\.|вулиця|просп\.|проспект|бульвар|пров\.|провулок|street|str\.)/i.test(s);
-
-const normalizeRegion = (r = '') => {
-	const s = r.trim();
-	if (!s) return '';
-	return /область$/i.test(s)
-		? s
-		: s.replace(/\s+обл\.?$/i, ' область').replace(/\s*$/, '') +
-				(/(область)$/i.test(s) ? '' : ' область');
-};
-
-const buildLocation = ({ region, city, street, houseNumber, apartment }) => {
-	const regionPart = normalizeRegion(region || '');
-	const cityPart = city?.trim() ? `м. ${city.trim()}` : '';
-	let streetPart = (street || '').trim();
-	if (streetPart && !hasStreetPrefix(streetPart)) streetPart = `вул. ${streetPart}`;
-	const housePart = (houseNumber || '').trim();
-	const aptPart = (apartment || '').trim() ? `кв. ${apartment.trim()}` : '';
-
-	return [regionPart, cityPart, [streetPart, housePart].filter(Boolean).join(' '), aptPart]
-		.filter(Boolean)
-		.join(', ')
-		.replace(/\s+,/g, ',')
-		.replace(/,\s*,/g, ', ')
-		.trim();
-};
 
 const CreateAccommodation = () => {
 	const { t } = useTranslation();
@@ -95,7 +42,7 @@ const CreateAccommodation = () => {
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
 
-	const setCoordinates = ({ latitude, longitude }: { latitude: string; longitude: string }) => {
+	const handleMapSelect = ({ latitude, longitude }: { latitude: string; longitude: string }) => {
 		setValue('latitude', latitude);
 		setValue('longitude', longitude);
 	};
@@ -121,10 +68,7 @@ const CreateAccommodation = () => {
 				size: (formData.size || '—').trim(),
 				latitude: String(formData.latitude || ''),
 				longitude: String(formData.longitude || ''),
-				amenities: String(formData.amenities || '')
-					.split(',')
-					.map((a) => a.trim())
-					.filter(Boolean),
+				amenities: parseAmenities(formData.amenities || ''),
 				dailyRate: Number(formData.dailyRate),
 				image: (formData.image || '').trim(),
 			};
@@ -132,9 +76,7 @@ const CreateAccommodation = () => {
 			await createAccommodation(payload);
 			navigate('/accommodations');
 		} catch (err: unknown) {
-			const message = (err as { response?: { data?: { message?: string } } })?.response?.data
-				?.message;
-			setError(message || t('accommodations.errorCreating'));
+			setError(getApiErrorMessage(err, t('accommodations.errorCreating')));
 		} finally {
 			setLoading(false);
 		}
@@ -204,20 +146,10 @@ const CreateAccommodation = () => {
 
 				<div className="form-group">
 					<span>{t('accommodationForm.selectLocation')}</span>
-					<div style={{ height: 300, width: '100%', marginBottom: '1rem' }}>
-						<MapContainer
-							center={[50.45, 30.52]}
-							zoom={12}
-							style={{ height: '100%', width: '100%' }}
-						>
-							<TileLayer
-								url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-								attribution="&copy; OpenStreetMap contributors"
-							/>
-							<LocationPicker setCoordinates={setCoordinates} />
-							{hasPoint && <Marker position={[lat, lng]} icon={defaultIcon} />}
-						</MapContainer>
-					</div>
+					<MapPicker
+						position={hasPoint ? { lat, lng } : null}
+						onSelect={handleMapSelect}
+					/>
 					{hasPoint && (
 						<p>{t('common.selectedCoordinates', { lat: String(lat), lng: String(lng) })}</p>
 					)}

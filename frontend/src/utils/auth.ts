@@ -1,14 +1,12 @@
-// Отримати токен з localStorage
 export const getAuthToken = () => {
 	try {
-		const auth = JSON.parse(localStorage.getItem('auth'));
+		const auth = JSON.parse(sessionStorage.getItem('auth') || 'null');
 		return auth?.token || null;
 	} catch {
 		return null;
 	}
 };
 
-// Очистити токен
 export const clearAuthToken = () => {
-	localStorage.removeItem('auth');
+	sessionStorage.removeItem('auth');
 };

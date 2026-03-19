@@ -8,6 +8,7 @@ import {
 	updateAccommodation,
 } from '../../api/accommodations/accommodationService';
 import Notification from '../../components/Notification';
+import { getApiErrorMessage, parseAmenities } from '../../utils/accommodationPayload';
 import { getSafeImageUrl } from '../../utils/getSafeImageUrl';
 import { mapAmenity, mapType, typeTranslations } from '../../utils/translations/index';
 import {
@@ -75,17 +76,12 @@ const AdminEditAccommodation = () => {
 			const payload = {
 				...formData,
 				dailyRate: Number(formData.dailyRate),
-				amenities: formData.amenities
-					.split(',')
-					.map((a) => a.trim())
-					.filter(Boolean),
+				amenities: parseAmenities(formData.amenities),
 			};
 			await updateAccommodation(id, payload);
 			navigate('/admin/accommodations');
 		} catch (err: unknown) {
-			const message = (err as { response?: { data?: { message?: string } } })?.response?.data
-				?.message;
-			setError(message || t('accommodations.errorUpdating'));
+			setError(getApiErrorMessage(err, t('accommodations.errorUpdating')));
 		} finally {
 			setLoading(false);
 		}

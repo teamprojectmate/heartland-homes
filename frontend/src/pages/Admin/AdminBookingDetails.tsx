@@ -2,6 +2,7 @@ import { TrashIcon } from '@heroicons/react/24/solid';
 import { useEffect, useState } from 'react';
 import { getAccommodationById } from '../../api/accommodations/accommodationService';
 import { getAllUsers } from '../../api/user/userService';
+import { useIsMobile } from '../../hooks/useIsMobile';
 import ErrorState from '../../components/ErrorState';
 import { TableSkeleton } from '../../components/skeletons';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -10,6 +11,7 @@ import {
 	fetchBookings,
 	updateBookingStatus,
 } from '../../store/slices/bookingsSlice';
+import { calcNights } from '../../utils/dateCalc';
 import AdminTable from '../Admin/AdminTable';
 
 // стилі
@@ -69,18 +71,11 @@ const AdminBookings = () => {
 
 	const [usersMap, setUsersMap] = useState({});
 	const [enrichedBookings, setEnrichedBookings] = useState([]);
-	const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-
-	// resize listener
-	useEffect(() => {
-		const handleResize = () => setIsMobile(window.innerWidth < 768);
-		window.addEventListener('resize', handleResize);
-		return () => window.removeEventListener('resize', handleResize);
-	}, []);
+	const isMobile = useIsMobile();
 
 	//  завантаження бронювань та користувачів
 	useEffect(() => {
-		dispatch(fetchBookings({}) as any);
+		dispatch(fetchBookings());
 
 		getAllUsers().then((users) => {
 			const map = {};
@@ -104,13 +99,10 @@ const AdminBookings = () => {
 					try {
 						accommodation = await getAccommodationById(booking.accommodationId);
 						if (accommodation && booking.checkInDate && booking.checkOutDate) {
-							const start = new Date(booking.checkInDate);
-							const end = new Date(booking.checkOutDate);
-							const nights = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
-							totalPrice = nights * (accommodation.dailyRate || 0);
+							totalPrice = calcNights(booking.checkInDate, booking.checkOutDate) * (accommodation.dailyRate || 0);
 						}
 					} catch {
-						console.warn(`Не вдалося завантажити житло id=${booking.accommodationId}`);
+						/* accommodation not found */
 					}
 
 					const user = usersMap[booking.userId];

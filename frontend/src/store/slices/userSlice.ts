@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { getApiErrorMessage } from '../../utils/accommodationPayload';
 import {
 	updateProfile as apiUpdateProfile,
 	updateUserRole as apiUpdateUserRole,
@@ -7,7 +8,7 @@ import {
 	getCurrentUser,
 } from '../../api/user/userService';
 
-const savedProfile = localStorage.getItem('userProfile');
+const savedProfile = sessionStorage.getItem('userProfile');
 
 const initialState = {
 	profile: savedProfile ? JSON.parse(savedProfile) : null,
@@ -19,11 +20,11 @@ const initialState = {
 //  Профіль
 export const fetchProfile = createAsyncThunk(
 	'user/fetchProfile',
-	async (_: void, { rejectWithValue }: any) => {
+	async (_: void, { rejectWithValue }) => {
 		try {
 			return await getCurrentUser();
-		} catch (err: any) {
-			return rejectWithValue(err.response?.data?.message || 'Не вдалося завантажити профіль');
+		} catch (err: unknown) {
+			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося завантажити профіль'));
 		}
 	},
 );
@@ -31,11 +32,11 @@ export const fetchProfile = createAsyncThunk(
 // Оновлення профілю
 export const updateProfile = createAsyncThunk(
 	'user/updateProfile',
-	async (userData: any, { rejectWithValue }: any) => {
+	async (userData: any, { rejectWithValue }) => {
 		try {
 			return await apiUpdateProfile(userData);
-		} catch (err: any) {
-			return rejectWithValue(err.response?.data?.message || 'Не вдалося оновити профіль');
+		} catch (err: unknown) {
+			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося оновити профіль'));
 		}
 	},
 );
@@ -43,7 +44,7 @@ export const updateProfile = createAsyncThunk(
 // Список користувачів
 export const fetchUsers = createAsyncThunk(
 	'user/fetchUsers',
-	async (_: void, { rejectWithValue }: any) => {
+	async (_: void, { rejectWithValue }) => {
 		try {
 			const users = await getAllUsers();
 
@@ -53,8 +54,8 @@ export const fetchUsers = createAsyncThunk(
 				if (role?.startsWith('ROLE_')) role = role.replace('ROLE_', '');
 				return { ...u, role };
 			});
-		} catch (err: any) {
-			return rejectWithValue(err.response?.data?.message || 'Не вдалося завантажити список');
+		} catch (err: unknown) {
+			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося завантажити список'));
 		}
 	},
 );
@@ -62,12 +63,12 @@ export const fetchUsers = createAsyncThunk(
 // Оновлення ролі
 export const updateUserRole = createAsyncThunk(
 	'user/updateUserRole',
-	async ({ id, role }: { id: number; role: string }, { rejectWithValue }: any) => {
+	async ({ id, role }: { id: number; role: string }, { rejectWithValue }) => {
 		try {
 			const updated = await apiUpdateUserRole({ id, role });
 			return { id, role: updated.role || role };
-		} catch (err: any) {
-			return rejectWithValue(err.response?.data?.message || 'Не вдалося оновити роль');
+		} catch (err: unknown) {
+			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося оновити роль'));
 		}
 	},
 );
@@ -75,12 +76,12 @@ export const updateUserRole = createAsyncThunk(
 //  Видалення користувача
 export const removeUser = createAsyncThunk(
 	'user/removeUser',
-	async (id: number, { rejectWithValue }: any) => {
+	async (id: number, { rejectWithValue }) => {
 		try {
 			await deleteUser(id);
 			return id;
-		} catch (err: any) {
-			return rejectWithValue(err.response?.data?.message || 'Не вдалося видалити користувача');
+		} catch (err: unknown) {
+			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося видалити користувача'));
 		}
 	},
 );
@@ -92,7 +93,7 @@ const userSlice = createSlice({
 		clearProfile: (state) => {
 			state.profile = null;
 			state.error = null;
-			localStorage.removeItem('userProfile');
+			sessionStorage.removeItem('userProfile');
 		},
 	},
 	extraReducers: (builder) => {
@@ -100,7 +101,7 @@ const userSlice = createSlice({
 			// PROFILE
 			.addCase(fetchProfile.fulfilled, (s, { payload }) => {
 				s.profile = payload;
-				localStorage.setItem('userProfile', JSON.stringify(payload));
+				sessionStorage.setItem('userProfile', JSON.stringify(payload));
 				s.loading = false;
 			})
 			.addCase(fetchProfile.pending, (s) => {

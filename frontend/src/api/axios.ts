@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 import qs from 'qs';
 
 const instance = axios.create({
@@ -6,38 +7,40 @@ const instance = axios.create({
 	paramsSerializer: (params) => qs.stringify(params, { arrayFormat: 'repeat', allowDots: true }),
 });
 
-//  Функція для отримання токена з localStorage
-const getAuthData = () => {
+const getAuthToken = (): string | null => {
 	try {
-		return JSON.parse(localStorage.getItem('auth')) || null;
-	} catch (error) {
-		console.error('Помилка при парсингу токена з localStorage:', error);
+		const auth = JSON.parse(sessionStorage.getItem('auth') || 'null');
+		if (!auth?.token) return null;
+
+		const decoded = jwtDecode(auth.token);
+		if (decoded.exp && Date.now() >= decoded.exp * 1000) {
+			sessionStorage.removeItem('auth');
+			sessionStorage.removeItem('userProfile');
+			return null;
+		}
+
+		return auth.token;
+	} catch {
 		return null;
 	}
 };
 
-//  додаємо токен у кожен запит
 instance.interceptors.request.use((config) => {
-	const auth = getAuthData();
-	const token = auth?.token;
-
+	const token = getAuthToken();
 	if (token) {
 		config.headers.Authorization = `Bearer ${token}`;
 	}
 	return config;
 });
 
-//  обробка помилок
 instance.interceptors.response.use(
 	(res) => res,
 	(err) => {
 		if (err.response?.status === 401) {
-			const currentPath = window.location.pathname;
-
-			//  Не редіректимо, якщо вже на сторінці логіну
-			if (currentPath !== '/login') {
-				localStorage.removeItem('auth');
-				localStorage.removeItem('userProfile');
+			const isAuthEndpoint = err.config?.url?.includes('/auth/');
+			if (!isAuthEndpoint && window.location.pathname !== '/login') {
+				sessionStorage.removeItem('auth');
+				sessionStorage.removeItem('userProfile');
 				window.location.href = '/login';
 			}
 		}

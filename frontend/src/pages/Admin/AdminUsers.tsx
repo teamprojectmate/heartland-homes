@@ -1,5 +1,6 @@
 import { TrashIcon } from '@heroicons/react/24/solid';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useIsMobile } from '../../hooks/useIsMobile';
 import Notification from '../../components/Notification';
 import RoleSelect from '../../components/selects/RoleSelect';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -14,17 +15,11 @@ const AdminUsers = () => {
 	const dispatch = useAppDispatch();
 	const { items, loading, error } = useAppSelector((s) => s.user);
 
-	const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+	const isMobile = useIsMobile();
 
 	useEffect(() => {
 		dispatch(fetchUsers());
 	}, [dispatch]);
-
-	useEffect(() => {
-		const handleResize = () => setIsMobile(window.innerWidth < 768);
-		window.addEventListener('resize', handleResize);
-		return () => window.removeEventListener('resize', handleResize);
-	}, []);
 
 	const handleUpdateRole = (id, role) => {
 		dispatch(updateUserRole({ id, role }));

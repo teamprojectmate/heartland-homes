@@ -49,7 +49,7 @@ const Accommodations = () => {
 	}, [dispatch, location.search]);
 
 	useEffect(() => {
-		dispatch(loadAccommodations({}) as any);
+		dispatch(loadAccommodations());
 	}, [dispatch]);
 
 	useEffect(() => {
