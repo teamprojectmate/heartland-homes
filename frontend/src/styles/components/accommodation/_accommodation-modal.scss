@@ -1,0 +1,27 @@
+.accommodation-modal-overlay {
+	position: fixed;
+	inset: 0;
+	background-color: rgba(0, 0, 0, 0.6);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 2000;
+}
+
+.accommodation-modal-content {
+	background: #fff;
+	border-radius: 12px;
+	width: 90%;
+	max-width: 1000px;
+	max-height: 90vh;
+	overflow-y: auto;
+	padding: 1rem;
+}
+
+.accommodation-modal-close {
+	float: right;
+	border: none;
+	background: transparent;
+	font-size: 1.5rem;
+	cursor: pointer;
+}

@@ -1,13 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAccommodationById } from '../../api/accommodations/accommodationService';
-//  централізовано booking-компоненти
 import { BookingList } from '../../components/booking/index';
 import Notification from '../../components/Notification';
+import { useEnrichedBookings } from '../../hooks/useEnrichedBookings';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { cancelBooking, fetchMyBookings, setPage } from '../../store/slices/bookingsSlice';
 import { fetchPaymentsByUser } from '../../store/slices/paymentsSlice';
-import { normalizeBooking } from '../../utils/normalizeBooking';
 
 import '../../styles/components/booking/_bookings.scss';
 import '../../styles/components/_cards.scss';
@@ -17,7 +15,6 @@ const MyBookings = () => {
 	const dispatch = useAppDispatch();
 
 	const [notification, setNotification] = useState({ message: '', type: '' });
-	const [enrichedBookings, setEnrichedBookings] = useState([]);
 
 	const { isAuthenticated, user } = useAppSelector((state) => state.auth);
 	const { bookings, status, error, page, totalPages, totalElements } = useAppSelector(
@@ -25,7 +22,9 @@ const MyBookings = () => {
 	);
 	const { payments } = useAppSelector((state) => state.payments);
 
-	// завантаження бронювань і платежів
+	// Shared enrichment hook (replaces manual useEffect)
+	const enrichedBookings = useEnrichedBookings(bookings, payments);
+
 	useEffect(() => {
 		if (!isAuthenticated) {
 			navigate('/login');
@@ -39,7 +38,6 @@ const MyBookings = () => {
 		}
 	}, [isAuthenticated, navigate, dispatch, page, user]);
 
-	// якщо бронювань немає на цій сторінці — скинути сторінку назад
 	useEffect(() => {
 		if (status === 'succeeded' && bookings.length === 0 && page > 0) {
 			dispatch(setPage(page - 1));
@@ -47,49 +45,17 @@ const MyBookings = () => {
 		}
 	}, [status, bookings, page, dispatch]);
 
-	// збагачення бронювань: житло + платежі
-	useEffect(() => {
-		const fetchAccommodations = async () => {
-			if (!bookings || bookings.length === 0) {
-				setEnrichedBookings([]);
-				return;
-			}
-
-			try {
-				const results = await Promise.all(
-					bookings.map(async (booking) => {
-						try {
-							const acc = await getAccommodationById(booking.accommodationId);
-							const payment = payments.find((p) => p.bookingId === booking.id);
-
-							return normalizeBooking({ ...booking, accommodation: acc, payment });
-						} catch {
-							console.warn(`⚠️ Не вдалося отримати житло для bookingId=${booking.id}`);
-							return normalizeBooking({ ...booking, accommodation: null });
-						}
-					}),
-				);
-				setEnrichedBookings(results);
-			} catch (err) {
-				console.error('❌ Помилка підвантаження житла:', err);
-			}
-		};
-
-		fetchAccommodations();
-	}, [bookings, payments]);
-
-	const handlePageChange = (newPage) => {
+	const handlePageChange = (newPage: number) => {
 		dispatch(setPage(newPage));
 	};
 
-	const handleCancelBooking = async (bookingId) => {
+	const handleCancelBooking = async (bookingId: number) => {
 		try {
 			await dispatch(cancelBooking(bookingId)).unwrap();
 			setNotification({
-				message: 'Бронювання успішно скасовано!',
+				message: 'Bронювання успiшно скасовано!',
 				type: 'success',
 			});
-			setEnrichedBookings((prev) => prev.filter((b) => b.id !== bookingId));
 		} catch {
 			setNotification({
 				message: 'Не вдалося скасувати бронювання.',
@@ -98,7 +64,7 @@ const MyBookings = () => {
 		}
 	};
 
-	const handlePayBooking = (bookingId) => {
+	const handlePayBooking = (bookingId: number) => {
 		navigate(`/payment/${bookingId}`);
 	};
 
