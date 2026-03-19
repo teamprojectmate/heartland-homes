@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import Notification from '../../components/Notification';
+import { FormSkeleton } from '../../components/skeletons';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { fetchProfile, updateProfile } from '../../store/slices/userSlice';
 import { type ProfileFormData, profileSchema } from '../../validation/schemas';
@@ -45,8 +46,8 @@ const Profile = () => {
 			<div className="profile-card">
 				<h1 className="auth-title">{t('profile.title')}</h1>
 
-				{error && <Notification message={error} type="danger" />}
-				{loading && <p>{t('common.loading')}</p>}
+				{error && <Notification message={String(error)} type="danger" />}
+				{loading && <FormSkeleton />}
 
 				{!loading && profile && (
 					<form onSubmit={handleSubmit(onSubmit)} className="profile-form">

@@ -63,7 +63,12 @@ const Payment = () => {
 		}
 	}, [payment]);
 
-	if (loading) return <p className="text-center">{t('common.loading')}</p>;
+	if (loading)
+		return (
+			<div className="payment-page">
+				<p className="text-center">{t('common.loading')}</p>
+			</div>
+		);
 
 	return (
 		<div className="payment-page">
