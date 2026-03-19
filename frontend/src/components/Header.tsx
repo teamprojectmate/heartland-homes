@@ -17,7 +17,7 @@ import { logout } from '../store/slices/authSlice';
 
 import '../styles/components/header/_index.scss';
 import '../styles/components/_buttons.scss';
-import LanguageSwitcher from './LanguageSwitcher';
+import SettingsBar from './SettingsBar';
 
 const Header = () => {
 	const { t } = useTranslation();
@@ -114,14 +114,14 @@ const Header = () => {
 
 						{isAuthenticated ? (
 							<div className="nav-actions">
-								<LanguageSwitcher />
+								<SettingsBar />
 								<button type="button" className="btn-chip logout" onClick={handleLogout}>
 									<FaSignOutAlt className="nav-icon" /> {t('nav.logout')}
 								</button>
 							</div>
 						) : (
 							<div className="nav-actions">
-								<LanguageSwitcher />
+								<SettingsBar />
 								<NavLink to="/login" className="btn-chip primary">
 									<FaSignInAlt className="nav-icon" /> {t('nav.login')}
 								</NavLink>
@@ -190,7 +190,7 @@ const Header = () => {
 								</li>
 							</ul>
 							<div className="drawer-actions">
-								<LanguageSwitcher />
+								<SettingsBar />
 								<NavLink to="/" onClick={() => setOpen(false)} className="btn-primary">
 									{t('nav.backToHome')}
 								</NavLink>
@@ -239,14 +239,14 @@ const Header = () => {
 
 							{isAuthenticated ? (
 								<div className="drawer-actions">
-									<LanguageSwitcher />
+									<SettingsBar />
 									<button type="button" className="btn-primary" onClick={handleLogout}>
 										<FaSignOutAlt className="nav-icon" /> {t('nav.logout')}
 									</button>
 								</div>
 							) : (
 								<div className="drawer-actions">
-									<LanguageSwitcher />
+									<SettingsBar />
 									<NavLink onClick={closeDrawer} to="/login" className="btn-primary">
 										<FaSignInAlt className="nav-icon" /> {t('nav.login')}
 									</NavLink>

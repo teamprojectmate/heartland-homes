@@ -10,16 +10,16 @@
   flex-direction: column;
   gap: $spacer-sm;
   padding: 1.5rem;
-  background-color: $surface-color;
+  background-color: var(--bg-surface);
   border-radius: $radius;
-  box-shadow: $box-shadow-md;
+  box-shadow: var(--shadow-md);
 }
 
 .filters-heading {
   margin-bottom: 0.5rem;
   font-size: 1.25rem;
   font-weight: 700;
-  color: $heading-color;
+  color: var(--text-heading);
 }
 
 .filters-grid {
@@ -46,7 +46,7 @@
   justify-content: flex-end;
   padding-top: 1rem;
   margin-top: auto;
-  border-top: 1px solid $border-color;
+  border-top: 1px solid var(--border-color);
 }
 
 // Адаптивність для мобільних пристроїв

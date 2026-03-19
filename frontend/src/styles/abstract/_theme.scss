@@ -1,0 +1,174 @@
+// src/styles/abstract/_theme.scss
+// CSS Custom Properties for light/dark theming
+
+:root {
+  // Primary accent (text, borders, links)
+  --color-primary: #0f766e;
+
+  // Backgrounds
+  --bg-primary: #f6f7f9;
+  --bg-surface: #ffffff;
+  --bg-surface-hover: #f9fafb;
+  --bg-input: #ffffff;
+
+  // Text
+  --text-primary: #2f3b45;
+  --text-secondary: #6b7280;
+  --text-heading: #22313f;
+  --text-muted: #9ca3af;
+  --text-inverse: #ffffff;
+
+  // Borders
+  --border-color: #e5e7eb;
+  --border-light: #f3f4f6;
+
+  // Shadows
+  --shadow-sm: 0 2px 6px rgb(16 24 40 / 6%);
+  --shadow-md: 0 8px 24px rgb(16 24 40 / 8%);
+  --shadow-card: 0 2px 10px rgb(0 0 0 / 8%), 0 4px 16px rgb(0 0 0 / 5%);
+
+  // Skeleton
+  --skeleton-base: #f0f0f0;
+  --skeleton-shine: #e0e0e0;
+
+  // Header/Footer
+  --header-bg: #ffffff;
+  --footer-bg: #1a1a2e;
+
+  // Tables
+  --table-header-bg: #f3f4f6;
+  --table-row-alt: #f9fafb;
+  --table-row-hover: #f3f4f6;
+  --table-border: #e5e7eb;
+
+  // Drawer
+  --drawer-bg: #ffffff;
+  --drawer-border: #e5e7eb;
+  --drawer-close-bg: #f3f4f6;
+  --drawer-close-border: #d1d5db;
+
+  // Burger
+  --burger-bg: #ffffff;
+  --burger-line: #22313f;
+
+  // Badges
+  --badge-default-bg: #f3f4f6;
+  --badge-default-color: #22313f;
+  --badge-default-border: #e5e7eb;
+  --badge-size-bg: #e5e7eb;
+  --badge-size-color: #22313f;
+  --badge-size-border: #d1d5db;
+
+  // Buttons (theme-dependent variants)
+  --btn-secondary-bg: #e9eef3;
+  --btn-secondary-fg: #6b7280;
+  --btn-secondary-bd: #d7dde3;
+  --btn-secondary-hover: #e4eaef;
+  --btn-outline-fg: #475569;
+  --btn-outline-bd: #e5e7eb;
+  --btn-outline-hover: #f6f8fa;
+  --btn-chip-bg: #f0f4f5;
+  --btn-chip-fg: #0f766e;
+  --btn-chip-bd: #dbe7e6;
+  --btn-chip-hover: #e8f0ef;
+
+  // Footer property
+  --footer-property-bg: #ffffff;
+  --footer-property-color: #2f3b45;
+
+  // Payment cards
+  --payment-checkout-bg: linear-gradient(135deg, #e6fcf7, #ccfbf1);
+  --payment-paid-bg: linear-gradient(135deg, #d1fae5, #a7f3d0);
+  --payment-pending-bg: linear-gradient(135deg, #fef3c7, #fde68a);
+  --payment-canceled-bg: linear-gradient(135deg, #fee2e2, #fecaca);
+  --payment-expired-bg: linear-gradient(135deg, #e5e7eb, #d1d5db);
+  --payment-card-color: #22313f;
+  --payment-badge-bg: rgba(255, 255, 255, 0.7);
+}
+
+[data-theme='dark'] {
+  --color-primary: #14b8a6;
+
+  --bg-primary: #0f172a;
+  --bg-surface: #1e293b;
+  --bg-surface-hover: #334155;
+  --bg-input: #334155;
+
+  --text-primary: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-heading: #f1f5f9;
+  --text-muted: #64748b;
+  --text-inverse: #0f172a;
+
+  --border-color: #334155;
+  --border-light: #1e293b;
+
+  --shadow-sm: 0 2px 6px rgb(0 0 0 / 20%);
+  --shadow-md: 0 8px 24px rgb(0 0 0 / 30%);
+  --shadow-card: 0 2px 10px rgb(0 0 0 / 30%), 0 4px 16px rgb(0 0 0 / 20%);
+
+  --skeleton-base: #1e293b;
+  --skeleton-shine: #334155;
+
+  --header-bg: #1e293b;
+  --footer-bg: #0f172a;
+
+  --table-header-bg: #1e293b;
+  --table-row-alt: #1e293b;
+  --table-row-hover: #334155;
+  --table-border: #334155;
+
+  --drawer-bg: #1e293b;
+  --drawer-border: #334155;
+  --drawer-close-bg: #334155;
+  --drawer-close-border: #475569;
+
+  --burger-bg: #1e293b;
+  --burger-line: #e2e8f0;
+
+  // Badges
+  --badge-default-bg: #334155;
+  --badge-default-color: #e2e8f0;
+  --badge-default-border: #475569;
+  --badge-size-bg: #334155;
+  --badge-size-color: #e2e8f0;
+  --badge-size-border: #475569;
+
+  // Buttons
+  --btn-secondary-bg: #334155;
+  --btn-secondary-fg: #e2e8f0;
+  --btn-secondary-bd: #475569;
+  --btn-secondary-hover: #475569;
+  --btn-outline-fg: #94a3b8;
+  --btn-outline-bd: #475569;
+  --btn-outline-hover: #334155;
+  --btn-chip-bg: rgba(20, 184, 166, 0.12);
+  --btn-chip-fg: #14b8a6;
+  --btn-chip-bd: rgba(20, 184, 166, 0.25);
+  --btn-chip-hover: rgba(20, 184, 166, 0.2);
+
+  // Footer property
+  --footer-property-bg: #1e293b;
+  --footer-property-color: #e2e8f0;
+
+  // Payment cards
+  --payment-checkout-bg: linear-gradient(135deg, #0d3330, #134e48);
+  --payment-paid-bg: linear-gradient(135deg, #064e3b, #065f46);
+  --payment-pending-bg: linear-gradient(135deg, #78350f, #92400e);
+  --payment-canceled-bg: linear-gradient(135deg, #7f1d1d, #991b1b);
+  --payment-expired-bg: linear-gradient(135deg, #1e293b, #334155);
+  --payment-card-color: #e2e8f0;
+  --payment-badge-bg: rgba(255, 255, 255, 0.15);
+}
+
+// Smooth transition for theme switching
+html {
+  &,
+  & * {
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease,
+      border-color 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+}

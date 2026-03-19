@@ -34,16 +34,16 @@ ul {
   padding: 0.5rem 0;
   font-size: 1.25rem;
   font-weight: 700;
-  color: $heading-color;
+  color: var(--text-heading);
   text-decoration: none;
 
   @include underline($primary-color, 3px, 99px, 8px);
 
   &:hover {
-    color: $primary-color;
+    color: var(--color-primary);
   }
 
   &.active {
-    color: $primary-color;
+    color: var(--color-primary);
   }
 }

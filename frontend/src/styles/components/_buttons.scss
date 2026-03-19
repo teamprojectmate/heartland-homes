@@ -119,9 +119,9 @@
 
   width: 100%;
   margin-top: 1rem;
-  color: $text-color;
-  background: $white-color;
-  border: 1px solid $border-color;
+  color: var(--text-primary);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
   box-shadow: none;
 
   img {
@@ -131,6 +131,36 @@
   }
 
   &:hover {
-    background: $gray-100;
+    background: var(--bg-surface-hover);
+  }
+}
+
+// Dark-mode overrides for button variants that use static SCSS colors
+.btn-secondary {
+  color: var(--btn-secondary-fg);
+  background: var(--btn-secondary-bg);
+  border-color: var(--btn-secondary-bd);
+
+  &:hover {
+    background: var(--btn-secondary-hover);
+  }
+}
+
+.btn-outline {
+  color: var(--btn-outline-fg);
+  border-color: var(--btn-outline-bd);
+
+  &:hover {
+    background: var(--btn-outline-hover);
+  }
+}
+
+.btn-chip {
+  color: var(--btn-chip-fg);
+  background: var(--btn-chip-bg);
+  border-color: var(--btn-chip-bd);
+
+  &:hover {
+    background: var(--btn-chip-hover);
   }
 }

@@ -8,8 +8,8 @@
   padding: $spacer-lg;
   margin-bottom: $spacer-lg;
   text-align: center;
-  background-color: $gray-100;
-  border: 1px solid $border-color;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
   border-radius: $radius-lg;
 
   h5 {
@@ -23,7 +23,7 @@
     max-width: 400px;
     margin-bottom: $spacer;
     font-size: $font-size-base;
-    color: $text-color;
+    color: var(--text-primary);
   }
 
   .btn-secondary {

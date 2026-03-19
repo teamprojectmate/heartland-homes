@@ -6,9 +6,9 @@
   width: 100%;
   overflow: hidden;
   border-collapse: collapse;
-  background: $surface-color;
+  background: var(--bg-surface);
   border-radius: $radius-lg;
-  box-shadow: $box-shadow-card;
+  box-shadow: var(--shadow-card);
 
   th,
   td {
@@ -16,28 +16,28 @@
     font-size: $font-size-sm;
     vertical-align: middle;
     text-align: center;
-    border-bottom: 1px solid $gray-200;
+    border-bottom: 1px solid var(--table-border);
   }
 
   th {
     font-weight: 700;
-    color: $heading-color;
+    color: var(--text-heading);
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    background: $gray-100;
+    background: var(--table-header-bg);
   }
 
   tbody tr {
     transition: background 0.2s ease;
 
     &:hover {
-      background: color.adjust($gray-200, $lightness: -8%);
+      background: var(--table-row-hover);
     }
   }
 
   td.price {
     font-weight: 700;
-    color: $primary-color;
+    color: var(--color-primary);
   }
 
   .table-img {
@@ -45,7 +45,7 @@
     height: 40px;
     object-fit: cover;
     border-radius: $radius-sm;
-    box-shadow: $box-shadow-sm;
+    box-shadow: var(--shadow-sm);
   }
 
   .actions {
@@ -75,17 +75,17 @@
   background-repeat: no-repeat;
   background-position: right 0.6rem center;
   background-size: 1rem;
-  border: 1px solid $gray-300;
+  border: 1px solid var(--border-color);
   border-radius: $radius-md;
   transition: all 0.2s ease;
 
   &:hover {
-    border-color: $primary-color;
+    border-color: var(--color-primary);
   }
 
   &:focus {
     outline: none;
-    border-color: $primary-color;
+    border-color: var(--color-primary);
     box-shadow: $box-shadow-focus;
   }
 }
@@ -110,11 +110,11 @@
 }
 
 .btn-inline.btn-secondary {
-  color: $primary-color;
-  background: $gray-200;
+  color: var(--color-primary);
+  background: var(--btn-secondary-bg);
 
   &:hover {
-    background: $gray-300;
+    background: var(--btn-secondary-hover);
   }
 }
 
@@ -146,10 +146,10 @@
   .admin-table tr {
     padding: 1rem;
     margin-bottom: 1rem;
-    background: $surface-color;
-    border: 1px solid $gray-200;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
     border-radius: $radius-lg;
-    box-shadow: $box-shadow-card;
+    box-shadow: var(--shadow-card);
   }
 
   .admin-table td {
@@ -157,13 +157,13 @@
     align-items: center;
     justify-content: space-between;
     padding: 0.6rem 0;
-    border-bottom: 1px solid $gray-100;
+    border-bottom: 1px solid var(--border-light);
 
     &::before {
       flex-shrink: 0;
       margin-right: 1rem;
       font-weight: 600;
-      color: $gray-600;
+      color: var(--text-secondary);
       content: attr(data-label);
     }
 

@@ -15,9 +15,9 @@
     select {
       padding: 0.6rem 1rem;
       font-size: $font-size-md;
-      color: $text-color;
-      background: $surface-color;
-      border: 1px solid $gray-300;
+      color: var(--text-primary);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
       border-radius: $radius-sm;
       transition: box-shadow 0.2s ease;
 

@@ -15,10 +15,10 @@ fieldset {
   padding: 0.85rem 1rem;
   font-size: 1rem;
   font-weight: 400;
-  color: map.get(map.get($form-states, default), fg);
+  color: var(--text-primary);
   appearance: none;
-  background: map.get(map.get($form-states, default), bg);
-  border: 1px solid map.get(map.get($form-states, default), bd);
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
   border-radius: $radius;
   transition:
     border-color 0.15s ease,
@@ -31,9 +31,9 @@ fieldset {
 
   &:focus {
     outline: none;
-    background: map.get(map.get($form-states, focus), bg);
-    border-color: map.get(map.get($form-states, focus), bd);
-    box-shadow: map.get(map.get($form-states, focus), shadow);
+    background: var(--bg-input);
+    border-color: var(--color-primary);
+    box-shadow: $box-shadow-focus;
   }
 
   &:disabled {
@@ -53,7 +53,7 @@ fieldset {
     font-size: 0.95rem;
     font-weight: 500;
     line-height: 1.4;
-    color: $heading-color;
+    color: var(--text-heading);
   }
 }
 
@@ -85,7 +85,7 @@ textarea {
     top: 50%;
     left: 14px;
     font-size: 1rem;
-    color: $muted-color;
+    color: var(--text-muted);
     transform: translateY(-50%);
   }
 
@@ -113,7 +113,7 @@ textarea {
 
   .form-check-label {
     font-weight: 600;
-    color: $text-color;
+    color: var(--text-primary);
   }
 }
 

@@ -12,19 +12,19 @@
   padding: 0.75rem;
   margin-bottom: 1rem;
   overflow: hidden;
-  background: $surface-color;
-  border: 1px solid $gray-200;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
   border-radius: $radius-lg;
-  box-shadow: $box-shadow-card;
+  box-shadow: var(--shadow-card);
 
   .accommodation-card-img {
     flex-shrink: 0;
     width: 120px;
     height: 90px;
     object-fit: cover;
-    background: $gray-100;
+    background: var(--bg-surface-hover);
     border-radius: $radius-md;
-    box-shadow: $box-shadow-sm;
+    box-shadow: var(--shadow-sm);
 
     &[src$='.svg'] {
       padding: 0.5rem;
@@ -48,14 +48,14 @@
       margin: 0;
       font-size: $font-size-md;
       font-weight: 600;
-      color: $heading-color;
+      color: var(--text-heading);
     }
   }
 
   .card-body {
     margin: 0.25rem 0;
     font-size: $font-size-sm;
-    color: $text-color;
+    color: var(--text-primary);
 
     p {
       margin: 0.25rem 0;
@@ -63,7 +63,7 @@
 
     .price {
       font-weight: 700;
-      color: $primary-color;
+      color: var(--color-primary);
     }
   }
 

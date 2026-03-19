@@ -29,11 +29,11 @@
 // Shadows
 
 @mixin card-shadow {
-  box-shadow: $box-shadow-card;
+  box-shadow: var(--shadow-card);
 }
 
 @mixin card-shadow-hover {
-  box-shadow: $box-shadow-card-hover;
+  box-shadow: var(--shadow-md);
 }
 
 @mixin card-shadows($shadow) {
@@ -58,7 +58,7 @@
 
 // Typography helpers
 
-@mixin heading($size: 1.5rem, $weight: 700, $color: $heading-color) {
+@mixin heading($size: 1.5rem, $weight: 700, $color: var(--text-heading)) {
   font-size: $size;
   font-weight: $weight;
   line-height: 1.2;
@@ -134,7 +134,7 @@
   font-weight: 600;
   color: $white-color;
   border-radius: $radius-sm;
-  box-shadow: $box-shadow-sm;
+  box-shadow: var(--shadow-sm);
   transition: transform 0.2s ease;
 
   &:hover {
@@ -150,7 +150,7 @@
   align-items: center;
   font-size: 1rem;
   font-weight: 600;
-  color: $heading-color;
+  color: var(--text-heading);
   text-decoration: none;
   border-radius: 10px;
   transition:
@@ -158,13 +158,13 @@
     color 0.25s ease;
 
   &:hover {
-    color: $primary-color;
-    background: $gray-100;
+    color: var(--color-primary);
+    background: var(--bg-surface-hover);
   }
 
   &.active {
-    color: $primary-color;
-    background: $gray-200;
+    color: var(--color-primary);
+    background: var(--bg-surface-hover);
   }
 }
 

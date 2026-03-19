@@ -18,22 +18,22 @@
   width: 90%;
   max-width: 640px;
   padding: 1.5rem;
-  background: $surface-color;
+  background: var(--bg-surface);
   border-radius: $radius-lg;
-  box-shadow: $box-shadow-lg;
+  box-shadow: var(--shadow-md);
   animation: slide-up 0.3s ease;
 
   h3 {
     margin-bottom: 0.8rem;
     font-size: 1.4rem;
     font-weight: 700;
-    color: $heading-color;
+    color: var(--text-heading);
   }
 
   p {
     font-size: 1.05rem;
     line-height: 1.6;
-    color: $text-color;
+    color: var(--text-primary);
   }
 }
 
@@ -47,7 +47,7 @@
   width: 32px;
   height: 32px;
   font-size: 18px;
-  color: $muted-color;
+  color: var(--text-muted);
   cursor: pointer;
   background: transparent;
   border: none;
@@ -55,8 +55,8 @@
   transition: all 0.2s ease;
 
   &:hover {
-    color: $primary-color;
-    background: rgba($primary-color, 0.1);
+    color: var(--color-primary);
+    background: rgba(20, 184, 166, 0.1);
     transform: rotate(90deg);
   }
 }

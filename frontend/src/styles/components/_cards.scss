@@ -7,9 +7,9 @@
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  background: $white-color;
+  background: var(--bg-surface);
   border-radius: $radius;
-  box-shadow: $box-shadow-card;
+  box-shadow: var(--shadow-card);
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease,
@@ -36,7 +36,7 @@
   @extend %card-base;
 
   &:hover {
-    border: 1px solid $primary-color;
+    border: 1px solid var(--color-primary);
     box-shadow: $box-shadow-card-hover;
     transform: translateY(-4px);
   }
@@ -80,14 +80,14 @@
 .city-label {
   font-size: 1rem;
   font-weight: 600;
-  color: $primary-color;
+  color: var(--color-primary);
 }
 
 .card-price {
   margin-top: auto;
   font-size: 1.5rem;
   font-weight: 700;
-  color: $primary-color;
+  color: var(--color-primary);
 }
 
 // Тільки локальний відступ

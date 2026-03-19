@@ -5,9 +5,9 @@
   flex-direction: column;
   gap: 0.8rem;
   padding: 1rem;
-  background: $surface-color;
+  background: var(--bg-surface);
   border-radius: $radius-lg;
-  box-shadow: $box-shadow-card;
+  box-shadow: var(--shadow-card);
 
   .filters-row {
     display: flex;
@@ -23,7 +23,7 @@
       margin-bottom: 0.2rem;
       font-size: 0.75rem;
       font-weight: 600;
-      color: $gray-600;
+      color: var(--text-muted);
       text-transform: uppercase;
     }
 

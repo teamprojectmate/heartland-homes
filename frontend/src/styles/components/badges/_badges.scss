@@ -7,9 +7,9 @@
   // fallback → якщо не задано background
   &:not([style*='background']) {
     font-weight: 600;
-    color: $heading-color;
-    background: $gray-100;
-    border: 1px solid $border-color;
+    color: var(--badge-default-color);
+    background: var(--badge-default-bg);
+    border: 1px solid var(--badge-default-border);
   }
 }
 
@@ -25,9 +25,9 @@
 // кількість спалень
 .badge-size {
   font-weight: 600;
-  color: $heading-color;
-  background: $gray-200;
-  border: 1px solid $gray-300;
+  color: var(--badge-size-color);
+  background: var(--badge-size-bg);
+  border: 1px solid var(--badge-size-border);
 
   &::before {
     font-size: 1rem;

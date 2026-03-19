@@ -10,7 +10,7 @@
 
   .pagination-info {
     font-size: $font-size-sm;
-    color: $text-color;
+    color: var(--text-primary);
   }
 
   .pagination-wrapper {

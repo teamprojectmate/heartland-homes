@@ -15,15 +15,15 @@
   .card-custom {
     max-width: 100%;
     margin: 0 auto;
-    background: $white-color;
+    background: var(--bg-surface);
     border-radius: $radius;
-    box-shadow: $box-shadow-card;
+    box-shadow: var(--shadow-card);
     transition:
       transform 0.2s ease,
       box-shadow 0.2s ease;
 
     &:hover {
-      box-shadow: $box-shadow-card-hover;
+      box-shadow: var(--shadow-md);
       transform: translateY(-4px);
     }
 

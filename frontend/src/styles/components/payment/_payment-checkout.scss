@@ -7,7 +7,7 @@
 
   min-height: calc(100vh - #{$z-header} - 5rem);
   padding: $spacer;
-  background: $background-light;
+  background: var(--bg-primary);
 }
 
 .payment-checkout {
@@ -15,13 +15,13 @@
   max-width: 520px;
   padding: 2rem;
   text-align: center;
-  background: linear-gradient(135deg, #e6fcf7, #ccfbf1);
+  background: var(--payment-checkout-bg);
   border-radius: $radius-lg;
-  box-shadow: $box-shadow-card;
+  box-shadow: var(--shadow-card);
   animation: fade-in 0.6s ease;
 
   .payment-title {
-    @include heading($font-size-xl, 700, $heading-color);
+    @include heading($font-size-xl, 700, var(--text-heading));
 
     position: relative;
     margin-bottom: $spacer-sm;
@@ -40,7 +40,7 @@
   .payment-subtitle {
     margin-bottom: $spacer;
     font-size: $font-size-base;
-    color: $muted-color;
+    color: var(--text-muted);
   }
 
   .payment-info {
@@ -64,7 +64,7 @@
       margin-top: 0.75rem;
       font-size: 1.8rem;
       font-weight: 800;
-      color: $primary-color;
+      color: var(--color-primary);
 
       .icon {
         margin-right: 0.5rem;
@@ -99,14 +99,14 @@
 .payment-systems {
   margin-top: 1.2rem;
   font-size: 0.9rem;
-  color: $muted-color;
+  color: var(--text-muted);
   text-align: center;
 
   .powered {
     display: block;
     margin-bottom: 0.25rem;
     font-size: 0.8rem;
-    color: $muted-color;
+    color: var(--text-muted);
   }
 
   .system-logo {

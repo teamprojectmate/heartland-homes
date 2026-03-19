@@ -5,7 +5,7 @@
   max-width: 700px;
   padding: 2.5rem;
   margin: 3rem auto;
-  background: $surface-color;
+  background: var(--bg-surface);
   border-radius: $radius-lg;
   animation: fade-in-up 0.6s ease both;
 
@@ -56,7 +56,7 @@
     max-width: 200px;
     max-height: 150px;
     object-fit: cover;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--border-color);
     border-radius: 6px;
   }
 }
