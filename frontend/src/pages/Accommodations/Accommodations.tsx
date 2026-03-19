@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import BaseMap from '../../components/BaseMap';
 import Notification from '../../components/Notification';
 import Pagination from '../../components/Pagination';
+import { CardSkeleton } from '../../components/skeletons';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
 	loadAccommodations,
@@ -98,7 +99,14 @@ const Accommodations = () => {
 					{error && <Notification message={error} type="danger" />}
 
 					{loading ? (
-						<p className="text-center">{t('common.loading')}</p>
+						<div className="page-skeleton__grid">
+							<CardSkeleton />
+							<CardSkeleton />
+							<CardSkeleton />
+							<CardSkeleton />
+							<CardSkeleton />
+							<CardSkeleton />
+						</div>
 					) : items.length > 0 ? (
 						<>
 							<AccommodationList accommodations={items} onCardHover={handleCardHover} />

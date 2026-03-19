@@ -4,9 +4,9 @@ import { Link, useParams } from 'react-router-dom';
 import { getAccommodationById } from '../../api/accommodations/accommodationService';
 import BaseMap from '../../components/BaseMap';
 import { BookingForm } from '../../components/booking';
+import { FormSkeleton } from '../../components/skeletons';
 import { useAppSelector } from '../../store/hooks';
 import { getSafeImageUrl } from '../../utils/getSafeImageUrl';
-
 import { mapAmenity, mapType } from '../../utils/translations';
 import AccommodationGallery from './AccommodationGallery';
 
@@ -45,7 +45,7 @@ const AccommodationDetails = ({ id: propId }: { id?: any }) => {
 		fetchAccommodation();
 	}, [id, t]);
 
-	if (loading) return <div className="loading">{t('common.loading')}</div>;
+	if (loading) return <FormSkeleton />;
 	if (error) return <div className="error">{error}</div>;
 	if (!accommodation) return <div className="not-found">{t('accommodations.notFoundError')}</div>;
 

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import AccommodationList from '../../pages/Accommodations/AccommodationList';
 import Notification from '../Notification';
+import { CardSkeleton } from '../skeletons';
 
 const AccommodationsSection = ({ loading, error, accommodations }) => {
 	const { t } = useTranslation();
@@ -17,7 +18,14 @@ const AccommodationsSection = ({ loading, error, accommodations }) => {
 					</Link>
 				</div>
 
-				{loading && <p className="text-center">{t('common.loading')}</p>}
+				{loading && (
+					<div className="page-skeleton__grid">
+						<CardSkeleton />
+						<CardSkeleton />
+						<CardSkeleton />
+						<CardSkeleton />
+					</div>
+				)}
 				{error && <Notification message={error} type="danger" />}
 				{!loading && !error && <AccommodationList accommodations={accommodations} />}
 			</div>

@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Notification from '../../components/Notification';
 import Pagination from '../../components/Pagination';
 import StatusSelect from '../../components/selects/StatusSelect';
+import { TableSkeleton } from '../../components/skeletons';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
 	loadAdminAccommodations,
@@ -122,7 +123,7 @@ const AdminAccommodations = () => {
 		[handleStatusChange],
 	);
 
-	if (loading) return <p className="text-center mt-5">{t('common.loading')}</p>;
+	if (loading) return <TableSkeleton rows={5} columns={6} />;
 
 	return (
 		<div className="container admin-page-container">

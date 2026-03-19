@@ -6,6 +6,7 @@ import Footer from './components/Footer';
 import Header from './components/Header';
 import PageWrapper from './components/PageWrapper';
 import ScrollToTop from './components/ScrollToTop';
+import { PageSkeleton } from './components/skeletons';
 import Login from './pages/Auth/Login';
 import LoginSuccess from './pages/Auth/LoginSuccess';
 import ProtectedRoute from './pages/Auth/ProtectedRoute';
@@ -93,7 +94,7 @@ function App() {
 			<main className="main-content">
 				<ScrollToTop />
 				<ErrorBoundary>
-					<Suspense fallback={<p className="text-center mt-5">{t('common.loading')}</p>}>
+					<Suspense fallback={<PageSkeleton />}>
 						<Routes>
 							{/* ── Public routes ──────────────────────────── */}
 							<Route

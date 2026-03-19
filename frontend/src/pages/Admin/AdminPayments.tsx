@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
+import ErrorState from '../../components/ErrorState';
 import Pagination from '../../components/Pagination';
+import { TableSkeleton } from '../../components/skeletons';
 import StatusBadge from '../../components/status/StatusBadge';
 import AdminTable from '../../pages/Admin/AdminTable';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -18,8 +20,8 @@ const AdminPayments = () => {
 		dispatch(fetchAllPayments({ page, size: 5, status: statusFilter || undefined }));
 	}, [dispatch, page, statusFilter]);
 
-	if (fetchStatus === 'loading') return <p className="text-center">Завантаження...</p>;
-	if (error) return <p className="text-danger text-center">{error}</p>;
+	if (fetchStatus === 'loading') return <TableSkeleton rows={5} columns={5} />;
+	if (error) return <ErrorState message={error} />;
 
 	const columns = [
 		{ key: 'id', label: 'ID' },
