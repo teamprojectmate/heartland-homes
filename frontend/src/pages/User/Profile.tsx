@@ -1,13 +1,24 @@
-import { useEffect, useState } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
 import Notification from '../../components/Notification';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { fetchProfile, updateProfile } from '../../store/slices/userSlice';
+import { type ProfileFormData, profileSchema } from '../../validation/schemas';
 
 const Profile = () => {
 	const dispatch = useAppDispatch();
 	const { profile, loading, error } = useAppSelector((state) => state.user);
 
-	const [formData, setFormData] = useState({ email: '', firstName: '', lastName: '' });
+	const {
+		register,
+		handleSubmit,
+		reset,
+		formState: { errors },
+	} = useForm<ProfileFormData>({
+		resolver: zodResolver(profileSchema),
+		defaultValues: { email: '', firstName: '', lastName: '' },
+	});
 
 	useEffect(() => {
 		dispatch(fetchProfile());
@@ -15,17 +26,16 @@ const Profile = () => {
 
 	useEffect(() => {
 		if (profile) {
-			setFormData({
+			reset({
 				email: profile.email || '',
 				firstName: profile.firstName || '',
 				lastName: profile.lastName || '',
 			});
 		}
-	}, [profile]);
+	}, [profile, reset]);
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
-		dispatch(updateProfile(formData));
+	const onSubmit = (data: ProfileFormData) => {
+		dispatch(updateProfile(data));
 	};
 
 	return (
@@ -37,17 +47,17 @@ const Profile = () => {
 				{loading && <p>Завантаження...</p>}
 
 				{!loading && profile && (
-					<form onSubmit={handleSubmit} className="profile-form">
+					<form onSubmit={handleSubmit(onSubmit)} className="profile-form">
 						<div className="form-group">
 							<input
 								id="profile-email"
 								type="email"
 								className="form-control"
-								value={formData.email}
 								placeholder=" "
-								onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+								{...register('email')}
 							/>
 							<label htmlFor="profile-email">Електронна пошта</label>
+							{errors.email && <span className="form-error">{errors.email.message}</span>}
 						</div>
 
 						<div className="form-group">
@@ -55,11 +65,11 @@ const Profile = () => {
 								id="profile-firstName"
 								type="text"
 								className="form-control"
-								value={formData.firstName}
 								placeholder=" "
-								onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+								{...register('firstName')}
 							/>
 							<label htmlFor="profile-firstName">Ім'я</label>
+							{errors.firstName && <span className="form-error">{errors.firstName.message}</span>}
 						</div>
 
 						<div className="form-group">
@@ -67,11 +77,11 @@ const Profile = () => {
 								id="profile-lastName"
 								type="text"
 								className="form-control"
-								value={formData.lastName}
 								placeholder=" "
-								onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+								{...register('lastName')}
 							/>
 							<label htmlFor="profile-lastName">Прізвище</label>
+							{errors.lastName && <span className="form-error">{errors.lastName.message}</span>}
 						</div>
 
 						<button className="btn btn-primary" type="submit" disabled={loading}>

@@ -1,24 +1,31 @@
-import { useEffect, useState } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
 import { FaEnvelope, FaHome, FaLock } from 'react-icons/fa';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import GoogleLoginButton from '../../components/GoogleLoginButton';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { login } from '../../store/slices/authSlice';
 import '../../styles/components/_auth.scss';
+import { type LoginFormData, loginSchema } from '../../validation/schemas';
 
 const Login = () => {
-	const [formData, setFormData] = useState({ email: '', password: '' });
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm<LoginFormData>({
+		resolver: zodResolver(loginSchema),
+	});
+
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 	const location = useLocation();
 
 	const { isAuthenticated, isLoading, isError, message } = useAppSelector((s) => s.auth);
 
-	const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
-
-	const handleSubmit = (e) => {
-		e.preventDefault();
-		dispatch(login(formData));
+	const onSubmit = (data: LoginFormData) => {
+		dispatch(login(data));
 	};
 
 	//  Якщо користувач вже залогінений → редіректимо
@@ -37,31 +44,27 @@ const Login = () => {
 					Немає акаунта? <Link to="/register">Зареєструватися</Link>
 				</p>
 
-				<form onSubmit={handleSubmit}>
+				<form onSubmit={handleSubmit(onSubmit)}>
 					<div className="form-group with-icon">
 						<FaEnvelope className="input-icon" />
 						<input
 							type="email"
-							name="email"
 							className="form-control"
 							placeholder="Електронна пошта"
-							value={formData.email}
-							onChange={handleChange}
-							required
+							{...register('email')}
 						/>
+						{errors.email && <span className="form-error">{errors.email.message}</span>}
 					</div>
 
 					<div className="form-group with-icon">
 						<FaLock className="input-icon" />
 						<input
 							type="password"
-							name="password"
 							className="form-control"
 							placeholder="Пароль"
-							value={formData.password}
-							onChange={handleChange}
-							required
+							{...register('password')}
 						/>
+						{errors.password && <span className="form-error">{errors.password.message}</span>}
 					</div>
 
 					{isError && (

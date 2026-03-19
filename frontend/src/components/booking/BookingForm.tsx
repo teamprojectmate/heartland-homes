@@ -1,19 +1,35 @@
-import { useMemo, useState } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMemo } from 'react';
+import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { createBooking } from '../../store/slices/bookingsSlice';
-import Notification from '../Notification';
 import '../../styles/components/booking/_booking-form.scss';
+import { type BookingFormData, bookingSchema } from '../../validation/schemas';
+import Notification from '../Notification';
 
 const BookingForm = ({ accommodation }) => {
-	const [checkInDate, setCheckInDate] = useState('');
-	const [checkOutDate, setCheckOutDate] = useState('');
-	const [error, setError] = useState(null);
+	const {
+		register,
+		handleSubmit,
+		watch,
+		setError,
+		formState: { errors },
+	} = useForm<BookingFormData>({
+		resolver: zodResolver(bookingSchema),
+		defaultValues: {
+			checkInDate: '',
+			checkOutDate: '',
+		},
+	});
 
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 	const { status } = useAppSelector((state) => state.bookings);
 	const { isAuthenticated } = useAppSelector((state) => state.auth);
+
+	const checkInDate = watch('checkInDate');
+	const checkOutDate = watch('checkOutDate');
 
 	//  Розрахунок кількості ночей і загальної ціни (тільки для UI)
 	const totalPrice = useMemo(() => {
@@ -28,29 +44,16 @@ const BookingForm = ({ accommodation }) => {
 		return nights * (accommodation?.dailyRate || 0);
 	}, [checkInDate, checkOutDate, accommodation]);
 
-	const handleSubmit = async (e) => {
-		e.preventDefault();
-		setError(null);
-
+	const onSubmit = async (data: BookingFormData) => {
 		if (!isAuthenticated) {
-			setError('Будь ласка, увійдіть, щоб забронювати помешкання.');
-			return;
-		}
-
-		if (!checkInDate || !checkOutDate) {
-			setError('Будь ласка, виберіть дати заїзду та виїзду.');
-			return;
-		}
-
-		if (new Date(checkOutDate) <= new Date(checkInDate)) {
-			setError('Дата виїзду повинна бути пізніше заїзду.');
+			setError('root', { message: 'Будь ласка, увійдіть, щоб забронювати помешкання.' });
 			return;
 		}
 
 		const bookingData = {
 			accommodationId: accommodation.id,
-			checkInDate,
-			checkOutDate,
+			checkInDate: data.checkInDate,
+			checkOutDate: data.checkOutDate,
 		};
 
 		const resultAction = await dispatch(createBooking(bookingData));
@@ -60,21 +63,21 @@ const BookingForm = ({ accommodation }) => {
 				navigate('/my-bookings');
 			}, 1000);
 		} else if (createBooking.rejected.match(resultAction)) {
-			setError(resultAction.payload);
+			setError('root', { message: resultAction.payload as string });
 		}
 	};
 
 	return (
-		<form onSubmit={handleSubmit} className="booking-form">
+		<form onSubmit={handleSubmit(onSubmit)} className="booking-form">
 			<div className="form-group">
 				<label htmlFor="check-in-date">Дата заїзду</label>
 				<input
 					type="date"
 					className="form-control"
 					id="check-in-date"
-					value={checkInDate}
-					onChange={(e) => setCheckInDate(e.target.value)}
+					{...register('checkInDate')}
 				/>
+				{errors.checkInDate && <span className="form-error">{errors.checkInDate.message}</span>}
 			</div>
 
 			<div className="form-group form-group-spacing">
@@ -83,9 +86,9 @@ const BookingForm = ({ accommodation }) => {
 					type="date"
 					className="form-control"
 					id="check-out-date"
-					value={checkOutDate}
-					onChange={(e) => setCheckOutDate(e.target.value)}
+					{...register('checkOutDate')}
 				/>
+				{errors.checkOutDate && <span className="form-error">{errors.checkOutDate.message}</span>}
 			</div>
 
 			{/*  Показуємо загальну суму тільки в UI */}
@@ -95,7 +98,7 @@ const BookingForm = ({ accommodation }) => {
 				</p>
 			)}
 
-			{error && <Notification message={error} type="danger" />}
+			{errors.root && <Notification message={errors.root.message} type="danger" />}
 
 			<button type="submit" className="btn-primary" disabled={status === 'loading'}>
 				{status === 'loading' ? 'Бронювання...' : 'Забронювати'}

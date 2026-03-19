@@ -1,21 +1,22 @@
-import { useEffect, useState } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
 import { FaEnvelope, FaLock, FaUser } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import Notification from '../../components/Notification';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { register, reset } from '../../store/slices/authSlice';
+import { register as registerUser, reset } from '../../store/slices/authSlice';
 import '../../styles/components/_auth.scss';
+import { type RegisterFormData, registerSchema } from '../../validation/schemas';
 
 const Register = () => {
-	const [formData, setFormData] = useState({
-		email: '',
-		password: '',
-		confirmPassword: '',
-		firstName: '',
-		lastName: '',
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm<RegisterFormData>({
+		resolver: zodResolver(registerSchema),
 	});
-
-	const { email, password, confirmPassword, firstName, lastName } = formData;
 
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
@@ -30,20 +31,9 @@ const Register = () => {
 		dispatch(reset());
 	}, [isSuccess, navigate, dispatch]);
 
-	const onChange = (e) => {
-		setFormData((prev) => ({
-			...prev,
-			[e.target.name]: e.target.value,
-		}));
-	};
-
-	const onSubmit = (e) => {
-		e.preventDefault();
-		if (password !== confirmPassword) {
-			alert('Паролі не співпадають');
-			return;
-		}
-		dispatch(register({ email, password, firstName, lastName }));
+	const onSubmit = (data: RegisterFormData) => {
+		const { confirmPassword, ...payload } = data;
+		dispatch(registerUser(payload));
 	};
 
 	return (
@@ -56,19 +46,17 @@ const Register = () => {
 					<Notification message="Реєстрація успішна! Тепер ви можете увійти." type="success" />
 				)}
 
-				<form onSubmit={onSubmit}>
+				<form onSubmit={handleSubmit(onSubmit)}>
 					<div className="form-group with-icon">
 						<FaUser className="input-icon" />
 						<input
 							type="text"
 							id="firstName"
-							name="firstName"
 							className="form-control"
-							placeholder="Ім’я"
-							value={firstName}
-							onChange={onChange}
-							required
+							placeholder="Ім'я"
+							{...register('firstName')}
 						/>
+						{errors.firstName && <span className="form-error">{errors.firstName.message}</span>}
 					</div>
 
 					<div className="form-group with-icon">
@@ -76,13 +64,11 @@ const Register = () => {
 						<input
 							type="text"
 							id="lastName"
-							name="lastName"
 							className="form-control"
 							placeholder="Прізвище"
-							value={lastName}
-							onChange={onChange}
-							required
+							{...register('lastName')}
 						/>
+						{errors.lastName && <span className="form-error">{errors.lastName.message}</span>}
 					</div>
 
 					<div className="form-group with-icon">
@@ -90,13 +76,11 @@ const Register = () => {
 						<input
 							type="email"
 							id="email"
-							name="email"
 							className="form-control"
 							placeholder="Електронна пошта"
-							value={email}
-							onChange={onChange}
-							required
+							{...register('email')}
 						/>
+						{errors.email && <span className="form-error">{errors.email.message}</span>}
 					</div>
 
 					<div className="form-group with-icon">
@@ -104,13 +88,11 @@ const Register = () => {
 						<input
 							type="password"
 							id="password"
-							name="password"
 							className="form-control"
 							placeholder="Пароль"
-							value={password}
-							onChange={onChange}
-							required
+							{...register('password')}
 						/>
+						{errors.password && <span className="form-error">{errors.password.message}</span>}
 					</div>
 
 					<div className="form-group with-icon">
@@ -118,13 +100,13 @@ const Register = () => {
 						<input
 							type="password"
 							id="confirmPassword"
-							name="confirmPassword"
 							className="form-control"
 							placeholder="Підтвердіть пароль"
-							value={confirmPassword}
-							onChange={onChange}
-							required
+							{...register('confirmPassword')}
 						/>
+						{errors.confirmPassword && (
+							<span className="form-error">{errors.confirmPassword.message}</span>
+						)}
 					</div>
 
 					<button type="submit" className="btn btn-primary" disabled={isLoading}>
