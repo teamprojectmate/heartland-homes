@@ -1,5 +1,25 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { getAccommodationById } from '../../api/accommodations/accommodationService';
 import bookingsService from '../../api/bookings/bookingsService';
+import { getApiErrorMessage } from '../../utils/accommodationPayload';
+import { calcNights } from '../../utils/dateCalc';
+
+const enrichBookings = async (bookings: any[]) =>
+	Promise.all(
+		bookings.map(async (b) => {
+			let accommodation = null;
+			let totalPrice = null;
+			try {
+				accommodation = await getAccommodationById(b.accommodationId);
+				if (accommodation && b.checkInDate && b.checkOutDate) {
+					totalPrice = calcNights(b.checkInDate, b.checkOutDate) * (accommodation.dailyRate || 0);
+				}
+			} catch {
+				/* accommodation not found — skip */
+			}
+			return { ...b, accommodation, totalPrice };
+		}),
+	);
 
 const initialState = {
 	bookings: [],
@@ -30,11 +50,11 @@ function removeBooking(state, id) {
 // Create booking
 export const createBooking = createAsyncThunk(
 	'bookings/createBooking',
-	async (bookingData: any, { rejectWithValue }: any) => {
+	async (bookingData: any, { rejectWithValue }) => {
 		try {
 			return await bookingsService.createBooking(bookingData);
-		} catch (err: any) {
-			return rejectWithValue(err.response?.data?.message || 'Не вдалося створити бронювання.');
+		} catch (err: unknown) {
+			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося створити бронювання.'));
 		}
 	},
 );
@@ -43,47 +63,17 @@ export const createBooking = createAsyncThunk(
 export const fetchBookings = createAsyncThunk(
 	'bookings/fetchBookings',
 	async (
-		{
-			page = 0,
-			size = 10,
-			userId,
-			status,
-		}: { page?: number; size?: number; userId?: number; status?: string } = {},
-		{ rejectWithValue }: any,
+		// biome-ignore lint/suspicious/noConfusingVoidType: RTK requires void for optional thunk args
+		args: { page?: number; size?: number; userId?: number; status?: string } | void,
+		{ rejectWithValue },
 	) => {
+		const { page = 0, size = 10, userId, status } = args || {};
 		try {
 			const response = await bookingsService.fetchBookings(page, size, userId, status);
-
-			const { getAccommodationById } = await import(
-				'../../api/accommodations/accommodationService'
-			);
-
-			const enriched = await Promise.all(
-				(response.content || []).map(async (b) => {
-					let accommodation = null;
-					let totalPrice = null;
-
-					try {
-						accommodation = await getAccommodationById(b.accommodationId);
-						if (accommodation && b.checkInDate && b.checkOutDate) {
-							const start = new Date(b.checkInDate);
-							const end = new Date(b.checkOutDate);
-							const nights = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
-							totalPrice = nights * (accommodation.dailyRate || 0);
-						}
-					} catch {
-						console.warn(`Не вдалося завантажити житло id=${b.accommodationId}`);
-					}
-
-					return { ...b, accommodation, totalPrice };
-				}),
-			);
-
+			const enriched = await enrichBookings(response.content || []);
 			return { ...response, content: enriched };
-		} catch (err: any) {
-			return rejectWithValue(
-				err.response?.data?.message || 'Не вдалося отримати список бронювань.',
-			);
+		} catch (err: unknown) {
+			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося отримати список бронювань.'));
 		}
 	},
 );
@@ -91,43 +81,15 @@ export const fetchBookings = createAsyncThunk(
 //  Fetch my bookings (current user)
 export const fetchMyBookings = createAsyncThunk(
 	'bookings/fetchMyBookings',
-	async (
-		{ page = 0, size = 5 }: { page?: number; size?: number } = {},
-		{ rejectWithValue }: any,
-	) => {
+	// biome-ignore lint/suspicious/noConfusingVoidType: RTK requires void for optional thunk args
+	async (args: { page?: number; size?: number } | void, { rejectWithValue }) => {
+		const { page = 0, size = 5 } = args || {};
 		try {
 			const response = await bookingsService.fetchMyBookings(page, size);
-
-			const { getAccommodationById } = await import(
-				'../../api/accommodations/accommodationService'
-			);
-
-			const enriched = await Promise.all(
-				(response.content || []).map(async (b) => {
-					let accommodation = null;
-					let totalPrice = null;
-
-					try {
-						accommodation = await getAccommodationById(b.accommodationId);
-						if (accommodation && b.checkInDate && b.checkOutDate) {
-							const start = new Date(b.checkInDate);
-							const end = new Date(b.checkOutDate);
-							const nights = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
-							totalPrice = nights * (accommodation.dailyRate || 0);
-						}
-					} catch {
-						console.warn(`Не вдалося завантажити житло id=${b.accommodationId}`);
-					}
-
-					return { ...b, accommodation, totalPrice };
-				}),
-			);
-
+			const enriched = await enrichBookings(response.content || []);
 			return { ...response, content: enriched };
-		} catch (err: any) {
-			return rejectWithValue(
-				err.response?.data?.message || 'Не вдалося завантажити мої бронювання.',
-			);
+		} catch (err: unknown) {
+			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося завантажити мої бронювання.'));
 		}
 	},
 );
@@ -135,7 +97,7 @@ export const fetchMyBookings = createAsyncThunk(
 // Change booking status (admin)
 export const changeBookingStatus = createAsyncThunk(
 	'bookings/changeBookingStatus',
-	async ({ booking, status }: { booking: any; status: string }, { rejectWithValue }: any) => {
+	async ({ booking, status }: { booking: any; status: string }, { rejectWithValue }) => {
 		try {
 			const updatedBooking = {
 				checkInDate: booking.checkInDate,
@@ -146,10 +108,8 @@ export const changeBookingStatus = createAsyncThunk(
 
 			const response = await bookingsService.updateBooking(booking.id, updatedBooking);
 			return response;
-		} catch (err: any) {
-			return rejectWithValue(
-				err.response?.data?.message || 'Не вдалося змінити статус бронювання.',
-			);
+		} catch (err: unknown) {
+			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося змінити статус бронювання.'));
 		}
 	},
 );
@@ -157,12 +117,12 @@ export const changeBookingStatus = createAsyncThunk(
 // Cancel booking (user)
 export const cancelBooking = createAsyncThunk(
 	'bookings/cancelBooking',
-	async (id: number, { rejectWithValue }: any) => {
+	async (id: number, { rejectWithValue }) => {
 		try {
 			await bookingsService.cancelBooking(id);
 			return id;
-		} catch (err: any) {
-			return rejectWithValue(err.response?.data?.message || 'Не вдалося скасувати бронювання.');
+		} catch (err: unknown) {
+			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося скасувати бронювання.'));
 		}
 	},
 );
@@ -170,12 +130,12 @@ export const cancelBooking = createAsyncThunk(
 //  Delete booking (admin)
 export const deleteBooking = createAsyncThunk(
 	'bookings/deleteBooking',
-	async (id: number, { rejectWithValue }: any) => {
+	async (id: number, { rejectWithValue }) => {
 		try {
 			await bookingsService.deleteBooking(id);
 			return id;
-		} catch (err: any) {
-			return rejectWithValue(err.response?.data?.message || 'Не вдалося видалити бронювання.');
+		} catch (err: unknown) {
+			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося видалити бронювання.'));
 		}
 	},
 );

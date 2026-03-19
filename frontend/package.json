@@ -74,7 +74,7 @@
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx}": [
-      "biome check --write --no-errors-on-unmatched"
+      "biome check --write"
     ],
     "src/**/*.scss": [
       "stylelint --fix"

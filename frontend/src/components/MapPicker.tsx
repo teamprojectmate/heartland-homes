@@ -1,7 +1,4 @@
-// src/components/MapPicker.jsx
-
 import L from 'leaflet';
-import { useState } from 'react';
 import { MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet';
 import setupLeaflet from '../utils/leafletConfig';
 import 'leaflet/dist/leaflet.css';
@@ -14,37 +11,55 @@ const defaultIcon = new L.Icon({
 	shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 	iconSize: [25, 41],
 	iconAnchor: [12, 41],
-	popupAnchor: [1, -34],
-	shadowSize: [41, 41],
 });
 
-// внутрішній компонент для відлову кліків
-const LocationMarker = ({ onSelect }) => {
-	const [position, setPosition] = useState<L.LatLng | null>(null);
+interface Coordinates {
+	latitude: string;
+	longitude: string;
+}
 
+interface ClickHandlerProps {
+	onSelect: (coords: Coordinates) => void;
+}
+
+const ClickHandler = ({ onSelect }: ClickHandlerProps) => {
 	useMapEvents({
 		click(e) {
-			setPosition(e.latlng);
-			onSelect(e.latlng); // передаємо координати наверх
+			onSelect({
+				latitude: e.latlng.lat.toFixed(6),
+				longitude: e.latlng.lng.toFixed(6),
+			});
 		},
 	});
-
-	return position ? <Marker position={position} icon={defaultIcon} /> : null;
+	return null;
 };
 
-const MapPicker = ({ onChange }) => {
+interface MapPickerProps {
+	position?: { lat: number; lng: number } | null;
+	center?: [number, number];
+	zoom?: number;
+	height?: number;
+	onSelect: (coords: Coordinates) => void;
+}
+
+const MapPicker = ({
+	position,
+	center = [50.45, 30.52],
+	zoom = 12,
+	height = 300,
+	onSelect,
+}: MapPickerProps) => {
+	const mapCenter: [number, number] = position ? [position.lat, position.lng] : center;
+
 	return (
-		<div>
-			<MapContainer
-				center={[49.0, 31.0]} // центр України
-				zoom={6}
-				style={{ height: '400px', width: '100%' }}
-			>
+		<div style={{ height, width: '100%' }}>
+			<MapContainer center={mapCenter} zoom={zoom} style={{ height: '100%', width: '100%' }}>
 				<TileLayer
 					url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 					attribution="&copy; OpenStreetMap contributors"
 				/>
-				<LocationMarker onSelect={onChange} />
+				<ClickHandler onSelect={onSelect} />
+				{position && <Marker position={[position.lat, position.lng]} icon={defaultIcon} />}
 			</MapContainer>
 		</div>
 	);

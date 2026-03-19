@@ -8,6 +8,7 @@ import Notification from '../components/Notification';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { deleteBooking } from '../store/slices/bookingsSlice';
 import { fetchPaymentsByUser } from '../store/slices/paymentsSlice';
+import { calcNights } from '../utils/dateCalc';
 import { fixDropboxUrl } from '../utils/fixDropboxUrl';
 import { mapStatus } from '../utils/translations';
 
@@ -85,10 +86,10 @@ const BookingDetails = () => {
 		? mapStatus(enrichedBooking.status)
 		: { label: '—', color: '#ccc' };
 
-	const checkIn = enrichedBooking ? new Date(enrichedBooking.checkInDate) : null;
-	const checkOut = enrichedBooking ? new Date(enrichedBooking.checkOutDate) : null;
 	const nights =
-		checkIn && checkOut ? (checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24) : 0;
+		enrichedBooking?.checkInDate && enrichedBooking?.checkOutDate
+			? calcNights(enrichedBooking.checkInDate, enrichedBooking.checkOutDate)
+			: 0;
 
 	const totalPrice =
 		enrichedBooking?.totalPrice ||

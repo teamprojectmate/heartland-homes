@@ -5,6 +5,7 @@ import {
 	fetchPaymentsByUser as fetchPaymentsByUserService,
 	getAllPaymentsService,
 } from '../../api/payments/paymentService';
+import { getApiErrorMessage } from '../../utils/accommodationPayload';
 
 const initialState = {
 	payment: null,
@@ -21,13 +22,13 @@ export const createPayment = createAsyncThunk(
 	'payments/createPayment',
 	async (
 		{ bookingId, paymentType = 'PAYMENT' }: { bookingId: number; paymentType?: string },
-		{ rejectWithValue }: any,
+		{ rejectWithValue },
 	) => {
 		try {
 			const response = await createPaymentService(bookingId, paymentType);
 			return response;
-		} catch (err: any) {
-			return rejectWithValue(err.response?.data?.message || 'Не вдалося створити платіж');
+		} catch (err: unknown) {
+			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося створити платіж'));
 		}
 	},
 );
@@ -35,12 +36,12 @@ export const createPayment = createAsyncThunk(
 //  Fetch payments by user
 export const fetchPaymentsByUser = createAsyncThunk(
 	'payments/fetchByUser',
-	async ({ userId, pageable }: { userId: number; pageable: any }, { rejectWithValue }: any) => {
+	async ({ userId, pageable }: { userId: number; pageable: any }, { rejectWithValue }) => {
 		try {
 			const response = await fetchPaymentsByUserService(userId, pageable);
 			return response;
-		} catch (err: any) {
-			return rejectWithValue(err.response?.data?.message || 'Не вдалося отримати список платежів');
+		} catch (err: unknown) {
+			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося отримати список платежів'));
 		}
 	},
 );
@@ -48,12 +49,12 @@ export const fetchPaymentsByUser = createAsyncThunk(
 //  Cancel payment
 export const cancelPayment = createAsyncThunk(
 	'payments/cancelPayment',
-	async (paymentId: number, { rejectWithValue }: any) => {
+	async (paymentId: number, { rejectWithValue }) => {
 		try {
 			await cancelPaymentService(paymentId);
 			return paymentId;
-		} catch (err: any) {
-			return rejectWithValue(err.response?.data?.message || 'Не вдалося скасувати платіж');
+		} catch (err: unknown) {
+			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося скасувати платіж'));
 		}
 	},
 );
@@ -61,12 +62,13 @@ export const cancelPayment = createAsyncThunk(
 //  Fetch all payments (admin)
 export const fetchAllPayments = createAsyncThunk(
 	'payments/fetchAll',
-	async (params: any, { rejectWithValue }: any) => {
+	// biome-ignore lint/suspicious/noConfusingVoidType: RTK requires void for optional thunk args
+	async (params: Record<string, unknown> | void, { rejectWithValue }) => {
 		try {
-			const response = await getAllPaymentsService(params);
+			const response = await getAllPaymentsService(params || {});
 			return response;
-		} catch (err: any) {
-			return rejectWithValue(err.response?.data?.message || 'Не вдалося отримати всі платежі');
+		} catch (err: unknown) {
+			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося отримати всі платежі'));
 		}
 	},
 );

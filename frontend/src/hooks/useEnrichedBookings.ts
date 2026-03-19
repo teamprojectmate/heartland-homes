@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { getAccommodationById } from '../api/accommodations/accommodationService';
 import type { Accommodation, Booking, Payment, User } from '../types';
+import { calcNights } from '../utils/dateCalc';
 import { normalizeBooking } from '../utils/normalizeBooking';
-
-const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
 type EnrichedBooking = Booking & {
 	accommodation?: Accommodation | null;
@@ -11,12 +10,6 @@ type EnrichedBooking = Booking & {
 	user?: User | null;
 	payment?: Payment | null;
 };
-
-function calcNights(checkIn: string, checkOut: string): number {
-	const start = new Date(checkIn);
-	const end = new Date(checkOut);
-	return Math.ceil((end.getTime() - start.getTime()) / MS_PER_DAY);
-}
 
 export const useEnrichedBookings = (
 	bookings: Booking[],
@@ -29,6 +22,7 @@ export const useEnrichedBookings = (
 	const bookingIds = useMemo(() => bookings.map((b) => b.id).join(','), [bookings]);
 	const paymentIds = useMemo(() => payments.map((p) => p.id).join(','), [payments]);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: using stable string IDs to prevent infinite re-fetch loops
 	useEffect(() => {
 		if (!bookings || bookings.length === 0) {
 			setEnrichedBookings([]);

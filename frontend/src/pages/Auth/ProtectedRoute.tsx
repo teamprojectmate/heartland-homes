@@ -22,9 +22,6 @@ const ProtectedRoute = ({ children, requiredRole = null }) => {
 	// Нормалізація (видаляємо префікс ROLE_)
 	const userRole = rawRole?.startsWith('ROLE_') ? rawRole.replace('ROLE_', '') : rawRole;
 
-	// ✅ Лог для відладки
-	console.log('🔑 User role:', userRole, 'Required:', requiredRole);
-
 	// Перевірка ролі (якщо є вимога)
 	if (requiredRole) {
 		const roles = Array.isArray(requiredRole) ? requiredRole : [requiredRole];

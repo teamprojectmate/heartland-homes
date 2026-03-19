@@ -1,17 +1,15 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import authService from '../../api/auth/authService';
+import { getApiErrorMessage } from '../../utils/accommodationPayload';
 
-// Читаємо збережені дані з localStorage
-const savedAuth = JSON.parse(localStorage.getItem('auth'));
-const savedProfile = JSON.parse(localStorage.getItem('userProfile'));
+const savedAuth = JSON.parse(sessionStorage.getItem('auth') || 'null');
+const savedProfile = JSON.parse(sessionStorage.getItem('userProfile') || 'null');
 
 let initialUser = null;
-if (savedAuth) {
+if (savedAuth?.token) {
 	initialUser = { token: savedAuth.token, ...savedProfile };
 
-	// Витягуємо роль
 	const rawRole = Array.isArray(initialUser.roles) ? initialUser.roles[0] : initialUser.role;
-
 	initialUser.cleanRole = rawRole?.startsWith('ROLE_') ? rawRole.replace('ROLE_', '') : rawRole;
 }
 
@@ -24,59 +22,47 @@ const initialState = {
 	message: '',
 };
 
-//  Логін
 export const login = createAsyncThunk(
 	'auth/login',
 	async ({ email, password }: { email: string; password: string }, { rejectWithValue }) => {
 		try {
 			const { token } = await authService.login({ email, password });
 
-			// тимчасово зберігаємо токен
-			localStorage.setItem('auth', JSON.stringify({ token }));
+			// Save token temporarily so getProfile() can use it
+			sessionStorage.setItem('auth', JSON.stringify({ token }));
 
 			const profile = await authService.getProfile();
 
 			const rawRole = profile.role || (profile.roles?.[0] ?? null);
 			const cleanRole = rawRole?.startsWith('ROLE_') ? rawRole.replace('ROLE_', '') : rawRole;
 
-			const userData = {
-				token,
-				...profile,
-				cleanRole,
-			};
+			// Save profile after successful verification
+			sessionStorage.setItem('userProfile', JSON.stringify(profile));
 
-			// зберігаємо у localStorage
-			localStorage.setItem('auth', JSON.stringify({ token }));
-			localStorage.setItem('userProfile', JSON.stringify(profile));
-
-			return userData;
-		} catch (err: any) {
-			localStorage.removeItem('auth');
-			localStorage.removeItem('userProfile');
-
-			return rejectWithValue(err.response?.data?.message || 'Невірний логін або пароль');
+			return { token, ...profile, cleanRole };
+		} catch (err: unknown) {
+			sessionStorage.removeItem('auth');
+			sessionStorage.removeItem('userProfile');
+			return rejectWithValue(getApiErrorMessage(err, 'Невірний логін або пароль'));
 		}
 	},
 );
 
-//  Реєстрація
 export const register = createAsyncThunk(
 	'auth/register',
 	async (userData: any, { rejectWithValue }) => {
 		try {
 			return await authService.register(userData);
-		} catch (err: any) {
-			return rejectWithValue(err.response?.data?.message || 'Помилка реєстрації');
+		} catch (err: unknown) {
+			return rejectWithValue(getApiErrorMessage(err, 'Помилка реєстрації'));
 		}
 	},
 );
 
-//  Логаут
 export const logout = createAsyncThunk('auth/logout', async () => {
 	authService.logout();
 });
 
-// Slice
 const authSlice = createSlice({
 	name: 'auth',
 	initialState,
@@ -91,18 +77,11 @@ const authSlice = createSlice({
 			s.user = payload;
 			s.isAuthenticated = !!payload;
 		},
-		//  Google Login success
 		loginSuccess: (s, { payload }) => {
 			s.user = payload;
 			s.isAuthenticated = true;
 			s.isError = false;
 			s.isLoading = false;
-
-			// зберігаємо у localStorage так само, як у login
-			localStorage.setItem('auth', JSON.stringify({ token: payload.token }));
-			if (payload.profile) {
-				localStorage.setItem('userProfile', JSON.stringify(payload.profile));
-			}
 		},
 	},
 	extraReducers: (builder) => {

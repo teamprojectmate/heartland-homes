@@ -7,6 +7,7 @@ import Notification from '../../components/Notification';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { createPayment } from '../../store/slices/paymentsSlice';
 import '../../styles/components/payment/_payment-checkout.scss';
+import { calcNights } from '../../utils/dateCalc';
 
 const Payment = () => {
 	const { t } = useTranslation();
@@ -30,9 +31,7 @@ const Payment = () => {
 					console.warn('Could not load accommodation', err);
 				}
 
-				const checkIn = new Date(data.checkInDate);
-				const checkOut = new Date(data.checkOutDate);
-				const nights = Math.ceil((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24));
+				const nights = calcNights(data.checkInDate, data.checkOutDate);
 
 				const calculatedPrice =
 					data.totalPrice || (accommodation?.dailyRate ? accommodation.dailyRate * nights : 0);
@@ -53,7 +52,14 @@ const Payment = () => {
 
 	useEffect(() => {
 		if (payment?.sessionUrl) {
-			window.location.href = payment.sessionUrl;
+			try {
+				const url = new URL(payment.sessionUrl);
+				if (url.protocol === 'https:') {
+					window.location.href = payment.sessionUrl;
+				}
+			} catch {
+				/* invalid URL — ignore */
+			}
 		}
 	}, [payment]);
 

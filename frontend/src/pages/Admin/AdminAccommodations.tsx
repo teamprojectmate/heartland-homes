@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FaEdit, FaPlus, FaTrash } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
@@ -6,6 +6,7 @@ import Notification from '../../components/Notification';
 import Pagination from '../../components/Pagination';
 import StatusSelect from '../../components/selects/StatusSelect';
 import { TableSkeleton } from '../../components/skeletons';
+import { useIsMobile } from '../../hooks/useIsMobile';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
 	loadAdminAccommodations,
@@ -40,7 +41,7 @@ const AdminAccommodations = () => {
 		totalPages,
 	} = useAppSelector((s) => s.accommodations);
 
-	const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+	const isMobile = useIsMobile();
 
 	useEffect(() => {
 		if (!user || user.cleanRole !== 'MANAGER') {
@@ -49,12 +50,6 @@ const AdminAccommodations = () => {
 		}
 		dispatch(loadAdminAccommodations({ page }));
 	}, [user, navigate, dispatch, page]);
-
-	useEffect(() => {
-		const handleResize = () => setIsMobile(window.innerWidth < 768);
-		window.addEventListener('resize', handleResize);
-		return () => window.removeEventListener('resize', handleResize);
-	}, []);
 
 	const handleDelete = (id) => {
 		if (window.confirm(t('admin.deleteAccommodation'))) {
@@ -120,7 +115,7 @@ const AdminAccommodations = () => {
 				),
 			},
 		],
-		[handleStatusChange],
+		[handleStatusChange, t],
 	);
 
 	if (loading) return <TableSkeleton rows={5} columns={6} />;

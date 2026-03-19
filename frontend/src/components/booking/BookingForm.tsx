@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { createBooking } from '../../store/slices/bookingsSlice';
 import '../../styles/components/booking/_booking-form.scss';
+import { calcNights } from '../../utils/dateCalc';
 import { type BookingFormData, bookingSchema } from '../../validation/schemas';
 import Notification from '../Notification';
 
@@ -36,12 +37,9 @@ const BookingForm = ({ accommodation }) => {
 	const totalPrice = useMemo(() => {
 		if (!checkInDate || !checkOutDate) return 0;
 
-		const start = new Date(checkInDate);
-		const end = new Date(checkOutDate);
+		if (new Date(checkOutDate) <= new Date(checkInDate)) return 0;
 
-		if (end <= start) return 0;
-
-		const nights = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+		const nights = calcNights(checkInDate, checkOutDate);
 		return nights * (accommodation?.dailyRate || 0);
 	}, [checkInDate, checkOutDate, accommodation]);
 
