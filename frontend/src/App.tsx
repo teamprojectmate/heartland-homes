@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Route, Routes } from 'react-router-dom';
 import ErrorBoundary from './components/ErrorBoundary';
 import Footer from './components/Footer';
@@ -65,6 +66,7 @@ import { setUser } from './store/slices/authSlice';
 // ── App ──────────────────────────────────────────────────────────────
 
 function App() {
+	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 
 	useEffect(() => {
@@ -91,13 +93,13 @@ function App() {
 			<main className="main-content">
 				<ScrollToTop />
 				<ErrorBoundary>
-					<Suspense fallback={<p className="text-center mt-5">Завантаження...</p>}>
+					<Suspense fallback={<p className="text-center mt-5">{t('common.loading')}</p>}>
 						<Routes>
 							{/* ── Public routes ──────────────────────────── */}
 							<Route
 								path="/"
 								element={
-									<PageWrapper title="Головна">
+									<PageWrapper title={t('pages.home')}>
 										<Home />
 									</PageWrapper>
 								}
@@ -105,7 +107,7 @@ function App() {
 							<Route
 								path="/accommodations"
 								element={
-									<PageWrapper title="Усі помешкання">
+									<PageWrapper title={t('pages.allAccommodations')}>
 										<Accommodations />
 									</PageWrapper>
 								}
@@ -113,7 +115,7 @@ function App() {
 							<Route
 								path="/accommodations/:id"
 								element={
-									<PageWrapper title="Деталі помешкання">
+									<PageWrapper title={t('pages.accommodationDetails')}>
 										<AccommodationDetails />
 									</PageWrapper>
 								}
@@ -123,7 +125,7 @@ function App() {
 							<Route
 								path="/login"
 								element={
-									<PageWrapper title="Вхід">
+									<PageWrapper title={t('pages.login')}>
 										<Login />
 									</PageWrapper>
 								}
@@ -133,7 +135,7 @@ function App() {
 							<Route
 								path="/register"
 								element={
-									<PageWrapper title="Реєстрація">
+									<PageWrapper title={t('pages.register')}>
 										<Register />
 									</PageWrapper>
 								}
@@ -144,7 +146,7 @@ function App() {
 								path="/accommodations/new"
 								element={
 									<ProtectedRoute requiredRole={['CUSTOMER', 'MANAGER']}>
-										<PageWrapper title="Створити помешкання">
+										<PageWrapper title={t('pages.createAccommodation')}>
 											<CreateAccommodation />
 										</PageWrapper>
 									</ProtectedRoute>
@@ -154,7 +156,7 @@ function App() {
 								path="/my-accommodations"
 								element={
 									<ProtectedRoute requiredRole={['CUSTOMER', 'MANAGER']}>
-										<PageWrapper title="Мої помешкання">
+										<PageWrapper title={t('pages.myAccommodations')}>
 											<MyAccommodations />
 										</PageWrapper>
 									</ProtectedRoute>
@@ -164,7 +166,7 @@ function App() {
 								path="/my-accommodations/edit/:id"
 								element={
 									<ProtectedRoute requiredRole={['CUSTOMER', 'MANAGER']}>
-										<PageWrapper title="Редагувати моє помешкання">
+										<PageWrapper title={t('pages.editMyAccommodation')}>
 											<EditMyAccommodation />
 										</PageWrapper>
 									</ProtectedRoute>
@@ -176,7 +178,7 @@ function App() {
 								path="/my-bookings"
 								element={
 									<ProtectedRoute>
-										<PageWrapper title="Мої бронювання">
+										<PageWrapper title={t('pages.myBookings')}>
 											<MyBookings />
 										</PageWrapper>
 									</ProtectedRoute>
@@ -186,7 +188,7 @@ function App() {
 								path="/my-bookings/:id"
 								element={
 									<ProtectedRoute>
-										<PageWrapper title="Деталі бронювання">
+										<PageWrapper title={t('pages.bookingDetails')}>
 											<BookingDetails />
 										</PageWrapper>
 									</ProtectedRoute>
@@ -196,7 +198,7 @@ function App() {
 								path="/profile"
 								element={
 									<ProtectedRoute>
-										<PageWrapper title="Мій профіль">
+										<PageWrapper title={t('pages.myProfile')}>
 											<Profile />
 										</PageWrapper>
 									</ProtectedRoute>
@@ -206,7 +208,7 @@ function App() {
 								path="/payment/:bookingId"
 								element={
 									<ProtectedRoute>
-										<PageWrapper title="Оплата">
+										<PageWrapper title={t('pages.payment')}>
 											<Payment />
 										</PageWrapper>
 									</ProtectedRoute>
@@ -216,7 +218,7 @@ function App() {
 								path="/payments/success"
 								element={
 									<ProtectedRoute>
-										<PageWrapper title="Оплата успішна">
+										<PageWrapper title={t('pages.paymentSuccess')}>
 											<PaymentSuccess />
 										</PageWrapper>
 									</ProtectedRoute>
@@ -226,7 +228,7 @@ function App() {
 								path="/payments/cancel"
 								element={
 									<ProtectedRoute>
-										<PageWrapper title="Оплату скасовано">
+										<PageWrapper title={t('pages.paymentCancelled')}>
 											<PaymentCancel />
 										</PageWrapper>
 									</ProtectedRoute>
@@ -236,7 +238,7 @@ function App() {
 								path="/my-payments"
 								element={
 									<ProtectedRoute>
-										<PageWrapper title="Мої платежі">
+										<PageWrapper title={t('pages.myPayments')}>
 											<PaymentsList />
 										</PageWrapper>
 									</ProtectedRoute>
@@ -248,7 +250,7 @@ function App() {
 								path="/admin/accommodations"
 								element={
 									<ProtectedRoute requiredRole="MANAGER">
-										<PageWrapper title="Усі помешкання">
+										<PageWrapper title={t('pages.allAccommodations')}>
 											<AdminAccommodations />
 										</PageWrapper>
 									</ProtectedRoute>
@@ -274,7 +276,7 @@ function App() {
 							<Route
 								path="/faq"
 								element={
-									<PageWrapper title="FAQ">
+									<PageWrapper title={t('pages.faq')}>
 										<FAQ />
 									</PageWrapper>
 								}
@@ -282,7 +284,7 @@ function App() {
 							<Route
 								path="/support"
 								element={
-									<PageWrapper title="Зв'язатися з нами">
+									<PageWrapper title={t('pages.contactUs')}>
 										<Support />
 									</PageWrapper>
 								}
@@ -290,7 +292,7 @@ function App() {
 							<Route
 								path="/about"
 								element={
-									<PageWrapper title="Про нас">
+									<PageWrapper title={t('pages.aboutUs')}>
 										<About />
 									</PageWrapper>
 								}
@@ -298,7 +300,7 @@ function App() {
 							<Route
 								path="/offers"
 								element={
-									<PageWrapper title="Акції та знижки">
+									<PageWrapper title={t('pages.offersDiscounts')}>
 										<OffersPage />
 									</PageWrapper>
 								}
@@ -306,7 +308,7 @@ function App() {
 							<Route
 								path="/popular"
 								element={
-									<PageWrapper title="Популярні напрямки">
+									<PageWrapper title={t('pages.popularDestinations')}>
 										<Popular />
 									</PageWrapper>
 								}
@@ -314,7 +316,7 @@ function App() {
 							<Route
 								path="/partners"
 								element={
-									<PageWrapper title="Партнери">
+									<PageWrapper title={t('pages.partners')}>
 										<Partners />
 									</PageWrapper>
 								}
@@ -322,7 +324,7 @@ function App() {
 							<Route
 								path="/terms"
 								element={
-									<PageWrapper title="Умови використання">
+									<PageWrapper title={t('pages.termsOfUse')}>
 										<Terms />
 									</PageWrapper>
 								}
@@ -330,7 +332,7 @@ function App() {
 							<Route
 								path="/privacy"
 								element={
-									<PageWrapper title="Політика конфіденційності">
+									<PageWrapper title={t('pages.privacyPolicy')}>
 										<Privacy />
 									</PageWrapper>
 								}
@@ -338,7 +340,7 @@ function App() {
 							<Route
 								path="/cookies"
 								element={
-									<PageWrapper title="Файли Cookie">
+									<PageWrapper title={t('pages.cookies')}>
 										<Cookies />
 									</PageWrapper>
 								}
@@ -348,7 +350,7 @@ function App() {
 							<Route
 								path="*"
 								element={
-									<PageWrapper title="Сторінку не знайдено">
+									<PageWrapper title={t('pages.notFound')}>
 										<NotFound />
 									</PageWrapper>
 								}

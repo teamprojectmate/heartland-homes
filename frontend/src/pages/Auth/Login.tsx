@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { Trans, useTranslation } from 'react-i18next';
 import { FaEnvelope, FaHome, FaLock } from 'react-icons/fa';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import GoogleLoginButton from '../../components/GoogleLoginButton';
@@ -10,6 +11,7 @@ import '../../styles/components/_auth.scss';
 import { type LoginFormData, loginSchema } from '../../validation/schemas';
 
 const Login = () => {
+	const { t } = useTranslation();
 	const {
 		register,
 		handleSubmit,
@@ -28,7 +30,6 @@ const Login = () => {
 		dispatch(login(data));
 	};
 
-	//  Якщо користувач вже залогінений → редіректимо
 	useEffect(() => {
 		if (isAuthenticated) {
 			const redirectPath = location.state?.from?.pathname || '/';
@@ -39,9 +40,9 @@ const Login = () => {
 	return (
 		<div className="auth-layout">
 			<div className="auth-card">
-				<h2 className="auth-title">Вхід</h2>
+				<h2 className="auth-title">{t('auth.loginTitle')}</h2>
 				<p className="form-subtitle">
-					Немає акаунта? <Link to="/register">Зареєструватися</Link>
+					{t('auth.noAccount')} <Link to="/register">{t('auth.registerLink')}</Link>
 				</p>
 
 				<form onSubmit={handleSubmit(onSubmit)}>
@@ -50,7 +51,7 @@ const Login = () => {
 						<input
 							type="email"
 							className="form-control"
-							placeholder="Електронна пошта"
+							placeholder={t('auth.email')}
 							{...register('email')}
 						/>
 						{errors.email && <span className="form-error">{errors.email.message}</span>}
@@ -61,7 +62,7 @@ const Login = () => {
 						<input
 							type="password"
 							className="form-control"
-							placeholder="Пароль"
+							placeholder={t('auth.password')}
 							{...register('password')}
 						/>
 						{errors.password && <span className="form-error">{errors.password.message}</span>}
@@ -69,24 +70,23 @@ const Login = () => {
 
 					{isError && (
 						<p className="form-error" data-testid="login-error">
-							{message || 'Невірний логін або пароль'}
+							{message || t('auth.invalidCredentials')}
 						</p>
 					)}
 
 					<button type="submit" disabled={isLoading}>
-						{isLoading ? 'Зачекайте...' : 'Увійти'}
+						{isLoading ? t('auth.wait') : t('nav.login')}
 					</button>
 				</form>
 
-				{/* Кнопка Google Login */}
 				<GoogleLoginButton />
 			</div>
 
 			<div className="auth-side login">
 				<FaHome className="auth-icon" />
-				<h2 className="auth-title">Ласкаво просимо 👋</h2>
+				<h2 className="auth-title">{t('auth.welcomeTitle')}</h2>
 				<p className="auth-subtitle">
-					Увійдіть, щоб забронювати свій наступний будинок мрії з <strong>Heartland Homes</strong>.
+					<Trans i18nKey="auth.welcomeLoginSubtitle" components={{ strong: <strong /> }} />
 				</p>
 			</div>
 		</div>

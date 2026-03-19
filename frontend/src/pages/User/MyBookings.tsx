@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { BookingList } from '../../components/booking/index';
 import Notification from '../../components/Notification';
@@ -11,6 +12,7 @@ import '../../styles/components/booking/_bookings.scss';
 import '../../styles/components/_cards.scss';
 
 const MyBookings = () => {
+	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const dispatch = useAppDispatch();
 
@@ -22,7 +24,6 @@ const MyBookings = () => {
 	);
 	const { payments } = useAppSelector((state) => state.payments);
 
-	// Shared enrichment hook (replaces manual useEffect)
 	const enrichedBookings = useEnrichedBookings(bookings, payments);
 
 	useEffect(() => {
@@ -53,12 +54,12 @@ const MyBookings = () => {
 		try {
 			await dispatch(cancelBooking(bookingId)).unwrap();
 			setNotification({
-				message: 'Bронювання успiшно скасовано!',
+				message: t('booking.cancelSuccess'),
 				type: 'success',
 			});
 		} catch {
 			setNotification({
-				message: 'Не вдалося скасувати бронювання.',
+				message: t('booking.cancelError'),
 				type: 'danger',
 			});
 		}
@@ -71,8 +72,8 @@ const MyBookings = () => {
 	if (status === 'loading') {
 		return (
 			<div className="container page">
-				<h1 className="text-center">Мої бронювання</h1>
-				<p className="text-center">Завантаження...</p>
+				<h1 className="text-center">{t('booking.myBookings')}</h1>
+				<p className="text-center">{t('common.loading')}</p>
 			</div>
 		);
 	}
@@ -84,7 +85,7 @@ const MyBookings = () => {
 
 	return (
 		<div className="container page">
-			<h1 className="text-center">Мої бронювання</h1>
+			<h1 className="text-center">{t('booking.myBookings')}</h1>
 			{error && <Notification message={error} type="danger" />}
 			{notification.message && (
 				<Notification message={notification.message} type={notification.type} />
@@ -101,18 +102,18 @@ const MyBookings = () => {
 				/>
 			) : hasBookings ? (
 				<p className="text-center mt-5">
-					На цій сторінці немає активних бронювань. Спробуйте{' '}
+					{t('booking.noActiveBookings')}{' '}
 					<button
 						type="button"
 						className="btn btn-link p-0 align-baseline"
 						onClick={() => handlePageChange(0)}
 					>
-						повернутись на першу сторінку
+						{t('booking.goToFirstPage')}
 					</button>{' '}
-					або перейдіть на інші сторінки.
+					{t('booking.orOtherPages')}
 				</p>
 			) : (
-				<p className="text-center mt-5">У вас поки що немає бронювань.</p>
+				<p className="text-center mt-5">{t('booking.noBookings')}</p>
 			)}
 		</div>
 	);

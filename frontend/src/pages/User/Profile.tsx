@@ -1,12 +1,14 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import Notification from '../../components/Notification';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { fetchProfile, updateProfile } from '../../store/slices/userSlice';
 import { type ProfileFormData, profileSchema } from '../../validation/schemas';
 
 const Profile = () => {
+	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const { profile, loading, error } = useAppSelector((state) => state.user);
 
@@ -41,10 +43,10 @@ const Profile = () => {
 	return (
 		<div className="container page">
 			<div className="profile-card">
-				<h1 className="auth-title">Мій профіль</h1>
+				<h1 className="auth-title">{t('profile.title')}</h1>
 
 				{error && <Notification message={error} type="danger" />}
-				{loading && <p>Завантаження...</p>}
+				{loading && <p>{t('common.loading')}</p>}
 
 				{!loading && profile && (
 					<form onSubmit={handleSubmit(onSubmit)} className="profile-form">
@@ -56,7 +58,7 @@ const Profile = () => {
 								placeholder=" "
 								{...register('email')}
 							/>
-							<label htmlFor="profile-email">Електронна пошта</label>
+							<label htmlFor="profile-email">{t('profile.email')}</label>
 							{errors.email && <span className="form-error">{errors.email.message}</span>}
 						</div>
 
@@ -68,7 +70,7 @@ const Profile = () => {
 								placeholder=" "
 								{...register('firstName')}
 							/>
-							<label htmlFor="profile-firstName">Ім'я</label>
+							<label htmlFor="profile-firstName">{t('profile.firstName')}</label>
 							{errors.firstName && <span className="form-error">{errors.firstName.message}</span>}
 						</div>
 
@@ -80,12 +82,12 @@ const Profile = () => {
 								placeholder=" "
 								{...register('lastName')}
 							/>
-							<label htmlFor="profile-lastName">Прізвище</label>
+							<label htmlFor="profile-lastName">{t('profile.lastName')}</label>
 							{errors.lastName && <span className="form-error">{errors.lastName.message}</span>}
 						</div>
 
 						<button className="btn btn-primary" type="submit" disabled={loading}>
-							{loading ? 'Збереження...' : 'Редагувати профіль'}
+							{loading ? t('common.saving') : t('profile.editProfile')}
 						</button>
 					</form>
 				)}

@@ -1,4 +1,8 @@
+import { useTranslation } from 'react-i18next';
+
 const Pagination = ({ page, totalPages, onPageChange }) => {
+	const { t } = useTranslation();
+
 	if (totalPages <= 1) return null;
 
 	return (
@@ -9,11 +13,11 @@ const Pagination = ({ page, totalPages, onPageChange }) => {
 				onClick={() => onPageChange(page - 1)}
 				disabled={page === 0}
 			>
-				◀ Попередня
+				{t('common.previous')}
 			</button>
 
 			<span className="pagination-info">
-				Сторінка <strong>{page + 1}</strong> із {totalPages}
+				{t('common.pageOf', { current: page + 1, total: totalPages })}
 			</span>
 
 			<button
@@ -22,7 +26,7 @@ const Pagination = ({ page, totalPages, onPageChange }) => {
 				onClick={() => onPageChange(page + 1)}
 				disabled={page >= totalPages - 1}
 			>
-				Наступна ▶
+				{t('common.next')}
 			</button>
 		</div>
 	);

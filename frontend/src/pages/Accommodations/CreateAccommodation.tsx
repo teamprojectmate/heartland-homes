@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import L from 'leaflet';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet';
 import { useNavigate } from 'react-router-dom';
 import { createAccommodation } from '../../api/accommodations/accommodationService';
@@ -63,6 +64,7 @@ const buildLocation = ({ region, city, street, houseNumber, apartment }) => {
 };
 
 const CreateAccommodation = () => {
+	const { t } = useTranslation();
 	const navigate = useNavigate();
 
 	const {
@@ -132,7 +134,7 @@ const CreateAccommodation = () => {
 		} catch (err: unknown) {
 			const message = (err as { response?: { data?: { message?: string } } })?.response?.data
 				?.message;
-			setError(message || 'Помилка при створенні');
+			setError(message || t('accommodations.errorCreating'));
 		} finally {
 			setLoading(false);
 		}
@@ -148,69 +150,60 @@ const CreateAccommodation = () => {
 	return (
 		<div className="container page">
 			<form onSubmit={handleSubmit(onSubmit)} className="admin-form">
-				<h1>✨ Створити помешкання</h1>
+				<h1>{t('accommodations.createTitle')}</h1>
 				{error && <Notification message={error} type="danger" />}
 
-				{/* Назва */}
 				<div className="form-group">
-					<label htmlFor="create-name">Назва</label>
+					<label htmlFor="create-name">{t('accommodationForm.name')}</label>
 					<input id="create-name" {...register('name')} />
 					{errors.name && <span className="form-error">{errors.name.message}</span>}
 				</div>
 
-				{/* Тип */}
 				<div className="form-group">
-					<label htmlFor="create-type">Тип</label>
+					<label htmlFor="create-type">{t('accommodationForm.type')}</label>
 					<select id="create-type" {...register('type')}>
-						<option value="HOUSE">Будинок</option>
-						<option value="APARTMENT">Квартира</option>
-						<option value="HOTEL">Готель</option>
-						<option value="VACATION_HOME">Дім для відпочинку</option>
-						<option value="HOSTEL">Хостел</option>
+						<option value="HOUSE">{t('accommodationType.house')}</option>
+						<option value="APARTMENT">{t('accommodationType.apartment')}</option>
+						<option value="HOTEL">{t('accommodationType.hotel')}</option>
+						<option value="VACATION_HOME">{t('accommodationType.vacationHome')}</option>
+						<option value="HOSTEL">{t('accommodationType.hostel')}</option>
 					</select>
 					{errors.type && <span className="form-error">{errors.type.message}</span>}
 				</div>
 
-				{/* Область */}
 				<div className="form-group">
-					<label htmlFor="create-region">Область</label>
-					<input id="create-region" placeholder="Київська область" {...register('region')} />
+					<label htmlFor="create-region">{t('accommodationForm.region')}</label>
+					<input id="create-region" {...register('region')} />
 				</div>
 
-				{/* Місто */}
 				<div className="form-group">
-					<label htmlFor="create-city">Місто</label>
+					<label htmlFor="create-city">{t('accommodationForm.city')}</label>
 					<input id="create-city" {...register('city')} />
 					{errors.city && <span className="form-error">{errors.city.message}</span>}
 				</div>
 
-				{/* Вулиця */}
 				<div className="form-group">
-					<label htmlFor="create-street">Вулиця / район</label>
+					<label htmlFor="create-street">{t('accommodationForm.street')}</label>
 					<input id="create-street" {...register('street')} />
 				</div>
 
-				{/* Номер будинку */}
 				<div className="form-group">
-					<label htmlFor="create-houseNumber">Номер будинку</label>
+					<label htmlFor="create-houseNumber">{t('accommodationForm.houseNumber')}</label>
 					<input id="create-houseNumber" {...register('houseNumber')} />
 				</div>
 
-				{/* Квартира */}
 				<div className="form-group">
-					<label htmlFor="create-apartment">Квартира / офіс</label>
+					<label htmlFor="create-apartment">{t('accommodationForm.apartment')}</label>
 					<input id="create-apartment" {...register('apartment')} />
 				</div>
 
-				{/* Розмір */}
 				<div className="form-group">
-					<label htmlFor="create-size">Кількість спален (наприклад, 1)</label>
+					<label htmlFor="create-size">{t('accommodationForm.bedroomCount')}</label>
 					<input id="create-size" {...register('size')} />
 				</div>
 
-				{/* Карта */}
 				<div className="form-group">
-					<span>Виберіть розташування на карті</span>
+					<span>{t('accommodationForm.selectLocation')}</span>
 					<div style={{ height: 300, width: '100%', marginBottom: '1rem' }}>
 						<MapContainer
 							center={[50.45, 30.52]}
@@ -226,32 +219,27 @@ const CreateAccommodation = () => {
 						</MapContainer>
 					</div>
 					{hasPoint && (
-						<p>
-							📍 Обрані координати: {lat}, {lng}
-						</p>
+						<p>{t('common.selectedCoordinates', { lat: String(lat), lng: String(lng) })}</p>
 					)}
 				</div>
 
-				{/* Зручності */}
 				<div className="form-group">
-					<label htmlFor="create-amenities">Зручності (через кому)</label>
+					<label htmlFor="create-amenities">{t('accommodationForm.amenitiesLabel')}</label>
 					<input
 						id="create-amenities"
-						placeholder="Wi-Fi, кухня, кондиціонер…"
+						placeholder={t('accommodationForm.amenitiesPlaceholder')}
 						{...register('amenities')}
 					/>
 				</div>
 
-				{/* Ціна */}
 				<div className="form-group">
-					<label htmlFor="create-dailyRate">Ціна за добу</label>
+					<label htmlFor="create-dailyRate">{t('accommodationForm.dailyRate')}</label>
 					<input type="number" id="create-dailyRate" min="1" step="1" {...register('dailyRate')} />
 					{errors.dailyRate && <span className="form-error">{errors.dailyRate.message}</span>}
 				</div>
 
-				{/* Зображення */}
 				<div className="form-group">
-					<label htmlFor="create-image">URL зображення</label>
+					<label htmlFor="create-image">{t('accommodationForm.imageUrl')}</label>
 					<input
 						id="create-image"
 						placeholder="https://example.com/image.jpg"
@@ -260,7 +248,7 @@ const CreateAccommodation = () => {
 				</div>
 
 				<button type="submit" className="btn-primary" disabled={loading}>
-					{loading ? 'Створення...' : 'Створити'}
+					{loading ? t('common.creating') : t('common.create')}
 				</button>
 			</form>
 		</div>

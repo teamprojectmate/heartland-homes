@@ -1,7 +1,9 @@
+import { useTranslation } from 'react-i18next';
 import { normalizeBooking } from '../utils/normalizeBooking';
 import StatusBadge from './status/StatusBadge';
 
 const BookingStatusBlock = ({ booking }) => {
+	const { t } = useTranslation();
 	const enrichedBooking = normalizeBooking(booking);
 
 	if (!enrichedBooking) return null;
@@ -9,11 +11,12 @@ const BookingStatusBlock = ({ booking }) => {
 	return (
 		<div className="booking-status-block">
 			<p>
-				<strong>Статус бронювання:</strong> <StatusBadge status={enrichedBooking.status} />
+				<strong>{t('booking.bookingStatus')}:</strong>{' '}
+				<StatusBadge status={enrichedBooking.status} />
 			</p>
 
 			<p>
-				<strong>Оплата:</strong>{' '}
+				<strong>{t('booking.payment')}:</strong>{' '}
 				{enrichedBooking.payment?.status ? (
 					<StatusBadge status={enrichedBooking.payment.status} />
 				) : (

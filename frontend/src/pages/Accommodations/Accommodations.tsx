@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import BaseMap from '../../components/BaseMap';
 import Notification from '../../components/Notification';
@@ -20,6 +21,7 @@ import '../../styles/components/accommodation/_accommodations-map.scss';
 import '../../styles/components/accommodation/_accommodations-list.scss';
 
 const Accommodations = () => {
+	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 	const location = useLocation();
@@ -82,7 +84,7 @@ const Accommodations = () => {
 			<div className="accommodations-list-wrapper">
 				<div className="container mt-4">
 					<h2 ref={accommodationListRef} className="section-heading mt-5">
-						Доступні помешкання
+						{t('accommodations.title')}
 					</h2>
 					<AccommodationFilters
 						city={filters.city || ''}
@@ -96,7 +98,7 @@ const Accommodations = () => {
 					{error && <Notification message={error} type="danger" />}
 
 					{loading ? (
-						<p className="text-center">Завантаження...</p>
+						<p className="text-center">{t('common.loading')}</p>
 					) : items.length > 0 ? (
 						<>
 							<AccommodationList accommodations={items} onCardHover={handleCardHover} />
@@ -107,7 +109,7 @@ const Accommodations = () => {
 							/>
 						</>
 					) : (
-						!error && <p className="text-center">Помешкань не знайдено</p>
+						!error && <p className="text-center">{t('accommodations.notFound')}</p>
 					)}
 				</div>
 			</div>
@@ -120,7 +122,7 @@ const Accommodations = () => {
 						<div style={{ width: '150px' }}>
 							<img
 								src={acc.image ? getSafeImageUrl(acc.image) : '/no-image.png'}
-								alt={acc.name || 'Помешкання'}
+								alt={acc.name || t('accommodations.accommodation')}
 								style={{
 									width: '100%',
 									borderRadius: '6px',

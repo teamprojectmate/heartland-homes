@@ -1,12 +1,12 @@
 import L from 'leaflet';
 import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 import setupLeaflet from '../utils/leafletConfig';
 import 'leaflet/dist/leaflet.css';
 
 setupLeaflet();
 
-//  завжди створюємо іконки
 const defaultIcon = new L.Icon({
 	iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
 	iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
@@ -45,9 +45,9 @@ type BaseMapProps = {
 };
 
 const BaseMap = ({ items = [], highlightedId = null, renderPopup }: BaseMapProps) => {
+	const { t } = useTranslation();
 	const mapRef = useRef(null);
 
-	//  підганяємо карту під маркери
 	useEffect(() => {
 		if (mapRef.current && items.length > 0) {
 			const bounds = items
@@ -73,14 +73,14 @@ const BaseMap = ({ items = [], highlightedId = null, renderPopup }: BaseMapProps
 					borderRadius: '8px',
 				}}
 			>
-				<p style={{ color: '#6b7280' }}>Немає доступних даних для карти</p>
+				<p style={{ color: '#6b7280' }}>{t('common.noDataForMap')}</p>
 			</div>
 		);
 	}
 
 	const defaultPosition: [number, number] = [
 		items[0]?.latitude || 49.0,
-		items[0]?.longitude || 31.0, // центр України
+		items[0]?.longitude || 31.0,
 	];
 
 	return (

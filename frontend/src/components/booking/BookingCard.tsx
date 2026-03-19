@@ -1,4 +1,5 @@
 import { TrashIcon } from '@heroicons/react/24/solid';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { fixDropboxUrl } from '../../utils/fixDropboxUrl';
 import BookingStatusBlock from '../BookingStatusBlock';
@@ -25,6 +26,7 @@ const BookingCard = ({
 	onDelete,
 	showAdminControls = false,
 }: BookingCardProps) => {
+	const { t } = useTranslation();
 	const imageUrl = booking.accommodation?.image
 		? fixDropboxUrl(booking.accommodation.image)
 		: fallbackImage;
@@ -33,11 +35,10 @@ const BookingCard = ({
 
 	return (
 		<div className="booking-card">
-			{/* Фото */}
 			<div className="booking-card-image-wrapper">
 				<img
 					src={imageUrl}
-					alt={booking.accommodation?.name || 'Зображення помешкання'}
+					alt={booking.accommodation?.name || t('accommodations.imageAlt')}
 					className="booking-card-image"
 					onError={(e) => {
 						const target = e.target as HTMLImageElement;
@@ -47,49 +48,51 @@ const BookingCard = ({
 				/>
 			</div>
 
-			{/* Контент */}
 			<div className="booking-card-content">
 				<div className="booking-card-header">
-					<h4 className="booking-card-title">{booking.accommodation?.name || 'Без назви'}</h4>
-					<p className="booking-card-location">{booking.accommodation?.city || 'Невідоме місто'}</p>
+					<h4 className="booking-card-title">
+						{booking.accommodation?.name || t('accommodations.noName')}
+					</h4>
+					<p className="booking-card-location">
+						{booking.accommodation?.city || t('booking.unknownCity')}
+					</p>
 				</div>
 
 				<div className="booking-card-info">
 					<p>
-						<strong>Дата заїзду:</strong> {booking.checkInDate}
+						<strong>{t('booking.checkInDate')}:</strong> {booking.checkInDate}
 					</p>
 					<p>
-						<strong>Дата виїзду:</strong> {booking.checkOutDate}
+						<strong>{t('booking.checkOutDate')}:</strong> {booking.checkOutDate}
 					</p>
 
-					{/* 🔹 Статуси */}
 					<BookingStatusBlock booking={booking} />
 
 					{showAdminControls && booking.user && (
 						<p>
-							<strong>Користувач:</strong> {booking.user.firstName} {booking.user.lastName} (
-							{booking.user.email})
+							<strong>{t('booking.user')}:</strong> {booking.user.firstName} {booking.user.lastName}{' '}
+							({booking.user.email})
 						</p>
 					)}
 				</div>
 
-				{/* Ціна */}
 				{booking.totalPrice && (
 					<p className="booking-card-price">
-						<strong>{booking.totalPrice} грн</strong>
+						<strong>
+							{booking.totalPrice} {t('common.currency')}
+						</strong>
 					</p>
 				)}
 
-				{/* Кнопки */}
 				<div className="booking-card-actions">
 					{!showAdminControls && (
 						<>
 							<Link to={`/my-bookings/${booking.id}`} className="btn btn-primary">
-								Деталі
+								{t('common.details')}
 							</Link>
 							{booking.status === 'PENDING' && !isPaid && (
 								<button type="button" className="btn btn-warning" onClick={() => onPay(booking.id)}>
-									Оплатити
+									{t('booking.pay')}
 								</button>
 							)}
 							{!isPaid && booking.status !== 'CANCELED' && (
@@ -98,7 +101,7 @@ const BookingCard = ({
 									className="btn btn-danger"
 									onClick={() => onCancel(booking.id)}
 								>
-									Скасувати
+									{t('booking.cancelBooking')}
 								</button>
 							)}
 						</>
@@ -114,7 +117,7 @@ const BookingCard = ({
 								type="button"
 								className="btn-icon btn-danger"
 								onClick={() => onDelete(booking.id)}
-								title="Видалити бронювання"
+								title={t('admin.deleteBooking')}
 							>
 								<TrashIcon className="w-5 h-5 text-white" />
 							</button>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { getAccommodationById } from '../../api/accommodations/accommodationService';
 import { fetchBookingById } from '../../api/bookings/bookingsService';
@@ -8,6 +9,7 @@ import { createPayment } from '../../store/slices/paymentsSlice';
 import '../../styles/components/payment/_payment-checkout.scss';
 
 const Payment = () => {
+	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const { bookingId } = useParams();
 
@@ -16,7 +18,6 @@ const Payment = () => {
 	const [booking, setBooking] = useState(null);
 	const [loading, setLoading] = useState(true);
 
-	// завантаження бронювання + помешкання
 	useEffect(() => {
 		const loadBooking = async () => {
 			try {
@@ -26,21 +27,19 @@ const Payment = () => {
 				try {
 					accommodation = await getAccommodationById(data.accommodationId);
 				} catch (err) {
-					console.warn('⚠️ Не вдалося отримати помешкання', err);
+					console.warn('Could not load accommodation', err);
 				}
 
-				// 🔹 розрахунок кількості ночей
 				const checkIn = new Date(data.checkInDate);
 				const checkOut = new Date(data.checkOutDate);
 				const nights = Math.ceil((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24));
 
-				// 🔹 якщо totalPrice немає в API → рахуємо самі
 				const calculatedPrice =
 					data.totalPrice || (accommodation?.dailyRate ? accommodation.dailyRate * nights : 0);
 
 				setBooking({ ...data, accommodation, totalPrice: calculatedPrice });
 			} catch (err) {
-				console.error('❌ Помилка завантаження бронювання', err);
+				console.error('Error loading booking', err);
 			} finally {
 				setLoading(false);
 			}
@@ -58,36 +57,32 @@ const Payment = () => {
 		}
 	}, [payment]);
 
-	if (loading) return <p className="text-center">Завантаження...</p>;
+	if (loading) return <p className="text-center">{t('common.loading')}</p>;
 
 	return (
 		<div className="payment-page">
 			<div className="payment-card payment-checkout">
-				<h2 className="payment-title">💳 Оплата бронювання</h2>
-				<p className="payment-subtitle">
-					🔒 Захищена оплата через банківську систему. Перевірте дані перед підтвердженням.
-				</p>
+				<h2 className="payment-title">{t('payment.title')}</h2>
+				<p className="payment-subtitle">{t('payment.subtitle')}</p>
 
 				{error && <Notification type="danger" message={error} />}
 
-				{/* Інформація */}
 				<div className="payment-info">
 					<p>
-						<strong>Помешкання:</strong> {booking?.accommodation?.name || '—'},{' '}
+						<strong>{t('payment.accommodation')}:</strong> {booking?.accommodation?.name || '—'},{' '}
 						{booking?.accommodation?.city || '—'}
 					</p>
 					<p>
-						<strong>Адреса:</strong> {booking?.accommodation?.location || '—'}
+						<strong>{t('payment.address')}:</strong> {booking?.accommodation?.location || '—'}
 					</p>
 					<p>
-						<strong>Дати:</strong> {booking?.checkInDate} → {booking?.checkOutDate}
+						<strong>{t('payment.dates')}:</strong> {booking?.checkInDate} → {booking?.checkOutDate}
 					</p>
 					<p className="payment-amount">
 						<span className="icon">💰</span> {booking?.totalPrice || '—'} ₴
 					</p>
 				</div>
 
-				{/* Кнопка */}
 				<button
 					type="button"
 					className="payment-button"
@@ -95,10 +90,9 @@ const Payment = () => {
 					disabled={createStatus === 'loading'}
 				>
 					<span className="icon">💳</span>{' '}
-					{createStatus === 'loading' ? 'Обробка...' : 'Оплатити зараз'}
+					{createStatus === 'loading' ? t('common.processing') : t('payment.payNow')}
 				</button>
 
-				{/* Лого платіжних систем */}
 				<div className="payment-systems">
 					<span className="powered">Powered by</span>
 					<img src="/assets/stripe.svg" alt="Stripe" className="system-logo stripe" />

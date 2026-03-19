@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import L from 'leaflet';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -108,6 +109,7 @@ const normalizeStreetOnly = (raw, city, _region) => {
 };
 
 const EditMyAccommodation = () => {
+	const { t } = useTranslation();
 	const { id } = useParams();
 	const navigate = useNavigate();
 
@@ -163,7 +165,7 @@ const EditMyAccommodation = () => {
 				});
 				setDataLoaded(true);
 			})
-			.catch(() => setError('Не вдалося завантажити помешкання'));
+			.catch(() => setError(t('accommodations.errorLoading')));
 	}, [id, reset]);
 
 	const setCoordinates = ({ latitude, longitude }: { latitude: string; longitude: string }) => {
@@ -213,13 +215,13 @@ const EditMyAccommodation = () => {
 		} catch (err: unknown) {
 			const message = (err as { response?: { data?: { message?: string } } })?.response?.data
 				?.message;
-			setError(message || 'Помилка при оновленні');
+			setError(message || t('accommodations.errorUpdating'));
 		} finally {
 			setLoading(false);
 		}
 	};
 
-	if (!dataLoaded && !error) return <p>Завантаження...</p>;
+	if (!dataLoaded && !error) return <p>{t('common.loading')}</p>;
 
 	const latValue = watch('latitude');
 	const lngValue = watch('longitude');
@@ -231,32 +233,29 @@ const EditMyAccommodation = () => {
 	return (
 		<div className="container page">
 			<form onSubmit={handleSubmit(onSubmit)} className="admin-form">
-				<h1>✨ ✏️ Редагувати моє помешкання</h1>
+				<h1>{t('accommodations.editTitle')}</h1>
 				{error && <Notification message={error} type="danger" />}
 
-				{/* Назва */}
 				<div className="form-group">
-					<label htmlFor="edit-name">Назва</label>
+					<label htmlFor="edit-name">{t('accommodationForm.name')}</label>
 					<input type="text" id="edit-name" {...register('name')} />
 					{errors.name && <span className="form-error">{errors.name.message}</span>}
 				</div>
 
-				{/* Тип */}
 				<div className="form-group">
-					<label htmlFor="edit-type">Тип</label>
+					<label htmlFor="edit-type">{t('accommodationForm.type')}</label>
 					<select id="edit-type" {...register('type')}>
-						<option value="HOUSE">Будинок</option>
-						<option value="APARTMENT">Квартира</option>
-						<option value="HOTEL">Готель</option>
-						<option value="VACATION_HOME">Дім для відпочинку</option>
-						<option value="HOSTEL">Хостел</option>
+						<option value="HOUSE">{t('accommodationType.house')}</option>
+						<option value="APARTMENT">{t('accommodationType.apartment')}</option>
+						<option value="HOTEL">{t('accommodationType.hotel')}</option>
+						<option value="VACATION_HOME">{t('accommodationType.vacationHome')}</option>
+						<option value="HOSTEL">{t('accommodationType.hostel')}</option>
 					</select>
 					{errors.type && <span className="form-error">{errors.type.message}</span>}
 				</div>
 
-				{/* Область */}
 				<div className="form-group">
-					<label htmlFor="edit-region">Область</label>
+					<label htmlFor="edit-region">{t('accommodationForm.region')}</label>
 					<input
 						type="text"
 						id="edit-region"
@@ -266,9 +265,8 @@ const EditMyAccommodation = () => {
 					/>
 				</div>
 
-				{/* Місто */}
 				<div className="form-group">
-					<label htmlFor="edit-city">Місто</label>
+					<label htmlFor="edit-city">{t('accommodationForm.city')}</label>
 					<input
 						type="text"
 						id="edit-city"
@@ -279,9 +277,8 @@ const EditMyAccommodation = () => {
 					{errors.city && <span className="form-error">{errors.city.message}</span>}
 				</div>
 
-				{/* Локація (вулиця/будинок/кв.) */}
 				<div className="form-group">
-					<label htmlFor="edit-location">Локація</label>
+					<label htmlFor="edit-location">{t('accommodationForm.locationLabel')}</label>
 					<input
 						type="text"
 						id="edit-location"
@@ -291,15 +288,13 @@ const EditMyAccommodation = () => {
 					/>
 				</div>
 
-				{/* Кількість спалень / розмір */}
 				<div className="form-group">
-					<label htmlFor="edit-size">Кількість спален (наприклад, 1)</label>
+					<label htmlFor="edit-size">{t('accommodationForm.bedroomCount')}</label>
 					<input type="text" id="edit-size" {...register('size')} />
 				</div>
 
-				{/* Карта */}
 				<div className="form-group">
-					<span>Виберіть розташування на карті</span>
+					<span>{t('accommodationForm.selectLocation')}</span>
 					<div style={{ height: '300px', width: '100%', marginBottom: '1rem' }}>
 						<MapContainer
 							center={[hasPoint ? lat : 50.45, hasPoint ? lng : 30.52]}
@@ -315,28 +310,23 @@ const EditMyAccommodation = () => {
 						</MapContainer>
 					</div>
 					{hasPoint && (
-						<p>
-							📍 Обрані координати: {lat}, {lng}
-						</p>
+						<p>{t('common.selectedCoordinates', { lat: String(lat), lng: String(lng) })}</p>
 					)}
 				</div>
 
-				{/* Зручності */}
 				<div className="form-group">
-					<label htmlFor="edit-amenities">Зручності (через кому)</label>
+					<label htmlFor="edit-amenities">{t('accommodationForm.amenitiesLabel')}</label>
 					<input type="text" id="edit-amenities" {...register('amenities')} />
 				</div>
 
-				{/* Ціна за добу */}
 				<div className="form-group">
-					<label htmlFor="edit-dailyRate">Ціна за добу</label>
+					<label htmlFor="edit-dailyRate">{t('accommodationForm.dailyRate')}</label>
 					<input type="number" min="1" step="1" id="edit-dailyRate" {...register('dailyRate')} />
 					{errors.dailyRate && <span className="form-error">{errors.dailyRate.message}</span>}
 				</div>
 
-				{/* URL зображення */}
 				<div className="form-group">
-					<label htmlFor="edit-image">URL зображення</label>
+					<label htmlFor="edit-image">{t('accommodationForm.imageUrl')}</label>
 					<input
 						type="text"
 						id="edit-image"
@@ -346,7 +336,7 @@ const EditMyAccommodation = () => {
 				</div>
 
 				<button type="submit" className="btn-primary" disabled={loading}>
-					{loading ? 'Оновлення...' : 'Оновити'}
+					{loading ? t('common.updating') : t('common.update')}
 				</button>
 			</form>
 		</div>

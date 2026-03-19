@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FaTrash } from 'react-icons/fa';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { getAccommodationById } from '../api/accommodations/accommodationService';
@@ -16,6 +17,7 @@ import '../styles/components/booking/_booking-details.scss';
 const fallbackImage = '/no-image.png';
 
 const BookingDetails = () => {
+	const { t } = useTranslation();
 	const { id } = useParams<{ id: string }>();
 	const navigate = useNavigate();
 	const dispatch = useAppDispatch();
@@ -27,13 +29,12 @@ const BookingDetails = () => {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 
-	// завантаження бронювання
 	useEffect(() => {
 		const fetchBooking = async () => {
 			try {
 				const bookingData = await fetchBookingById(id);
 				if (!bookingData) {
-					setError('Бронювання не знайдено.');
+					setError(t('booking.notFoundError'));
 					setLoading(false);
 					return;
 				}
@@ -42,29 +43,27 @@ const BookingDetails = () => {
 				try {
 					accommodation = await getAccommodationById(bookingData.accommodationId);
 				} catch (err) {
-					console.warn('⚠️ Не вдалося отримати помешкання:', err);
+					console.warn('Could not load accommodation:', err);
 				}
 
 				setBooking({ ...bookingData, accommodation });
 			} catch (err) {
-				console.error('❌ Помилка завантаження бронювання:', err);
-				setError('Не вдалося завантажити деталі бронювання.');
+				console.error('Error loading booking:', err);
+				setError(t('booking.loadError'));
 			} finally {
 				setLoading(false);
 			}
 		};
 
 		fetchBooking();
-	}, [id]);
+	}, [id, t]);
 
-	// завантаження платежів користувача
 	useEffect(() => {
 		if (user?.id) {
 			dispatch(fetchPaymentsByUser({ userId: user.id, pageable: { page: 0, size: 50 } }));
 		}
 	}, [user, dispatch]);
 
-	// об’єднання бронювання з оплатою
 	const enrichedBooking = useMemo(() => {
 		if (!booking) return null;
 		const payment = payments.find((p) => p.bookingId === booking.id);
@@ -86,7 +85,6 @@ const BookingDetails = () => {
 		? mapStatus(enrichedBooking.status)
 		: { label: '—', color: '#ccc' };
 
-	// розрахунок ціни
 	const checkIn = enrichedBooking ? new Date(enrichedBooking.checkInDate) : null;
 	const checkOut = enrichedBooking ? new Date(enrichedBooking.checkOutDate) : null;
 	const nights =
@@ -99,25 +97,25 @@ const BookingDetails = () => {
 			: null);
 
 	const handleCancel = async () => {
-		if (window.confirm('Ви впевнені, що хочете скасувати бронювання?')) {
+		if (window.confirm(t('booking.cancelConfirm'))) {
 			try {
 				await cancelBooking(Number(id));
 				setBooking((prev) => ({ ...prev, status: 'CANCELED' }));
 			} catch (err) {
-				console.error('❌ Помилка скасування бронювання:', err);
-				setError('Не вдалося скасувати бронювання.');
+				console.error('Error cancelling booking:', err);
+				setError(t('booking.cancelError'));
 			}
 		}
 	};
 
 	const handleDelete = async () => {
-		if (window.confirm('Ви впевнені, що хочете видалити бронювання?')) {
+		if (window.confirm(t('booking.deleteConfirm'))) {
 			try {
 				await dispatch(deleteBooking(Number(id))).unwrap();
 				navigate('/my-bookings');
 			} catch (err) {
-				console.error('❌ Помилка видалення бронювання:', err);
-				setError('Не вдалося видалити бронювання.');
+				console.error('Error deleting booking:', err);
+				setError(t('booking.deleteError'));
 			}
 		}
 	};
@@ -135,20 +133,21 @@ const BookingDetails = () => {
 		});
 	};
 
-	if (loading) return <p className="text-center">Завантаження...</p>;
+	if (loading) return <p className="text-center">{t('common.loading')}</p>;
 	if (error) return <Notification message={error} type="danger" />;
-	if (!enrichedBooking) return <p className="text-center">Бронювання не знайдено</p>;
+	if (!enrichedBooking) return <p className="text-center">{t('booking.notFoundError')}</p>;
 
 	return (
 		<div className="container booking-details-page">
-			<h1 className="section-heading">Деталі бронювання</h1>
+			<h1 className="section-heading">{t('booking.detailsTitle')}</h1>
 
 			<div className="details-grid">
-				{/* Ліва частина */}
 				<div className="booking-info-card">
-					<img src={imageUrl} alt="Помешкання" className="booking-image" />
+					<img src={imageUrl} alt={t('accommodations.accommodation')} className="booking-image" />
 					<div className="booking-info-header">
-						<h3 className="card-title">{enrichedBooking.accommodation?.name || 'Помешкання'}</h3>
+						<h3 className="card-title">
+							{enrichedBooking.accommodation?.name || t('accommodations.accommodation')}
+						</h3>
 						<p className="card-subtitle">
 							{enrichedBooking.accommodation?.city || '—'},{' '}
 							{enrichedBooking.accommodation?.location || '—'}
@@ -157,29 +156,31 @@ const BookingDetails = () => {
 
 					<div className="booking-details-content">
 						<p>
-							<strong>Дата заїзду:</strong> {enrichedBooking.checkInDate}
+							<strong>{t('booking.checkInDate')}:</strong> {enrichedBooking.checkInDate}
 						</p>
 						<p>
-							<strong>Дата виїзду:</strong> {enrichedBooking.checkOutDate}
+							<strong>{t('booking.checkOutDate')}:</strong> {enrichedBooking.checkOutDate}
 						</p>
 						<p>
-							<strong>Статус:</strong>{' '}
+							<strong>{t('booking.status')}:</strong>{' '}
 							<span className="badge" style={{ backgroundColor: statusColor }}>
 								{statusLabel}
 							</span>
 						</p>
 						<p>
-							<strong>Оплата:</strong>{' '}
+							<strong>{t('booking.payment')}:</strong>{' '}
 							{isPaid ? (
-								<span className="badge badge-success">Оплачено</span>
+								<span className="badge badge-success">{t('booking.paid')}</span>
 							) : (
-								<span className="badge badge-warning">Не оплачено</span>
+								<span className="badge badge-warning">{t('booking.unpaid')}</span>
 							)}
 						</p>
 						<p className="total-price">
-							<strong>Загальна ціна:</strong>{' '}
+							<strong>{t('booking.totalPrice')}:</strong>{' '}
 							{totalPrice ? (
-								<span className="price">{totalPrice} грн</span>
+								<span className="price">
+									{totalPrice} {t('common.currency')}
+								</span>
 							) : (
 								<span className="text-muted">—</span>
 							)}
@@ -187,31 +188,30 @@ const BookingDetails = () => {
 					</div>
 				</div>
 
-				{/* Права частина */}
 				<div className="actions-card">
 					<div className="booking-price">
 						<span className="price">{totalPrice || '—'}</span>
-						<span className="currency">грн</span>
+						<span className="currency">{t('common.currency')}</span>
 					</div>
 
 					{!isPaid && enrichedBooking.status === 'PENDING' && (
 						<button type="button" className="btn btn-success" onClick={handlePay}>
-							Оплатити
+							{t('booking.pay')}
 						</button>
 					)}
 					{!isPaid && enrichedBooking.status !== 'CANCELED' && (
 						<button type="button" className="btn btn-danger" onClick={handleCancel}>
-							Скасувати
+							{t('booking.cancelBooking')}
 						</button>
 					)}
 					{enrichedBooking.status === 'CANCELED' && (
 						<button type="button" className="btn btn-secondary" onClick={handleDelete}>
-							Видалити <FaTrash />
+							{t('booking.deleteBooking')} <FaTrash />
 						</button>
 					)}
 
 					<Link to="/my-bookings" className="btn btn-secondary">
-						Повернутися до списку
+						{t('booking.backToList')}
 					</Link>
 				</div>
 			</div>

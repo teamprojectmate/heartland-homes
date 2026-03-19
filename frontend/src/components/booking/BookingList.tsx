@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import Notification from '../Notification';
 import Pagination from '../Pagination';
 import BookingCard from './BookingCard';
@@ -28,10 +29,12 @@ const BookingList = ({
 	onPageChange,
 	error,
 }: BookingListProps) => {
+	const { t } = useTranslation();
+
 	if (error) return <Notification message={error} type="danger" />;
 
 	if (!bookings || bookings.length === 0) {
-		return <p className="text-center mt-5">Бронювань поки що немає.</p>;
+		return <p className="text-center mt-5">{t('booking.noBookingsYet')}</p>;
 	}
 
 	return (
