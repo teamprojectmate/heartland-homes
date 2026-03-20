@@ -1,8 +1,8 @@
 #!/bin/sh
 set -e
 
-cd frontend
+echo "⚙ frontend checks…"
+cd frontend && npx lint-staged && npm run type-check && cd ..
 
-echo "⚙ biome + type-check (staged/global)…"
-npx lint-staged
-npm run type-check
+echo "⚙ backend checks…"
+cd backend-nest && npx lint-staged && npm run type-check && cd ..

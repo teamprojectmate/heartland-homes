@@ -1,9 +1,8 @@
 #!/bin/sh
 set -e
 
-cd frontend
+echo "⚙ frontend checks…"
+cd frontend && npm run type-check && npm run biome:check && npm run build && cd ..
 
-echo "⚙ running checks before push…"
-npm run type-check
-npm run biome:check
-npm run build
+echo "⚙ backend checks…"
+cd backend-nest && npm run type-check && npm run biome:check && npm run build && npm run test && cd ..
