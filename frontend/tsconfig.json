@@ -20,11 +20,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
 
-    /* Paths */
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"]
-    }
   },
   "include": ["src", "vite-env.d.ts"],
   "exclude": ["node_modules", "src/**/*.test.ts", "src/**/*.test.tsx"]

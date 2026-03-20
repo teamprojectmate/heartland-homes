@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { createAccommodation } from '../../api/accommodations/accommodationService';
 import MapPicker from '../../components/MapPicker';
 import Notification from '../../components/Notification';
+import { useUnsavedChangesWarning } from '../../hooks/useUnsavedChangesWarning';
 import { getApiErrorMessage, parseAmenities } from '../../utils/accommodationPayload';
 import { buildLocation } from '../../utils/addressNormalization';
 import { type AccommodationFormData, accommodationSchema } from '../../validation/schemas';
@@ -19,7 +20,7 @@ const CreateAccommodation = () => {
 		handleSubmit,
 		setValue,
 		watch,
-		formState: { errors },
+		formState: { errors, isDirty },
 	} = useForm<AccommodationFormData>({
 		resolver: zodResolver(accommodationSchema),
 		defaultValues: {
@@ -41,6 +42,7 @@ const CreateAccommodation = () => {
 
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
+	useUnsavedChangesWarning(isDirty);
 
 	const handleMapSelect = ({ latitude, longitude }: { latitude: string; longitude: string }) => {
 		setValue('latitude', latitude);
@@ -176,7 +178,11 @@ const CreateAccommodation = () => {
 					/>
 				</div>
 
-				<button type="submit" className="btn-primary" disabled={loading}>
+				<button
+					type="submit"
+					className={`btn-primary ${loading ? 'btn-loading' : ''}`}
+					disabled={loading}
+				>
 					{loading ? t('common.creating') : t('common.create')}
 				</button>
 			</form>

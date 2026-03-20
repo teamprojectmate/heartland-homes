@@ -9,6 +9,7 @@ import {
 } from '../../api/accommodations/accommodationService';
 import MapPicker from '../../components/MapPicker';
 import Notification from '../../components/Notification';
+import { useUnsavedChangesWarning } from '../../hooks/useUnsavedChangesWarning';
 import { getApiErrorMessage, parseAmenities } from '../../utils/accommodationPayload';
 import {
 	buildLocation,
@@ -32,7 +33,7 @@ const EditMyAccommodation = () => {
 		setValue,
 		watch,
 		reset,
-		formState: { errors },
+		formState: { errors, isDirty },
 	} = useForm<EditMyAccommodationFormData>({
 		resolver: zodResolver(editMyAccommodationSchema),
 		defaultValues: {
@@ -53,6 +54,7 @@ const EditMyAccommodation = () => {
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [dataLoaded, setDataLoaded] = useState(false);
+	useUnsavedChangesWarning(isDirty);
 
 	useEffect(() => {
 		if (!id) return;
@@ -229,7 +231,11 @@ const EditMyAccommodation = () => {
 					/>
 				</div>
 
-				<button type="submit" className="btn-primary" disabled={loading}>
+				<button
+					type="submit"
+					className={`btn-primary ${loading ? 'btn-loading' : ''}`}
+					disabled={loading}
+				>
 					{loading ? t('common.updating') : t('common.update')}
 				</button>
 			</form>
