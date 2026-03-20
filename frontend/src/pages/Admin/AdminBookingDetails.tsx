@@ -131,7 +131,7 @@ const AdminBookings = () => {
 					}
 
 					const user = usersMap[booking.userId as string];
-					return { ...booking, accommodation, user, totalPrice } as BookingRow;
+					return { ...booking, accommodation, user, totalPrice } as unknown as BookingRow;
 				}),
 			);
 			setEnrichedBookings(results);

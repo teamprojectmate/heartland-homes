@@ -8,6 +8,7 @@ import Pagination from '../../components/Pagination';
 import { CardSkeleton } from '../../components/skeletons';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { fetchPaymentsByUser } from '../../store/slices/paymentsSlice';
+import type { Payment } from '../../types';
 import '../../styles/components/payment/_payments-list.scss';
 
 const PaymentsList = () => {
@@ -36,16 +37,17 @@ const PaymentsList = () => {
 		const loadPayments = async () => {
 			if (isAuthenticated && user?.id) {
 				const action = await dispatch(fetchPaymentsByUser({ userId: user.id, pageable }));
-				const data = action.payload?.content || [];
+				const payload = action.payload as { content?: Payment[] } | undefined;
+				const data = payload?.content || [];
 
 				const enriched = await Promise.all(
-					data.map(async (p: Record<string, unknown>) => {
+					data.map(async (p) => {
 						try {
-							const booking = await fetchBookingById(p.bookingId as number);
+							const booking = await fetchBookingById(p.bookingId);
 							const accommodation = await getAccommodationById(booking.accommodationId);
-							return { ...p, booking, accommodation };
+							return { ...p, booking, accommodation } as unknown as EnrichedPayment;
 						} catch {
-							return p;
+							return p as unknown as EnrichedPayment;
 						}
 					}),
 				);

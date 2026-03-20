@@ -1,3 +1,4 @@
+import type { Accommodation, PaginatedResponse } from '../../types';
 import api from '../axios';
 
 const pick = (obj: Record<string, unknown>, keys: string[]) =>
@@ -16,7 +17,9 @@ const ALLOWED_KEYS = [
 	'image',
 ];
 
-export const fetchAccommodations = async (params: Record<string, unknown> = {}) => {
+export const fetchAccommodations = async (
+	params: Record<string, unknown> = {},
+): Promise<PaginatedResponse<Accommodation>> => {
 	const cleanedParams = Object.fromEntries(
 		Object.entries(params).filter(
 			([, value]) =>
@@ -25,50 +28,70 @@ export const fetchAccommodations = async (params: Record<string, unknown> = {}) 
 				!(typeof value === 'object' && Object.keys(value as object).length === 0),
 		),
 	);
-	const response = await api.get('/accommodations/search', { params: cleanedParams });
+	const response = await api.get<PaginatedResponse<Accommodation>>('/accommodations/search', {
+		params: cleanedParams,
+	});
 	return response.data;
 };
 
-export const getAccommodationById = async (id: number | string) => {
-	const response = await api.get(`/accommodations/${id}`);
+export const getAccommodationById = async (id: number | string): Promise<Accommodation> => {
+	const response = await api.get<Accommodation>(`/accommodations/${id}`);
 	return response.data;
 };
 
-export const createAccommodation = async (data: Record<string, unknown>) => {
+export const createAccommodation = async (
+	data: Record<string, unknown>,
+): Promise<Accommodation> => {
 	const clean = pick(data, ALLOWED_KEYS);
-	const response = await api.post('/accommodations', clean);
+	const response = await api.post<Accommodation>('/accommodations', clean);
 	return response.data;
 };
 
-export const updateAccommodation = async (id: number | string, data: Record<string, unknown>) => {
+export const updateAccommodation = async (
+	id: number | string,
+	data: Record<string, unknown>,
+): Promise<Accommodation> => {
 	const clean = pick(data, ALLOWED_KEYS);
-	const response = await api.put(`/accommodations/${id}`, clean);
+	const response = await api.put<Accommodation>(`/accommodations/${id}`, clean);
 	return response.data;
 };
 
 export const updateMyAccommodation = async (
 	id: number | string,
 	formData: Record<string, unknown>,
-) => {
-	return api.put(`/accommodations/${id}`, formData);
-};
-
-export const fetchAdminAccommodations = async (page = 0, size = 10) => {
-	const response = await api.get('/accommodations', { params: { page, size } });
+): Promise<Accommodation> => {
+	const response = await api.put<Accommodation>(`/accommodations/${id}`, formData);
 	return response.data;
 };
 
-export const fetchMyAccommodations = async (page = 0, size = 10) => {
-	const response = await api.get('/accommodations/me', { params: { page, size } });
+export const fetchAdminAccommodations = async (
+	page = 0,
+	size = 10,
+): Promise<PaginatedResponse<Accommodation>> => {
+	const response = await api.get<PaginatedResponse<Accommodation>>('/accommodations', {
+		params: { page, size },
+	});
 	return response.data;
 };
 
-export const deleteAccommodation = async (id: number) => {
-	const response = await api.delete(`/accommodations/${id}`);
+export const fetchMyAccommodations = async (
+	page = 0,
+	size = 10,
+): Promise<PaginatedResponse<Accommodation>> => {
+	const response = await api.get<PaginatedResponse<Accommodation>>('/accommodations/me', {
+		params: { page, size },
+	});
 	return response.data;
 };
 
-export const updateAccommodationStatus = async (id: number, status: string) => {
-	const response = await api.patch(`/accommodations/${id}/status`, { status });
+export const deleteAccommodation = async (id: number): Promise<void> => {
+	await api.delete(`/accommodations/${id}`);
+};
+
+export const updateAccommodationStatus = async (
+	id: number,
+	status: string,
+): Promise<Accommodation> => {
+	const response = await api.patch<Accommodation>(`/accommodations/${id}/status`, { status });
 	return response.data;
 };

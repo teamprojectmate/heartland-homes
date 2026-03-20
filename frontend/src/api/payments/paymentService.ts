@@ -1,28 +1,34 @@
+import type { PaginatedResponse, Payment } from '../../types';
 import api from '../axios';
 
-//  Створити платіж
-export const createPayment = async (bookingId: number, paymentType = 'PAYMENT') => {
-	const response = await api.post('/payments', { bookingId, paymentType });
+export const createPayment = async (
+	bookingId: number,
+	paymentType = 'PAYMENT',
+): Promise<Payment> => {
+	const response = await api.post<Payment>('/payments', { bookingId, paymentType });
 	return response.data;
 };
 
-// Отримати платежі користувача
-export const fetchPaymentsByUser = async (userId: number, pageable: Record<string, unknown>) => {
-	const response = await api.get(`/payments`, {
+export const fetchPaymentsByUser = async (
+	userId: number,
+	pageable: Record<string, unknown>,
+): Promise<PaginatedResponse<Payment>> => {
+	const response = await api.get<PaginatedResponse<Payment>>('/payments', {
 		params: { userId, ...pageable },
 	});
 	return response.data;
 };
 
-// Скасувати платіж (backend uses GET for this — REST anti-pattern, not fixable on FE side)
-export const cancelPayment = async (paymentId: number) => {
-	const response = await api.get(`/payments/cancel`, { params: { id: paymentId } });
+// Backend uses GET for cancel — REST anti-pattern, not fixable on FE side
+export const cancelPayment = async (paymentId: number): Promise<Payment> => {
+	const response = await api.get<Payment>('/payments/cancel', { params: { id: paymentId } });
 	return response.data;
 };
 
-// Отримати всі платежі (адмін)
-export const getAllPaymentsService = async (pageable: Record<string, unknown>) => {
-	const response = await api.get('/payments', { params: pageable });
+export const getAllPaymentsService = async (
+	pageable: Record<string, unknown>,
+): Promise<PaginatedResponse<Payment>> => {
+	const response = await api.get<PaginatedResponse<Payment>>('/payments', { params: pageable });
 	return response.data;
 };
 

@@ -152,7 +152,7 @@ const paymentsSlice = createSlice({
 			})
 			.addCase(fetchAllPayments.fulfilled, (state, action) => {
 				state.fetchStatus = 'succeeded';
-				state.payments = action.payload.content || action.payload || [];
+				state.payments = action.payload.content || [];
 				state.totalPages = action.payload.totalPages || 1;
 			})
 			.addCase(fetchAllPayments.rejected, (state, action) => {
