@@ -1,5 +1,6 @@
 import { TrashIcon } from '@heroicons/react/24/solid';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getAccommodationById } from '../../api/accommodations/accommodationService';
 import { getAllUsers } from '../../api/user/userService';
 import ErrorState from '../../components/ErrorState';
@@ -14,7 +15,6 @@ import {
 import { calcNights } from '../../utils/dateCalc';
 import AdminTable from '../Admin/AdminTable';
 
-// стилі
 import '../../styles/components/badges/_badges.scss';
 import '../../styles/components/admin/_admin-bookings.scss';
 import '../../styles/components/admin/_admin-tables.scss';
@@ -39,43 +39,42 @@ const AdminBookingCard = ({
 	onStatusChange: (booking: BookingRow, status: string) => void;
 	onDelete: (id: number) => void;
 }) => {
+	const { t } = useTranslation();
 	return (
 		<div className="admin-booking-card">
-			<h3 className="admin-booking-title">{booking.accommodation?.name || 'Без назви'}</h3>
+			<h3 className="admin-booking-title">{booking.accommodation?.name || t('common.noName')}</h3>
 			<p>
-				<strong>Користувач:</strong>{' '}
+				<strong>{t('admin.user')}:</strong>{' '}
 				{booking.user
 					? `${booking.user.firstName} ${booking.user.lastName} (${booking.user.email})`
 					: booking.userId || '—'}
 			</p>
 			<p>
-				<strong>Дати:</strong> {booking.checkInDate} — {booking.checkOutDate}
+				<strong>{t('admin.dates')}:</strong> {booking.checkInDate} — {booking.checkOutDate}
 			</p>
 			<p>
-				<strong>Ціна:</strong> {booking.totalPrice ? `${booking.totalPrice} грн` : '—'}
+				<strong>{t('admin.price')}:</strong>{' '}
+				{booking.totalPrice ? `${booking.totalPrice} ${t('common.currency')}` : '—'}
 			</p>
 			<p>
-				<strong>Статус:</strong>{' '}
+				<strong>{t('admin.status')}:</strong>{' '}
 				<span className={`badge badge-status ${booking.status.toLowerCase()}`}>
-					{booking.status === 'PENDING' && 'Очікує'}
-					{booking.status === 'CONFIRMED' && 'Підтверджено'}
-					{booking.status === 'CANCELED' && 'Скасовано'}
-					{booking.status === 'EXPIRED' && 'Прострочено'}
+					{t(`bookingStatus.${booking.status.toLowerCase()}`)}
 				</span>
 			</p>
 
 			<div className="card-actions">
 				<select value={booking.status} onChange={(e) => onStatusChange(booking, e.target.value)}>
-					<option value="PENDING">Очікує</option>
-					<option value="CONFIRMED">Підтверджено</option>
-					<option value="CANCELED">Скасовано</option>
-					<option value="EXPIRED">Прострочено</option>
+					<option value="PENDING">{t('bookingStatus.pending')}</option>
+					<option value="CONFIRMED">{t('bookingStatus.confirmed')}</option>
+					<option value="CANCELED">{t('bookingStatus.canceled')}</option>
+					<option value="EXPIRED">{t('bookingStatus.expired')}</option>
 				</select>
 				<button
 					type="button"
 					className="btn-icon btn-danger"
 					onClick={() => onDelete(booking.id)}
-					title="Видалити бронювання"
+					title={t('admin.deleteBooking')}
 				>
 					<TrashIcon className="w-4 h-4 text-white" />
 				</button>
@@ -85,6 +84,7 @@ const AdminBookingCard = ({
 };
 
 const AdminBookings = () => {
+	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const { bookings, status, error } = useAppSelector((state) => state.bookings);
 
@@ -92,7 +92,6 @@ const AdminBookings = () => {
 	const [enrichedBookings, setEnrichedBookings] = useState<BookingRow[]>([]);
 	const isMobile = useIsMobile();
 
-	//  завантаження бронювань та користувачів
 	useEffect(() => {
 		dispatch(fetchBookings());
 
@@ -109,7 +108,6 @@ const AdminBookings = () => {
 		});
 	}, [dispatch]);
 
-	//  enrichment житла та користувачів
 	useEffect(() => {
 		if (!bookings || bookings.length === 0) return;
 
@@ -151,12 +149,11 @@ const AdminBookings = () => {
 	if (status === 'loading') return <TableSkeleton rows={5} columns={7} />;
 	if (error) return <ErrorState message={error} />;
 
-	//  колонки для AdminTable
 	const columns = [
 		{ key: 'id', label: 'ID' },
 		{
 			key: 'user',
-			label: 'Користувач',
+			label: t('admin.user'),
 			render: (b: Record<string, unknown>) => {
 				const user = b.user as { firstName: string; lastName: string; email: string } | null;
 				return user
@@ -166,29 +163,30 @@ const AdminBookings = () => {
 		},
 		{
 			key: 'accommodation',
-			label: 'Помешкання',
+			label: t('admin.accommodation'),
 			render: (b: Record<string, unknown>) => (b.accommodation as { name?: string })?.name || '—',
 		},
-		{ key: 'checkInDate', label: 'Заїзд' },
-		{ key: 'checkOutDate', label: 'Виїзд' },
+		{ key: 'checkInDate', label: t('admin.checkIn') },
+		{ key: 'checkOutDate', label: t('admin.checkOut') },
 		{
 			key: 'totalPrice',
-			label: 'Ціна',
-			render: (b: Record<string, unknown>) => (b.totalPrice ? `${b.totalPrice} грн` : '—'),
+			label: t('admin.price'),
+			render: (b: Record<string, unknown>) =>
+				b.totalPrice ? `${b.totalPrice} ${t('common.currency')}` : '—',
 		},
 		{
 			key: 'status',
-			label: 'Статус',
+			label: t('admin.status'),
 			render: (b: Record<string, unknown>) => (
 				<select
 					value={b.status as string}
 					onChange={(e) => handleStatusChange(b as unknown as BookingRow, e.target.value)}
 					className={`status-select ${(b.status as string).toLowerCase()}`}
 				>
-					<option value="PENDING">Очікує</option>
-					<option value="CONFIRMED">Підтверджено</option>
-					<option value="CANCELED">Скасовано</option>
-					<option value="EXPIRED">Прострочено</option>
+					<option value="PENDING">{t('bookingStatus.pending')}</option>
+					<option value="CONFIRMED">{t('bookingStatus.confirmed')}</option>
+					<option value="CANCELED">{t('bookingStatus.canceled')}</option>
+					<option value="EXPIRED">{t('bookingStatus.expired')}</option>
 				</select>
 			),
 		},
@@ -196,7 +194,7 @@ const AdminBookings = () => {
 
 	return (
 		<div className="admin-bookings container admin-page-container">
-			<h1 className="section-heading text-center">Управління бронюваннями</h1>
+			<h1 className="section-heading text-center">{t('admin.manageBookings')}</h1>
 
 			{isMobile ? (
 				<div className="admin-bookings-cards">
@@ -218,7 +216,7 @@ const AdminBookings = () => {
 							type="button"
 							className="btn-icon btn-danger"
 							onClick={() => handleDelete(b.id as number)}
-							title="Видалити бронювання"
+							title={t('admin.deleteBooking')}
 						>
 							<TrashIcon className="w-4 h-4 text-white" />
 						</button>

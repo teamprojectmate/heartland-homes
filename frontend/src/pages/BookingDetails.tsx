@@ -86,7 +86,7 @@ const BookingDetails = () => {
 		: fallbackImage;
 
 	const { label: statusLabel, color: statusColor } = enrichedBooking
-		? mapStatus(enrichedBooking.status)
+		? mapStatus(enrichedBooking.status, t)
 		: { label: '—', color: '#ccc' };
 
 	const nights =

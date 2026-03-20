@@ -3,7 +3,6 @@ import * as accommodationService from '../../api/accommodations/accommodationSer
 import type { Accommodation } from '../../types';
 import { getApiErrorMessage } from '../../utils/accommodationPayload';
 
-// Public: завантаження житла
 export const loadAccommodations = createAsyncThunk(
 	'accommodations/load',
 	async (
@@ -35,36 +34,33 @@ export const loadAccommodations = createAsyncThunk(
 			});
 			return data;
 		} catch (err: unknown) {
-			return rejectWithValue(getApiErrorMessage(err, 'Помилка при завантаженні'));
+			return rejectWithValue(getApiErrorMessage(err, 'Failed to load accommodations'));
 		}
 	},
 );
 
-// Admin: завантаження списку
 export const loadAdminAccommodations = createAsyncThunk(
 	'accommodations/loadAdmin',
 	async ({ page = 0, size = 10 }: { page?: number; size?: number }, { rejectWithValue }) => {
 		try {
 			return await accommodationService.fetchAdminAccommodations(page, size);
 		} catch (err: unknown) {
-			return rejectWithValue(getApiErrorMessage(err, 'Помилка при завантаженні житла (адмін)'));
+			return rejectWithValue(getApiErrorMessage(err, 'Failed to load accommodations (admin)'));
 		}
 	},
 );
 
-//  Customer: завантаження своїх помешкань
 export const loadMyAccommodations = createAsyncThunk(
 	'accommodations/loadMy',
 	async ({ page = 0, size = 10 }: { page?: number; size?: number }, { rejectWithValue }) => {
 		try {
 			return await accommodationService.fetchMyAccommodations(page, size);
 		} catch (err: unknown) {
-			return rejectWithValue(getApiErrorMessage(err, 'Помилка при завантаженні ваших помешкань'));
+			return rejectWithValue(getApiErrorMessage(err, 'Failed to load your accommodations'));
 		}
 	},
 );
 
-// Admin: видалення житла
 export const removeAccommodation = createAsyncThunk(
 	'accommodations/remove',
 	async (id: number, { rejectWithValue }) => {
@@ -72,24 +68,22 @@ export const removeAccommodation = createAsyncThunk(
 			await accommodationService.deleteAccommodation(id);
 			return id;
 		} catch (err: unknown) {
-			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося видалити житло'));
+			return rejectWithValue(getApiErrorMessage(err, 'Failed to delete accommodation'));
 		}
 	},
 );
 
-// Створення житла
 export const createAccommodationAsync = createAsyncThunk(
 	'accommodations/create',
 	async (formData: Record<string, unknown>, { rejectWithValue }) => {
 		try {
 			return await accommodationService.createAccommodation(formData);
 		} catch (err: unknown) {
-			return rejectWithValue(getApiErrorMessage(err, 'Помилка при створенні житла'));
+			return rejectWithValue(getApiErrorMessage(err, 'Failed to create accommodation'));
 		}
 	},
 );
 
-// Admin: оновлення статусу житла
 export const updateAccommodationStatusAsync = createAsyncThunk(
 	'accommodations/updateStatus',
 	async ({ id, status }: { id: number; status: string }, { rejectWithValue }) => {
@@ -97,7 +91,7 @@ export const updateAccommodationStatusAsync = createAsyncThunk(
 			const response = await accommodationService.updateAccommodationStatus(id, status);
 			return { id, accommodationStatus: response.accommodationStatus };
 		} catch (err: unknown) {
-			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося оновити статус житла'));
+			return rejectWithValue(getApiErrorMessage(err, 'Failed to update accommodation status'));
 		}
 	},
 );

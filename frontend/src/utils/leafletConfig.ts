@@ -3,7 +3,6 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
 const setupLeaflet = () => {
-	// Виправлення шляху до іконок Leaflet для Webpack
 	// @ts-expect-error -- leaflet internal
 	delete L.Icon.Default.prototype._getIconUrl;
 

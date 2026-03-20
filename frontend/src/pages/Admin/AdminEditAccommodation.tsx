@@ -10,7 +10,7 @@ import {
 import Notification from '../../components/Notification';
 import { getApiErrorMessage, parseAmenities } from '../../utils/accommodationPayload';
 import { getSafeImageUrl } from '../../utils/getSafeImageUrl';
-import { mapAmenity, mapType, typeTranslations } from '../../utils/translations/index';
+import { getTypeTranslations, mapAmenity, mapType } from '../../utils/translations/index';
 import {
 	type AdminAccommodationFormData,
 	adminAccommodationSchema,
@@ -48,7 +48,6 @@ const AdminEditAccommodation = () => {
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
 
-	// завантаження даних
 	useEffect(() => {
 		const fetchAccommodation = async () => {
 			setLoading(true);
@@ -108,19 +107,17 @@ const AdminEditAccommodation = () => {
 				<h1>{t('accommodations.adminEditTitle')}</h1>
 				{error && <Notification message={error} type="danger" />}
 
-				{/* Назва */}
 				<div className="form-group">
 					<label htmlFor="admin-edit-name">{t('accommodationForm.name')}</label>
 					<input type="text" id="admin-edit-name" {...register('name')} />
 					{errors.name && <span className="form-error">{errors.name.message}</span>}
 				</div>
 
-				{/* Тип */}
 				<div className="form-group">
 					<label htmlFor="admin-edit-type">{t('accommodationForm.type')}</label>
 					<select id="admin-edit-type" {...register('type')}>
 						<option value="">{t('searchForm.selectType')}</option>
-						{Object.entries(typeTranslations).map(([key, { label }]) => (
+						{Object.entries(getTypeTranslations(t)).map(([key, { label }]) => (
 							<option key={key} value={key}>
 								{label}
 							</option>
@@ -131,7 +128,7 @@ const AdminEditAccommodation = () => {
 					{typeValue && (
 						<div className="badge-group" style={{ marginTop: '0.5rem' }}>
 							{(() => {
-								const type = mapType(typeValue);
+								const type = mapType(typeValue, t);
 								return (
 									<span className={`badge badge-type-${typeValue.toLowerCase()}`}>
 										{type.icon} {type.label}
@@ -142,13 +139,11 @@ const AdminEditAccommodation = () => {
 					)}
 				</div>
 
-				{/* Локація */}
 				<div className="form-group">
 					<label htmlFor="admin-edit-location">{t('accommodationForm.locationLabel')}</label>
 					<input type="text" id="admin-edit-location" {...register('location')} />
 				</div>
 
-				{/* Місто */}
 				<div className="form-group">
 					<label htmlFor="admin-edit-city">{t('accommodationForm.city')}</label>
 					<input type="text" id="admin-edit-city" {...register('city')} />

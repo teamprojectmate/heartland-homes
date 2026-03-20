@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import authService from '../../api/auth/authService';
 import { useAppDispatch } from '../../store/hooks';
 import { setUser } from '../../store/slices/authSlice';
 
 const LoginSuccess = () => {
+	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const location = useLocation();
 	const dispatch = useAppDispatch();
@@ -42,8 +44,8 @@ const LoginSuccess = () => {
 
 	return (
 		<div style={{ textAlign: 'center', marginTop: '50px' }}>
-			<h2>Обробка входу...</h2>
-			<p>Зачекайте, будь ласка</p>
+			<h2>{t('auth.processingLogin')}</h2>
+			<p>{t('auth.pleaseWait')}</p>
 		</div>
 	);
 };

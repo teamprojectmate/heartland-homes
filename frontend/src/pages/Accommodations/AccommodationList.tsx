@@ -15,7 +15,7 @@ const AccommodationList = ({
 	const handleMouseLeave = useCallback(() => onCardHover?.(null), [onCardHover]);
 
 	if (!accommodations || accommodations.length === 0) {
-		return <p className="text-center">Немає доступних помешкань.</p>;
+		return <p className="text-center">No accommodations available.</p>;
 	}
 
 	return (

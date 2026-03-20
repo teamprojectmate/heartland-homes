@@ -31,7 +31,6 @@ const PageWrapper = ({ title, children, extraErrors = [] }: PageWrapperProps) =>
 
 	const [blink, setBlink] = useState(false);
 
-	// toggle blink, тільки коли є errors
 	useEffect(() => {
 		if (errors.length === 0) return;
 

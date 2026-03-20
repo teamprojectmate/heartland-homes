@@ -1,4 +1,5 @@
-import { roles } from '../../utils/roles';
+import { useTranslation } from 'react-i18next';
+import { getRoles } from '../../utils/roles';
 import '../../styles/components/admin/_admin-users.scss';
 
 type RoleSelectProps = {
@@ -8,6 +9,9 @@ type RoleSelectProps = {
 };
 
 const RoleSelect = ({ value, onChange, disabled = false }: RoleSelectProps) => {
+	const { t } = useTranslation();
+	const roles = getRoles(t);
+
 	return (
 		<select
 			className="role-select"

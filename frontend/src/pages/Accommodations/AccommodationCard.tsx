@@ -11,7 +11,7 @@ const AccommodationCard = ({ accommodation }: { accommodation: Accommodation }) 
 	const { t } = useTranslation();
 	const imageUrl = getSafeImageUrl(accommodation.image);
 
-	const { label, icon, color } = mapType(accommodation.type);
+	const { label, icon, color } = mapType(accommodation.type, t);
 
 	return (
 		<div className="card-custom">

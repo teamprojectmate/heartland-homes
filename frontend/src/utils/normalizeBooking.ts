@@ -6,10 +6,8 @@
 export const normalizeBooking = (booking: Record<string, unknown> | null) => {
 	if (!booking) return null;
 
-	//  Нормалізуємо статус
 	let fixedStatus = ((booking.status as string) || '').toUpperCase() || 'UNKNOWN';
 
-	//  Автопідтвердження, якщо вже оплачено
 	if (
 		(booking.payment as Record<string, unknown>)?.status === 'PAID' &&
 		fixedStatus === 'PENDING'

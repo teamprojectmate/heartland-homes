@@ -38,7 +38,7 @@ export const createPayment = createAsyncThunk(
 			const response = await createPaymentService(bookingId, paymentType);
 			return response;
 		} catch (err: unknown) {
-			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося створити платіж'));
+			return rejectWithValue(getApiErrorMessage(err, 'Failed to create payment'));
 		}
 	},
 );
@@ -54,7 +54,7 @@ export const fetchPaymentsByUser = createAsyncThunk(
 			const response = await fetchPaymentsByUserService(userId, pageable);
 			return response;
 		} catch (err: unknown) {
-			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося отримати список платежів'));
+			return rejectWithValue(getApiErrorMessage(err, 'Failed to fetch payments'));
 		}
 	},
 );
@@ -67,7 +67,7 @@ export const cancelPayment = createAsyncThunk(
 			await cancelPaymentService(paymentId);
 			return paymentId;
 		} catch (err: unknown) {
-			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося скасувати платіж'));
+			return rejectWithValue(getApiErrorMessage(err, 'Failed to cancel payment'));
 		}
 	},
 );
@@ -81,7 +81,7 @@ export const fetchAllPayments = createAsyncThunk(
 			const response = await getAllPaymentsService(params || {});
 			return response;
 		} catch (err: unknown) {
-			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося отримати всі платежі'));
+			return rejectWithValue(getApiErrorMessage(err, 'Failed to fetch all payments'));
 		}
 	},
 );

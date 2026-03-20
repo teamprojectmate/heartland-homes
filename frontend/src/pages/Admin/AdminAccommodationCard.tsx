@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import StatusSelect from '../../components/selects/StatusSelect';
@@ -14,14 +15,15 @@ type AdminAccommodationCardProps = {
 };
 
 const AdminAccommodationCard = ({ acc, onStatusChange, onDelete }: AdminAccommodationCardProps) => {
+	const { t } = useTranslation();
 	const image = acc.image ? fixDropboxUrl(acc.image) : fallbackImage;
-	const { label, icon, color } = mapType(acc.type as string);
+	const { label, icon, color } = mapType(acc.type as string, t);
 
 	return (
 		<div className="admin-accommodation-card">
 			<img
 				src={image}
-				alt={acc.name || 'Помешкання'}
+				alt={acc.name || t('accommodations.accommodation')}
 				className="accommodation-card-img"
 				onError={(e) => (e.currentTarget.src = fallbackImage)}
 			/>
@@ -36,26 +38,25 @@ const AdminAccommodationCard = ({ acc, onStatusChange, onDelete }: AdminAccommod
 					/>
 				</div>
 
-				{/*  Badge типу житла */}
 				<div className="badge badge-type" style={{ backgroundColor: color }}>
 					{icon} {label}
 				</div>
 
 				<div className="card-body">
 					<p>
-						<strong>Місто:</strong> {acc.city}
+						<strong>{t('admin.city')}:</strong> {acc.city}
 					</p>
 					<p className="price">
-						<strong>Ціна:</strong> {acc.dailyRate} грн
+						<strong>{t('admin.price')}:</strong> {acc.dailyRate} {t('common.currency')}
 					</p>
 				</div>
 
 				<div className="admin-card-actions">
 					<Link to={`/admin/accommodations/edit/${acc.id}`} className="btn-inline btn-secondary">
-						<FaEdit /> Редагувати
+						<FaEdit /> {t('common.edit')}
 					</Link>
 					<button type="button" className="btn-inline btn-danger" onClick={() => onDelete(acc.id)}>
-						<FaTrash /> Видалити
+						<FaTrash /> {t('common.delete')}
 					</button>
 				</div>
 			</div>

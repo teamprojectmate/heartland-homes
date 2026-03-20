@@ -5,7 +5,6 @@ function ScrollToTop(): null {
 	useLocation();
 
 	useEffect(() => {
-		// Прокручуємо догори плавно при зміні сторінки
 		window.scrollTo({
 			top: 0,
 			left: 0,

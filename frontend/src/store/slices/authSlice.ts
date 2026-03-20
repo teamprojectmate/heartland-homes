@@ -43,7 +43,7 @@ export const login = createAsyncThunk(
 		} catch (err: unknown) {
 			sessionStorage.removeItem('auth');
 			sessionStorage.removeItem('userProfile');
-			return rejectWithValue(getApiErrorMessage(err, 'Невірний логін або пароль'));
+			return rejectWithValue(getApiErrorMessage(err, 'Invalid email or password'));
 		}
 	},
 );
@@ -54,7 +54,7 @@ export const register = createAsyncThunk(
 		try {
 			return await authService.register(userData);
 		} catch (err: unknown) {
-			return rejectWithValue(getApiErrorMessage(err, 'Помилка реєстрації'));
+			return rejectWithValue(getApiErrorMessage(err, 'Registration failed'));
 		}
 	},
 );
@@ -101,7 +101,7 @@ const authSlice = createSlice({
 			.addCase(login.rejected, (s, { payload, error }) => {
 				s.isLoading = false;
 				s.isError = true;
-				s.message = (payload as string) || error?.message || 'Невірний логін або пароль';
+				s.message = (payload as string) || error?.message || 'Invalid email or password';
 				s.user = null;
 				s.isAuthenticated = false;
 			})
@@ -113,12 +113,12 @@ const authSlice = createSlice({
 			.addCase(register.fulfilled, (s) => {
 				s.isLoading = false;
 				s.isSuccess = true;
-				s.message = 'Реєстрація успішна! Тепер увійдіть у систему.';
+				s.message = 'Registration successful! Please sign in.';
 			})
 			.addCase(register.rejected, (s, { payload }) => {
 				s.isLoading = false;
 				s.isError = true;
-				s.message = (payload as string) || 'Помилка реєстрації';
+				s.message = (payload as string) || 'Registration failed';
 			})
 			.addCase(logout.fulfilled, (s) => {
 				s.user = null;

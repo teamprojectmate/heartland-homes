@@ -1,14 +1,19 @@
+import { useTranslation } from 'react-i18next';
+
 const PaymentStatusBadge = ({ status }: { status: string }) => {
-	// Кастомні переклади саме для платежів
-	const labels: Record<string, { text: string; className: string }> = {
-		PAID: { text: 'Оплачено', className: 'success' },
-		PENDING: { text: 'Очікує', className: 'warning' },
-		FAILED: { text: 'Помилка', className: 'danger' },
+	const { t } = useTranslation();
+
+	const labels: Record<string, { i18nKey: string; className: string }> = {
+		PAID: { i18nKey: 'status.paid', className: 'success' },
+		PENDING: { i18nKey: 'status.pending', className: 'warning' },
+		FAILED: { i18nKey: 'status.failed', className: 'danger' },
 	};
 
-	const label = labels[status] || { text: status, className: 'secondary' };
+	const config = labels[status];
+	const text = config ? t(config.i18nKey) : status;
+	const className = config?.className || 'secondary';
 
-	return <span className={`badge badge-status ${label.className}`}>{label.text}</span>;
+	return <span className={`badge badge-status ${className}`}>{text}</span>;
 };
 
 export default PaymentStatusBadge;
