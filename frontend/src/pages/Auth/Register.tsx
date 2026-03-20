@@ -108,7 +108,11 @@ const Register = () => {
 						)}
 					</div>
 
-					<button type="submit" className="btn btn-primary" disabled={isLoading}>
+					<button
+						type="submit"
+						className={`btn btn-primary ${isLoading ? 'btn-loading' : ''}`}
+						disabled={isLoading}
+					>
 						{isLoading ? t('auth.registering') : t('auth.registerLink')}
 					</button>
 				</form>

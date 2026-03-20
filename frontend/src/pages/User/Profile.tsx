@@ -87,7 +87,11 @@ const Profile = () => {
 							{errors.lastName && <span className="form-error">{errors.lastName.message}</span>}
 						</div>
 
-						<button className="btn btn-primary" type="submit" disabled={loading}>
+						<button
+							className={`btn btn-primary ${loading ? 'btn-loading' : ''}`}
+							type="submit"
+							disabled={loading}
+						>
 							{loading ? t('common.saving') : t('profile.editProfile')}
 						</button>
 					</form>

@@ -74,7 +74,7 @@ const Login = () => {
 						</p>
 					)}
 
-					<button type="submit" disabled={isLoading}>
+					<button type="submit" className={isLoading ? 'btn-loading' : ''} disabled={isLoading}>
 						{isLoading ? t('auth.wait') : t('nav.login')}
 					</button>
 				</form>
