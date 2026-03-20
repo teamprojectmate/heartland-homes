@@ -1,1 +1,5 @@
-cd frontend && npx tsc -b && npx biome check src/ && npm run build
+#!/bin/sh
+set -e
+
+echo "⚙ running checks before push…"
+npm run check
