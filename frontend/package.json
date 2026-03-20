@@ -16,6 +16,9 @@
     "lint:css-fix": "stylelint \"src/**/*.scss\" --fix",
     "type-check": "tsc --noEmit",
     "check": "npm run type-check && npm run biome:check",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "prepare": "husky"
   },
   "dependencies": {
