@@ -93,7 +93,11 @@ const BookingCard = ({
 								{t('common.details')}
 							</Link>
 							{booking.status === 'PENDING' && !isPaid && (
-								<button type="button" className="btn btn-warning" onClick={() => onPay(booking.id)}>
+								<button
+									type="button"
+									className="btn btn-warning"
+									onClick={() => onPay?.(booking.id)}
+								>
 									{t('booking.pay')}
 								</button>
 							)}
@@ -101,7 +105,7 @@ const BookingCard = ({
 								<button
 									type="button"
 									className="btn btn-danger"
-									onClick={() => onCancel(booking.id)}
+									onClick={() => onCancel?.(booking.id)}
 								>
 									{t('booking.cancelBooking')}
 								</button>
@@ -113,12 +117,12 @@ const BookingCard = ({
 						<>
 							<StatusSelect
 								value={booking.status}
-								onChange={(newStatus) => onStatusChange(booking, newStatus)}
+								onChange={(newStatus) => onStatusChange?.(booking, newStatus)}
 							/>
 							<button
 								type="button"
 								className="btn-icon btn-danger"
-								onClick={() => onDelete(booking.id)}
+								onClick={() => onDelete?.(booking.id)}
 								title={t('admin.deleteBooking')}
 							>
 								<TrashIcon className="w-5 h-5 text-white" />

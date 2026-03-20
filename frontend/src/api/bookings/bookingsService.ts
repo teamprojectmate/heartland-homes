@@ -6,10 +6,7 @@ export const createBooking = async (bookingData: Record<string, unknown>): Promi
 	return response.data;
 };
 
-export const fetchMyBookings = async (
-	page = 0,
-	size = 5,
-): Promise<PaginatedResponse<Booking>> => {
+export const fetchMyBookings = async (page = 0, size = 5): Promise<PaginatedResponse<Booking>> => {
 	const response = await api.get<PaginatedResponse<Booking>>('/bookings/my', {
 		params: { page, size },
 	});

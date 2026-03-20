@@ -56,6 +56,7 @@ const EditMyAccommodation = () => {
 
 	// Завантаження + парсинг області та вулиці
 	useEffect(() => {
+		if (!id) return;
 		getAccommodationById(id)
 			.then((data) => {
 				const { region, rest } = stripRegionFromLocation(data.location || '');
@@ -118,6 +119,7 @@ const EditMyAccommodation = () => {
 				image: (formData.image || '').trim(),
 			};
 
+			if (!id) return;
 			await updateMyAccommodation(id, payload);
 			navigate('/my-accommodations');
 		} catch (err: unknown) {

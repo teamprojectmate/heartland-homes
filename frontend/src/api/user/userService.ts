@@ -16,10 +16,7 @@ export const getAllUsers = async (): Promise<User[]> => {
 	return Array.isArray(response.data) ? response.data : response.data?.content || [];
 };
 
-export const updateUserRole = async ({
-	id,
-	role,
-}: { id: number; role: string }): Promise<User> => {
+export const updateUserRole = async ({ id, role }: { id: number; role: string }): Promise<User> => {
 	const { data } = await api.put<User>(`/users/${id}/role`, { role });
 	return data;
 };

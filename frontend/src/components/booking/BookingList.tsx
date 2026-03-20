@@ -66,9 +66,9 @@ const BookingList = ({
 				</div>
 			)}
 
-			{totalPages > 0 && (
+			{totalPages != null && totalPages > 0 && onPageChange && (
 				<div className="pagination-wrapper">
-					<Pagination page={page} totalPages={totalPages} onPageChange={onPageChange} />
+					<Pagination page={page ?? 0} totalPages={totalPages ?? 0} onPageChange={onPageChange} />
 				</div>
 			)}
 		</div>

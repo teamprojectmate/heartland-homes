@@ -90,8 +90,8 @@ const Accommodations = () => {
 					<AccommodationFilters
 						city={filters.city || ''}
 						type={filters.type || ''}
-						minDailyRate={filters.minDailyRate || ''}
-						maxDailyRate={filters.maxDailyRate || ''}
+						minDailyRate={filters.minDailyRate != null ? String(filters.minDailyRate) : ''}
+						maxDailyRate={filters.maxDailyRate != null ? String(filters.maxDailyRate) : ''}
 						onApplyFilters={handleApplyFilters}
 						onResetFilters={handleResetFilters}
 					/>

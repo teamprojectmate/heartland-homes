@@ -4,5 +4,5 @@ set -e
 cd frontend
 
 echo "⚙ biome + type-check (staged/global)…"
-npm run biome:fix
+npx lint-staged
 npm run type-check

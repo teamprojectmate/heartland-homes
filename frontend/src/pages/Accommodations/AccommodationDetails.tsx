@@ -6,6 +6,7 @@ import BaseMap from '../../components/BaseMap';
 import { BookingForm } from '../../components/booking';
 import { FormSkeleton } from '../../components/skeletons';
 import { useAppSelector } from '../../store/hooks';
+import type { Accommodation } from '../../types';
 import { getSafeImageUrl } from '../../utils/getSafeImageUrl';
 import { mapAmenity, mapType } from '../../utils/translations';
 import AccommodationGallery from './AccommodationGallery';
@@ -19,9 +20,9 @@ const AccommodationDetails = ({ id: propId }: { id?: number | string }) => {
 	const { id: routeId } = useParams();
 	const id = propId || routeId;
 
-	const [accommodation, setAccommodation] = useState(null);
+	const [accommodation, setAccommodation] = useState<Accommodation | null>(null);
 	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState(null);
+	const [error, setError] = useState<string | null>(null);
 
 	const { isAuthenticated } = useAppSelector((state) => state.auth);
 

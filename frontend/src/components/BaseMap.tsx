@@ -46,13 +46,13 @@ type BaseMapProps = {
 
 const BaseMap = ({ items = [], highlightedId = null, renderPopup }: BaseMapProps) => {
 	const { t } = useTranslation();
-	const mapRef = useRef(null);
+	const mapRef = useRef<L.Map | null>(null);
 
 	useEffect(() => {
 		if (mapRef.current && items.length > 0) {
 			const bounds = items
 				.filter((acc) => acc.latitude && acc.longitude)
-				.map((acc) => [acc.latitude, acc.longitude]);
+				.map((acc) => [acc.latitude, acc.longitude] as [number, number]);
 
 			if (bounds.length > 0) {
 				mapRef.current.fitBounds(bounds, { padding: [50, 50] });

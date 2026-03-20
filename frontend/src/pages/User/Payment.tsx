@@ -6,6 +6,7 @@ import { fetchBookingById } from '../../api/bookings/bookingsService';
 import Notification from '../../components/Notification';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { createPayment } from '../../store/slices/paymentsSlice';
+import type { Booking } from '../../types';
 import '../../styles/components/payment/_payment-checkout.scss';
 import { calcNights } from '../../utils/dateCalc';
 
@@ -16,12 +17,13 @@ const Payment = () => {
 
 	const { payment, createStatus, error } = useAppSelector((s) => s.payments);
 
-	const [booking, setBooking] = useState(null);
+	const [booking, setBooking] = useState<Booking | null>(null);
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
 		const loadBooking = async () => {
 			try {
+				if (!bookingId) return;
 				const data = await fetchBookingById(bookingId);
 
 				let accommodation = null;
@@ -36,7 +38,11 @@ const Payment = () => {
 				const calculatedPrice =
 					data.totalPrice || (accommodation?.dailyRate ? accommodation.dailyRate * nights : 0);
 
-				setBooking({ ...data, accommodation, totalPrice: calculatedPrice });
+				setBooking({
+					...data,
+					accommodation: accommodation ?? undefined,
+					totalPrice: calculatedPrice,
+				});
 			} catch (_err) {
 				/* error handled silently */
 			} finally {

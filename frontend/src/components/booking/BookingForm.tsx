@@ -100,7 +100,7 @@ const BookingForm = ({ accommodation }: { accommodation: Accommodation }) => {
 				</p>
 			)}
 
-			{errors.root && <Notification message={errors.root.message} type="danger" />}
+			{errors.root && <Notification message={errors.root.message || ''} type="danger" />}
 
 			<button type="submit" className="btn-primary" disabled={status === 'loading'}>
 				{status === 'loading' ? t('booking.booking') : t('booking.bookNow')}
