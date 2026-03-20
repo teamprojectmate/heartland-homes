@@ -2,4 +2,6 @@
 set -e
 
 echo "⚙ running checks before push…"
-npm run check
+npm run type-check
+npm run biome:check
+npm run build
