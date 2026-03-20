@@ -1,3 +1,9 @@
 backend/.editorconfig
+
 # macOS system files
 .DS_Store
+
+# Root-level npm artifacts (npm install from wrong dir)
+/node_modules
+/package.json
+/package-lock.json
