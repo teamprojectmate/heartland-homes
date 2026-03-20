@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import * as accommodationService from '../../api/accommodations/accommodationService';
+import type { Accommodation } from '../../types';
 import { getApiErrorMessage } from '../../utils/accommodationPayload';
 
 // Public: завантаження житла
@@ -104,19 +105,19 @@ export const updateAccommodationStatusAsync = createAsyncThunk(
 const accommodationsSlice = createSlice({
 	name: 'accommodations',
 	initialState: {
-		items: [],
+		items: [] as Accommodation[],
 		totalPages: 0,
 		totalElements: 0,
 		page: 0,
 		size: 10,
-		sort: null,
+		sort: null as string | null,
 		loading: false,
-		error: null,
+		error: null as string | null,
 		filters: {
-			city: null,
-			type: null,
-			minDailyRate: null,
-			maxDailyRate: null,
+			city: null as string | null,
+			type: null as string | null,
+			minDailyRate: null as number | null,
+			maxDailyRate: null as number | null,
 		},
 		adminMode: false,
 		myMode: false,
@@ -156,7 +157,7 @@ const accommodationsSlice = createSlice({
 			})
 			.addCase(loadAccommodations.rejected, (s, { payload }) => {
 				s.loading = false;
-				s.error = payload;
+				s.error = (payload as string) ?? null;
 			})
 
 			// Admin load
@@ -174,7 +175,7 @@ const accommodationsSlice = createSlice({
 			})
 			.addCase(loadAdminAccommodations.rejected, (s, { payload }) => {
 				s.loading = false;
-				s.error = payload;
+				s.error = (payload as string) ?? null;
 			})
 
 			//  My accommodations load
@@ -192,7 +193,7 @@ const accommodationsSlice = createSlice({
 			})
 			.addCase(loadMyAccommodations.rejected, (s, { payload }) => {
 				s.loading = false;
-				s.error = payload;
+				s.error = (payload as string) ?? null;
 			})
 
 			// Admin remove
@@ -211,7 +212,7 @@ const accommodationsSlice = createSlice({
 			})
 			.addCase(createAccommodationAsync.rejected, (s, { payload }) => {
 				s.loading = false;
-				s.error = payload;
+				s.error = (payload as string) ?? null;
 			})
 
 			// Admin update status

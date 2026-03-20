@@ -53,6 +53,7 @@ const AdminEditAccommodation = () => {
 		const fetchAccommodation = async () => {
 			setLoading(true);
 			try {
+				if (!id) return;
 				const data = await getAccommodationById(id);
 				reset({
 					name: data.name || '',
@@ -85,6 +86,7 @@ const AdminEditAccommodation = () => {
 				dailyRate: Number(formData.dailyRate),
 				amenities: parseAmenities(formData.amenities),
 			};
+			if (!id) return;
 			await updateAccommodation(id, payload);
 			navigate('/admin/accommodations');
 		} catch (err: unknown) {

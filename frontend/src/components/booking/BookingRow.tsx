@@ -31,7 +31,10 @@ const BookingRow = ({ booking, onStatusChange, onDelete }: BookingRowProps) => {
 				</span>
 			</td>
 			<td className="actions">
-				<select value={booking.status} onChange={(e) => onStatusChange(booking.id, e.target.value)}>
+				<select
+					value={booking.status}
+					onChange={(e) => onStatusChange?.(booking.id, e.target.value)}
+				>
 					<option value="PENDING">Очікує</option>
 					<option value="CONFIRMED">Підтверджено</option>
 					<option value="CANCELED">Скасовано</option>
@@ -42,7 +45,7 @@ const BookingRow = ({ booking, onStatusChange, onDelete }: BookingRowProps) => {
 					<FaInfoCircle />
 				</Link>
 
-				<button type="button" className="btn-danger btn-sm" onClick={() => onDelete(booking.id)}>
+				<button type="button" className="btn-danger btn-sm" onClick={() => onDelete?.(booking.id)}>
 					<FaTrash />
 				</button>
 			</td>

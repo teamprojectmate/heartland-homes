@@ -76,7 +76,7 @@ export const buildLocation = ({
 	if (streetPart && !hasStreetPrefix(streetPart)) streetPart = `вул. ${streetPart}`;
 
 	const housePart = (houseNumber || '').trim();
-	const aptPart = (apartment || '').trim() ? `кв. ${apartment.trim()}` : '';
+	const aptPart = (apartment || '').trim() ? `кв. ${(apartment || '').trim()}` : '';
 
 	return [regionPart, cityPart, [streetPart, housePart].filter(Boolean).join(' '), aptPart]
 		.filter(Boolean)

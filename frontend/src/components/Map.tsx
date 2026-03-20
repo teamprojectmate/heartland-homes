@@ -1,6 +1,7 @@
+import type { Accommodation } from '../types';
 import BaseMap from './BaseMap';
 
-const AccommodationMap = ({ accommodations = [] }) => {
+const AccommodationMap = ({ accommodations = [] }: { accommodations?: Accommodation[] }) => {
 	const items = accommodations
 		.filter((a) => a.latitude && a.longitude)
 		.map((a) => ({

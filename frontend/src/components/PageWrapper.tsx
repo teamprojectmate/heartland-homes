@@ -65,7 +65,7 @@ const PageWrapper = ({ title, children, extraErrors = [] }: PageWrapperProps) =>
 	return (
 		<>
 			{errors.map((err) => (
-				<Notification key={err} message={err} type="danger" />
+				<Notification key={String(err)} message={String(err)} type="danger" />
 			))}
 			{children}
 		</>

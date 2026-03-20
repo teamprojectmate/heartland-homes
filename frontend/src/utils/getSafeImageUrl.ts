@@ -1,6 +1,6 @@
 import { fixDropboxUrl } from './fixDropboxUrl';
 
-export const getSafeImageUrl = (url: string) => {
+export const getSafeImageUrl = (url: string | undefined) => {
 	if (!url) return '/no-image.png'; // fallback якщо url немає
 	try {
 		const fixed = fixDropboxUrl(url);

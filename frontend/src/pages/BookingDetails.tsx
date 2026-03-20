@@ -9,6 +9,7 @@ import { FormSkeleton } from '../components/skeletons';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { deleteBooking } from '../store/slices/bookingsSlice';
 import { fetchPaymentsByUser } from '../store/slices/paymentsSlice';
+import type { Booking } from '../types';
 import { calcNights } from '../utils/dateCalc';
 import { fixDropboxUrl } from '../utils/fixDropboxUrl';
 import { mapStatus } from '../utils/translations';
@@ -27,13 +28,14 @@ const BookingDetails = () => {
 	const { user } = useAppSelector((state) => state.auth);
 	const { payments } = useAppSelector((state) => state.payments);
 
-	const [booking, setBooking] = useState(null);
+	const [booking, setBooking] = useState<Booking | null>(null);
 	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState(null);
+	const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {
 		const fetchBooking = async () => {
 			try {
+				if (!id) return;
 				const bookingData = await fetchBookingById(id);
 				if (!bookingData) {
 					setError(t('booking.notFoundError'));
@@ -48,7 +50,7 @@ const BookingDetails = () => {
 					/* error handled silently */
 				}
 
-				setBooking({ ...bookingData, accommodation });
+				setBooking({ ...bookingData, accommodation: accommodation ?? undefined });
 			} catch (_err) {
 				/* error handled silently */
 				setError(t('booking.loadError'));
@@ -102,9 +104,7 @@ const BookingDetails = () => {
 		if (window.confirm(t('booking.cancelConfirm'))) {
 			try {
 				await cancelBooking(Number(id));
-				setBooking((prev: Record<string, unknown> | null) =>
-					prev ? { ...prev, status: 'CANCELED' } : prev,
-				);
+				setBooking((prev) => (prev ? { ...prev, status: 'CANCELED' as const } : prev));
 			} catch (_err) {
 				/* error handled silently */
 				setError(t('booking.cancelError'));
@@ -125,6 +125,7 @@ const BookingDetails = () => {
 	};
 
 	const handlePay = () => {
+		if (!enrichedBooking) return;
 		navigate(`/payment/${enrichedBooking.id}`, {
 			state: {
 				amount: totalPrice,
