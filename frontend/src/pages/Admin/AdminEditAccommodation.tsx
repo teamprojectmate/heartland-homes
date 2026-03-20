@@ -55,9 +55,16 @@ const AdminEditAccommodation = () => {
 			try {
 				const data = await getAccommodationById(id);
 				reset({
-					...data,
+					name: data.name || '',
+					type: data.type || '',
+					location: data.location || data.address || '',
+					city: data.city || '',
+					latitude: String(data.latitude || ''),
+					longitude: String(data.longitude || ''),
+					size: String(data.size || ''),
 					amenities: data.amenities?.join(', ') || '',
 					dailyRate: String(data.dailyRate ?? ''),
+					image: data.image || data.imageUrl || '',
 				});
 			} catch {
 				setError(t('accommodations.errorLoading'));

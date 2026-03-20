@@ -69,7 +69,7 @@ const EditMyAccommodation = () => {
 					region: region || '',
 					city: data.city || '',
 					location: streetOnly || '',
-					size: data.size || '',
+					size: String(data.size || ''),
 					latitude: String(data.latitude || ''),
 					longitude: String(data.longitude || ''),
 					amenities: amenitiesStr,
