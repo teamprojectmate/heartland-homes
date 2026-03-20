@@ -32,7 +32,9 @@
 		"currency": "UAH",
 		"currencySymbol": "UAH",
 		"perNight": "/ night",
-		"selectedCoordinates": "Selected coordinates: {{lat}}, {{lng}}"
+		"selectedCoordinates": "Selected coordinates: {{lat}}, {{lng}}",
+		"tryAgain": "Try again",
+		"goHome": "Go to home page"
 	},
 	"nav": {
 		"home": "Home",

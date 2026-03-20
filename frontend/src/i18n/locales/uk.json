@@ -32,7 +32,9 @@
 		"currency": "грн",
 		"currencySymbol": "грн",
 		"perNight": "/ доба",
-		"selectedCoordinates": "Обрані координати: {{lat}}, {{lng}}"
+		"selectedCoordinates": "Обрані координати: {{lat}}, {{lng}}",
+		"tryAgain": "Спробувати знову",
+		"goHome": "На головну"
 	},
 	"nav": {
 		"home": "Головна",
