@@ -1,0 +1,9 @@
+#!/bin/sh
+set -e
+
+cd frontend
+
+echo "⚙ running checks before push…"
+npm run type-check
+npm run biome:check
+npm run build
