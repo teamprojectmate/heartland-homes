@@ -1,9 +1,10 @@
 import { TrashIcon } from '@heroicons/react/24/solid';
+import { useTranslation } from 'react-i18next';
 import RoleSelect from '../../components/selects/RoleSelect';
 
-const roleBadges: Record<string, { label: string; icon: string; color: string }> = {
-	MANAGER: { label: 'Менеджер', icon: '🛠', color: '#2563eb' },
-	USER: { label: 'Клієнт', icon: '👤', color: '#059669' },
+const roleBadgeConfig: Record<string, { i18nKey: string; icon: string; color: string }> = {
+	MANAGER: { i18nKey: 'roles.manager', icon: '🛠', color: '#2563eb' },
+	USER: { i18nKey: 'roles.user', icon: '👤', color: '#059669' },
 };
 
 type AdminUserCardProps = {
@@ -13,11 +14,16 @@ type AdminUserCardProps = {
 };
 
 const AdminUserCard = ({ user, onUpdateRole, onDelete }: AdminUserCardProps) => {
-	const role = roleBadges[user.role?.toUpperCase() || ''] || {
-		label: user.role || 'Невідомо',
-		icon: '❔',
-		color: '#6b7280',
-	};
+	const { t } = useTranslation();
+
+	const config = roleBadgeConfig[user.role?.toUpperCase() || ''];
+	const role = config
+		? { label: t(config.i18nKey), icon: config.icon, color: config.color }
+		: {
+				label: user.role || t('roles.unknown'),
+				icon: '❔',
+				color: '#6b7280',
+			};
 
 	return (
 		<div className="admin-user-card">
@@ -42,7 +48,7 @@ const AdminUserCard = ({ user, onUpdateRole, onDelete }: AdminUserCardProps) => 
 			<div className="card-actions">
 				<button type="button" className="btn-inline btn-danger" onClick={() => onDelete(user.id)}>
 					<TrashIcon className="w-4 h-4" />
-					Видалити
+					{t('common.delete')}
 				</button>
 			</div>
 		</div>

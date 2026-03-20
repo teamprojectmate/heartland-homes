@@ -50,7 +50,7 @@ const AccommodationDetails = ({ id: propId }: { id?: number | string }) => {
 	if (error) return <div className="error">{error}</div>;
 	if (!accommodation) return <div className="not-found">{t('accommodations.notFoundError')}</div>;
 
-	const { label: typeLabel, icon: typeIcon, color: typeColor } = mapType(accommodation.type);
+	const { label: typeLabel, icon: typeIcon, color: typeColor } = mapType(accommodation.type, t);
 
 	return (
 		<div className="accommodation-details-page">

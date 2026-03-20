@@ -24,50 +24,45 @@ const initialState: UserState = {
 	error: null,
 };
 
-//  Профіль
 export const fetchProfile = createAsyncThunk(
 	'user/fetchProfile',
 	async (_: undefined, { rejectWithValue }) => {
 		try {
 			return await getCurrentUser();
 		} catch (err: unknown) {
-			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося завантажити профіль'));
+			return rejectWithValue(getApiErrorMessage(err, 'Failed to load profile'));
 		}
 	},
 );
 
-// Оновлення профілю
 export const updateProfile = createAsyncThunk(
 	'user/updateProfile',
 	async (userData: Record<string, unknown>, { rejectWithValue }) => {
 		try {
 			return await apiUpdateProfile(userData);
 		} catch (err: unknown) {
-			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося оновити профіль'));
+			return rejectWithValue(getApiErrorMessage(err, 'Failed to update profile'));
 		}
 	},
 );
 
-// Список користувачів
 export const fetchUsers = createAsyncThunk(
 	'user/fetchUsers',
 	async (_: undefined, { rejectWithValue }) => {
 		try {
 			const users = await getAllUsers();
 
-			// нормалізація ролей
 			return users.map((u: Record<string, unknown>) => {
 				let role = u.role || (Array.isArray(u.roles) ? u.roles[0] : null);
 				if (role?.startsWith('ROLE_')) role = role.replace('ROLE_', '');
 				return { ...u, role };
 			});
 		} catch (err: unknown) {
-			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося завантажити список'));
+			return rejectWithValue(getApiErrorMessage(err, 'Failed to load users'));
 		}
 	},
 );
 
-// Оновлення ролі
 export const updateUserRole = createAsyncThunk(
 	'user/updateUserRole',
 	async ({ id, role }: { id: number; role: string }, { rejectWithValue }) => {
@@ -75,12 +70,11 @@ export const updateUserRole = createAsyncThunk(
 			const updated = await apiUpdateUserRole({ id, role });
 			return { id, role: updated.role || role };
 		} catch (err: unknown) {
-			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося оновити роль'));
+			return rejectWithValue(getApiErrorMessage(err, 'Failed to update role'));
 		}
 	},
 );
 
-//  Видалення користувача
 export const removeUser = createAsyncThunk(
 	'user/removeUser',
 	async (id: number, { rejectWithValue }) => {
@@ -88,7 +82,7 @@ export const removeUser = createAsyncThunk(
 			await deleteUser(id);
 			return id;
 		} catch (err: unknown) {
-			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося видалити користувача'));
+			return rejectWithValue(getApiErrorMessage(err, 'Failed to delete user'));
 		}
 	},
 );

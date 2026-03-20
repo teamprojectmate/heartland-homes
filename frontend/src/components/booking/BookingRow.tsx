@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { FaInfoCircle, FaTrash } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import type { Booking } from '../../types';
@@ -12,7 +13,8 @@ type BookingRowProps = {
 };
 
 const BookingRow = ({ booking, onStatusChange, onDelete }: BookingRowProps) => {
-	const { label, color, slug } = mapStatus(booking.status);
+	const { t } = useTranslation();
+	const { label, color, slug } = mapStatus(booking.status, t);
 
 	return (
 		<tr>
@@ -35,10 +37,10 @@ const BookingRow = ({ booking, onStatusChange, onDelete }: BookingRowProps) => {
 					value={booking.status}
 					onChange={(e) => onStatusChange?.(booking.id, e.target.value)}
 				>
-					<option value="PENDING">Очікує</option>
-					<option value="CONFIRMED">Підтверджено</option>
-					<option value="CANCELED">Скасовано</option>
-					<option value="EXPIRED">Прострочено</option>
+					<option value="PENDING">{t('status.pending')}</option>
+					<option value="CONFIRMED">{t('status.confirmed')}</option>
+					<option value="CANCELED">{t('status.cancelled')}</option>
+					<option value="EXPIRED">{t('status.expired')}</option>
 				</select>
 
 				<Link to={`/admin/bookings/${booking.id}`} className="btn-secondary btn-sm">

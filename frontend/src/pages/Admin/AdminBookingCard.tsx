@@ -1,4 +1,5 @@
 import { TrashIcon } from '@heroicons/react/24/solid';
+import { useTranslation } from 'react-i18next';
 import StatusSelect from '../../components/selects/StatusSelect';
 import { fixDropboxUrl } from '../../utils/fixDropboxUrl';
 
@@ -24,6 +25,8 @@ type AdminBookingCardProps = {
 };
 
 const AdminBookingCard = ({ booking, onDelete, onStatusChange }: AdminBookingCardProps) => {
+	const { t } = useTranslation();
+
 	const image = booking.accommodation?.image
 		? fixDropboxUrl(booking.accommodation.image)
 		: fallbackImage;
@@ -32,52 +35,54 @@ const AdminBookingCard = ({ booking, onDelete, onStatusChange }: AdminBookingCar
 		<div className="admin-booking-card">
 			<img
 				src={image}
-				alt={booking.accommodation?.name || 'Житло'}
+				alt={booking.accommodation?.name || t('accommodations.accommodation')}
 				className="booking-card-img"
 				onError={(e) => (e.currentTarget.src = fallbackImage)}
 			/>
 
 			<div className="booking-card-content">
 				<div className="card-header">
-					<h3 className="admin-booking-title">{booking.accommodation?.name || 'Без назви'}</h3>
+					<h3 className="admin-booking-title">
+						{booking.accommodation?.name || t('accommodations.noName')}
+					</h3>
 				</div>
 
 				<div className="card-body">
 					<p>
-						<strong>Користувач:</strong>{' '}
+						<strong>{t('booking.user')}:</strong>{' '}
 						{booking.user
 							? `${booking.user.firstName} ${booking.user.lastName} (${booking.user.email})`
 							: booking.userId || '—'}
 					</p>
 
 					<p>
-						<strong>Дати:</strong> {booking.checkInDate} → {booking.checkOutDate}
+						<strong>{t('booking.dates')}:</strong> {booking.checkInDate} → {booking.checkOutDate}
 					</p>
 
 					<p className="price">
-						<strong>Ціна:</strong> {booking.totalPrice ? `${booking.totalPrice} грн` : '—'}
+						<strong>{t('booking.totalPrice')}:</strong>{' '}
+						{booking.totalPrice ? `${booking.totalPrice} ${t('common.currency')}` : '—'}
 					</p>
 
-					{/*  Бейджі */}
 					<p>
-						<strong>Статус:</strong>{' '}
+						<strong>{t('booking.status')}:</strong>{' '}
 						<span className={`badge badge-status badge-status-${booking.status.toLowerCase()}`}>
-							{booking.status === 'PENDING' && 'Очікує'}
-							{booking.status === 'CONFIRMED' && 'Підтверджено'}
-							{booking.status === 'CANCELED' && 'Скасовано'}
-							{booking.status === 'EXPIRED' && 'Прострочено'}
+							{booking.status === 'PENDING' && t('status.pending')}
+							{booking.status === 'CONFIRMED' && t('status.confirmed')}
+							{booking.status === 'CANCELED' && t('status.cancelled')}
+							{booking.status === 'EXPIRED' && t('status.expired')}
 						</span>
 					</p>
 
 					<p>
-						<strong>Оплата:</strong>{' '}
+						<strong>{t('booking.payment')}:</strong>{' '}
 						{booking.payment ? (
 							<span
 								className={`badge ${
 									booking.payment.status === 'PAID' ? 'badge-status-paid' : 'badge-status-pending'
 								}`}
 							>
-								{booking.payment.status === 'PAID' ? 'Оплачено' : 'Очікує оплату'}
+								{booking.payment.status === 'PAID' ? t('status.paid') : t('status.awaitingPayment')}
 							</span>
 						) : (
 							<span className="badge badge-status badge-status-unknown">—</span>
@@ -98,7 +103,7 @@ const AdminBookingCard = ({ booking, onDelete, onStatusChange }: AdminBookingCar
 						onClick={() => onDelete(booking.id)}
 					>
 						<TrashIcon className="w-4 h-4" />
-						Видалити
+						{t('common.delete')}
 					</button>
 				</div>
 			</div>

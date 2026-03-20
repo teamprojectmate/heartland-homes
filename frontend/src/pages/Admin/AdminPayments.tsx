@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import ErrorState from '../../components/ErrorState';
 import Pagination from '../../components/Pagination';
 import { TableSkeleton } from '../../components/skeletons';
@@ -10,6 +11,7 @@ import { fetchAllPayments } from '../../store/slices/paymentsSlice';
 import '../../styles/components/admin/_admin-tables.scss';
 
 const AdminPayments = () => {
+	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const { payments, fetchStatus, error, totalPages } = useAppSelector((state) => state.payments);
 
@@ -25,42 +27,40 @@ const AdminPayments = () => {
 
 	const columns = [
 		{ key: 'id', label: 'ID' },
-		{ key: 'bookingId', label: 'Бронювання ID' },
+		{ key: 'bookingId', label: t('admin.bookingId') },
 		{
 			key: 'amountToPay',
-			label: 'Сума',
-			render: (p: Record<string, unknown>) => `${p.amountToPay} грн`,
+			label: t('admin.amount'),
+			render: (p: Record<string, unknown>) => `${p.amountToPay} ${t('common.currency')}`,
 		},
-		{ key: 'paymentType', label: 'Тип' },
+		{ key: 'paymentType', label: t('admin.type') },
 		{
 			key: 'status',
-			label: 'Статус',
+			label: t('admin.status'),
 			render: (p: Record<string, unknown>) => <StatusBadge status={p.status as string} />,
 		},
 	];
 
 	return (
 		<div className="admin-payments container admin-page-container">
-			<h1 className="section-heading text-center">Управління платежами</h1>
+			<h1 className="section-heading text-center">{t('admin.managePayments')}</h1>
 
-			{/*  Фільтр */}
 			<div className="filter-bar mb-3 text-center">
 				<select
 					value={statusFilter}
 					onChange={(e) => {
-						setPage(0); // скидаємо на першу сторінку при зміні фільтра
+						setPage(0);
 						setStatusFilter(e.target.value);
 					}}
 				>
-					<option value="">Всі</option>
-					<option value="PENDING">Очікує оплату</option>
-					<option value="PAID">Оплачено</option>
+					<option value="">{t('admin.all')}</option>
+					<option value="PENDING">{t('admin.awaitingPayment')}</option>
+					<option value="PAID">{t('admin.paid')}</option>
 				</select>
 			</div>
 
 			<AdminTable columns={columns} data={payments} />
 
-			{/*  Пагінація */}
 			<Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
 		</div>
 	);

@@ -111,7 +111,8 @@
 		"latitude": "Latitude",
 		"longitude": "Longitude",
 		"bedroomCountShort": "Number of bedrooms",
-		"imagePreview": "Image preview"
+		"imagePreview": "Image preview",
+		"regionPlaceholder": "e.g., Kyiv region"
 	},
 	"accommodationType": {
 		"house": "House",
@@ -192,7 +193,9 @@
 		"type": "Type",
 		"typePayment": "Payment",
 		"typeRefund": "Refund",
-		"paidBadge": "Paid"
+		"paidBadge": "Paid",
+		"bookingId": "Booking ID",
+		"pay": "Pay now"
 	},
 	"auth": {
 		"loginTitle": "Sign In",
@@ -212,7 +215,11 @@
 		"registering": "Registering...",
 		"welcomeTitle": "Welcome",
 		"welcomeLoginSubtitle": "Sign in to book your next dream home with <strong>Heartland Homes</strong>.",
-		"welcomeRegisterSubtitle": "Register to find your perfect home with <strong>Heartland Homes</strong>."
+		"welcomeRegisterSubtitle": "Register to find your perfect home with <strong>Heartland Homes</strong>.",
+		"accessDenied": "Access denied",
+		"noPermission": "You do not have permission to view this page.",
+		"processingLogin": "Processing login...",
+		"pleaseWait": "Please wait"
 	},
 	"profile": {
 		"title": "My Profile",
@@ -267,7 +274,8 @@
 	"roles": {
 		"customer": "Customer",
 		"manager": "Manager",
-		"unknown": "Unknown"
+		"unknown": "Unknown",
+		"user": "Customer"
 	},
 	"status": {
 		"pending": "Pending",
@@ -381,6 +389,12 @@
 		"cookies1": "Cookies help us analyze traffic.",
 		"cookies2": "They remember your preferences...",
 		"cookies3": "You can disable cookies..."
+	},
+	"passwordStrength": {
+		"label": "Password strength:",
+		"weak": "Weak",
+		"medium": "Medium",
+		"strong": "Strong"
 	},
 	"pages": {
 		"home": "Home",

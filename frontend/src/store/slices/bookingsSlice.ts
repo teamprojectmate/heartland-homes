@@ -50,7 +50,6 @@ const initialState: BookingsState = {
 	totalElements: 0,
 };
 
-//  Хелпер: оновлення сторінки/пагінації
 function updatePageState(state: BookingsState, payload: Record<string, unknown>) {
 	state.bookings = (payload.content as Record<string, unknown>[]) || [];
 	state.page = ((payload.pageable as Record<string, unknown>)?.pageNumber as number) ?? 0;
@@ -58,7 +57,6 @@ function updatePageState(state: BookingsState, payload: Record<string, unknown>)
 	state.totalElements = (payload.totalElements as number) || 0;
 }
 
-//  Хелпер: видалення бронювання (cancel/delete)
 function removeBooking(state: BookingsState, id: number) {
 	state.bookings = state.bookings.filter((b: Record<string, unknown>) => b.id !== id);
 	state.totalElements = Math.max(0, state.totalElements - 1);
@@ -72,7 +70,7 @@ export const createBooking = createAsyncThunk(
 		try {
 			return await bookingsService.createBooking(bookingData);
 		} catch (err: unknown) {
-			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося створити бронювання.'));
+			return rejectWithValue(getApiErrorMessage(err, 'Failed to create booking'));
 		}
 	},
 );
@@ -91,7 +89,7 @@ export const fetchBookings = createAsyncThunk(
 			const enriched = await enrichBookings(response.content || []);
 			return { ...response, content: enriched };
 		} catch (err: unknown) {
-			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося отримати список бронювань.'));
+			return rejectWithValue(getApiErrorMessage(err, 'Failed to fetch bookings'));
 		}
 	},
 );
@@ -107,7 +105,7 @@ export const fetchMyBookings = createAsyncThunk(
 			const enriched = await enrichBookings(response.content || []);
 			return { ...response, content: enriched };
 		} catch (err: unknown) {
-			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося завантажити мої бронювання.'));
+			return rejectWithValue(getApiErrorMessage(err, 'Failed to fetch my bookings'));
 		}
 	},
 );
@@ -130,7 +128,7 @@ export const changeBookingStatus = createAsyncThunk(
 			const response = await bookingsService.updateBooking(booking.id as number, updatedBooking);
 			return response;
 		} catch (err: unknown) {
-			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося змінити статус бронювання.'));
+			return rejectWithValue(getApiErrorMessage(err, 'Failed to update booking status'));
 		}
 	},
 );
@@ -143,7 +141,7 @@ export const cancelBooking = createAsyncThunk(
 			await bookingsService.cancelBooking(id);
 			return id;
 		} catch (err: unknown) {
-			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося скасувати бронювання.'));
+			return rejectWithValue(getApiErrorMessage(err, 'Failed to cancel booking'));
 		}
 	},
 );
@@ -156,7 +154,7 @@ export const deleteBooking = createAsyncThunk(
 			await bookingsService.deleteBooking(id);
 			return id;
 		} catch (err: unknown) {
-			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося видалити бронювання.'));
+			return rejectWithValue(getApiErrorMessage(err, 'Failed to delete booking'));
 		}
 	},
 );

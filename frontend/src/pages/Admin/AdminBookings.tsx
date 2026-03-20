@@ -1,5 +1,6 @@
 import { TrashIcon } from '@heroicons/react/24/solid';
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getAllUsers } from '../../api/user/userService';
 import ErrorState from '../../components/ErrorState';
 import StatusSelect from '../../components/selects/StatusSelect';
@@ -34,6 +35,7 @@ type EnrichedBookingRow = {
 };
 
 const AdminBookings = () => {
+	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const { bookings, status, error } = useAppSelector((state) => state.bookings);
 	const { payments } = useAppSelector((state) => state.payments);
@@ -85,7 +87,7 @@ const AdminBookings = () => {
 		{ key: 'id', label: 'ID' },
 		{
 			key: 'user',
-			label: 'Користувач',
+			label: t('admin.user'),
 			render: (b: Record<string, unknown>) => {
 				const row = b as unknown as EnrichedBookingRow;
 				return row.user
@@ -95,23 +97,23 @@ const AdminBookings = () => {
 		},
 		{
 			key: 'accommodation',
-			label: 'Помешкання',
+			label: t('admin.accommodation'),
 			render: (b: Record<string, unknown>) =>
 				(b as unknown as EnrichedBookingRow).accommodation?.name || '—',
 		},
-		{ key: 'checkInDate', label: 'Заїзд' },
-		{ key: 'checkOutDate', label: 'Виїзд' },
+		{ key: 'checkInDate', label: t('admin.checkIn') },
+		{ key: 'checkOutDate', label: t('admin.checkOut') },
 		{
 			key: 'totalPrice',
-			label: 'Ціна',
+			label: t('admin.price'),
 			render: (b: Record<string, unknown>) => {
 				const row = b as unknown as EnrichedBookingRow;
-				return row.totalPrice ? `${row.totalPrice} грн` : '—';
+				return row.totalPrice ? `${row.totalPrice} ${t('common.currency')}` : '—';
 			},
 		},
 		{
 			key: 'status',
-			label: 'Статус бронювання',
+			label: t('booking.bookingStatus'),
 			render: (b: Record<string, unknown>) => {
 				const row = b as unknown as EnrichedBookingRow;
 				return (
@@ -125,14 +127,14 @@ const AdminBookings = () => {
 		},
 		{
 			key: 'paymentStatus',
-			label: 'Статус оплати',
+			label: t('booking.paymentStatus'),
 			render: (b: Record<string, unknown>) => {
 				const row = b as unknown as EnrichedBookingRow;
 				if (!row.payment) return '—';
 				const isPaid = row.payment.status === 'PAID';
 				return (
 					<span className={`badge ${isPaid ? 'badge-status-paid' : 'badge-status-pending'}`}>
-						{isPaid ? 'Оплачено' : 'Очікує оплату'}
+						{isPaid ? t('status.paid') : t('status.awaitingPayment')}
 					</span>
 				);
 			},
@@ -141,7 +143,7 @@ const AdminBookings = () => {
 
 	return (
 		<div className="admin-bookings container admin-page-container">
-			<h1 className="section-heading text-center">Управління бронюваннями</h1>
+			<h1 className="section-heading text-center">{t('admin.manageBookings')}</h1>
 
 			{isMobile ? (
 				<div className="admin-bookings-cards">
@@ -165,10 +167,10 @@ const AdminBookings = () => {
 							type="button"
 							className="btn-inline btn-danger"
 							onClick={() => handleDelete(b.id as number)}
-							title="Видалити бронювання"
+							title={t('admin.deleteBooking')}
 						>
 							<TrashIcon className="w-4 h-4" />
-							Видалити
+							{t('common.delete')}
 						</button>
 					)}
 				/>

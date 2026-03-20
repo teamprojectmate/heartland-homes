@@ -1,5 +1,6 @@
-import { typeTranslations } from '../../utils/translations';
+import { useTranslation } from 'react-i18next';
 import '../../styles/components/admin/_admin-form.scss';
+import { getTypeTranslations } from '../../utils/translations';
 
 type TypeSelectProps = {
 	value: string;
@@ -8,6 +9,9 @@ type TypeSelectProps = {
 };
 
 const TypeSelect = ({ value, onChange, disabled = false }: TypeSelectProps) => {
+	const { t } = useTranslation();
+	const types = getTypeTranslations(t);
+
 	return (
 		<select
 			className="type-select"
@@ -15,8 +19,8 @@ const TypeSelect = ({ value, onChange, disabled = false }: TypeSelectProps) => {
 			onChange={(e) => onChange(e.target.value)}
 			disabled={disabled}
 		>
-			<option value="">— Оберіть тип —</option>
-			{Object.entries(typeTranslations).map(([key, { label }]) => (
+			<option value="">{t('searchForm.selectType')}</option>
+			{Object.entries(types).map(([key, { label }]) => (
 				<option key={key} value={key}>
 					{label}
 				</option>

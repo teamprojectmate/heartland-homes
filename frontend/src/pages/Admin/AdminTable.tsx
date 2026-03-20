@@ -1,9 +1,3 @@
-/**
- * Універсальна таблиця для адмінки
- * @param {Array} columns - { key, label, className?, render? }
- * @param {Array} data - масив об'єктів (рядків таблиці)
- * @param {Function} actions - функція для додаткових дій (кнопки тощо)
- */
 type Column = {
 	key: string;
 	label: string;
@@ -28,7 +22,7 @@ const AdminTable = ({ columns, data, actions }: AdminTableProps) => {
 								{col.label}
 							</th>
 						))}
-						{actions && <th>Дії</th>}
+						{actions && <th>Actions</th>}
 					</tr>
 				</thead>
 				<tbody>
@@ -46,7 +40,7 @@ const AdminTable = ({ columns, data, actions }: AdminTableProps) => {
 					) : (
 						<tr>
 							<td colSpan={columns.length + (actions ? 1 : 0)} className="text-center">
-								Немає даних
+								No data
 							</td>
 						</tr>
 					)}

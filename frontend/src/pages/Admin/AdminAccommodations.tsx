@@ -73,7 +73,7 @@ const AdminAccommodations = () => {
 				key: 'type',
 				label: t('admin.type'),
 				render: (acc: Record<string, unknown>) => {
-					const { label, icon, color } = mapType(acc.type as string);
+					const { label, icon, color } = mapType(acc.type as string, t);
 					return (
 						<span className="badge badge-type" style={{ backgroundColor: color }}>
 							{icon} {label}

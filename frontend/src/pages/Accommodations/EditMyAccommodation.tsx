@@ -54,7 +54,6 @@ const EditMyAccommodation = () => {
 	const [loading, setLoading] = useState(false);
 	const [dataLoaded, setDataLoaded] = useState(false);
 
-	// Завантаження + парсинг області та вулиці
 	useEffect(() => {
 		if (!id) return;
 		getAccommodationById(id)
@@ -167,7 +166,7 @@ const EditMyAccommodation = () => {
 					<input
 						type="text"
 						id="edit-region"
-						placeholder="Івано-Франківська область"
+						placeholder={t('accommodationForm.regionPlaceholder')}
 						{...register('region')}
 						onBlur={normalizeFormAddress}
 					/>
@@ -178,7 +177,7 @@ const EditMyAccommodation = () => {
 					<input
 						type="text"
 						id="edit-city"
-						placeholder="Київ"
+						placeholder="Kyiv"
 						{...register('city')}
 						onBlur={normalizeFormAddress}
 					/>
@@ -190,7 +189,7 @@ const EditMyAccommodation = () => {
 					<input
 						type="text"
 						id="edit-location"
-						placeholder="вул. Центральна, 15, кв. 3"
+						placeholder="Main St., 15, apt. 3"
 						{...register('location')}
 						onBlur={normalizeFormAddress}
 					/>

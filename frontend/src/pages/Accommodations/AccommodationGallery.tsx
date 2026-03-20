@@ -10,7 +10,7 @@ const AccommodationGallery = ({ images }: { images: string[] }) => {
 	if (!images || images.length === 0) {
 		return (
 			<div className="gallery-fallback">
-				<img src="/no-image.png" alt="Немає зображення" />
+				<img src="/no-image.png" alt="No preview available" />
 			</div>
 		);
 	}
@@ -18,7 +18,7 @@ const AccommodationGallery = ({ images }: { images: string[] }) => {
 	if (images.length === 1) {
 		return (
 			<div className="single-image-container">
-				<img src={getSafeImageUrl(images[0])} alt="Фото помешкання" />
+				<img src={getSafeImageUrl(images[0])} alt="Accommodation view" />
 			</div>
 		);
 	}
@@ -34,7 +34,7 @@ const AccommodationGallery = ({ images }: { images: string[] }) => {
 			>
 				{images.map((img: string, idx: number) => (
 					<SwiperSlide key={img}>
-						<img src={getSafeImageUrl(img)} alt={`Фото ${idx + 1}`} />
+						<img src={getSafeImageUrl(img)} alt={`Slide ${idx + 1}`} />
 					</SwiperSlide>
 				))}
 			</Swiper>

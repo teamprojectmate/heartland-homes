@@ -1,4 +1,3 @@
-//  Основна палітра (синхронізована з _variables.scss)
 export const colors = {
 	primary: '#0f766e',
 	primary600: '#0b5f59',
@@ -25,7 +24,6 @@ export const colors = {
 	gray800: '#1f2937',
 	gray900: '#111827',
 
-	// Бейджі (як у SCSS)
 	badge: {
 		house: '#16a34a',
 		apartment: '#2563eb',

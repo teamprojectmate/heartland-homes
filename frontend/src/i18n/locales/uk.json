@@ -111,7 +111,8 @@
 		"latitude": "Широта (Latitude)",
 		"longitude": "Довгота (Longitude)",
 		"bedroomCountShort": "Кількість спалень",
-		"imagePreview": "Превʼю зображення"
+		"imagePreview": "Превʼю зображення",
+		"regionPlaceholder": "напр., Київська область"
 	},
 	"accommodationType": {
 		"house": "Будинок",
@@ -192,7 +193,9 @@
 		"type": "Тип",
 		"typePayment": "Оплата",
 		"typeRefund": "Повернення",
-		"paidBadge": "Оплачено"
+		"paidBadge": "Оплачено",
+		"bookingId": "ID бронювання",
+		"pay": "Оплатити"
 	},
 	"auth": {
 		"loginTitle": "Вхід",
@@ -212,7 +215,11 @@
 		"registering": "Реєстрація...",
 		"welcomeTitle": "Ласкаво просимо",
 		"welcomeLoginSubtitle": "Увійдіть, щоб забронювати свій наступний будинок мрії з <strong>Heartland Homes</strong>.",
-		"welcomeRegisterSubtitle": "Зареєструйтесь, щоб знайти свій ідеальний дім разом з <strong>Heartland Homes</strong>."
+		"welcomeRegisterSubtitle": "Зареєструйтесь, щоб знайти свій ідеальний дім разом з <strong>Heartland Homes</strong>.",
+		"accessDenied": "Доступ заборонено",
+		"noPermission": "У вас немає дозволу на перегляд цієї сторінки.",
+		"processingLogin": "Обробка входу...",
+		"pleaseWait": "Зачекайте, будь ласка"
 	},
 	"profile": {
 		"title": "Мій профіль",
@@ -267,7 +274,8 @@
 	"roles": {
 		"customer": "Клієнт",
 		"manager": "Менеджер",
-		"unknown": "Невідомо"
+		"unknown": "Невідомо",
+		"user": "Клієнт"
 	},
 	"status": {
 		"pending": "Очікує",
@@ -381,6 +389,12 @@
 		"cookies1": "Cookie допомагають нам аналізувати трафік.",
 		"cookies2": "Запам'ятовують ваші уподобання...",
 		"cookies3": "Ви можете вимкнути cookie..."
+	},
+	"passwordStrength": {
+		"label": "Надійність пароля:",
+		"weak": "Слабкий",
+		"medium": "Середній",
+		"strong": "Сильний"
 	},
 	"pages": {
 		"home": "Головна",

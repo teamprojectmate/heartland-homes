@@ -4,7 +4,7 @@ import { mapStatus } from '../../utils/translations';
 
 const BookingInfo = ({ booking }: { booking: Booking }) => {
 	const { t } = useTranslation();
-	const { label, color, slug } = mapStatus(booking.status);
+	const { label, color, slug } = mapStatus(booking.status, t);
 
 	return (
 		<div className="booking-info">

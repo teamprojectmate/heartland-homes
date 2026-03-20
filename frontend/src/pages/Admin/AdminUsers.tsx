@@ -1,5 +1,6 @@
 import { TrashIcon } from '@heroicons/react/24/solid';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import ErrorState from '../../components/ErrorState';
 import Notification from '../../components/Notification';
 import RoleSelect from '../../components/selects/RoleSelect';
@@ -14,6 +15,7 @@ import '../../styles/components/admin/_admin-users.scss';
 import '../../styles/components/admin/_admin-tables.scss';
 
 const AdminUsers = () => {
+	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const { items, loading, error } = useAppSelector((s) => s.user);
 
@@ -28,7 +30,7 @@ const AdminUsers = () => {
 	};
 
 	const handleDeleteUser = (id: number) => {
-		if (window.confirm('Видалити користувача?')) {
+		if (window.confirm(t('admin.deleteUser'))) {
 			dispatch(removeUser(id));
 		}
 	};
@@ -38,12 +40,12 @@ const AdminUsers = () => {
 
 	const columns = [
 		{ key: 'id', label: 'ID' },
-		{ key: 'email', label: 'Email' },
-		{ key: 'firstName', label: 'Ім’я' },
-		{ key: 'lastName', label: 'Прізвище' },
+		{ key: 'email', label: t('auth.email') },
+		{ key: 'firstName', label: t('auth.firstName') },
+		{ key: 'lastName', label: t('auth.lastName') },
 		{
 			key: 'role',
-			label: 'Роль',
+			label: t('admin.role'),
 			render: (u: Record<string, unknown>) => (
 				<RoleSelect
 					value={u.role as string}
@@ -55,7 +57,7 @@ const AdminUsers = () => {
 
 	return (
 		<div className="container admin-page-container">
-			<h1 className="section-heading text-center">Користувачі</h1>
+			<h1 className="section-heading text-center">{t('admin.users')}</h1>
 			{error && <Notification message={error} type="danger" />}
 
 			{isMobile ? (
@@ -86,10 +88,10 @@ const AdminUsers = () => {
 							type="button"
 							className="btn-inline btn-danger"
 							onClick={() => handleDeleteUser(u.id as number)}
-							title="Видалити користувача"
+							title={t('admin.deleteUser')}
 						>
 							<TrashIcon className="w-4 h-4" />
-							Видалити
+							{t('common.delete')}
 						</button>
 					)}
 				/>

@@ -1,12 +1,13 @@
+import { useTranslation } from 'react-i18next';
 import '../../styles/components/_status-select.scss';
 
 import {
-	accommodationStatusLabels,
-	adminBookingStatusLabels,
-	paymentStatusLabels,
+	getAccommodationStatusLabels,
+	getAdminBookingStatusLabels,
+	getPaymentStatusLabels,
 } from '../../utils/statusLabels';
 
-//  функція для нормалізації ключів у css-класи
+// function to normalize keys to css classes
 const normalizeClass = (value: string) =>
 	value ? value.toLowerCase().replace(/_/g, '-').replace(/\s+/g, '-') : '';
 
@@ -17,11 +18,12 @@ type StatusSelectProps = {
 };
 
 const StatusSelect = ({ value, onChange, type }: StatusSelectProps) => {
+	const { t } = useTranslation();
 	let options: Record<string, { text: string; className: string }> = {};
 
-	if (type === 'booking') options = adminBookingStatusLabels;
-	if (type === 'accommodation') options = accommodationStatusLabels;
-	if (type === 'payment') options = paymentStatusLabels;
+	if (type === 'booking') options = getAdminBookingStatusLabels(t);
+	if (type === 'accommodation') options = getAccommodationStatusLabels(t);
+	if (type === 'payment') options = getPaymentStatusLabels(t);
 
 	return (
 		<select

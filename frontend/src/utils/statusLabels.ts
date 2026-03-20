@@ -1,44 +1,78 @@
-// Статуси бронювань
-export const bookingStatusLabels = {
-	PENDING: { text: 'Очікує підтвердження', className: 'badge-status-pending' },
-	CONFIRMED: { text: 'Підтверджено', className: 'badge-status-confirmed' },
-	CANCELED: { text: 'Скасовано', className: 'badge-status-canceled' },
-	EXPIRED: { text: 'Прострочено', className: 'badge-status-expired' },
+import type { TFunction } from 'i18next';
+
+// Booking status config (className only, text via i18n)
+const bookingStatusKeys = {
+	PENDING: { i18nKey: 'status.pendingConfirmation', className: 'badge-status-pending' },
+	CONFIRMED: { i18nKey: 'status.confirmed', className: 'badge-status-confirmed' },
+	CANCELED: { i18nKey: 'status.cancelled', className: 'badge-status-canceled' },
+	EXPIRED: { i18nKey: 'status.expired', className: 'badge-status-expired' },
 };
 
-// Статуси помешкань
-export const accommodationStatusLabels = {
+// Accommodation status config
+const accommodationStatusKeys = {
 	REQUIRES_VERIFICATION: {
-		text: 'Потребує перевірки',
+		i18nKey: 'status.requiresVerification',
 		className: 'badge-status-requires-verification',
 	},
-	PERMITTED: { text: 'Дозволено', className: 'badge-status-permitted' },
-	REJECTED: { text: 'Відхилено', className: 'badge-status-rejected' },
+	PERMITTED: { i18nKey: 'status.permitted', className: 'badge-status-permitted' },
+	REJECTED: { i18nKey: 'status.rejected', className: 'badge-status-rejected' },
 };
 
-// Статуси платежів
-export const paymentStatusLabels = {
-	PENDING: { text: 'Очікує оплату', className: 'badge-status-pending' },
-	PAID: { text: 'Оплачено', className: 'badge-status-paid' },
-	FAILED: { text: 'Помилка', className: 'badge-status-failed' },
+// Payment status config
+const paymentStatusKeys = {
+	PENDING: { i18nKey: 'status.awaitingPayment', className: 'badge-status-pending' },
+	PAID: { i18nKey: 'status.paid', className: 'badge-status-paid' },
+	FAILED: { i18nKey: 'status.failed', className: 'badge-status-failed' },
 };
 
-//  Об'єднаний словник
-const allStatusLabels = {
-	...bookingStatusLabels,
-	...accommodationStatusLabels,
-	...paymentStatusLabels,
+// Combined config
+const allStatusKeys = {
+	...bookingStatusKeys,
+	...accommodationStatusKeys,
+	...paymentStatusKeys,
 };
 
-//  Статуси бронювань для адмін-панелі
-export const adminBookingStatusLabels = {
-	PENDING: { text: 'Очікує підтвердження', className: 'badge-status-pending' },
-	CONFIRMED: { text: 'Підтверджено', className: 'badge-status-confirmed' },
+// Admin booking status config
+const adminBookingStatusKeys = {
+	PENDING: { i18nKey: 'status.pendingConfirmation', className: 'badge-status-pending' },
+	CONFIRMED: { i18nKey: 'status.confirmed', className: 'badge-status-confirmed' },
 };
 
-//  функція для StatusBadge
-export const getStatusLabel = (status: string) =>
-	(allStatusLabels as Record<string, { text: string; className: string }>)[status] || {
-		text: status,
-		className: 'badge-status-unknown',
-	};
+// Resolved label helpers that accept t function
+export const getBookingStatusLabels = (t: TFunction) =>
+	Object.fromEntries(
+		Object.entries(bookingStatusKeys).map(([key, val]) => [
+			key,
+			{ text: t(val.i18nKey), className: val.className },
+		]),
+	);
+
+export const getAccommodationStatusLabels = (t: TFunction) =>
+	Object.fromEntries(
+		Object.entries(accommodationStatusKeys).map(([key, val]) => [
+			key,
+			{ text: t(val.i18nKey), className: val.className },
+		]),
+	);
+
+export const getPaymentStatusLabels = (t: TFunction) =>
+	Object.fromEntries(
+		Object.entries(paymentStatusKeys).map(([key, val]) => [
+			key,
+			{ text: t(val.i18nKey), className: val.className },
+		]),
+	);
+
+export const getAdminBookingStatusLabels = (t: TFunction) =>
+	Object.fromEntries(
+		Object.entries(adminBookingStatusKeys).map(([key, val]) => [
+			key,
+			{ text: t(val.i18nKey), className: val.className },
+		]),
+	);
+
+export const getStatusLabel = (status: string, t: TFunction) => {
+	const config = (allStatusKeys as Record<string, { i18nKey: string; className: string }>)[status];
+	if (!config) return { text: status, className: 'badge-status-unknown' };
+	return { text: t(config.i18nKey), className: config.className };
+};
