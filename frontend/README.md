@@ -1,258 +1,117 @@
-# Booking Service — Frontend 🏨
+# Heartland Homes — Frontend
 
-Клієнтська частина проєкту **Booking Service**, створена на **React** та **Redux Toolkit**. Додаток дозволяє користувачам переглядати доступні помешкання, бронювати їх, керувати профілем і переглядати історію бронювань.
+Short-term vacation rental platform (similar to Airbnb). Built with React 19, TypeScript, Redux Toolkit, and Vite.
 
----
+## Features
 
-## 🚀 Основні можливості
-- **Автентифікація:** реєстрація, вхід/вихід, зберігання токена, захищені маршрути.
-- **Управління профілем:** перегляд і редагування даних користувача, зміна пароля.
-- **Перегляд помешкань:** список доступних варіантів із фільтрами та пагінацією.
-- **Деталі помешкання:** опис, фото, зручності, рейтинг, доступні дати.
-- **Бронювання:** створення бронювання, підтвердження та оплата.
-- **Мої бронювання:** перегляд усіх бронювань, скасування (якщо підтримується бекендом).
+- **Authentication:** Email/password + Google OAuth, JWT-based session, role-based access (Customer/Manager)
+- **Accommodations:** Search with filters (city, type, price), interactive map (Leaflet), gallery
+- **Bookings:** Create, view, cancel bookings with date validation and price calculation
+- **Payments:** Stripe Checkout integration with payment status tracking
+- **Admin Panel:** Manage accommodations, bookings, users, payments (Manager role)
+- **Dark/Light Theme:** CSS custom properties with WCAG AA contrast
+- **i18n:** English and Ukrainian translations
 
----
+## Tech Stack
 
-## 🛠 Використані технології
-- **React** — інтерфейс користувача.
-- **React Router DOM** — маршрутизація сторінок.
-- **Redux Toolkit** — централізоване управління станом.
-- **Axios** — HTTP-запити до бекенду.
-- **Stripe Elements** — обробка платежів.
-- **Bootstrap** — базова стилізація компонентів (або ваш UI-фреймворк).
+| Category | Technology |
+|----------|-----------|
+| Framework | React 19, TypeScript 5.9 (strict mode) |
+| Build | Vite 7 |
+| State | Redux Toolkit (typed hooks) |
+| Forms | React Hook Form + Zod validation |
+| Styling | SCSS with CSS custom properties |
+| Maps | Leaflet + React Leaflet |
+| Payments | Stripe |
+| Auth | JWT + Google OAuth |
+| i18n | i18next (EN/UA) |
+| Linter | Biome (strict: noExplicitAny, noDoubleEquals, a11y rules) |
+| Tests | Vitest (unit) + Cypress (E2E) |
 
-> За потреби можна легко замінити Bootstrap на Tailwind/Material UI.
+## Getting Started
 
----
+### Prerequisites
+- Node.js v20+
+- npm v9+
 
-## ✅ Передумови
-- **Node.js** v18+ (рекомендовано v20)
-- **npm** v9+ або **pnpm/yarn** (на ваш вибір)
-- Запущений **бекенд-сервер** Booking Service
-
-Перевірити версію Node.js:
+### Setup
 
 ```bash
-node -v
+cd frontend
+npm install
 ```
 
----
-# React + Vite
+### Environment Variables
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Create `.env` in `frontend/`:
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-
-
-## ⚙️ Налаштування середовища
-
-Фронтенд за замовчуванням звертається до бекенду за адресою `http://localhost:8080/api/v1`.
-Якщо бекенд працює на іншому порту/домені — змініть **BASE_URL** у відповідних файлах або через змінні середовища.
-
-### Варіант A — змінна у коді (приклад)
-```js
-// src/store/slices/authSlice.js
-const BASE_URL = 'http://localhost:8080/api/v1';
+```env
+VITE_API_URL=http://localhost:8080/api/v1
+VITE_GOOGLE_CLIENT_ID=your_google_client_id
+VITE_STRIPE_PUBLIC_KEY=pk_test_your_key
 ```
 
-### Варіант B — через .env (рекомендовано)
-Створіть файл **.env** у корені фронтенд-проєкту:
+### Development
 
-> Якщо ви використовуєте Create React App — префікс `REACT_APP_...`.
-> Якщо Vite — префікс `VITE_...`.
-
-```dotenv
-# Base API URL
-REACT_APP_API_BASE_URL=http://localhost:8080/api/v1
-
-# Stripe
-REACT_APP_STRIPE_PUBLISHABLE_KEY=pk_test_XXXXXXXXXXXXXXXXXXXXXXXX
-
-# Інші приклади
-REACT_APP_APP_NAME=Booking Service
-REACT_APP_ENABLE_MOCKS=false
+```bash
+npm run dev
 ```
 
-У коді звертайтесь до значень так:
-```js
-const BASE_URL = process.env.REACT_APP_API_BASE_URL ?? 'http://localhost:8080/api/v1';
+Open http://localhost:5173
+
+### Build
+
+```bash
+npm run build
 ```
 
----
+Output: `dist/`
 
-## 🧩 Встановлення та запуск
-1. **Встановіть залежності**
-   ```bash
-   npm install
-   ```
+## Scripts
 
-2. **Запустіть застосунок у режимі розробки**
-   ```bash
-   npm start
-   ```
-   Доступно за адресою: http://localhost:3000
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start dev server (Vite) |
+| `npm run build` | Production build |
+| `npm run type-check` | TypeScript check |
+| `npm run biome:check` | Lint (errors only) |
+| `npm run biome:fix` | Lint + autofix |
+| `npm run test` | Run tests (watch) |
+| `npm run test:run` | Run tests (single run) |
+| `npm run check` | type-check + biome:check |
 
-3. **Збірка продакшен-версії**
-   ```bash
-   npm run build
-   ```
-   Готові файли зʼявляться в директорії `build/`.
-
-4. **Перевірка форматування та лінтингу (за наявності)**
-   ```bash
-   npm run lint
-   npm run format
-   ```
-
----
-
-## 📂 Структура проєкту
+## Project Structure
 
 ```
 src/
-├─ App.jsx                 # Головний компонент із маршрутизацією
-├─ index.jsx               # Точка входу застосунку
-├─ assets/                 # Зображення, іконки, статичні файли
-├─ components/             # Презентаційні та спільні компоненти
-├─ pages/                  # Сторінки (Login, Register, Listings, Details, Profile, Bookings)
-├─ features/               # Фічі або модулі (за потреби)
-├─ hooks/                  # Кастомні хуки
-├─ services/               # API-клієнти (axios інстанс, запити)
-├─ store/                  # Redux store та slices
-│  ├─ store.js             # Ініціалізація Redux store
-│  └─ slices/
-│     ├─ authSlice.js      # Логіка автентифікації (вхід/реєстрація/вихід)
-│     └─ ...               # Інші slices (properties, bookings, profile)
-├─ styles/                 # Глобальні стилі / Bootstrap overrides
-└─ utils/                  # Хелпери, константи
+├── api/            Typed API services (Promise<T>, Axios interceptors)
+├── components/     Reusable UI (MapPicker, Skeletons, BookingCard)
+├── hooks/          Custom hooks (useEnrichedBookings, useIsMobile)
+├── pages/          Route pages by feature (Auth, Admin, User, Info)
+├── routes/         AppRoutes (lazy-loaded with React.lazy)
+├── store/          Redux Toolkit (5 slices, typed RootState/AppDispatch)
+├── styles/         SCSS (CSS custom properties, z-index scale, theme)
+├── types/          Centralized TypeScript types
+├── utils/          Pure functions (dateCalc, addressNormalization)
+├── validation/     Zod schemas for forms
+└── i18n/           Translations (en.json, uk.json)
 ```
 
----
+## Quality Gates
 
-## 🔐 Автентифікація
-- Зберігання токена у **HttpOnly cookie** або **localStorage** (залежно від вимог безпеки).
-- Захищені маршрути через **PrivateRoute**/**RequireAuth**.
-- Оновлення токена (refresh) — якщо підтримується бекендом.
+| When | What runs |
+|------|-----------|
+| `git commit` | lint-staged (biome fix) + tsc |
+| `git push` | type-check + biome:check + build |
+| PR (GitHub) | CI: tsc + biome + build |
 
----
+## Test Credentials
 
-## 💳 Платежі (Stripe)
-1. Додайте **публічний ключ** у `.env` (`REACT_APP_STRIPE_PUBLISHABLE_KEY`).
-2. Ініціалізуйте Stripe у корені застосунку (наприклад, у `App.jsx`).
-3. На бекенді має створюватися **PaymentIntent**; фронт завершує оплату через **Stripe Elements**.
+| Role | Email | Password |
+|------|-------|----------|
+| Admin | `admin@booking.com` | `password123` |
+| User | `john.doe@booking.com` | `password123` |
 
-> Докладніше — у документації Stripe. Переконайтеся, що бекенд повертає `client_secret`.
+## License
 
----
-
-## 🌐 Налаштування API-клієнта (Axios)
-Створіть інстанс із базовою адресою та інтерсепторами:
-
-```js
-// src/services/http.js
-import axios from 'axios';
-
-const http = axios.create({
-  baseURL: process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/api/v1',
-  withCredentials: true,
-});
-
-http.interceptors.request.use((config) => {
-  const token = localStorage.getItem('access_token');
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-  return config;
-});
-
-export default http;
-```
-
----
-
-## 🧪 Тестування (опційно)
-- **Jest** + **React Testing Library** для юніт/інтеграційних тестів.
-
-```bash
-npm test
-```
-
----
-
-## 🧰 Корисні npm-скрипти (приклад)
-```json
-{
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "lint": "eslint \"src/**/*.{js,jsx}\"",
-    "format": "prettier --write ."
-  }
-}
-```
-> За потреби адаптуйте під ваш білдер (CRA/Vite/Next.js).
-
----
-
-## 🐳 Docker (опційно)
-```dockerfile
-# Dockerfile
-FROM node:20-alpine AS build
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-RUN npm run build
-
-FROM nginx:alpine
-COPY --from=build /app/build /usr/share/nginx/html
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
-```
-
----
-
-## 🔧 Типові проблеми
-- **CORS помилка:** переконайтеся, що бекенд дозволяє запити з `http://localhost:3000`.
-- **Помилка Stripe ключа:** перевірте `REACT_APP_STRIPE_PUBLISHABLE_KEY`.
-- **Невірний BASE_URL:** уточніть адресу бекенду у `.env` або в коді.
-
----
-
-## 🗺 Дорожня карта (Roadmap)
-- Відгуки та рейтинги
-- Збережені помешкання (favorites)
-- Мультимовність (i18n)
-- SSR / SEO покращення
-
----
-
-## 📄 Ліцензія
-MIT або інша (вкажіть за потреби).
-
----
-
-## 🤝 Внесок
-PR/issue-и вітаються! Описуйте кроки відтворення, очікувану/фактичну поведінку та середовище.
-
----
-
-### Швидкий старт
-```bash
-git clone <repo-url>
-cd booking-service-frontend
-cp .env.example .env   # за потреби
-npm install
-npm start
-```
-
-Гарної розробки! 💙
-
+MIT

@@ -14,9 +14,9 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
 		return { hasError: true, error };
 	}
 
-	componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-		console.error('ErrorBoundary caught error:', error, errorInfo);
-	}
+	handleReset = () => {
+		this.setState({ hasError: false, error: null });
+	};
 
 	render() {
 		if (this.state.hasError) {
@@ -24,6 +24,16 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
 				<div className="container text-center mt-5">
 					<h2>{i18n.t('common.errorOccurred')}</h2>
 					<p>{this.state.error?.message || i18n.t('common.unexpectedError')}</p>
+					<div
+						style={{ display: 'flex', gap: '1rem', justifyContent: 'center', marginTop: '1.5rem' }}
+					>
+						<button type="button" className="btn-primary" onClick={this.handleReset}>
+							{i18n.t('common.tryAgain')}
+						</button>
+						<a href="/" className="btn-secondary">
+							{i18n.t('common.goHome')}
+						</a>
+					</div>
 				</div>
 			);
 		}
