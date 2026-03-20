@@ -1,13 +1,13 @@
 import api from '../axios';
 
 //  Створити платіж
-export const createPayment = async (bookingId, paymentType = 'PAYMENT') => {
+export const createPayment = async (bookingId: number, paymentType = 'PAYMENT') => {
 	const response = await api.post('/payments', { bookingId, paymentType });
 	return response.data;
 };
 
 // Отримати платежі користувача
-export const fetchPaymentsByUser = async (userId, pageable) => {
+export const fetchPaymentsByUser = async (userId: number, pageable: Record<string, unknown>) => {
 	const response = await api.get(`/payments`, {
 		params: { userId, ...pageable },
 	});
@@ -15,13 +15,13 @@ export const fetchPaymentsByUser = async (userId, pageable) => {
 };
 
 // Скасувати платіж (backend uses GET for this — REST anti-pattern, not fixable on FE side)
-export const cancelPayment = async (paymentId) => {
+export const cancelPayment = async (paymentId: number) => {
 	const response = await api.get(`/payments/cancel`, { params: { id: paymentId } });
 	return response.data;
 };
 
 // Отримати всі платежі (адмін)
-export const getAllPaymentsService = async (pageable) => {
+export const getAllPaymentsService = async (pageable: Record<string, unknown>) => {
 	const response = await api.get('/payments', { params: pageable });
 	return response.data;
 };

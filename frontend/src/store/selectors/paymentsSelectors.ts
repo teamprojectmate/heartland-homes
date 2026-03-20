@@ -1,3 +1,5 @@
-export const selectPaymentByBookingId = (state, bookingId) => {
-	return state.payments.payments.find((p) => p.bookingId === bookingId);
+import type { RootState } from '../store';
+
+export const selectPaymentByBookingId = (state: RootState, bookingId: number) => {
+	return state.payments.payments.find((p: Record<string, unknown>) => p.bookingId === bookingId);
 };

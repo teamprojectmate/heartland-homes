@@ -35,8 +35,8 @@ const AccommodationDetails = ({ id: propId }: { id?: number | string }) => {
 					return;
 				}
 				setAccommodation(data);
-			} catch (err) {
-				console.error('Error loading accommodation:', err);
+			} catch (_err) {
+				/* error handled silently */
 				setError(t('accommodations.errorLoadingDetails'));
 			} finally {
 				setLoading(false);
@@ -69,7 +69,7 @@ const AccommodationDetails = ({ id: propId }: { id?: number | string }) => {
 						<AccommodationGallery
 							images={
 								accommodation.images?.length
-									? accommodation.images.map((img) => getSafeImageUrl(img))
+									? accommodation.images.map((img: string) => getSafeImageUrl(img))
 									: accommodation.image
 										? [getSafeImageUrl(accommodation.image)]
 										: []
@@ -85,8 +85,8 @@ const AccommodationDetails = ({ id: propId }: { id?: number | string }) => {
 								{typeIcon} {typeLabel}
 							</span>
 							<span className="badge badge-size">
-								{parseInt(accommodation.size, 10)}{' '}
-								{parseInt(accommodation.size, 10) > 1
+								{parseInt(String(accommodation.size), 10)}{' '}
+								{parseInt(String(accommodation.size), 10) > 1
 									? t('accommodations.bedrooms_other')
 									: t('accommodations.bedrooms_one')}
 							</span>
@@ -96,7 +96,7 @@ const AccommodationDetails = ({ id: propId }: { id?: number | string }) => {
 							<strong>{t('accommodations.amenities')}:</strong>
 							<div className="badge-group mt-2">
 								{accommodation?.amenities?.length > 0 ? (
-									accommodation.amenities.map((amenity) => {
+									accommodation.amenities.map((amenity: string) => {
 										const { label, icon, slug, color } = mapAmenity(amenity);
 										return (
 											<span
@@ -150,7 +150,7 @@ const AccommodationDetails = ({ id: propId }: { id?: number | string }) => {
 						renderPopup={(acc) => (
 							<div style={{ width: '150px' }}>
 								<img
-									src={getSafeImageUrl(acc.image) || '/no-image.png'}
+									src={getSafeImageUrl(acc.image as string) || '/no-image.png'}
 									alt={acc.name}
 									style={{ width: '100%', borderRadius: '6px', marginBottom: '6px' }}
 									onError={(e) => (e.currentTarget.src = '/no-image.png')}

@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
-function ScrollToTop() {
-	const _location = useLocation();
+function ScrollToTop(): null {
+	useLocation();
 
 	useEffect(() => {
 		// Прокручуємо догори плавно при зміні сторінки

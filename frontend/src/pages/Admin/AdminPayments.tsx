@@ -29,13 +29,13 @@ const AdminPayments = () => {
 		{
 			key: 'amountToPay',
 			label: 'Сума',
-			render: (p) => `${p.amountToPay} грн`,
+			render: (p: Record<string, unknown>) => `${p.amountToPay} грн`,
 		},
 		{ key: 'paymentType', label: 'Тип' },
 		{
 			key: 'status',
 			label: 'Статус',
-			render: (p) => <StatusBadge status={p.status} />,
+			render: (p: Record<string, unknown>) => <StatusBadge status={p.status as string} />,
 		},
 	];
 

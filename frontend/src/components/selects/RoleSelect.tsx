@@ -1,7 +1,13 @@
 import { roles } from '../../utils/roles';
 import '../../styles/components/admin/_admin-users.scss';
 
-const RoleSelect = ({ value, onChange, disabled = false }) => {
+type RoleSelectProps = {
+	value: string;
+	onChange: (value: string) => void;
+	disabled?: boolean;
+};
+
+const RoleSelect = ({ value, onChange, disabled = false }: RoleSelectProps) => {
 	return (
 		<select
 			className="role-select"

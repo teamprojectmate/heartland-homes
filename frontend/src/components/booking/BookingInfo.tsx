@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next';
+import type { Booking } from '../../types';
 import { mapStatus } from '../../utils/translations';
 
-const BookingInfo = ({ booking }) => {
+const BookingInfo = ({ booking }: { booking: Booking }) => {
 	const { t } = useTranslation();
 	const { label, color, slug } = mapStatus(booking.status);
 

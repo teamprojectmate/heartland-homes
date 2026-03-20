@@ -7,7 +7,23 @@ import '../../styles/components/admin/_admin-bookings.scss';
 
 const fallbackImage = '/assets/no-image.svg';
 
-const AdminBookingCard = ({ booking, onDelete, onStatusChange }) => {
+type AdminBookingCardProps = {
+	booking: Record<string, unknown> & {
+		accommodation?: { image?: string; name?: string };
+		user?: { firstName: string; lastName: string; email: string };
+		userId?: number;
+		checkInDate: string;
+		checkOutDate: string;
+		totalPrice?: number;
+		status: string;
+		payment?: { status: string };
+		id: number;
+	};
+	onDelete: (id: number) => void;
+	onStatusChange: (booking: Record<string, unknown>, newStatus: string) => void;
+};
+
+const AdminBookingCard = ({ booking, onDelete, onStatusChange }: AdminBookingCardProps) => {
 	const image = booking.accommodation?.image
 		? fixDropboxUrl(booking.accommodation.image)
 		: fallbackImage;

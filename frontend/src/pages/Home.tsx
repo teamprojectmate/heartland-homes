@@ -17,7 +17,7 @@ const Home = () => {
 	}, [dispatch]);
 
 	const handleSearch = useCallback(
-		(e, formData) => {
+		(e: React.FormEvent, formData: Record<string, string>) => {
 			e.preventDefault();
 			dispatch(setFilters(formData));
 

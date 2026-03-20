@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { Booking } from '../../types';
 import BookingStatusBlock from '../BookingStatusBlock';
 import BookingActions from './BookingActions';
 import BookingInfo from './BookingInfo';
@@ -7,7 +8,14 @@ import BookingInfo from './BookingInfo';
 import '../../styles/components/booking/_booking-card.scss';
 import '../../styles/components/booking/_booking-details.scss';
 
-const BookingDetails = ({ booking, onCancel, onDelete, onPay }) => {
+type BookingDetailsProps = {
+	booking: Booking;
+	onCancel: (id: number) => void;
+	onDelete: (id: number) => void;
+	onPay: (id: number) => void;
+};
+
+const BookingDetails = ({ booking, onCancel, onDelete, onPay }: BookingDetailsProps) => {
 	const { t } = useTranslation();
 
 	const enrichedBooking = useMemo(() => {

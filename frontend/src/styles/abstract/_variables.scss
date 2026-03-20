@@ -111,10 +111,13 @@ $container-pad-max: 24px;
 $control-height-sm: 44px;
 $control-height-md: 40px;
 
-// 📊 Z-index
-
+// Z-index scale (ordered, no magic numbers)
+$z-dropdown: 100;
 $z-header: 1000;
-$z-drawer: 1200;
+$z-notification: 1050;
+$z-drawer: 1100;
+$z-modal: 1200;
+$z-tooltip: 1300;
 
 // Палітра бейджів
 

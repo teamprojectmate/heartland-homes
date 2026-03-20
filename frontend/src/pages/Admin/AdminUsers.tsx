@@ -23,11 +23,11 @@ const AdminUsers = () => {
 		dispatch(fetchUsers());
 	}, [dispatch]);
 
-	const handleUpdateRole = (id, role) => {
+	const handleUpdateRole = (id: number, role: string) => {
 		dispatch(updateUserRole({ id, role }));
 	};
 
-	const handleDeleteUser = (id) => {
+	const handleDeleteUser = (id: number) => {
 		if (window.confirm('Видалити користувача?')) {
 			dispatch(removeUser(id));
 		}
@@ -44,8 +44,11 @@ const AdminUsers = () => {
 		{
 			key: 'role',
 			label: 'Роль',
-			render: (u) => (
-				<RoleSelect value={u.role} onChange={(newRole) => handleUpdateRole(u.id, newRole)} />
+			render: (u: Record<string, unknown>) => (
+				<RoleSelect
+					value={u.role as string}
+					onChange={(newRole: string) => handleUpdateRole(u.id as number, newRole)}
+				/>
 			),
 		},
 	];
@@ -59,8 +62,16 @@ const AdminUsers = () => {
 				<div className="admin-users-cards">
 					{items.map((u) => (
 						<AdminUserCard
-							key={u.id}
-							user={u}
+							key={u.id as number}
+							user={
+								u as unknown as {
+									id: number;
+									firstName: string;
+									lastName?: string;
+									email: string;
+									role?: string;
+								}
+							}
 							onUpdateRole={handleUpdateRole}
 							onDelete={handleDeleteUser}
 						/>
@@ -74,7 +85,7 @@ const AdminUsers = () => {
 						<button
 							type="button"
 							className="btn-inline btn-danger"
-							onClick={() => handleDeleteUser(u.id)}
+							onClick={() => handleDeleteUser(u.id as number)}
 							title="Видалити користувача"
 						>
 							<TrashIcon className="w-4 h-4" />

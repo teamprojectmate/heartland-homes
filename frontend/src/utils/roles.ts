@@ -5,6 +5,6 @@ export const roles = {
 };
 
 //  Хелпер для зручного отримання лейблу
-export const getRoleLabel = (role) => {
-	return roles[role]?.label || role;
+export const getRoleLabel = (role: string) => {
+	return (roles as Record<string, { value: string; label: string }>)[role]?.label || role;
 };

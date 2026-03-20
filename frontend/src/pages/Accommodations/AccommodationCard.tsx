@@ -1,12 +1,13 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import type { Accommodation } from '../../types';
 import { getSafeImageUrl } from '../../utils/getSafeImageUrl';
 import { mapType } from '../../utils/translations/index';
 
 const fallbackImage = '/no-image.png';
 
-const AccommodationCard = ({ accommodation }) => {
+const AccommodationCard = ({ accommodation }: { accommodation: Accommodation }) => {
 	const { t } = useTranslation();
 	const imageUrl = getSafeImageUrl(accommodation.image);
 
@@ -31,8 +32,8 @@ const AccommodationCard = ({ accommodation }) => {
 
 					{accommodation.size && (
 						<span className="badge badge-size">
-							{parseInt(accommodation.size, 10)}{' '}
-							{parseInt(accommodation.size, 10) > 1
+							{parseInt(String(accommodation.size), 10)}{' '}
+							{parseInt(String(accommodation.size), 10) > 1
 								? t('accommodations.bedrooms_other')
 								: t('accommodations.bedrooms_one')}
 						</span>

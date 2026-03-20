@@ -1,4 +1,4 @@
-export const fixDropboxUrl = (url) => {
+export const fixDropboxUrl = (url: string) => {
 	if (!url) return '';
 
 	// Якщо є ?dl=0 → замінюємо на raw=1

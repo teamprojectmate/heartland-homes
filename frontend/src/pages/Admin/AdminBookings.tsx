@@ -13,7 +13,7 @@ import {
 	updateBookingStatus,
 } from '../../store/slices/bookingsSlice';
 import { fetchAllPayments } from '../../store/slices/paymentsSlice';
-import type { User } from '../../types';
+import type { Booking, Payment, User } from '../../types';
 import AdminBookingCard from './AdminBookingCard';
 import AdminTable from './AdminTable';
 
@@ -41,7 +41,11 @@ const AdminBookings = () => {
 	const [usersMap, setUsersMap] = useState<Record<string, User>>({});
 	const isMobile = useIsMobile();
 
-	const enrichedBookings = useEnrichedBookings(bookings, payments, usersMap);
+	const enrichedBookings = useEnrichedBookings(
+		bookings as unknown as Booking[],
+		payments as unknown as Payment[],
+		usersMap,
+	);
 
 	useEffect(() => {
 		dispatch(fetchBookings());
@@ -82,38 +86,50 @@ const AdminBookings = () => {
 		{
 			key: 'user',
 			label: 'Користувач',
-			render: (b: EnrichedBookingRow) =>
-				b.user ? `${b.user.firstName} ${b.user.lastName} (${b.user.email})` : b.userId,
+			render: (b: Record<string, unknown>) => {
+				const row = b as unknown as EnrichedBookingRow;
+				return row.user
+					? `${row.user.firstName} ${row.user.lastName} (${row.user.email})`
+					: row.userId;
+			},
 		},
 		{
 			key: 'accommodation',
 			label: 'Помешкання',
-			render: (b: EnrichedBookingRow) => b.accommodation?.name || '—',
+			render: (b: Record<string, unknown>) =>
+				(b as unknown as EnrichedBookingRow).accommodation?.name || '—',
 		},
 		{ key: 'checkInDate', label: 'Заїзд' },
 		{ key: 'checkOutDate', label: 'Виїзд' },
 		{
 			key: 'totalPrice',
 			label: 'Ціна',
-			render: (b: EnrichedBookingRow) => (b.totalPrice ? `${b.totalPrice} грн` : '—'),
+			render: (b: Record<string, unknown>) => {
+				const row = b as unknown as EnrichedBookingRow;
+				return row.totalPrice ? `${row.totalPrice} грн` : '—';
+			},
 		},
 		{
 			key: 'status',
 			label: 'Статус бронювання',
-			render: (b: EnrichedBookingRow) => (
-				<StatusSelect
-					type="booking"
-					value={b.status}
-					onChange={(newStatus: string) => handleStatusChange(b, newStatus)}
-				/>
-			),
+			render: (b: Record<string, unknown>) => {
+				const row = b as unknown as EnrichedBookingRow;
+				return (
+					<StatusSelect
+						type="booking"
+						value={row.status}
+						onChange={(newStatus: string) => handleStatusChange(row, newStatus)}
+					/>
+				);
+			},
 		},
 		{
 			key: 'paymentStatus',
 			label: 'Статус оплати',
-			render: (b: EnrichedBookingRow) => {
-				if (!b.payment) return '—';
-				const isPaid = b.payment.status === 'PAID';
+			render: (b: Record<string, unknown>) => {
+				const row = b as unknown as EnrichedBookingRow;
+				if (!row.payment) return '—';
+				const isPaid = row.payment.status === 'PAID';
 				return (
 					<span className={`badge ${isPaid ? 'badge-status-paid' : 'badge-status-pending'}`}>
 						{isPaid ? 'Оплачено' : 'Очікує оплату'}
@@ -133,7 +149,9 @@ const AdminBookings = () => {
 						<AdminBookingCard
 							key={booking.id}
 							booking={booking}
-							onStatusChange={handleStatusChange}
+							onStatusChange={(booking: Record<string, unknown>, newStatus: string) =>
+								handleStatusChange(booking as EnrichedBookingRow, newStatus)
+							}
 							onDelete={handleDelete}
 						/>
 					))}
@@ -142,11 +160,11 @@ const AdminBookings = () => {
 				<AdminTable
 					columns={columns}
 					data={enrichedBookings}
-					actions={(b: EnrichedBookingRow) => (
+					actions={(b: Record<string, unknown>) => (
 						<button
 							type="button"
 							className="btn-inline btn-danger"
-							onClick={() => handleDelete(b.id)}
+							onClick={() => handleDelete(b.id as number)}
 							title="Видалити бронювання"
 						>
 							<TrashIcon className="w-4 h-4" />

@@ -28,7 +28,18 @@ const enrichBookings = async (bookings: RawBooking[]) =>
 		}),
 	);
 
-const initialState = {
+type BookingsState = {
+	bookings: Record<string, unknown>[];
+	currentBooking: Record<string, unknown> | null;
+	status: string;
+	error: string | null;
+	paymentStatus: string;
+	page: number;
+	totalPages: number;
+	totalElements: number;
+};
+
+const initialState: BookingsState = {
 	bookings: [],
 	currentBooking: null,
 	status: 'idle',
@@ -40,16 +51,16 @@ const initialState = {
 };
 
 //  Хелпер: оновлення сторінки/пагінації
-function updatePageState(state, payload) {
-	state.bookings = payload.content || [];
-	state.page = payload.pageable?.pageNumber ?? 0;
-	state.totalPages = payload.totalPages || 0;
-	state.totalElements = payload.totalElements || 0;
+function updatePageState(state: BookingsState, payload: Record<string, unknown>) {
+	state.bookings = (payload.content as Record<string, unknown>[]) || [];
+	state.page = ((payload.pageable as Record<string, unknown>)?.pageNumber as number) ?? 0;
+	state.totalPages = (payload.totalPages as number) || 0;
+	state.totalElements = (payload.totalElements as number) || 0;
 }
 
 //  Хелпер: видалення бронювання (cancel/delete)
-function removeBooking(state, id) {
-	state.bookings = state.bookings.filter((b) => b.id !== id);
+function removeBooking(state: BookingsState, id: number) {
+	state.bookings = state.bookings.filter((b: Record<string, unknown>) => b.id !== id);
 	state.totalElements = Math.max(0, state.totalElements - 1);
 	state.totalPages = Math.ceil(state.totalElements / 5);
 }
@@ -116,7 +127,7 @@ export const changeBookingStatus = createAsyncThunk(
 				status,
 			};
 
-			const response = await bookingsService.updateBooking(booking.id, updatedBooking);
+			const response = await bookingsService.updateBooking(booking.id as number, updatedBooking);
 			return response;
 		} catch (err: unknown) {
 			return rejectWithValue(getApiErrorMessage(err, 'Не вдалося змінити статус бронювання.'));

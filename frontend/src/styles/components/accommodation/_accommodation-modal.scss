@@ -1,3 +1,5 @@
+@use '../../abstract/variables' as *;
+
 .accommodation-modal-overlay {
 	position: fixed;
 	inset: 0;
@@ -5,7 +7,7 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	z-index: 2000;
+	z-index: $z-modal;
 }
 
 .accommodation-modal-content {

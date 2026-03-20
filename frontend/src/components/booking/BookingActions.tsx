@@ -1,10 +1,18 @@
 import { useTranslation } from 'react-i18next';
+import type { Booking } from '../../types';
 import { normalizeBooking } from '../../utils/normalizeBooking';
 
-const BookingActions = ({ booking, onCancel, onPay, onDelete }) => {
+type BookingActionsProps = {
+	booking: Booking;
+	onCancel: (id: number) => void;
+	onPay: (id: number) => void;
+	onDelete: (id: number) => void;
+};
+
+const BookingActions = ({ booking, onCancel, onPay, onDelete }: BookingActionsProps) => {
 	const { t } = useTranslation();
-	const enrichedBooking = normalizeBooking(booking);
-	const isPaid = enrichedBooking.payment?.status === 'PAID';
+	const enrichedBooking = normalizeBooking(booking as Record<string, unknown>) as Booking;
+	const isPaid = enrichedBooking?.payment?.status === 'PAID';
 
 	return (
 		<div className="booking-actions">

@@ -10,6 +10,7 @@ import './styles/main.scss';
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
+// biome-ignore lint/style/noNonNullAssertion: root element guaranteed by index.html
 ReactDOM.createRoot(document.getElementById('root')!).render(
 	<React.StrictMode>
 		<Provider store={store}>

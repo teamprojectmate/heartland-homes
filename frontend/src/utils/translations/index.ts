@@ -15,10 +15,16 @@ export const typeTranslations = {
 };
 
 //  Мапінг типів житла
-export const mapType = (type) => {
+export const mapType = (type: string) => {
 	if (!type) return { label: 'Невідомо', icon: '❓', color: '#ccc' };
 	const key = type.toUpperCase();
-	return typeTranslations[key] || { label: type, icon: '❓', color: '#ccc' };
+	return (
+		(typeTranslations as Record<string, { label: string; icon: string; color: string }>)[key] || {
+			label: type,
+			icon: '❓',
+			color: '#ccc',
+		}
+	);
 };
 
 //  Зручності
@@ -64,8 +70,13 @@ export const amenityTranslations = {
 export const mapAmenity = (slug = '') => {
 	const lower = slug.toLowerCase();
 	for (const key in amenityTranslations) {
-		const { aliases, ...rest } = amenityTranslations[key];
-		if (aliases.some((alias) => lower.includes(alias))) {
+		const { aliases, ...rest } = (
+			amenityTranslations as Record<
+				string,
+				{ label: string; icon: string; slug: string; color: string; aliases: string[] }
+			>
+		)[key];
+		if (aliases.some((alias: string) => lower.includes(alias))) {
 			return rest;
 		}
 	}
@@ -92,7 +103,7 @@ export const statusTranslations = {
 export const mapStatus = (status = '') => {
 	const key = status.toUpperCase();
 	return (
-		statusTranslations[key] || {
+		(statusTranslations as Record<string, { label: string; color: string; slug: string }>)[key] || {
 			label: status || 'Невідомо',
 			color: colors.gray400,
 			slug: 'unknown',
@@ -110,7 +121,9 @@ export const paymentTypeTranslations = {
 export const mapPaymentType = (type = '') => {
 	const key = type.toUpperCase();
 	return (
-		paymentTypeTranslations[key] || {
+		(paymentTypeTranslations as Record<string, { label: string; slug: string; icon: string }>)[
+			key
+		] || {
 			label: type || 'Невідомо',
 			slug: 'unknown',
 			icon: '❔',
