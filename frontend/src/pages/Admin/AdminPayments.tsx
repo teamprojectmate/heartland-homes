@@ -29,9 +29,9 @@ const AdminPayments = () => {
 		{ key: 'id', label: 'ID' },
 		{ key: 'bookingId', label: t('admin.bookingId') },
 		{
-			key: 'amountToPay',
+			key: 'amount',
 			label: t('admin.amount'),
-			render: (p: Record<string, unknown>) => `${p.amountToPay} ${t('common.currency')}`,
+			render: (p: Record<string, unknown>) => `${p.amount} ${t('common.currency')}`,
 		},
 		{ key: 'paymentType', label: t('admin.type') },
 		{

@@ -85,12 +85,17 @@ const AccommodationDetails = ({ id: propId }: { id?: number | string }) => {
 							<span className="badge badge-type" style={{ backgroundColor: typeColor }}>
 								{typeIcon} {typeLabel}
 							</span>
-							<span className="badge badge-size">
-								{parseInt(String(accommodation.size), 10)}{' '}
-								{parseInt(String(accommodation.size), 10) > 1
-									? t('accommodations.bedrooms_other')
-									: t('accommodations.bedrooms_one')}
-							</span>
+							{accommodation.bedrooms != null && accommodation.bedrooms > 0 && (
+								<span className="badge badge-size">
+									🛏 {accommodation.bedrooms}{' '}
+									{accommodation.bedrooms > 1
+										? t('accommodations.bedrooms_other')
+										: t('accommodations.bedrooms_one')}
+								</span>
+							)}
+							{accommodation.size && (
+								<span className="badge badge-size">📐 {accommodation.size}</span>
+							)}
 						</div>
 
 						<div className="mt-3">

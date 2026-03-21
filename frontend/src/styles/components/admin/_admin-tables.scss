@@ -2,13 +2,17 @@
 @use '../../abstract/mixins' as *;
 @use 'sass:color';
 
-.admin-table {
-  width: 100%;
-  overflow: hidden;
-  border-collapse: collapse;
-  background: var(--bg-surface);
+.admin-table-wrapper {
+  overflow-x: auto;
   border-radius: $radius-lg;
   box-shadow: var(--shadow-card);
+}
+
+.admin-table {
+  width: 100%;
+  min-width: 800px;
+  border-collapse: collapse;
+  background: var(--bg-surface);
 
   th,
   td {
@@ -128,7 +132,7 @@
 }
 
 // Mobile
-@media (max-width: $max-width-2xl) {
+@media (width <= 768px) {
   .admin-table,
   .admin-table thead,
   .admin-table tbody,

@@ -29,10 +29,6 @@
   background: var(--badge-size-bg);
   border: 1px solid var(--badge-size-border);
 
-  &::before {
-    font-size: 1rem;
-    content: '🛏 ';
-  }
 }
 
 // група

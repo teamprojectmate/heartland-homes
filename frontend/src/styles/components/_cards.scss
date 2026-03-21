@@ -92,5 +92,8 @@
 
 // Тільки локальний відступ
 .card-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
   margin: 0.5rem 0 1rem;
 }
