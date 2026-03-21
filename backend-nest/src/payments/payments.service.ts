@@ -113,7 +113,9 @@ export class PaymentsService {
 		let sessionUrl: string | null = null;
 
 		if (this.stripe) {
-			const frontendUrl = this.configService.get<string>('FRONTEND_URL', 'http://localhost:5173');
+			const rawFrontendUrl =
+				this.configService.get<string>('FRONTEND_URL') ?? 'http://localhost:5173';
+			const frontendUrl = rawFrontendUrl.split(',')[0] ?? 'http://localhost:5173';
 
 			try {
 				const session = await this.stripe.checkout.sessions.create({
