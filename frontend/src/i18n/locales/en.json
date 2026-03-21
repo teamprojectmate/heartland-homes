@@ -191,6 +191,8 @@
 		"backToBookings": "Back to my bookings",
 		"myPayments": "My Payments",
 		"noPayments": "You have no payments yet.",
+		"loadError": "Could not load payments.",
+		"retry": "Retry",
 		"paymentId": "Payment #{{id}}",
 		"type": "Type",
 		"typePayment": "Payment",
