@@ -1,6 +1,7 @@
 import { TrashIcon } from '@heroicons/react/24/solid';
 import { useTranslation } from 'react-i18next';
 import StatusSelect from '../../components/selects/StatusSelect';
+import { formatDate } from '../../utils/dateCalc';
 import { fixDropboxUrl } from '../../utils/fixDropboxUrl';
 
 import '../../styles/components/badges/_badges.scss';
@@ -56,7 +57,8 @@ const AdminBookingCard = ({ booking, onDelete, onStatusChange }: AdminBookingCar
 					</p>
 
 					<p>
-						<strong>{t('booking.dates')}:</strong> {booking.checkInDate} → {booking.checkOutDate}
+						<strong>{t('booking.dates')}:</strong> {formatDate(booking.checkInDate)} →{' '}
+						{formatDate(booking.checkOutDate)}
 					</p>
 
 					<p className="price">

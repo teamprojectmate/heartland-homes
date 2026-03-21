@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import type { Booking } from '../../types';
+import { formatDate } from '../../utils/dateCalc';
 import { mapStatus } from '../../utils/translations';
 
 const BookingInfo = ({ booking }: { booking: Booking }) => {
@@ -21,10 +22,10 @@ const BookingInfo = ({ booking }: { booking: Booking }) => {
 				</p>
 			)}
 			<p>
-				<strong>{t('booking.checkInDate')}:</strong> {booking.checkInDate}
+				<strong>{t('booking.checkInDate')}:</strong> {formatDate(booking.checkInDate)}
 			</p>
 			<p>
-				<strong>{t('booking.checkOutDate')}:</strong> {booking.checkOutDate}
+				<strong>{t('booking.checkOutDate')}:</strong> {formatDate(booking.checkOutDate)}
 			</p>
 			<p>
 				<strong>{t('booking.status')}:</strong>{' '}

@@ -5,3 +5,10 @@ export const calcNights = (checkIn: string, checkOut: string): number => {
 	const end = new Date(checkOut);
 	return Math.max(0, Math.ceil((end.getTime() - start.getTime()) / MS_PER_DAY));
 };
+
+export const formatDate = (date: string | Date | null | undefined): string => {
+	if (!date) return '—';
+	const d = typeof date === 'string' ? new Date(date) : date;
+	if (Number.isNaN(d.getTime())) return '—';
+	return d.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+};
