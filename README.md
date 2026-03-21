@@ -41,12 +41,79 @@
 - Stripe
 - SCSS (модульна структура)
 
-### Backend
+### Backend (Spring Boot — legacy)
 - Spring Boot
 - Spring Security + JWT
 - Stripe API
 - Docker
 - PostgreSQL
+
+### Backend (NestJS — active)
+- NestJS 11, TypeScript (strict mode)
+- Prisma v7, PostgreSQL
+- JWT auth, RBAC (Customer/Manager)
+- Stripe Checkout + Webhooks
+- Helmet, CORS, ThrottlerGuard, ValidationPipe
+- Biome linter, Jest
+
+---
+
+## NestJS Backend — Quick Start
+
+### Prerequisites
+- Node.js 22+, PostgreSQL 15+, Stripe account (test mode)
+
+### Setup
+```bash
+cd backend-nest
+cp .env.example .env    # fill in your values
+npm install
+npx prisma generate
+npx prisma migrate dev
+npx nest start          # http://localhost:3000
+```
+
+### Environment Variables (`backend-nest/.env`)
+```env
+DATABASE_URL="postgresql://user:password@localhost:5432/heartland_homes"
+JWT_SECRET="your-jwt-secret-key-min-32-chars"
+JWT_EXPIRATION="1h"
+STRIPE_SECRET_KEY="sk_test_..."       # https://dashboard.stripe.com/test/apikeys
+STRIPE_WEBHOOK_SECRET="whsec_..."
+PORT=3000
+FRONTEND_URL="http://localhost:5173"
+```
+
+### Test Credentials
+
+| Role | Email | Password |
+|------|-------|----------|
+| Admin (Manager) | admin@booking.com | password123 |
+| Customer | browsertest@example.com | TestPass123! |
+
+### Stripe Test Card
+- Card: `4242 4242 4242 4242`
+- Expiry: any future date (e.g. `12/34`)
+- CVC: any 3 digits (e.g. `123`)
+
+### API Endpoints (26 total)
+
+| Module | Endpoints |
+|--------|-----------|
+| Auth | POST /auth/registration, POST /auth/login |
+| Users | GET/PUT /users/me, GET /users, PUT /users/:id/role, DELETE /users/:id |
+| Accommodations | GET/POST /accommodations, GET/PUT/DELETE /accommodations/:id, GET /accommodations/search, PATCH /accommodations/:id/status |
+| Bookings | GET/POST /bookings, GET/PUT/DELETE /bookings/:id, GET /bookings/my, POST /bookings/:id/payment |
+| Payments | POST /payments, GET /payments, POST /payments/webhook |
+
+### NestJS Scripts
+```bash
+npx nest start       # dev server
+npx nest build       # production build
+npm run type-check   # tsc --noEmit
+npm run biome:check  # lint
+npm run test         # jest
+```
 
 ---
 
