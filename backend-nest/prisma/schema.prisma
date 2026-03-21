@@ -1,0 +1,126 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ── Enums ──
+
+enum Role {
+  CUSTOMER
+  MANAGER
+}
+
+enum AccommodationType {
+  HOUSE
+  APARTMENT
+  HOTEL
+  VACATION_HOME
+  HOSTEL
+  COTTAGE
+}
+
+enum AccommodationStatus {
+  REQUIRES_VERIFICATION
+  PERMITTED
+  REJECTED
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELED
+  COMPLETED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+  CANCELED
+}
+
+// ── Models ──
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  firstName String
+  lastName  String
+  role      Role     @default(CUSTOMER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  accommodations Accommodation[]
+  bookings       Booking[]
+
+  @@map("users")
+}
+
+model Accommodation {
+  id        Int                 @id @default(autoincrement())
+  name      String
+  type      AccommodationType
+  status    AccommodationStatus @default(REQUIRES_VERIFICATION)
+  city      String
+  location  String?
+  latitude  Float?
+  longitude Float?
+  size      String?
+  bedrooms  Int?
+  dailyRate Float
+  amenities String[]
+  image     String?
+  userId    Int
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bookings Booking[]
+
+  @@index([city])
+  @@index([type])
+  @@index([status])
+  @@index([userId])
+  @@index([dailyRate])
+  @@map("accommodations")
+}
+
+model Booking {
+  id              Int           @id @default(autoincrement())
+  accommodationId Int
+  userId          Int
+  checkInDate     DateTime
+  checkOutDate    DateTime
+  status          BookingStatus @default(PENDING)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  accommodation Accommodation @relation(fields: [accommodationId], references: [id], onDelete: Cascade)
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payment       Payment?
+
+  @@index([userId])
+  @@index([accommodationId])
+  @@index([status])
+  @@map("bookings")
+}
+
+model Payment {
+  id              Int           @id @default(autoincrement())
+  bookingId       Int           @unique
+  amount          Float
+  currency        String        @default("UAH")
+  status          PaymentStatus @default(PENDING)
+  stripeSessionId String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}

@@ -12,16 +12,46 @@
 			"recommended": true,
 			"correctness": {
 				"noUnusedImports": "error",
-				"noUnusedVariables": "error"
+				"noUnusedVariables": "error",
+				"noUndeclaredVariables": "error"
 			},
 			"style": {
 				"useConst": "error",
 				"useImportType": "off",
-				"noNonNullAssertion": "warn"
+				"noNonNullAssertion": "warn",
+				"useDefaultParameterLast": "error",
+				"useExponentiationOperator": "error",
+				"useNodejsImportProtocol": "error",
+				"noParameterAssign": "error",
+				"useForOf": "error",
+				"useTemplate": "error",
+				"noUselessElse": "error",
+				"useThrowOnlyError": "error",
+				"noNegationElse": "warn",
+				"useCollapsedElseIf": "warn",
+				"useShorthandAssign": "error",
+				"noProcessEnv": "warn"
 			},
 			"suspicious": {
 				"noExplicitAny": "error",
-				"noDoubleEquals": "error"
+				"noDoubleEquals": "error",
+				"noConsole": "warn",
+				"noConfusingVoidType": "off",
+				"noFallthroughSwitchClause": "error",
+				"noMisleadingCharacterClass": "error"
+			},
+			"complexity": {
+				"noForEach": "warn",
+				"noUselessSwitchCase": "error",
+				"noUselessConstructor": "error",
+				"useFlatMap": "error"
+			},
+			"performance": {
+				"noAccumulatingSpread": "error",
+				"noDelete": "warn"
+			},
+			"security": {
+				"noDangerouslySetInnerHtml": "error"
 			}
 		}
 	},
@@ -30,9 +60,12 @@
 			"quoteStyle": "single",
 			"trailingCommas": "all",
 			"semicolons": "always"
+		},
+		"parser": {
+			"unsafeParameterDecoratorsEnabled": true
 		}
 	},
 	"files": {
-		"includes": ["src/**", "test/**"]
+		"includes": ["src/**", "test/**", "!src/generated/**"]
 	}
 }
