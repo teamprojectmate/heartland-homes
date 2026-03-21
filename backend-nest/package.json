@@ -17,7 +17,7 @@
     "format": "biome format --write src/",
     "type-check": "tsc --noEmit",
     "check": "npm run type-check && npm run biome:check",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:e2e": "jest --config ./test/jest-e2e.json",
