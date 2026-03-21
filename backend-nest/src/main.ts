@@ -24,6 +24,7 @@ async function bootstrap() {
 
 	app.enableCors({
 		origin: parseCorsOrigins(configService),
+		credentials: true,
 	});
 
 	app.useGlobalPipes(
