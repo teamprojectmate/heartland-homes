@@ -2,8 +2,17 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import authService from '../../api/auth/authService';
 import { getApiErrorMessage } from '../../utils/accommodationPayload';
 
-const savedAuth = JSON.parse(sessionStorage.getItem('auth') || 'null');
-const savedProfile = JSON.parse(sessionStorage.getItem('userProfile') || 'null');
+const safeParse = (key: string) => {
+	try {
+		return JSON.parse(sessionStorage.getItem(key) || 'null');
+	} catch {
+		sessionStorage.removeItem(key);
+		return null;
+	}
+};
+
+const savedAuth = safeParse('auth');
+const savedProfile = safeParse('userProfile');
 
 let initialUser = null;
 if (savedAuth?.token) {
@@ -18,7 +27,7 @@ const initialState = {
 	isAuthenticated: !!initialUser,
 	isError: false,
 	isSuccess: false,
-	isLoading: false,
+	isLoading: !!savedAuth?.token,
 	message: '',
 };
 
@@ -76,6 +85,7 @@ const authSlice = createSlice({
 		setUser: (s, { payload }) => {
 			s.user = payload;
 			s.isAuthenticated = !!payload;
+			s.isLoading = false;
 		},
 		loginSuccess: (s, { payload }) => {
 			s.user = payload;
