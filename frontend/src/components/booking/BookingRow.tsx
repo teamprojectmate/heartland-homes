@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { FaInfoCircle, FaTrash } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import type { Booking } from '../../types';
+import { formatDate } from '../../utils/dateCalc';
 import { mapStatus } from '../../utils/translations';
 
 type BookingRowProps = {
@@ -25,8 +26,8 @@ const BookingRow = ({ booking, onStatusChange, onDelete }: BookingRowProps) => {
 					? `${booking.accommodation.name} (${booking.accommodation.city})`
 					: '—'}
 			</td>
-			<td>{booking.checkInDate}</td>
-			<td>{booking.checkOutDate}</td>
+			<td>{formatDate(booking.checkInDate)}</td>
+			<td>{formatDate(booking.checkOutDate)}</td>
 			<td>
 				<span className={`status-badge status-${slug}`} style={{ backgroundColor: color }}>
 					{label}

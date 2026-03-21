@@ -7,6 +7,7 @@ import Notification from '../../components/Notification';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { createPayment } from '../../store/slices/paymentsSlice';
 import type { Booking } from '../../types';
+import { formatDate } from '../../utils/dateCalc';
 import '../../styles/components/payment/_payment-checkout.scss';
 import { calcNights } from '../../utils/dateCalc';
 
@@ -93,7 +94,9 @@ const Payment = () => {
 						<strong>{t('payment.address')}:</strong> {booking?.accommodation?.location || '—'}
 					</p>
 					<p>
-						<strong>{t('payment.dates')}:</strong> {booking?.checkInDate} → {booking?.checkOutDate}
+						<strong>{t('payment.dates')}:</strong>{' '}
+						{booking?.checkInDate ? formatDate(booking.checkInDate) : ''} →{' '}
+						{booking?.checkOutDate ? formatDate(booking.checkOutDate) : ''}
 					</p>
 					<p className="payment-amount">
 						<span className="icon">💰</span> {booking?.totalPrice || '—'} ₴

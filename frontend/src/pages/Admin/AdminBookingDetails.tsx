@@ -12,7 +12,7 @@ import {
 	fetchBookings,
 	updateBookingStatus,
 } from '../../store/slices/bookingsSlice';
-import { calcNights } from '../../utils/dateCalc';
+import { calcNights, formatDate } from '../../utils/dateCalc';
 import AdminBookingDetailCard, { type BookingRow } from './AdminBookingDetailCard';
 import AdminTable from './AdminTable';
 
@@ -122,8 +122,16 @@ const AdminBookings = () => {
 			label: t('admin.accommodation'),
 			render: (b: Record<string, unknown>) => (b.accommodation as { name?: string })?.name || '—',
 		},
-		{ key: 'checkInDate', label: t('admin.checkIn') },
-		{ key: 'checkOutDate', label: t('admin.checkOut') },
+		{
+			key: 'checkInDate',
+			label: t('admin.checkIn'),
+			render: (r: Record<string, unknown>) => formatDate(r.checkInDate as string | undefined),
+		},
+		{
+			key: 'checkOutDate',
+			label: t('admin.checkOut'),
+			render: (r: Record<string, unknown>) => formatDate(r.checkOutDate as string | undefined),
+		},
 		{
 			key: 'totalPrice',
 			label: t('admin.price'),

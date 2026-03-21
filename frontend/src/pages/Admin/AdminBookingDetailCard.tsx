@@ -1,5 +1,6 @@
 import { TrashIcon } from '@heroicons/react/24/solid';
 import { useTranslation } from 'react-i18next';
+import { formatDate } from '../../utils/dateCalc';
 
 export type BookingRow = Record<string, unknown> & {
 	id: number;
@@ -30,7 +31,8 @@ const AdminBookingDetailCard = ({ booking, onStatusChange, onDelete }: Props) =>
 					: booking.userId || '—'}
 			</p>
 			<p>
-				<strong>{t('admin.dates')}:</strong> {booking.checkInDate} — {booking.checkOutDate}
+				<strong>{t('admin.dates')}:</strong> {formatDate(booking.checkInDate)} —{' '}
+				{formatDate(booking.checkOutDate)}
 			</p>
 			<p>
 				<strong>{t('admin.price')}:</strong>{' '}

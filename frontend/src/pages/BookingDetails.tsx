@@ -10,7 +10,7 @@ import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { deleteBooking } from '../store/slices/bookingsSlice';
 import { fetchPaymentsByUser } from '../store/slices/paymentsSlice';
 import type { Booking } from '../types';
-import { calcNights } from '../utils/dateCalc';
+import { calcNights, formatDate } from '../utils/dateCalc';
 import { fixDropboxUrl } from '../utils/fixDropboxUrl';
 import { mapStatus } from '../utils/translations';
 
@@ -161,10 +161,11 @@ const BookingDetails = () => {
 
 					<div className="booking-details-content">
 						<p>
-							<strong>{t('booking.checkInDate')}:</strong> {enrichedBooking.checkInDate}
+							<strong>{t('booking.checkInDate')}:</strong> {formatDate(enrichedBooking.checkInDate)}
 						</p>
 						<p>
-							<strong>{t('booking.checkOutDate')}:</strong> {enrichedBooking.checkOutDate}
+							<strong>{t('booking.checkOutDate')}:</strong>{' '}
+							{formatDate(enrichedBooking.checkOutDate)}
 						</p>
 						<p>
 							<strong>{t('booking.status')}:</strong>{' '}

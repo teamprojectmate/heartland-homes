@@ -15,6 +15,7 @@ import {
 } from '../../store/slices/bookingsSlice';
 import { fetchAllPayments } from '../../store/slices/paymentsSlice';
 import type { Booking, Payment, User } from '../../types';
+import { formatDate } from '../../utils/dateCalc';
 import AdminBookingCard from './AdminBookingCard';
 import AdminTable from './AdminTable';
 
@@ -101,8 +102,16 @@ const AdminBookings = () => {
 			render: (b: Record<string, unknown>) =>
 				(b as unknown as EnrichedBookingRow).accommodation?.name || '—',
 		},
-		{ key: 'checkInDate', label: t('admin.checkIn') },
-		{ key: 'checkOutDate', label: t('admin.checkOut') },
+		{
+			key: 'checkInDate',
+			label: t('admin.checkIn'),
+			render: (r: Record<string, unknown>) => formatDate(r.checkInDate as string | undefined),
+		},
+		{
+			key: 'checkOutDate',
+			label: t('admin.checkOut'),
+			render: (r: Record<string, unknown>) => formatDate(r.checkOutDate as string | undefined),
+		},
 		{
 			key: 'totalPrice',
 			label: t('admin.price'),

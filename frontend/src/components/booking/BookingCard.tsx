@@ -1,6 +1,8 @@
 import { TrashIcon } from '@heroicons/react/24/solid';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import type { Booking } from '../../types';
+import { formatDate } from '../../utils/dateCalc';
 import { fixDropboxUrl } from '../../utils/fixDropboxUrl';
 import BookingStatusBlock from '../BookingStatusBlock';
 import StatusSelect from '../selects/StatusSelect';
@@ -8,8 +10,6 @@ import StatusSelect from '../selects/StatusSelect';
 import '../../styles/components/booking/_booking-card.scss';
 
 const fallbackImage = '/no-image.png';
-
-import type { Booking } from '../../types';
 
 type BookingCardProps = {
 	booking: Booking;
@@ -62,10 +62,10 @@ const BookingCard = ({
 
 				<div className="booking-card-info">
 					<p>
-						<strong>{t('booking.checkInDate')}:</strong> {booking.checkInDate}
+						<strong>{t('booking.checkInDate')}:</strong> {formatDate(booking.checkInDate)}
 					</p>
 					<p>
-						<strong>{t('booking.checkOutDate')}:</strong> {booking.checkOutDate}
+						<strong>{t('booking.checkOutDate')}:</strong> {formatDate(booking.checkOutDate)}
 					</p>
 
 					<BookingStatusBlock booking={booking} />
