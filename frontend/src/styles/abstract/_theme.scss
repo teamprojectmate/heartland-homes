@@ -7,16 +7,16 @@
 
   // Backgrounds
   --bg-primary: #f6f7f9;
-  --bg-surface: #ffffff;
+  --bg-surface: #fff;
   --bg-surface-hover: #f9fafb;
-  --bg-input: #ffffff;
+  --bg-input: #fff;
 
   // Text
   --text-primary: #2f3b45;
   --text-secondary: #6b7280;
   --text-heading: #22313f;
   --text-muted: #9ca3af;
-  --text-inverse: #ffffff;
+  --text-inverse: #fff;
 
   // Borders
   --border-color: #e5e7eb;
@@ -32,7 +32,7 @@
   --skeleton-shine: #e0e0e0;
 
   // Header/Footer
-  --header-bg: #ffffff;
+  --header-bg: #fff;
   --footer-bg: #1a1a2e;
 
   // Tables
@@ -42,13 +42,13 @@
   --table-border: #e5e7eb;
 
   // Drawer
-  --drawer-bg: #ffffff;
+  --drawer-bg: #fff;
   --drawer-border: #e5e7eb;
   --drawer-close-bg: #f3f4f6;
   --drawer-close-border: #d1d5db;
 
   // Burger
-  --burger-bg: #ffffff;
+  --burger-bg: #fff;
   --burger-line: #22313f;
 
   // Badges
@@ -73,7 +73,7 @@
   --btn-chip-hover: #e8f0ef;
 
   // Footer property
-  --footer-property-bg: #ffffff;
+  --footer-property-bg: #fff;
   --footer-property-color: #2f3b45;
 
   // Payment cards
@@ -81,48 +81,40 @@
   --payment-paid-bg: linear-gradient(135deg, #d1fae5, #a7f3d0);
   --payment-pending-bg: linear-gradient(135deg, #fef3c7, #fde68a);
   --payment-canceled-bg: linear-gradient(135deg, #fee2e2, #fecaca);
+  --payment-failed-bg: linear-gradient(135deg, #fecaca, #fca5a5);
   --payment-expired-bg: linear-gradient(135deg, #e5e7eb, #d1d5db);
   --payment-card-color: #22313f;
-  --payment-badge-bg: rgba(255, 255, 255, 0.7);
+  --payment-badge-bg: rgb(255 255 255 / 70%);
 }
 
 [data-theme='dark'] {
   --color-primary: #14b8a6;
-
   --bg-primary: #0f172a;
   --bg-surface: #1e293b;
   --bg-surface-hover: #334155;
   --bg-input: #334155;
-
   --text-primary: #e2e8f0;
   --text-secondary: #94a3b8;
   --text-heading: #f1f5f9;
   --text-muted: #64748b;
   --text-inverse: #0f172a;
-
   --border-color: #334155;
   --border-light: #1e293b;
-
   --shadow-sm: 0 2px 6px rgb(0 0 0 / 20%);
   --shadow-md: 0 8px 24px rgb(0 0 0 / 30%);
   --shadow-card: 0 2px 10px rgb(0 0 0 / 30%), 0 4px 16px rgb(0 0 0 / 20%);
-
   --skeleton-base: #1e293b;
   --skeleton-shine: #334155;
-
   --header-bg: #1e293b;
   --footer-bg: #0f172a;
-
   --table-header-bg: #1e293b;
   --table-row-alt: #1e293b;
   --table-row-hover: #334155;
   --table-border: #334155;
-
   --drawer-bg: #1e293b;
   --drawer-border: #334155;
   --drawer-close-bg: #334155;
   --drawer-close-border: #475569;
-
   --burger-bg: #1e293b;
   --burger-line: #e2e8f0;
 
@@ -142,10 +134,10 @@
   --btn-outline-fg: #94a3b8;
   --btn-outline-bd: #475569;
   --btn-outline-hover: #334155;
-  --btn-chip-bg: rgba(20, 184, 166, 0.12);
+  --btn-chip-bg: rgb(20 184 166 / 12%);
   --btn-chip-fg: #14b8a6;
-  --btn-chip-bd: rgba(20, 184, 166, 0.25);
-  --btn-chip-hover: rgba(20, 184, 166, 0.2);
+  --btn-chip-bd: rgb(20 184 166 / 25%);
+  --btn-chip-hover: rgb(20 184 166 / 20%);
 
   // Footer property
   --footer-property-bg: #1e293b;
@@ -156,9 +148,10 @@
   --payment-paid-bg: linear-gradient(135deg, #064e3b, #065f46);
   --payment-pending-bg: linear-gradient(135deg, #78350f, #92400e);
   --payment-canceled-bg: linear-gradient(135deg, #7f1d1d, #991b1b);
+  --payment-failed-bg: linear-gradient(135deg, #991b1b, #b91c1c);
   --payment-expired-bg: linear-gradient(135deg, #1e293b, #334155);
   --payment-card-color: #e2e8f0;
-  --payment-badge-bg: rgba(255, 255, 255, 0.15);
+  --payment-badge-bg: rgb(255 255 255 / 15%);
 }
 
 // Smooth transition for theme switching

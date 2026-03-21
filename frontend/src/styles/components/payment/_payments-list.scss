@@ -78,6 +78,10 @@
     background: var(--payment-canceled-bg);
   }
 
+  &.failed {
+    background: var(--payment-failed-bg);
+  }
+
   &.expired {
     background: var(--payment-expired-bg);
   }

@@ -1,15 +1,29 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { getAccommodationById } from '../../api/accommodations/accommodationService';
 import { fetchBookingById } from '../../api/bookings/bookingsService';
 import ErrorState from '../../components/ErrorState';
-import Notification from '../../components/Notification';
 import Pagination from '../../components/Pagination';
 import { CardSkeleton } from '../../components/skeletons';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { fetchPaymentsByUser } from '../../store/slices/paymentsSlice';
+import { fetchPaymentsByUser, resetPaymentsList } from '../../store/slices/paymentsSlice';
 import type { Payment } from '../../types';
+import { formatDate } from '../../utils/dateCalc';
 import '../../styles/components/payment/_payments-list.scss';
+
+type EnrichedPayment = {
+	id: number;
+	status: string;
+	amount?: number;
+	currency?: string;
+	createdAt?: string;
+	sessionUrl?: string;
+	accommodation?: { name?: string; location?: string };
+	booking?: { checkInDate?: string; checkOutDate?: string };
+	bookingId: number;
+	[key: string]: unknown;
+};
 
 const PaymentsList = () => {
 	const { t } = useTranslation();
@@ -18,20 +32,14 @@ const PaymentsList = () => {
 	const { isAuthenticated, user } = useAppSelector((state) => state.auth);
 
 	const [page, setPage] = useState(0);
-	type EnrichedPayment = {
-		id: number;
-		status: string;
-		amountToPay: number;
-		paymentType: string;
-		sessionUrl?: string;
-		accommodation?: { name?: string; location?: string };
-		bookingId: number;
-		[key: string]: unknown;
-	};
 	const [enrichedPayments, setEnrichedPayments] = useState<EnrichedPayment[]>([]);
 	const size = 5;
 
 	const pageable = useMemo(() => ({ page, size, sort: ['id,desc'] }), [page]);
+
+	useEffect(() => {
+		dispatch(resetPaymentsList());
+	}, [dispatch]);
 
 	useEffect(() => {
 		const loadPayments = async () => {
@@ -69,8 +77,7 @@ const PaymentsList = () => {
 				</div>
 			</div>
 		);
-	if (fetchStatus === 'failed' && error) return <ErrorState message={String(error)} />;
-	if (error) return <Notification message={error} type="danger" />;
+	if (fetchStatus === 'failed') return <ErrorState message={error || t('payment.loadError')} />;
 
 	return (
 		<div className="container payments-page">
@@ -96,21 +103,29 @@ const PaymentsList = () => {
 									<p>
 										<strong>{t('payment.address')}:</strong> {p.accommodation?.location || '—'}
 									</p>
+									{p.booking?.checkInDate && (
+										<p>
+											<strong>{t('payment.dates')}:</strong> {formatDate(p.booking.checkInDate)} →{' '}
+											{formatDate(p.booking.checkOutDate)}
+										</p>
+									)}
 									<div className="payment-amount">
 										<div className="left">
 											<span className="icon">💰</span>
-											{p.amountToPay} ₴
+											{p.amount ?? '—'} {p.currency ?? '₴'}
 										</div>
 										<img src="/assets/visa.svg" alt="VISA" className="system-logo" />
 									</div>
-									<p>
-										<strong>{t('payment.type')}:</strong>{' '}
-										{p.paymentType === 'PAYMENT' ? t('payment.typePayment') : p.paymentType}
-									</p>
+									{p.createdAt && <p className="payment-date">{formatDate(p.createdAt)}</p>}
 								</div>
 
 								<div className="payment-card-footer">
-									{p.status !== 'PAID' && p.sessionUrl ? (
+									{p.status === 'PAID' && (
+										<Link to={`/my-bookings/${p.bookingId}`} className="btn btn-primary btn-sm">
+											{t('common.details')}
+										</Link>
+									)}
+									{p.status === 'PENDING' && p.sessionUrl && (
 										<a
 											href={p.sessionUrl}
 											target="_blank"
@@ -119,8 +134,19 @@ const PaymentsList = () => {
 										>
 											{t('booking.pay')}
 										</a>
-									) : (
-										<span className="btn btn-sm btn-success">{t('payment.paidBadge')}</span>
+									)}
+									{p.status === 'PENDING' && !p.sessionUrl && (
+										<Link to={`/payment/${p.bookingId}`} className="btn btn-warning">
+											{t('booking.pay')}
+										</Link>
+									)}
+									{p.status === 'FAILED' && (
+										<Link to={`/payment/${p.bookingId}`} className="btn btn-danger btn-sm">
+											{t('payment.retry')}
+										</Link>
+									)}
+									{p.status === 'CANCELED' && (
+										<span className="badge badge-canceled">{t('status.cancelled')}</span>
 									)}
 								</div>
 							</div>
