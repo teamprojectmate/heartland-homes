@@ -36,19 +36,21 @@ const MyBookings = () => {
 			return;
 		}
 
-		dispatch(fetchMyBookings({ page, size: 5 }));
-
 		if (user?.id) {
 			dispatch(fetchPaymentsByUser({ userId: user.id, pageable: { page: 0, size: 50 } }));
 		}
-	}, [isAuthenticated, navigate, dispatch, page, user]);
+	}, [isAuthenticated, navigate, dispatch, user]);
+
+	useEffect(() => {
+		if (!isAuthenticated) return;
+		dispatch(fetchMyBookings({ page, size: 5 }));
+	}, [isAuthenticated, dispatch, page]);
 
 	useEffect(() => {
 		if (status === 'succeeded' && bookings.length === 0 && page > 0) {
 			dispatch(setPage(page - 1));
-			dispatch(fetchMyBookings({ page: page - 1, size: 5 }));
 		}
-	}, [status, bookings, page, dispatch]);
+	}, [status, bookings.length, page, dispatch]);
 
 	const handlePageChange = (newPage: number) => {
 		dispatch(setPage(newPage));

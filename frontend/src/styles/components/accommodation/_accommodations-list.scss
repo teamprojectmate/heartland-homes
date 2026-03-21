@@ -3,18 +3,12 @@
 
 .accommodations-list-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1.5rem;
-  justify-content: center;
 }
 
 .accommodation-card-wrapper {
-  max-width: 360px;
-  margin: 0 auto;
-
   .card-custom {
-    max-width: 100%;
-    margin: 0 auto;
     background: var(--bg-surface);
     border-radius: $radius;
     box-shadow: var(--shadow-card);

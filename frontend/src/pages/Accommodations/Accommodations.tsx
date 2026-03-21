@@ -46,11 +46,8 @@ const Accommodations = () => {
 			}
 		}
 		dispatch(setFilters(newFilters));
-	}, [dispatch, location.search]);
-
-	useEffect(() => {
 		dispatch(loadAccommodations());
-	}, [dispatch]);
+	}, [dispatch, location.search]);
 
 	useEffect(() => {
 		return () => {

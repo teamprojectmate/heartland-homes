@@ -21,8 +21,9 @@ export const useEnrichedBookings = (
 
 	const bookingIds = useMemo(() => bookings.map((b) => b.id).join(','), [bookings]);
 	const paymentIds = useMemo(() => payments.map((p) => p.id).join(','), [payments]);
+	const usersKey = useMemo(() => Object.keys(usersMap).sort().join(','), [usersMap]);
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: using stable string IDs to prevent infinite re-fetch loops
+	// biome-ignore lint/correctness/useExhaustiveDependencies: using stable string keys to prevent infinite re-fetch loops
 	useEffect(() => {
 		if (!bookings || bookings.length === 0) {
 			setEnrichedBookings([]);
@@ -83,7 +84,7 @@ export const useEnrichedBookings = (
 		return () => {
 			cancelled = true;
 		};
-	}, [bookingIds, paymentIds, usersMap]);
+	}, [bookingIds, paymentIds, usersKey]);
 
 	return enrichedBookings;
 };

@@ -1,5 +1,5 @@
 import { TrashIcon } from '@heroicons/react/24/solid';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getAccommodationById } from '../../api/accommodations/accommodationService';
 import { getAllUsers } from '../../api/user/userService';
@@ -27,6 +27,7 @@ const AdminBookings = () => {
 
 	const [usersMap, setUsersMap] = useState<Record<string, Record<string, unknown>>>({});
 	const [enrichedBookings, setEnrichedBookings] = useState<BookingRow[]>([]);
+	const accCacheRef = useRef<Record<number, Record<string, unknown>>>({});
 	const isMobile = useIsMobile();
 
 	useEffect(() => {
@@ -48,31 +49,49 @@ const AdminBookings = () => {
 	useEffect(() => {
 		if (!bookings || bookings.length === 0) return;
 
+		let cancelled = false;
+
 		const enrichData = async () => {
-			const results = await Promise.all(
-				bookings.map(async (booking) => {
-					let accommodation = null;
-					let totalPrice: number | null = null;
+			const uniqueIds = [...new Set(bookings.map((b) => b.accommodationId as number))];
+			const missingIds = uniqueIds.filter((id) => !(id in accCacheRef.current));
 
-					try {
-						accommodation = await getAccommodationById(booking.accommodationId as number);
-						if (accommodation && booking.checkInDate && booking.checkOutDate) {
-							totalPrice =
-								calcNights(booking.checkInDate as string, booking.checkOutDate as string) *
-								(accommodation.dailyRate || 0);
+			if (missingIds.length > 0) {
+				const fetched = await Promise.all(
+					missingIds.map(async (id) => {
+						try {
+							return { id, data: await getAccommodationById(id) };
+						} catch {
+							return { id, data: null };
 						}
-					} catch {
-						/* accommodation not found */
-					}
+					}),
+				);
+				for (const { id, data } of fetched) {
+					if (data) accCacheRef.current[id] = data;
+				}
+			}
 
-					const user = usersMap[booking.userId as string];
-					return { ...booking, accommodation, user, totalPrice } as unknown as BookingRow;
-				}),
-			);
+			if (cancelled) return;
+
+			const results = bookings.map((booking) => {
+				const accommodation = accCacheRef.current[booking.accommodationId as number] || null;
+				let totalPrice: number | null = null;
+
+				if (accommodation && booking.checkInDate && booking.checkOutDate) {
+					totalPrice =
+						calcNights(booking.checkInDate as string, booking.checkOutDate as string) *
+						((accommodation as { dailyRate?: number }).dailyRate || 0);
+				}
+
+				const user = usersMap[booking.userId as string];
+				return { ...booking, accommodation, user, totalPrice } as unknown as BookingRow;
+			});
 			setEnrichedBookings(results);
 		};
 
 		enrichData();
+		return () => {
+			cancelled = true;
+		};
 	}, [bookings, usersMap]);
 
 	const handleStatusChange = (booking: BookingRow, newStatus: string) => {
