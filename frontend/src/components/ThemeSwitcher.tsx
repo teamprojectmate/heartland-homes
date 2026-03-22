@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useLayoutEffect, useState } from 'react';
 
 type Theme = 'light' | 'dark';
 
@@ -11,13 +11,13 @@ const getInitialTheme = (): Theme => {
 const ThemeSwitcher = () => {
 	const [theme, setTheme] = useState<Theme>(getInitialTheme);
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		document.documentElement.setAttribute('data-theme', theme);
 		localStorage.setItem('theme', theme);
 	}, [theme]);
 
-	const toggleTheme = useCallback(() => {
-		setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
+	const applyTheme = useCallback((newTheme: Theme) => {
+		setTheme(newTheme);
 	}, []);
 
 	return (
@@ -25,7 +25,7 @@ const ThemeSwitcher = () => {
 			<button
 				type="button"
 				className={`toggle-btn ${theme === 'light' ? 'active' : ''}`}
-				onClick={toggleTheme}
+				onClick={() => applyTheme('light')}
 				aria-label="Light theme"
 				aria-pressed={theme === 'light'}
 			>
@@ -45,7 +45,7 @@ const ThemeSwitcher = () => {
 			<button
 				type="button"
 				className={`toggle-btn ${theme === 'dark' ? 'active' : ''}`}
-				onClick={toggleTheme}
+				onClick={() => applyTheme('dark')}
 				aria-label="Dark theme"
 				aria-pressed={theme === 'dark'}
 			>
