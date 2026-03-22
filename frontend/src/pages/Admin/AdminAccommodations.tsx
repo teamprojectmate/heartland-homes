@@ -104,12 +104,12 @@ const AdminAccommodations = () => {
 				),
 			},
 			{
-				key: 'accommodationStatus',
+				key: 'status',
 				label: t('admin.status'),
 				render: (acc: Record<string, unknown>) => (
 					<StatusSelect
 						type="accommodation"
-						value={acc.accommodationStatus as string}
+						value={acc.status as string}
 						onChange={(newStatus: string) => handleStatusChange(acc.id as number, newStatus)}
 					/>
 				),
