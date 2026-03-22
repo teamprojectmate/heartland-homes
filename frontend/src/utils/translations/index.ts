@@ -310,7 +310,18 @@ export const mapAmenity = (slug = '', t?: TFunction) => {
 	const lower = slug.toLowerCase();
 	for (const key in amenityKeys) {
 		const config = amenityKeys[key];
-		if (config.aliases.some((alias) => lower.includes(alias))) {
+		const wordBoundary = (text: string, term: string) => {
+			const i = text.indexOf(term);
+			if (i === -1) return false;
+			const before = i === 0 || /\W/.test(text[i - 1]);
+			const after = i + term.length >= text.length || /\W/.test(text[i + term.length]);
+			return before && after;
+		};
+		if (
+			config.aliases.some((alias) =>
+				alias.length <= 2 ? lower === alias : wordBoundary(lower, alias),
+			)
+		) {
 			return {
 				label: t ? t(config.i18nKey) : slug,
 				icon: config.icon,

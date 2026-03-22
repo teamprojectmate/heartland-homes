@@ -213,18 +213,14 @@ cd backend && ./mvnw test
 
 ### 🧰 Корисні скрипти
 **Frontend**
-```json
-{
-  "scripts": {
-    "dev": "vite",
-    "start": "react-scripts start",
-    "build": "vite build",
-    "preview": "vite preview",
-    "test": "react-scripts test",
-    "lint": "eslint \"src/**/*.{js,jsx}\"",
-    "format": "prettier --write ."
-  }
-}
+```bash
+cd frontend
+npm run dev          # Vite dev server
+npm run build        # production build
+npm run preview      # preview build
+npm run test:run     # Vitest (115 tests)
+npx tsc --noEmit     # TypeScript check
+npx biome check src/ # lint
 ```
 **Backend**
 ```bash

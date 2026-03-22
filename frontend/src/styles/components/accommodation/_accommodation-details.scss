@@ -18,7 +18,7 @@
     }
 
     .page-subtitle {
-      @include heading($font-size-lg, 400, var(--text-muted));
+      @include heading($font-size-lg, 500, var(--text-primary));
     }
   }
 
