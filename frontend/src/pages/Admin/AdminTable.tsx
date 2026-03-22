@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 type Column = {
 	key: string;
 	label: string;
@@ -12,6 +14,8 @@ type AdminTableProps = {
 };
 
 const AdminTable = ({ columns, data, actions }: AdminTableProps) => {
+	const { t } = useTranslation();
+
 	return (
 		<div className="admin-table-wrapper">
 			<table className="admin-table">
@@ -22,7 +26,7 @@ const AdminTable = ({ columns, data, actions }: AdminTableProps) => {
 								{col.label}
 							</th>
 						))}
-						{actions && <th>Actions</th>}
+						{actions && <th>{t('admin.actions')}</th>}
 					</tr>
 				</thead>
 				<tbody>
@@ -40,7 +44,7 @@ const AdminTable = ({ columns, data, actions }: AdminTableProps) => {
 					) : (
 						<tr>
 							<td colSpan={columns.length + (actions ? 1 : 0)} className="text-center">
-								No data
+								{t('common.noData')}
 							</td>
 						</tr>
 					)}

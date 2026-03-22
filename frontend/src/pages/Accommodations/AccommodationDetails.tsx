@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 import { getAccommodationById } from '../../api/accommodations/accommodationService';
 import BaseMap from '../../components/BaseMap';
 import { BookingForm } from '../../components/booking';
+import ErrorState from '../../components/ErrorState';
 import { FormSkeleton } from '../../components/skeletons';
 import { useAppSelector } from '../../store/hooks';
 import type { Accommodation } from '../../types';
@@ -47,8 +48,15 @@ const AccommodationDetails = ({ id: propId }: { id?: number | string }) => {
 	}, [id, t]);
 
 	if (loading) return <FormSkeleton />;
-	if (error) return <div className="error">{error}</div>;
-	if (!accommodation) return <div className="not-found">{t('accommodations.notFoundError')}</div>;
+	if (error || !accommodation)
+		return (
+			<div className="container" style={{ textAlign: 'center', padding: '3rem 1rem' }}>
+				<ErrorState message={error || t('accommodations.notFoundError')} />
+				<Link to="/accommodations" className="btn-primary" style={{ marginTop: '1rem' }}>
+					{t('common.back')}
+				</Link>
+			</div>
+		);
 
 	const { label: typeLabel, icon: typeIcon, color: typeColor } = mapType(accommodation.type, t);
 

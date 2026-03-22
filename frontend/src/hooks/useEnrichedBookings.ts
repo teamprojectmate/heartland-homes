@@ -19,7 +19,10 @@ export const useEnrichedBookings = (
 	const [enrichedBookings, setEnrichedBookings] = useState<EnrichedBooking[]>([]);
 	const accCacheRef = useRef<Record<number, Accommodation>>({});
 
-	const bookingIds = useMemo(() => bookings.map((b) => b.id).join(','), [bookings]);
+	const bookingIds = useMemo(
+		() => bookings.map((b) => `${b.id}:${b.status}`).join(','),
+		[bookings],
+	);
 	const paymentIds = useMemo(() => payments.map((p) => p.id).join(','), [payments]);
 	const usersKey = useMemo(() => Object.keys(usersMap).sort().join(','), [usersMap]);
 
