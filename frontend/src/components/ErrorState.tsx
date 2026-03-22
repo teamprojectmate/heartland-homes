@@ -12,7 +12,7 @@ const ErrorState = ({ message, onRetry }: ErrorStateProps) => {
 	return (
 		<div className="error-state">
 			<svg
-				className="error-state__icon"
+				className="error-state-icon"
 				viewBox="0 0 24 24"
 				fill="none"
 				stroke="currentColor"
@@ -26,9 +26,9 @@ const ErrorState = ({ message, onRetry }: ErrorStateProps) => {
 				<line x1="12" y1="9" x2="12" y2="13" />
 				<line x1="12" y1="17" x2="12.01" y2="17" />
 			</svg>
-			<p className="error-state__message">{translateApiError(message, t)}</p>
+			<p className="error-state-message">{translateApiError(message, t)}</p>
 			{onRetry && (
-				<button type="button" className="error-state__retry" onClick={onRetry}>
+				<button type="button" className="error-state-retry" onClick={onRetry}>
 					{t('common.tryAgain')}
 				</button>
 			)}
