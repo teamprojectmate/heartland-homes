@@ -4,8 +4,11 @@
 
 .admin-table-wrapper {
   overflow-x: auto;
+  background: var(--bg-surface);
+  border: 1px solid var(--card-border);
   border-radius: $radius-lg;
   box-shadow: var(--shadow-card);
+  backdrop-filter: blur(12px);
 }
 
 .admin-table {

@@ -47,7 +47,7 @@ describe('registerSchema', () => {
 		const result = registerSchema.safeParse({ ...validData, confirmPassword: 'different' });
 		expect(result.success).toBe(false);
 		if (!result.success) {
-			expect(result.error.issues[0].message).toBe('Passwords do not match');
+			expect(result.error.issues[0].message).toBe('validation.passwordsNoMatch');
 		}
 	});
 

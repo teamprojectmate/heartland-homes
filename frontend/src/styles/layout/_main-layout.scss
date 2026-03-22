@@ -17,7 +17,8 @@ body {
   font-size: $font-size-base;
   line-height: $line-height-base;
   color: var(--text-primary);
-  background-color: var(--bg-primary);
+  background: var(--bg-gradient);
+  background-attachment: fixed;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 

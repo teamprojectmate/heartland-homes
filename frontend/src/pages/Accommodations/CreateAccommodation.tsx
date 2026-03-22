@@ -100,7 +100,7 @@ const CreateAccommodation = () => {
 				<div className="form-group">
 					<label htmlFor="create-name">{t('accommodationForm.name')}</label>
 					<input id="create-name" {...register('name')} />
-					{errors.name && <span className="form-error">{errors.name.message}</span>}
+					{errors.name && <span className="form-error">{t(errors.name.message ?? '')}</span>}
 				</div>
 
 				<div className="form-group">
@@ -112,7 +112,7 @@ const CreateAccommodation = () => {
 						<option value="VACATION_HOME">{t('accommodationType.vacationHome')}</option>
 						<option value="HOSTEL">{t('accommodationType.hostel')}</option>
 					</select>
-					{errors.type && <span className="form-error">{errors.type.message}</span>}
+					{errors.type && <span className="form-error">{t(errors.type.message ?? '')}</span>}
 				</div>
 
 				<div className="form-group">
@@ -123,7 +123,7 @@ const CreateAccommodation = () => {
 				<div className="form-group">
 					<label htmlFor="create-city">{t('accommodationForm.city')}</label>
 					<input id="create-city" {...register('city')} />
-					{errors.city && <span className="form-error">{errors.city.message}</span>}
+					{errors.city && <span className="form-error">{t(errors.city.message ?? '')}</span>}
 				</div>
 
 				<div className="form-group">
@@ -166,7 +166,9 @@ const CreateAccommodation = () => {
 				<div className="form-group">
 					<label htmlFor="create-dailyRate">{t('accommodationForm.dailyRate')}</label>
 					<input type="number" id="create-dailyRate" min="1" step="1" {...register('dailyRate')} />
-					{errors.dailyRate && <span className="form-error">{errors.dailyRate.message}</span>}
+					{errors.dailyRate && (
+						<span className="form-error">{t(errors.dailyRate.message ?? '')}</span>
+					)}
 				</div>
 
 				<div className="form-group">

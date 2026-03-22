@@ -54,7 +54,7 @@ const Login = () => {
 							placeholder={t('auth.email')}
 							{...register('email')}
 						/>
-						{errors.email && <span className="form-error">{errors.email.message}</span>}
+						{errors.email && <span className="form-error">{t(errors.email.message ?? '')}</span>}
 					</div>
 
 					<div className="form-group with-icon">
@@ -65,7 +65,9 @@ const Login = () => {
 							placeholder={t('auth.password')}
 							{...register('password')}
 						/>
-						{errors.password && <span className="form-error">{errors.password.message}</span>}
+						{errors.password && (
+							<span className="form-error">{t(errors.password.message ?? '')}</span>
+						)}
 					</div>
 
 					{isError && (

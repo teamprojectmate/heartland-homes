@@ -117,12 +117,14 @@ const BookingForm = ({ accommodation }: { accommodation: Accommodation }) => {
 							minDate={today}
 							locale={locale}
 							dateFormat="dd/MM/yyyy"
-							placeholderText={t('booking.checkInDate')}
+							placeholderText="дд/мм/рррр"
 							autoComplete="off"
 						/>
 					)}
 				/>
-				{errors.checkInDate && <span className="form-error">{errors.checkInDate.message}</span>}
+				{errors.checkInDate && (
+					<span className="form-error">{t(errors.checkInDate.message ?? '')}</span>
+				)}
 			</div>
 
 			<div className="form-group form-group-spacing">
@@ -142,12 +144,14 @@ const BookingForm = ({ accommodation }: { accommodation: Accommodation }) => {
 							minDate={checkInDate ? new Date(checkInDate) : today}
 							locale={locale}
 							dateFormat="dd/MM/yyyy"
-							placeholderText={t('booking.checkOutDate')}
+							placeholderText="дд/мм/рррр"
 							autoComplete="off"
 						/>
 					)}
 				/>
-				{errors.checkOutDate && <span className="form-error">{errors.checkOutDate.message}</span>}
+				{errors.checkOutDate && (
+					<span className="form-error">{t(errors.checkOutDate.message ?? '')}</span>
+				)}
 			</div>
 
 			{totalPrice > 0 && (
