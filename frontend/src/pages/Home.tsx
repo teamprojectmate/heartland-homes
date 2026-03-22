@@ -13,7 +13,7 @@ const Home = () => {
 
 	useEffect(() => {
 		dispatch(resetFilters());
-		dispatch(loadAccommodations({ pageable: { page: 0, size: 4 } }));
+		dispatch(loadAccommodations({ pageable: { page: 0, size: 3 } }));
 	}, [dispatch]);
 
 	const handleSearch = useCallback(
@@ -31,7 +31,7 @@ const Home = () => {
 		[dispatch, navigate],
 	);
 
-	const topAccommodations = useMemo(() => items.slice(0, 4), [items]);
+	const topAccommodations = useMemo(() => items.slice(0, 3), [items]);
 
 	return (
 		<div className="home-page">

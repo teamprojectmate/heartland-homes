@@ -41,7 +41,9 @@ const AdminPayments = () => {
 		{
 			key: 'status',
 			label: t('admin.status'),
-			render: (p: Record<string, unknown>) => <StatusBadge status={p.status as string} />,
+			render: (p: Record<string, unknown>) => (
+				<StatusBadge status={p.status as string} context="payment" />
+			),
 		},
 	];
 
