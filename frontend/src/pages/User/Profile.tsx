@@ -38,7 +38,7 @@ const Profile = () => {
 	}, [profile, reset]);
 
 	const onSubmit = (data: ProfileFormData) => {
-		dispatch(updateProfile(data));
+		dispatch(updateProfile({ firstName: data.firstName, lastName: data.lastName }));
 	};
 
 	return (
@@ -57,6 +57,7 @@ const Profile = () => {
 								type="email"
 								className="form-control"
 								placeholder=" "
+								disabled
 								{...register('email')}
 							/>
 							<label htmlFor="profile-email">{t('profile.email')}</label>
