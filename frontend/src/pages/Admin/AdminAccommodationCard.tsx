@@ -33,7 +33,7 @@ const AdminAccommodationCard = ({ acc, onStatusChange, onDelete }: AdminAccommod
 					<h3 className="accommodation-title">{acc.name}</h3>
 					<StatusSelect
 						type="accommodation"
-						value={acc.accommodationStatus || ''}
+						value={acc.status || ''}
 						onChange={(newStatus) => onStatusChange(acc.id, newStatus)}
 					/>
 				</div>

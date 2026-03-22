@@ -55,7 +55,7 @@ const MyAccommodations = () => {
 								<td>
 									{acc.dailyRate} {t('common.currency')}
 								</td>
-								<td>{acc.accommodationStatus}</td>
+								<td>{acc.status}</td>
 								<td>
 									<Link to={`/my-accommodations/edit/${acc.id}`} className="btn-icon btn-secondary">
 										<FaEdit />

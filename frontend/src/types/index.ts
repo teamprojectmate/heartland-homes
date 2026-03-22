@@ -43,7 +43,6 @@ export type Accommodation = {
 	size?: number;
 	location?: string;
 	images?: string[];
-	accommodationStatus?: string;
 };
 
 export type Booking = {
