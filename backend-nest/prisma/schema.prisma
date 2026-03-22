@@ -63,11 +63,13 @@ model User {
 
 model Accommodation {
   id        Int                 @id @default(autoincrement())
-  name      String
-  type      AccommodationType
-  status    AccommodationStatus @default(REQUIRES_VERIFICATION)
-  city      String
-  location  String?
+  name       String
+  nameUk     String?
+  type       AccommodationType
+  status     AccommodationStatus @default(REQUIRES_VERIFICATION)
+  city       String
+  location   String?
+  locationUk String?
   latitude  Float?
   longitude Float?
   size      String?

@@ -17,6 +17,11 @@ export class CreateAccommodationDto {
 	@IsNotEmpty()
 	name!: string;
 
+	@Transform(({ value }: { value: string }) => value?.trim())
+	@IsString()
+	@IsOptional()
+	nameUk?: string;
+
 	@IsEnum(AccommodationType)
 	type!: AccommodationType;
 
@@ -29,6 +34,11 @@ export class CreateAccommodationDto {
 	@IsString()
 	@IsOptional()
 	location?: string;
+
+	@Transform(({ value }: { value: string }) => value?.trim())
+	@IsString()
+	@IsOptional()
+	locationUk?: string;
 
 	@Transform(({ value }: { value: string }) => (value ? parseFloat(value) : undefined))
 	@IsNumber()
