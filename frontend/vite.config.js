@@ -16,4 +16,17 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          redux: ['@reduxjs/toolkit', 'react-redux'],
+          maps: ['leaflet', 'react-leaflet'],
+          ui: ['react-icons', 'react-datepicker', 'react-i18next', 'i18next'],
+          stripe: ['@stripe/react-stripe-js', '@stripe/stripe-js'],
+        },
+      },
+    },
+  },
 });
