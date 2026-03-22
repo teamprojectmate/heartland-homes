@@ -1,8 +1,17 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { IsNotEmpty, IsString } from 'class-validator';
+import { CurrentUser, type JwtPayload } from '../common/decorators/current-user.decorator';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+
+class RefreshTokenDto {
+	@IsString()
+	@IsNotEmpty()
+	refreshToken!: string;
+}
 
 @ApiTags('auth')
 @Controller('auth')
@@ -25,5 +34,22 @@ export class AuthController {
 	@Post('login')
 	login(@Body() dto: LoginDto) {
 		return this.authService.login(dto);
+	}
+
+	@ApiOperation({ summary: 'Refresh access token' })
+	@ApiResponse({ status: 200, description: 'Token refreshed successfully' })
+	@ApiResponse({ status: 401, description: 'Invalid or expired refresh token' })
+	@Post('refresh')
+	refresh(@Body() dto: RefreshTokenDto) {
+		return this.authService.refresh(dto.refreshToken);
+	}
+
+	@ApiOperation({ summary: 'Logout and invalidate refresh token' })
+	@ApiResponse({ status: 200, description: 'Logged out successfully' })
+	@ApiResponse({ status: 401, description: 'Unauthorized' })
+	@Post('logout')
+	@UseGuards(JwtAuthGuard)
+	logout(@CurrentUser() user: JwtPayload) {
+		return this.authService.logout(user.sub);
 	}
 }

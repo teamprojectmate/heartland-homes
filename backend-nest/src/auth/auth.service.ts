@@ -1,4 +1,5 @@
 import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import type { Role, User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
@@ -7,9 +8,11 @@ import type { LoginDto } from './dto/login.dto';
 import type { RegisterDto } from './dto/register.dto';
 
 const SALT_ROUNDS = 10;
+const REFRESH_TOKEN_EXPIRATION = '7d';
 
 export interface AuthResponse {
 	token: string;
+	refreshToken: string;
 	user: {
 		id: number;
 		email: string;
@@ -21,10 +24,15 @@ export interface AuthResponse {
 
 @Injectable()
 export class AuthService {
+	private readonly jwtSecret: string;
+
 	constructor(
 		private prisma: PrismaService,
 		private jwtService: JwtService,
-	) {}
+		private configService: ConfigService,
+	) {
+		this.jwtSecret = this.configService.getOrThrow<string>('JWT_SECRET');
+	}
 
 	async register(dto: RegisterDto): Promise<AuthResponse> {
 		const existing = await this.prisma.user.findUnique({
@@ -67,15 +75,56 @@ export class AuthService {
 		return this.buildAuthResponse(user);
 	}
 
-	private buildAuthResponse(user: User): AuthResponse {
-		const token = this.jwtService.sign({
-			sub: user.id,
-			email: user.email,
-			role: user.role,
+	async refresh(refreshToken: string): Promise<AuthResponse> {
+		let payload: { sub: number; email: string; role: Role };
+
+		try {
+			payload = this.jwtService.verify(refreshToken, { secret: this.jwtSecret });
+		} catch {
+			throw new UnauthorizedException('Invalid or expired refresh token');
+		}
+
+		const user = await this.prisma.user.findUnique({
+			where: { id: payload.sub },
+		});
+
+		if (!user || !user.refreshToken) {
+			throw new UnauthorizedException('Invalid or expired refresh token');
+		}
+
+		const isValid = await bcrypt.compare(refreshToken, user.refreshToken);
+
+		if (!isValid) {
+			throw new UnauthorizedException('Invalid or expired refresh token');
+		}
+
+		return this.buildAuthResponse(user);
+	}
+
+	async logout(userId: number): Promise<void> {
+		await this.prisma.user.update({
+			where: { id: userId },
+			data: { refreshToken: null },
+		});
+	}
+
+	private async buildAuthResponse(user: User): Promise<AuthResponse> {
+		const jwtPayload = { sub: user.id, email: user.email, role: user.role };
+
+		const token = this.jwtService.sign(jwtPayload);
+		const refreshToken = this.jwtService.sign(jwtPayload, {
+			expiresIn: REFRESH_TOKEN_EXPIRATION,
+		});
+
+		const hashedRefreshToken = await bcrypt.hash(refreshToken, SALT_ROUNDS);
+		await this.prisma.user.update({
+			where: { id: user.id },
+			data: { refreshToken: hashedRefreshToken },
 		});
 
 		return {
 			token,
+			refreshToken,
 			user: {
 				id: user.id,
 				email: user.email,
