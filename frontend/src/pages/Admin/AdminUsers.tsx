@@ -3,11 +3,10 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import ErrorState from '../../components/ErrorState';
 import Notification from '../../components/Notification';
-import RoleSelect from '../../components/selects/RoleSelect';
 import { TableSkeleton } from '../../components/skeletons';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { fetchUsers, removeUser, updateUserRole } from '../../store/slices/userSlice';
+import { fetchUsers, removeUser } from '../../store/slices/userSlice';
 import AdminTable from '../Admin/AdminTable';
 import AdminUserCard from './AdminUserCard';
 
@@ -18,6 +17,7 @@ const AdminUsers = () => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const { items, loading, error } = useAppSelector((s) => s.user);
+	const { user: currentUser } = useAppSelector((s) => s.auth);
 
 	const isMobile = useIsMobile();
 
@@ -25,11 +25,8 @@ const AdminUsers = () => {
 		dispatch(fetchUsers());
 	}, [dispatch]);
 
-	const handleUpdateRole = (id: number, role: string) => {
-		dispatch(updateUserRole({ id, role }));
-	};
-
 	const handleDeleteUser = (id: number) => {
+		if (id === currentUser?.id) return;
 		if (window.confirm(t('admin.deleteUser'))) {
 			dispatch(removeUser(id));
 		}
@@ -47,10 +44,7 @@ const AdminUsers = () => {
 			key: 'role',
 			label: t('admin.role'),
 			render: (u: Record<string, unknown>) => (
-				<RoleSelect
-					value={u.role as string}
-					onChange={(newRole: string) => handleUpdateRole(u.id as number, newRole)}
-				/>
+				<span>{u.role === 'MANAGER' ? t('roles.manager') : t('roles.customer')}</span>
 			),
 		},
 	];
@@ -74,7 +68,6 @@ const AdminUsers = () => {
 									role?: string;
 								}
 							}
-							onUpdateRole={handleUpdateRole}
 							onDelete={handleDeleteUser}
 						/>
 					))}
@@ -83,17 +76,19 @@ const AdminUsers = () => {
 				<AdminTable
 					columns={columns}
 					data={items}
-					actions={(u) => (
-						<button
-							type="button"
-							className="btn-inline btn-danger"
-							onClick={() => handleDeleteUser(u.id as number)}
-							title={t('admin.deleteUser')}
-						>
-							<TrashIcon className="w-4 h-4" />
-							{t('common.delete')}
-						</button>
-					)}
+					actions={(u) =>
+						u.id === currentUser?.id ? null : (
+							<button
+								type="button"
+								className="btn-inline btn-danger"
+								onClick={() => handleDeleteUser(u.id as number)}
+								title={t('admin.deleteUser')}
+							>
+								<TrashIcon className="w-4 h-4" />
+								{t('common.delete')}
+							</button>
+						)
+					}
 				/>
 			)}
 		</div>

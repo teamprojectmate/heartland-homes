@@ -50,9 +50,7 @@ const AdminLayout = () => {
 				<header className="admin-header">
 					<h2>{t('admin.panelTitle')}</h2>
 					<div className="admin-user-actions">
-						<span className="admin-user">
-							{user?.firstName || user?.email} ({user?.cleanRole})
-						</span>
+						<span className="admin-user">{user?.firstName || user?.email}</span>
 						<button type="button" className="btn-logout" onClick={() => dispatch(logout())}>
 							{t('nav.logout')}
 						</button>

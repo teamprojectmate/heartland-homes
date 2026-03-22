@@ -1,6 +1,6 @@
 import { TrashIcon } from '@heroicons/react/24/solid';
 import { useTranslation } from 'react-i18next';
-import RoleSelect from '../../components/selects/RoleSelect';
+import { useAppSelector } from '../../store/hooks';
 
 const roleBadgeConfig: Record<string, { i18nKey: string; icon: string; color: string }> = {
 	MANAGER: { i18nKey: 'roles.manager', icon: '🛠', color: '#2563eb' },
@@ -9,12 +9,12 @@ const roleBadgeConfig: Record<string, { i18nKey: string; icon: string; color: st
 
 type AdminUserCardProps = {
 	user: { id: number; firstName: string; lastName?: string; email: string; role?: string };
-	onUpdateRole: (id: number, role: string) => void;
 	onDelete: (id: number) => void;
 };
 
-const AdminUserCard = ({ user, onUpdateRole, onDelete }: AdminUserCardProps) => {
+const AdminUserCard = ({ user, onDelete }: AdminUserCardProps) => {
 	const { t } = useTranslation();
+	const { user: currentUser } = useAppSelector((s) => s.auth);
 
 	const config = roleBadgeConfig[user.role?.toUpperCase() || ''];
 	const role = config
@@ -38,19 +38,16 @@ const AdminUserCard = ({ user, onUpdateRole, onDelete }: AdminUserCardProps) => 
 				</div>
 
 				<p className="user-email">{user.email}</p>
-
-				<RoleSelect
-					value={user.role || ''}
-					onChange={(newRole: string) => onUpdateRole(user.id, newRole)}
-				/>
 			</div>
 
-			<div className="card-actions">
-				<button type="button" className="btn-inline btn-danger" onClick={() => onDelete(user.id)}>
-					<TrashIcon className="w-4 h-4" />
-					{t('common.delete')}
-				</button>
-			</div>
+			{user.id !== currentUser?.id && (
+				<div className="card-actions">
+					<button type="button" className="btn-inline btn-danger" onClick={() => onDelete(user.id)}>
+						<TrashIcon className="w-4 h-4" />
+						{t('common.delete')}
+					</button>
+				</div>
+			)}
 		</div>
 	);
 };

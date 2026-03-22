@@ -36,6 +36,8 @@ const allStatusKeys = {
 const adminBookingStatusKeys = {
 	PENDING: { i18nKey: 'status.pendingConfirmation', className: 'badge-status-pending' },
 	CONFIRMED: { i18nKey: 'status.confirmed', className: 'badge-status-confirmed' },
+	CANCELED: { i18nKey: 'status.cancelled', className: 'badge-status-canceled' },
+	EXPIRED: { i18nKey: 'status.expired', className: 'badge-status-expired' },
 };
 
 // Resolved label helpers that accept t function

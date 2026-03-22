@@ -1,6 +1,8 @@
 import { TrashIcon } from '@heroicons/react/24/solid';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { FaInfoCircle } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 import { getAllUsers } from '../../api/user/userService';
 import ErrorState from '../../components/ErrorState';
 import StatusSelect from '../../components/selects/StatusSelect';
@@ -172,15 +174,23 @@ const AdminBookings = () => {
 					columns={columns}
 					data={enrichedBookings}
 					actions={(b: Record<string, unknown>) => (
-						<button
-							type="button"
-							className="btn-inline btn-danger"
-							onClick={() => handleDelete(b.id as number)}
-							title={t('admin.deleteBooking')}
-						>
-							<TrashIcon className="w-4 h-4" />
-							{t('common.delete')}
-						</button>
+						<div className="action-buttons">
+							<Link
+								to={`/admin/bookings/${b.id}`}
+								className="btn-icon btn-secondary"
+								title={t('common.details')}
+							>
+								<FaInfoCircle />
+							</Link>
+							<button
+								type="button"
+								className="btn-icon btn-danger"
+								onClick={() => handleDelete(b.id as number)}
+								title={t('admin.deleteBooking')}
+							>
+								<TrashIcon className="w-4 h-4" />
+							</button>
+						</div>
 					)}
 				/>
 			)}

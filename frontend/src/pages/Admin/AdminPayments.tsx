@@ -33,7 +33,11 @@ const AdminPayments = () => {
 			label: t('admin.amount'),
 			render: (p: Record<string, unknown>) => `${p.amount} ${t('common.currency')}`,
 		},
-		{ key: 'paymentType', label: t('admin.type') },
+		{
+			key: 'paymentType',
+			label: t('admin.type'),
+			render: () => `💳 ${t('payment.typePayment')}`,
+		},
 		{
 			key: 'status',
 			label: t('admin.status'),
