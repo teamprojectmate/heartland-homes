@@ -1,14 +1,15 @@
 # Heartland Homes 🏡
 
-Повноцінний сервіс для пошуку, бронювання та управління помешканнями.  
-Проєкт складається з **Frontend (React + Vite)** та **Backend (Spring Boot)**.
+Повноцінний сервіс для пошуку, бронювання та управління помешканнями.
+Проєкт складається з **Frontend (React + Vite)**, **Backend (Spring Boot)** та **Backend (NestJS)**.
 
 ---
 
 ## 🌍 Демо
 
-- **Frontend (Vercel):** [https://heartland-homes.vercel.app](https://heartland-homes.vercel.app)  
-- **Backend (Microsoft Azure):** [https://accommodation-booking-service.azurewebsites.net](https://accommodation-booking-service.azurewebsites.net)
+- **Frontend (Vercel):** [heartland-homes.vercel.app](https://heartland-homes.vercel.app)
+- **Backend — NestJS (Render):** [heartland-homes-api.onrender.com](https://heartland-homes-api.onrender.com)
+- **Backend — Spring Boot (Azure):** [accommodation-booking-service.azurewebsites.net](https://accommodation-booking-service.azurewebsites.net)
 
 ---
 
@@ -23,23 +24,32 @@
 - Перегляд історії бронювань.
 
 ### Для адміністраторів
-- Управління всіма помешканнями.
-- Керування бронюваннями.
-- Перегляд користувачів.
-- Панель адміністратора.
+- Управління всіма помешканнями (CRUD, статуси).
+- Керування бронюваннями (деталі, зміна статусу, видалення).
+- Управління платежами (перегляд, фільтр).
+- Управління користувачами (перегляд, видалення — не може видалити себе).
+
+### i18n
+- Повна підтримка EN/UA (31 компонент).
+- Мультимовний контент з БД (nameUk, locationUk).
+- Переклад API помилок (44 повідомлення).
+- 6 міст + 32 amenities з перекладами та іконками.
 
 ---
 
 ## 🛠 Використані технології
 
 ### Frontend
-- **React 19 + Vite**
-- React Router DOM
+- **React 19 + Vite + TypeScript**
 - Redux Toolkit
+- React Hook Form + Zod
+- i18next (EN/UA, 8 namespace files)
 - Axios
 - Leaflet (карти)
-- Stripe
+- Stripe.js
 - SCSS (модульна структура)
+- Dark/Light theme
+- Vitest (115 тестів)
 
 ### Backend (Spring Boot — legacy)
 - Spring Boot
@@ -54,7 +64,8 @@
 - JWT auth, RBAC (Customer/Manager)
 - Stripe Checkout + Webhooks
 - Helmet, CORS, ThrottlerGuard, ValidationPipe
-- Biome linter, Jest
+- Biome linter
+- Jest (51 тестів — unit, integration, E2E)
 
 ---
 
@@ -89,7 +100,8 @@ FRONTEND_URL="http://localhost:5173"
 | Role | Email | Password |
 |------|-------|----------|
 | Admin (Manager) | admin@booking.com | password123 |
-| Customer | browsertest@example.com | TestPass123! |
+| Customer | john.doe@booking.com | password123 |
+| Customer | jane.smith@booking.com | password123 |
 
 ### Stripe Test Card
 - Card: `4242 4242 4242 4242`
@@ -122,13 +134,15 @@ npm run test         # jest
 ```env
 # Frontend (.env.example)
 ```
-## локально
+## локально (NestJS)
 ```bash
-VITE_API_URL=http://localhost:8080
+VITE_API_URL=http://localhost:3000
 ```
 
-## продакшен (на Vercel)
-### VITE_API_URL=https://api.heartland-homes.com
+## продакшен (Vercel)
+```bash
+VITE_API_URL=https://heartland-homes-api.onrender.com
+```
 
 
 ## Backend (.env.template)
@@ -168,13 +182,25 @@ docker compose up --build
 ---
 
 ### 🧪 Тестування
-**Backend:**
+
+**Frontend (115 тестів — utils, validation, Redux, translations):**
 ```bash
-./mvnw test
+cd frontend && npm run test:run
 ```
-**Frontend:**
+
+**Backend NestJS — unit + integration (37 тестів):**
 ```bash
-npm test
+cd backend-nest && npm test
+```
+
+**Backend NestJS — E2E (14 тестів):**
+```bash
+cd backend-nest && npm run test:e2e
+```
+
+**Backend Spring Boot:**
+```bash
+cd backend && ./mvnw test
 ```
 
 ---
@@ -211,11 +237,13 @@ npm test
 ---
 
 ### 🗺 Roadmap
-- Розширення RBAC
+- ~~i18n~~ ✅
+- ~~Webhooks Stripe~~ ✅
+- ~~166 тестів (unit, integration, E2E)~~ ✅
 - Відгуки, фаворити
-- i18n
-- Webhooks Stripe
-- Моніторинг
+- Availability calendar
+- Docker Compose
+- Swagger @ApiOperation/@ApiResponse
 
 ---
 
