@@ -97,3 +97,12 @@ export const updateAccommodationStatus = async (
 	const response = await api.patch<Accommodation>(`/accommodations/${id}/status`, { status });
 	return response.data;
 };
+
+export const getBookedDates = async (
+	accommodationId: number,
+): Promise<{ checkInDate: string; checkOutDate: string }[]> => {
+	const response = await api.get<{ checkInDate: string; checkOutDate: string }[]>(
+		`/accommodations/${accommodationId}/booked-dates`,
+	);
+	return response.data;
+};
