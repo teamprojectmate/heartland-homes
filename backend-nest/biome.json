@@ -63,7 +63,8 @@
 		},
 		"parser": {
 			"unsafeParameterDecoratorsEnabled": true
-		}
+		},
+		"globals": ["jest", "describe", "it", "expect", "beforeEach", "afterEach", "beforeAll", "afterAll"]
 	},
 	"files": {
 		"includes": ["src/**", "test/**", "!src/generated/**"]
