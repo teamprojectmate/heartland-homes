@@ -175,24 +175,62 @@ const bookingsSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder
+			// Create booking
+			.addCase(createBooking.pending, (state) => {
+				state.status = 'loading';
+				state.error = null;
+			})
 			.addCase(createBooking.fulfilled, (state, action) => {
+				state.status = 'succeeded';
 				state.bookings.push(action.payload);
 				state.totalElements += 1;
 				state.totalPages = Math.ceil(state.totalElements / 5);
 			})
+			.addCase(createBooking.rejected, (state, { payload }) => {
+				state.status = 'failed';
+				state.error = (payload as string) ?? null;
+			})
+			// Fetch bookings (admin)
+			.addCase(fetchBookings.pending, (state) => {
+				state.status = 'loading';
+				state.error = null;
+			})
 			.addCase(fetchBookings.fulfilled, (state, action) => {
+				state.status = 'succeeded';
 				updatePageState(state, action.payload);
+			})
+			.addCase(fetchBookings.rejected, (state, { payload }) => {
+				state.status = 'failed';
+				state.error = (payload as string) ?? null;
+			})
+			// Fetch my bookings
+			.addCase(fetchMyBookings.pending, (state) => {
+				state.status = 'loading';
+				state.error = null;
 			})
 			.addCase(fetchMyBookings.fulfilled, (state, action) => {
+				state.status = 'succeeded';
 				updatePageState(state, action.payload);
 			})
+			.addCase(fetchMyBookings.rejected, (state, { payload }) => {
+				state.status = 'failed';
+				state.error = (payload as string) ?? null;
+			})
+			// Change status
 			.addCase(changeBookingStatus.fulfilled, (state, action) => {
 				const idx = state.bookings.findIndex((b) => b.id === action.payload.id);
 				if (idx !== -1) state.bookings[idx] = action.payload;
 			})
+			// Cancel booking — update status, don't remove
 			.addCase(cancelBooking.fulfilled, (state, action) => {
-				removeBooking(state, action.payload);
+				const idx = state.bookings.findIndex(
+					(b: Record<string, unknown>) => b.id === action.payload,
+				);
+				if (idx !== -1) {
+					(state.bookings[idx] as Record<string, unknown>).status = 'CANCELED';
+				}
 			})
+			// Delete booking — remove from list
 			.addCase(deleteBooking.fulfilled, (state, action) => {
 				removeBooking(state, action.payload);
 			});
