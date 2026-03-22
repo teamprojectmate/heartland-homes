@@ -116,7 +116,7 @@ const PaymentsList = () => {
 									<div className="payment-amount">
 										<div className="left">
 											<span className="icon">💰</span>
-											{p.amount ?? '—'} {p.currency ?? '₴'}
+											{p.amount ?? '—'} {t('common.currency')}
 										</div>
 										<img src="/assets/visa.svg" alt="VISA" className="system-logo" />
 									</div>

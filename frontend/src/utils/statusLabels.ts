@@ -25,11 +25,16 @@ const paymentStatusKeys = {
 	FAILED: { i18nKey: 'status.failed', className: 'badge-status-failed' },
 };
 
-// Combined config
-const allStatusKeys = {
+// Booking-specific status keys (booking PENDING ≠ payment PENDING)
+const bookingSpecificKeys = {
 	...bookingStatusKeys,
 	...accommodationStatusKeys,
+};
+
+// Payment-specific status keys
+const paymentSpecificKeys = {
 	...paymentStatusKeys,
+	...accommodationStatusKeys,
 };
 
 // Admin booking status config
@@ -73,8 +78,18 @@ export const getAdminBookingStatusLabels = (t: TFunction) =>
 		]),
 	);
 
-export const getStatusLabel = (status: string, t: TFunction) => {
-	const config = (allStatusKeys as Record<string, { i18nKey: string; className: string }>)[status];
+export const getStatusLabel = (
+	status: string,
+	t: TFunction,
+	context: 'booking' | 'payment' | 'accommodation' = 'booking',
+): { text: string; className: string } => {
+	const keys =
+		context === 'payment'
+			? paymentSpecificKeys
+			: context === 'accommodation'
+				? accommodationStatusKeys
+				: bookingSpecificKeys;
+	const config = (keys as Record<string, { i18nKey: string; className: string }>)[status];
 	if (!config) return { text: status, className: 'badge-status-unknown' };
 	return { text: t(config.i18nKey), className: config.className };
 };

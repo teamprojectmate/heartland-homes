@@ -13,13 +13,13 @@ const BookingStatusBlock = ({ booking }: { booking: Booking }) => {
 		<div className="booking-status-block">
 			<p>
 				<strong>{t('booking.bookingStatus')}:</strong>{' '}
-				<StatusBadge status={enrichedBooking.status} />
+				<StatusBadge status={enrichedBooking.status} context="booking" />
 			</p>
 
 			<p>
 				<strong>{t('booking.payment')}:</strong>{' '}
 				{enrichedBooking.payment?.status ? (
-					<StatusBadge status={enrichedBooking.payment.status} />
+					<StatusBadge status={enrichedBooking.payment.status} context="payment" />
 				) : (
 					<span className="badge badge-status badge-status-unknown">—</span>
 				)}
