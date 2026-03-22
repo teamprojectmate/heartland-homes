@@ -35,20 +35,19 @@ export const login = createAsyncThunk(
 	'auth/login',
 	async ({ email, password }: { email: string; password: string }, { rejectWithValue }) => {
 		try {
-			const { token } = await authService.login({ email, password });
+			const { token, refreshToken } = await authService.login({ email, password });
 
-			// Save token temporarily so getProfile() can use it
-			sessionStorage.setItem('auth', JSON.stringify({ token }));
+			// Save tokens so getProfile() and interceptor can use them
+			sessionStorage.setItem('auth', JSON.stringify({ token, refreshToken }));
 
 			const profile = await authService.getProfile();
 
 			const rawRole = profile.role || (profile.roles?.[0] ?? null);
 			const cleanRole = rawRole?.startsWith('ROLE_') ? rawRole.replace('ROLE_', '') : rawRole;
 
-			// Save profile after successful verification
 			sessionStorage.setItem('userProfile', JSON.stringify(profile));
 
-			return { token, ...profile, cleanRole };
+			return { token, refreshToken, ...profile, cleanRole };
 		} catch (err: unknown) {
 			sessionStorage.removeItem('auth');
 			sessionStorage.removeItem('userProfile');
