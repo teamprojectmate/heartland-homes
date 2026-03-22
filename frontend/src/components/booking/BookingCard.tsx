@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import type { Booking } from '../../types';
 import { formatDate } from '../../utils/dateCalc';
 import { fixDropboxUrl } from '../../utils/fixDropboxUrl';
+import { localized, mapCity } from '../../utils/translations';
 import BookingStatusBlock from '../BookingStatusBlock';
 import StatusSelect from '../selects/StatusSelect';
 
@@ -28,7 +29,8 @@ const BookingCard = ({
 	onDelete,
 	showAdminControls = false,
 }: BookingCardProps) => {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
+	const lang = i18n.language;
 	const imageUrl = booking.accommodation?.image
 		? fixDropboxUrl(booking.accommodation.image)
 		: fallbackImage;
@@ -40,7 +42,10 @@ const BookingCard = ({
 			<div className="booking-card-image-wrapper">
 				<img
 					src={imageUrl}
-					alt={booking.accommodation?.name || t('accommodations.imageAlt')}
+					alt={
+						localized(booking.accommodation?.name, booking.accommodation?.nameUk, lang) ||
+						t('accommodations.imageAlt')
+					}
 					className="booking-card-image"
 					onError={(e) => {
 						const target = e.target as HTMLImageElement;
@@ -53,10 +58,11 @@ const BookingCard = ({
 			<div className="booking-card-content">
 				<div className="booking-card-header">
 					<h4 className="booking-card-title">
-						{booking.accommodation?.name || t('accommodations.noName')}
+						{localized(booking.accommodation?.name, booking.accommodation?.nameUk, lang) ||
+							t('accommodations.noName')}
 					</h4>
 					<p className="booking-card-location">
-						{booking.accommodation?.city || t('booking.unknownCity')}
+						{mapCity(booking.accommodation?.city ?? '', t) || t('booking.unknownCity')}
 					</p>
 				</div>
 

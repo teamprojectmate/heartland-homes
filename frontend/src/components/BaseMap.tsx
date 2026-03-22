@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 import setupLeaflet from '../utils/leafletConfig';
+import { localized, mapCity } from '../utils/translations';
 import 'leaflet/dist/leaflet.css';
 
 setupLeaflet();
@@ -45,7 +46,8 @@ type BaseMapProps = {
 };
 
 const BaseMap = ({ items = [], highlightedId = null, renderPopup }: BaseMapProps) => {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
+	const lang = i18n.language;
 	const mapRef = useRef<L.Map | null>(null);
 
 	useEffect(() => {
@@ -115,8 +117,8 @@ const BaseMap = ({ items = [], highlightedId = null, renderPopup }: BaseMapProps
 									renderPopup(acc)
 								) : (
 									<div>
-										<strong>{acc.name}</strong>
-										<div>{acc.city}</div>
+										<strong>{localized(acc.name, acc.nameUk as string | undefined, lang)}</strong>
+										<div>{mapCity(acc.city, t)}</div>
 									</div>
 								)}
 							</Popup>

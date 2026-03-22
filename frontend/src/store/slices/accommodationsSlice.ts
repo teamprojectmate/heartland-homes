@@ -89,7 +89,7 @@ export const updateAccommodationStatusAsync = createAsyncThunk(
 	async ({ id, status }: { id: number; status: string }, { rejectWithValue }) => {
 		try {
 			const response = await accommodationService.updateAccommodationStatus(id, status);
-			return { id, accommodationStatus: response.accommodationStatus };
+			return { id, status: response.status };
 		} catch (err: unknown) {
 			return rejectWithValue(getApiErrorMessage(err, 'Failed to update accommodation status'));
 		}
@@ -211,9 +211,9 @@ const accommodationsSlice = createSlice({
 
 			// Admin update status
 			.addCase(updateAccommodationStatusAsync.fulfilled, (state, action) => {
-				const { id, accommodationStatus } = action.payload;
+				const { id, status } = action.payload;
 				const acc = state.items.find((item) => item.id === id);
-				if (acc) acc.accommodationStatus = accommodationStatus;
+				if (acc) acc.status = status;
 			});
 	},
 });

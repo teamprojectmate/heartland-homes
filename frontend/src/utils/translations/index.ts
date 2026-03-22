@@ -1,6 +1,12 @@
 import type { TFunction } from 'i18next';
 import { colors } from '../colors';
 
+// Pick localized field based on current language
+export const localized = (en: string | undefined, uk: string | undefined, lang: string): string => {
+	if (lang === 'uk' && uk) return uk;
+	return en ?? '';
+};
+
 // Accommodation type config with i18n keys
 const typeKeys = {
 	HOUSE: { i18nKey: 'accommodationType.house', icon: '🏠', color: colors.badge.house },
@@ -42,79 +48,278 @@ export const mapType = (type: string, t: TFunction) => {
 	return { label: t(config.i18nKey), icon: config.icon, color: config.color };
 };
 
-// Amenities config
-const amenityKeys = {
+// City config with i18n keys
+const cityKeys: Record<string, { i18nKey: string }> = {
+	kyiv: { i18nKey: 'cities.kyiv' },
+	lviv: { i18nKey: 'cities.lviv' },
+	odesa: { i18nKey: 'cities.odesa' },
+	bukovel: { i18nKey: 'cities.bukovel' },
+	dnipro: { i18nKey: 'cities.dnipro' },
+	kharkiv: { i18nKey: 'cities.kharkiv' },
+};
+
+// Map city name with i18n
+export const mapCity = (city: string | undefined, t?: TFunction): string => {
+	if (!city) return '';
+	const config = cityKeys[city.toLowerCase()];
+	if (config && t) return t(config.i18nKey);
+	return city;
+};
+
+// Amenities config with i18n keys
+type AmenityConfig = {
+	i18nKey: string;
+	icon: string;
+	slug: string;
+	color: string;
+	aliases: string[];
+};
+
+const amenityKeys: Record<string, AmenityConfig> = {
 	wifi: {
-		i18nKey: 'wifi',
-		label: 'Wi-Fi',
+		i18nKey: 'amenity.wifi',
 		icon: '📶',
 		slug: 'wifi',
 		color: colors.badge.wifi,
 		aliases: ['wi-fi', 'wifi', 'вайфай'],
 	},
 	kitchen: {
-		i18nKey: 'kitchen',
-		label: 'Кухня',
+		i18nKey: 'amenity.kitchen',
 		icon: '🍳',
 		slug: 'kitchen',
 		color: colors.badge.kitchen,
 		aliases: ['кухня', 'kitchen'],
 	},
 	ac: {
-		i18nKey: 'ac',
-		label: 'Кондиціонер',
+		i18nKey: 'amenity.airConditioning',
 		icon: '❄️',
 		slug: 'ac',
 		color: colors.badge.ac,
-		aliases: ['кондиціонер', 'air conditioner', 'ac'],
+		aliases: ['кондиціонер', 'air conditioning', 'air conditioner', 'ac'],
 	},
 	parking: {
-		i18nKey: 'parking',
-		label: 'Парковка',
+		i18nKey: 'amenity.parking',
 		icon: '🅿️',
 		slug: 'parking',
 		color: colors.badge.parking,
 		aliases: ['парковка', 'parking'],
 	},
 	washer: {
-		i18nKey: 'washer',
-		label: 'Пральна машина',
+		i18nKey: 'amenity.washingMachine',
 		icon: '🧺',
 		slug: 'washer',
 		color: colors.badge.washer,
-		aliases: ['пральна машина', 'washer', 'laundry'],
+		aliases: ['пральна машина', 'washing machine', 'washer'],
+	},
+	pool: {
+		i18nKey: 'amenity.pool',
+		icon: '🏊',
+		slug: 'pool',
+		color: colors.badge.other,
+		aliases: ['басейн', 'pool'],
+	},
+	spa: {
+		i18nKey: 'amenity.spa',
+		icon: '💆',
+		slug: 'spa',
+		color: colors.badge.other,
+		aliases: ['спа', 'spa'],
+	},
+	restaurant: {
+		i18nKey: 'amenity.restaurant',
+		icon: '🍽️',
+		slug: 'restaurant',
+		color: colors.badge.other,
+		aliases: ['ресторан', 'restaurant'],
+	},
+	roomService: {
+		i18nKey: 'amenity.roomService',
+		icon: '🛎️',
+		slug: 'room-service',
+		color: colors.badge.other,
+		aliases: ['обслуговування номерів', 'room service'],
+	},
+	gym: {
+		i18nKey: 'amenity.gym',
+		icon: '💪',
+		slug: 'gym',
+		color: colors.badge.other,
+		aliases: ['спортзал', 'gym'],
+	},
+	garden: {
+		i18nKey: 'amenity.garden',
+		icon: '🌿',
+		slug: 'garden',
+		color: colors.badge.other,
+		aliases: ['сад', 'garden'],
+	},
+	bbq: {
+		i18nKey: 'amenity.bbq',
+		icon: '🔥',
+		slug: 'bbq',
+		color: colors.badge.other,
+		aliases: ['мангал', 'bbq'],
+	},
+	sharedKitchen: {
+		i18nKey: 'amenity.sharedKitchen',
+		icon: '🍳',
+		slug: 'shared-kitchen',
+		color: colors.badge.kitchen,
+		aliases: ['спільна кухня', 'shared kitchen'],
+	},
+	laundry: {
+		i18nKey: 'amenity.laundry',
+		icon: '🧺',
+		slug: 'laundry',
+		color: colors.badge.washer,
+		aliases: ['пральня', 'laundry'],
+	},
+	balcony: {
+		i18nKey: 'amenity.balcony',
+		icon: '🌅',
+		slug: 'balcony',
+		color: colors.badge.other,
+		aliases: ['балкон', 'balcony'],
+	},
+	riverView: {
+		i18nKey: 'amenity.riverView',
+		icon: '🏞️',
+		slug: 'river-view',
+		color: colors.badge.other,
+		aliases: ['вид на річку', 'river view'],
+	},
+	cityCenter: {
+		i18nKey: 'amenity.cityCenter',
+		icon: '🏙️',
+		slug: 'city-center',
+		color: colors.badge.other,
+		aliases: ['центр міста', 'city center'],
+	},
+	terrace: {
+		i18nKey: 'amenity.terrace',
+		icon: '🪴',
+		slug: 'terrace',
+		color: colors.badge.other,
+		aliases: ['тераса', 'terrace'],
+	},
+	panoramicView: {
+		i18nKey: 'amenity.panoramicView',
+		icon: '🌄',
+		slug: 'panoramic-view',
+		color: colors.badge.other,
+		aliases: ['панорамний вид', 'panoramic view'],
+	},
+	historicCenter: {
+		i18nKey: 'amenity.historicCenter',
+		icon: '🏛️',
+		slug: 'historic-center',
+		color: colors.badge.other,
+		aliases: ['історичний центр', 'historic center'],
+	},
+	fireplace: {
+		i18nKey: 'amenity.fireplace',
+		icon: '🔥',
+		slug: 'fireplace',
+		color: colors.badge.other,
+		aliases: ['камін', 'fireplace'],
+	},
+	forestView: {
+		i18nKey: 'amenity.forestView',
+		icon: '🌲',
+		slug: 'forest-view',
+		color: colors.badge.other,
+		aliases: ['вид на ліс', 'forest view'],
+	},
+	concierge: {
+		i18nKey: 'amenity.concierge',
+		icon: '🧑‍💼',
+		slug: 'concierge',
+		color: colors.badge.other,
+		aliases: ['консьєрж', 'concierge'],
+	},
+	lounge: {
+		i18nKey: 'amenity.lounge',
+		icon: '🛋️',
+		slug: 'lounge',
+		color: colors.badge.other,
+		aliases: ['лаунж', 'lounge'],
+	},
+	sauna: {
+		i18nKey: 'amenity.sauna',
+		icon: '🧖',
+		slug: 'sauna',
+		color: colors.badge.other,
+		aliases: ['сауна', 'sauna'],
+	},
+	seaView: {
+		i18nKey: 'amenity.seaView',
+		icon: '🌊',
+		slug: 'sea-view',
+		color: colors.badge.other,
+		aliases: ['вид на море', 'sea view'],
+	},
+	beachAccess: {
+		i18nKey: 'amenity.beachAccess',
+		icon: '🏖️',
+		slug: 'beach-access',
+		color: colors.badge.other,
+		aliases: ['доступ до пляжу', 'beach access'],
+	},
+	skiStorage: {
+		i18nKey: 'amenity.skiStorage',
+		icon: '🎿',
+		slug: 'ski-storage',
+		color: colors.badge.other,
+		aliases: ['лижне сховище', 'ski storage'],
+	},
+	mountainView: {
+		i18nKey: 'amenity.mountainView',
+		icon: '🏔️',
+		slug: 'mountain-view',
+		color: colors.badge.other,
+		aliases: ['вид на гори', 'mountain view'],
+	},
+	hikingTrails: {
+		i18nKey: 'amenity.hikingTrails',
+		icon: '🥾',
+		slug: 'hiking-trails',
+		color: colors.badge.other,
+		aliases: ['туристичні маршрути', 'hiking trails'],
+	},
+	shuttle: {
+		i18nKey: 'amenity.shuttle',
+		icon: '🚐',
+		slug: 'shuttle',
+		color: colors.badge.other,
+		aliases: ['трансфер', 'shuttle'],
+	},
+	smartTv: {
+		i18nKey: 'amenity.smartTv',
+		icon: '📺',
+		slug: 'smart-tv',
+		color: colors.badge.other,
+		aliases: ['smart tv'],
 	},
 };
 
 // Keep amenityTranslations for backward compat
 export const amenityTranslations = amenityKeys;
 
-// Map amenity (amenities are data-driven labels, keep as-is for now)
-export const mapAmenity = (slug = '') => {
+// Map amenity with i18n
+export const mapAmenity = (slug = '', t?: TFunction) => {
 	const lower = slug.toLowerCase();
 	for (const key in amenityKeys) {
-		const {
-			aliases,
-			i18nKey: _i18nKey,
-			...rest
-		} = (
-			amenityKeys as Record<
-				string,
-				{
-					label: string;
-					icon: string;
-					slug: string;
-					color: string;
-					aliases: string[];
-					i18nKey: string;
-				}
-			>
-		)[key];
-		if (aliases.some((alias: string) => lower.includes(alias))) {
-			return rest;
+		const config = amenityKeys[key];
+		if (config.aliases.some((alias) => lower.includes(alias))) {
+			return {
+				label: t ? t(config.i18nKey) : slug,
+				icon: config.icon,
+				slug: config.slug,
+				color: config.color,
+			};
 		}
 	}
-	return { label: slug || 'Other', icon: '❔', slug: 'other', color: colors.badge.other };
+	return { label: slug, icon: '❔', slug: 'other', color: colors.badge.other };
 };
 
 // Status config with i18n keys

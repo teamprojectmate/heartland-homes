@@ -3,12 +3,13 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import type { Accommodation } from '../../types';
 import { getSafeImageUrl } from '../../utils/getSafeImageUrl';
-import { mapType } from '../../utils/translations/index';
+import { localized, mapCity, mapType } from '../../utils/translations/index';
 
 const fallbackImage = '/no-image.png';
 
 const AccommodationCard = ({ accommodation }: { accommodation: Accommodation }) => {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
+	const lang = i18n.language;
 	const imageUrl = getSafeImageUrl(accommodation.image);
 
 	const { label, icon, color } = mapType(accommodation.type, t);
@@ -23,7 +24,10 @@ const AccommodationCard = ({ accommodation }: { accommodation: Accommodation }) 
 			/>
 
 			<div className="card-body">
-				<h3 className="card-title">{accommodation?.name || t('accommodations.noName')}</h3>
+				<h3 className="card-title">
+					{localized(accommodation?.name, accommodation?.nameUk, lang) ||
+						t('accommodations.noName')}
+				</h3>
 
 				<div className="card-badges">
 					<span className="badge badge-type" style={{ backgroundColor: color }}>
@@ -43,9 +47,7 @@ const AccommodationCard = ({ accommodation }: { accommodation: Accommodation }) 
 				</div>
 
 				<p className="city-label">
-					{accommodation?.location?.includes(accommodation?.city)
-						? accommodation?.location
-						: `${accommodation?.city}, ${accommodation?.location}`}
+					{`${mapCity(accommodation?.city ?? '', t)}, ${localized(accommodation?.location, accommodation?.locationUk, lang)}`}
 				</p>
 
 				<p className="card-price">

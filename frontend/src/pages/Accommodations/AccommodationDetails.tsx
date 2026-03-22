@@ -8,7 +8,7 @@ import { FormSkeleton } from '../../components/skeletons';
 import { useAppSelector } from '../../store/hooks';
 import type { Accommodation } from '../../types';
 import { getSafeImageUrl } from '../../utils/getSafeImageUrl';
-import { mapAmenity, mapType } from '../../utils/translations';
+import { localized, mapAmenity, mapCity, mapType } from '../../utils/translations';
 import AccommodationGallery from './AccommodationGallery';
 
 import '../../styles/components/accommodation/_accommodation-details.scss';
@@ -16,7 +16,8 @@ import '../../styles/components/accommodation/_accommodation-gallery.scss';
 import '../../styles/components/badges/_badges.scss';
 
 const AccommodationDetails = ({ id: propId }: { id?: number | string }) => {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
+	const lang = i18n.language;
 	const { id: routeId } = useParams();
 	const id = propId || routeId;
 
@@ -57,10 +58,14 @@ const AccommodationDetails = ({ id: propId }: { id?: number | string }) => {
 			<div className="page-header">
 				<h2 className="page-title">{t('accommodations.detailsTitle')}</h2>
 				<h3 className="page-subtitle">
-					<strong>{accommodation?.name || t('accommodations.noName')}</strong>
+					<strong>
+						{localized(accommodation?.name, accommodation?.nameUk, lang) ||
+							t('accommodations.noName')}
+					</strong>
 				</h3>
 				<p className="page-subtitle">
-					{accommodation?.city}, {accommodation?.location}
+					{mapCity(accommodation?.city ?? '', t)},{' '}
+					{localized(accommodation?.location, accommodation?.locationUk, lang)}
 				</p>
 			</div>
 
@@ -103,7 +108,7 @@ const AccommodationDetails = ({ id: propId }: { id?: number | string }) => {
 							<div className="badge-group mt-2">
 								{accommodation?.amenities?.length > 0 ? (
 									accommodation.amenities.map((amenity: string) => {
-										const { label, icon, slug, color } = mapAmenity(amenity);
+										const { label, icon, slug, color } = mapAmenity(amenity, t);
 										return (
 											<span
 												key={amenity}
@@ -161,8 +166,8 @@ const AccommodationDetails = ({ id: propId }: { id?: number | string }) => {
 									style={{ width: '100%', borderRadius: '6px', marginBottom: '6px' }}
 									onError={(e) => (e.currentTarget.src = '/no-image.png')}
 								/>
-								<strong>{acc.name}</strong>
-								<div>{acc.city}</div>
+								<strong>{localized(acc.name, acc.nameUk as string | undefined, lang)}</strong>
+								<div>{mapCity(acc.city, t)}</div>
 							</div>
 						)}
 					/>

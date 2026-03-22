@@ -16,6 +16,7 @@ import {
 import { fetchAllPayments } from '../../store/slices/paymentsSlice';
 import type { Booking, Payment, User } from '../../types';
 import { formatDate } from '../../utils/dateCalc';
+import { localized } from '../../utils/translations';
 import AdminBookingCard from './AdminBookingCard';
 import AdminTable from './AdminTable';
 
@@ -36,7 +37,8 @@ type EnrichedBookingRow = {
 };
 
 const AdminBookings = () => {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
+	const lang = i18n.language;
 	const dispatch = useAppDispatch();
 	const { bookings, status, error } = useAppSelector((state) => state.bookings);
 	const { payments } = useAppSelector((state) => state.payments);
@@ -99,8 +101,16 @@ const AdminBookings = () => {
 		{
 			key: 'accommodation',
 			label: t('admin.accommodation'),
-			render: (b: Record<string, unknown>) =>
-				(b as unknown as EnrichedBookingRow).accommodation?.name || '—',
+			render: (b: Record<string, unknown>) => {
+				const row = b as unknown as EnrichedBookingRow;
+				return (
+					localized(
+						row.accommodation?.name,
+						(row.accommodation as Record<string, unknown> | null)?.nameUk as string | undefined,
+						lang,
+					) || '—'
+				);
+			},
 		},
 		{
 			key: 'checkInDate',

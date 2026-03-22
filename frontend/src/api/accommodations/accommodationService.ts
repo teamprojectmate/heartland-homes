@@ -6,8 +6,10 @@ const pick = (obj: Record<string, unknown>, keys: string[]) =>
 
 const ALLOWED_KEYS = [
 	'name',
+	'nameUk',
 	'type',
 	'location',
+	'locationUk',
 	'city',
 	'latitude',
 	'longitude',

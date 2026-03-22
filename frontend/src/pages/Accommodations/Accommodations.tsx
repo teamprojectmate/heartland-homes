@@ -13,6 +13,7 @@ import {
 	setPage,
 } from '../../store/slices/accommodationsSlice';
 import { getSafeImageUrl } from '../../utils/getSafeImageUrl';
+import { localized, mapCity } from '../../utils/translations';
 import AccommodationDetails from './AccommodationDetails';
 import AccommodationFilters from './AccommodationFilters';
 import AccommodationList from './AccommodationList';
@@ -22,7 +23,8 @@ import '../../styles/components/accommodation/_accommodations-map.scss';
 import '../../styles/components/accommodation/_accommodations-list.scss';
 
 const Accommodations = () => {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
+	const lang = i18n.language;
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 	const location = useLocation();
@@ -127,7 +129,10 @@ const Accommodations = () => {
 						<div style={{ width: '150px' }}>
 							<img
 								src={acc.image ? getSafeImageUrl(acc.image as string) : '/no-image.png'}
-								alt={acc.name || t('accommodations.accommodation')}
+								alt={
+									localized(acc.name, acc.nameUk as string | undefined, lang) ||
+									t('accommodations.accommodation')
+								}
 								style={{
 									width: '100%',
 									borderRadius: '6px',
@@ -140,8 +145,8 @@ const Accommodations = () => {
 									if (e.key === 'Enter') setSelectedAccommodation(acc);
 								}}
 							/>
-							<strong>{acc.name}</strong>
-							<div>{acc.city}</div>
+							<strong>{localized(acc.name, acc.nameUk as string | undefined, lang)}</strong>
+							<div>{mapCity(acc.city, t)}</div>
 						</div>
 					)}
 				/>

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import StatusSelect from '../../components/selects/StatusSelect';
 import { formatDate } from '../../utils/dateCalc';
 import { fixDropboxUrl } from '../../utils/fixDropboxUrl';
+import { localized } from '../../utils/translations';
 
 import '../../styles/components/badges/_badges.scss';
 import '../../styles/components/admin/_admin-bookings.scss';
@@ -26,7 +27,8 @@ type AdminBookingCardProps = {
 };
 
 const AdminBookingCard = ({ booking, onDelete, onStatusChange }: AdminBookingCardProps) => {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
+	const lang = i18n.language;
 
 	const image = booking.accommodation?.image
 		? fixDropboxUrl(booking.accommodation.image)
@@ -36,7 +38,13 @@ const AdminBookingCard = ({ booking, onDelete, onStatusChange }: AdminBookingCar
 		<div className="admin-booking-card">
 			<img
 				src={image}
-				alt={booking.accommodation?.name || t('accommodations.accommodation')}
+				alt={
+					localized(
+						booking.accommodation?.name,
+						(booking.accommodation as Record<string, unknown>)?.nameUk as string | undefined,
+						lang,
+					) || t('accommodations.accommodation')
+				}
 				className="booking-card-img"
 				onError={(e) => (e.currentTarget.src = fallbackImage)}
 			/>
@@ -44,7 +52,11 @@ const AdminBookingCard = ({ booking, onDelete, onStatusChange }: AdminBookingCar
 			<div className="booking-card-content">
 				<div className="card-header">
 					<h3 className="admin-booking-title">
-						{booking.accommodation?.name || t('accommodations.noName')}
+						{localized(
+							booking.accommodation?.name,
+							(booking.accommodation as Record<string, unknown>)?.nameUk as string | undefined,
+							lang,
+						) || t('accommodations.noName')}
 					</h3>
 				</div>
 
