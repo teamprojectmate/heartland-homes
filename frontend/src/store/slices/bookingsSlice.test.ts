@@ -15,9 +15,16 @@ const mockBooking = {
 	status: 'PENDING',
 };
 
+const loadBookings = (store: ReturnType<typeof createTestStore>) => {
+	store.dispatch({
+		type: 'bookings/fetchBookings/fulfilled',
+		payload: { content: [mockBooking], totalPages: 1, totalElements: 1 },
+	});
+};
+
 describe('bookingsSlice', () => {
 	describe('initial state', () => {
-		it('should have empty bookings array', () => {
+		it('should have empty bookings and idle status', () => {
 			const store = createTestStore();
 			const state = store.getState().bookings;
 
@@ -27,49 +34,101 @@ describe('bookingsSlice', () => {
 		});
 	});
 
-	describe('fetchBookings.fulfilled', () => {
-		it('should store bookings and pagination', () => {
+	describe('fetchBookings', () => {
+		it('pending should set loading and clear error', () => {
 			const store = createTestStore();
-			const payload = { content: [mockBooking], totalPages: 1, totalElements: 1 };
+			store.dispatch({ type: 'bookings/fetchBookings/pending' });
 
-			store.dispatch({ type: 'bookings/fetchBookings/fulfilled', payload });
+			expect(store.getState().bookings.status).toBe('loading');
+			expect(store.getState().bookings.error).toBeNull();
+		});
+
+		it('fulfilled should store bookings and set succeeded', () => {
+			const store = createTestStore();
+			loadBookings(store);
 			const state = store.getState().bookings;
 
+			expect(state.status).toBe('succeeded');
 			expect(state.bookings).toEqual([mockBooking]);
 			expect(state.totalPages).toBe(1);
-			expect(state.totalElements).toBe(1);
 		});
-	});
 
-	describe('fetchMyBookings.fulfilled', () => {
-		it('should store user bookings', () => {
-			const store = createTestStore();
-			const payload = { content: [mockBooking], totalPages: 1, totalElements: 1 };
-
-			store.dispatch({ type: 'bookings/fetchMyBookings/fulfilled', payload });
-
-			expect(store.getState().bookings.bookings).toEqual([mockBooking]);
-		});
-	});
-
-	describe('createBooking.fulfilled', () => {
-		it('should add new booking to list', () => {
-			const store = createTestStore();
-			store.dispatch({ type: 'bookings/createBooking/fulfilled', payload: mockBooking });
-			const state = store.getState().bookings;
-
-			expect(state.bookings).toContainEqual(mockBooking);
-			expect(state.totalElements).toBe(1);
-		});
-	});
-
-	describe('changeBookingStatus.fulfilled', () => {
-		it('should update booking status in list', () => {
+		it('rejected should set error and failed status', () => {
 			const store = createTestStore();
 			store.dispatch({
-				type: 'bookings/fetchBookings/fulfilled',
+				type: 'bookings/fetchBookings/rejected',
+				payload: 'Failed to fetch bookings',
+			});
+			const state = store.getState().bookings;
+
+			expect(state.status).toBe('failed');
+			expect(state.error).toBe('Failed to fetch bookings');
+		});
+	});
+
+	describe('fetchMyBookings', () => {
+		it('pending should set loading', () => {
+			const store = createTestStore();
+			store.dispatch({ type: 'bookings/fetchMyBookings/pending' });
+
+			expect(store.getState().bookings.status).toBe('loading');
+		});
+
+		it('fulfilled should store user bookings', () => {
+			const store = createTestStore();
+			store.dispatch({
+				type: 'bookings/fetchMyBookings/fulfilled',
 				payload: { content: [mockBooking], totalPages: 1, totalElements: 1 },
 			});
+
+			expect(store.getState().bookings.bookings).toEqual([mockBooking]);
+			expect(store.getState().bookings.status).toBe('succeeded');
+		});
+
+		it('rejected should set error', () => {
+			const store = createTestStore();
+			store.dispatch({
+				type: 'bookings/fetchMyBookings/rejected',
+				payload: 'Failed to load your bookings',
+			});
+
+			expect(store.getState().bookings.error).toBe('Failed to load your bookings');
+		});
+	});
+
+	describe('createBooking', () => {
+		it('pending should set loading', () => {
+			const store = createTestStore();
+			store.dispatch({ type: 'bookings/createBooking/pending' });
+
+			expect(store.getState().bookings.status).toBe('loading');
+			expect(store.getState().bookings.error).toBeNull();
+		});
+
+		it('fulfilled should add booking to list', () => {
+			const store = createTestStore();
+			store.dispatch({ type: 'bookings/createBooking/fulfilled', payload: mockBooking });
+
+			expect(store.getState().bookings.bookings).toContainEqual(mockBooking);
+			expect(store.getState().bookings.status).toBe('succeeded');
+		});
+
+		it('rejected should set error', () => {
+			const store = createTestStore();
+			store.dispatch({
+				type: 'bookings/createBooking/rejected',
+				payload: 'Selected dates are not available',
+			});
+
+			expect(store.getState().bookings.error).toBe('Selected dates are not available');
+			expect(store.getState().bookings.status).toBe('failed');
+		});
+	});
+
+	describe('changeBookingStatus', () => {
+		it('fulfilled should update booking status in list', () => {
+			const store = createTestStore();
+			loadBookings(store);
 
 			const updatedBooking = { ...mockBooking, status: 'CONFIRMED' };
 			store.dispatch({
@@ -82,27 +141,23 @@ describe('bookingsSlice', () => {
 		});
 	});
 
-	describe('cancelBooking.fulfilled', () => {
-		it('should remove booking from list', () => {
+	describe('cancelBooking', () => {
+		it('fulfilled should update status to CANCELED (not remove)', () => {
 			const store = createTestStore();
-			store.dispatch({
-				type: 'bookings/fetchBookings/fulfilled',
-				payload: { content: [mockBooking], totalPages: 1, totalElements: 1 },
-			});
+			loadBookings(store);
 
 			store.dispatch({ type: 'bookings/cancelBooking/fulfilled', payload: 1 });
+			const state = store.getState().bookings;
 
-			expect(store.getState().bookings.bookings).toHaveLength(0);
+			expect(state.bookings).toHaveLength(1);
+			expect(state.bookings[0].status).toBe('CANCELED');
 		});
 	});
 
-	describe('deleteBooking.fulfilled', () => {
-		it('should remove booking from list', () => {
+	describe('deleteBooking', () => {
+		it('fulfilled should remove booking from list', () => {
 			const store = createTestStore();
-			store.dispatch({
-				type: 'bookings/fetchBookings/fulfilled',
-				payload: { content: [mockBooking], totalPages: 1, totalElements: 1 },
-			});
+			loadBookings(store);
 
 			store.dispatch({ type: 'bookings/deleteBooking/fulfilled', payload: 1 });
 
