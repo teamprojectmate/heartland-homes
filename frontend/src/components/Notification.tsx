@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { translateApiError } from '../utils/translateApiError';
 import '../styles/components/_notifications.scss';
 
 type NotificationProps = {
@@ -14,6 +16,7 @@ const Notification = ({
 	duration = 3000,
 	onClose,
 }: NotificationProps) => {
+	const { t } = useTranslation();
 	const [visible, setVisible] = useState(true);
 
 	useEffect(() => {
@@ -31,7 +34,7 @@ const Notification = ({
 
 	return (
 		<div className={`${notificationClass}`} role="alert" aria-live="assertive" aria-atomic="true">
-			<span>{message}</span>
+			<span>{translateApiError(message, t)}</span>
 			<button
 				type="button"
 				className="close-btn"
