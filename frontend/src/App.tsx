@@ -38,6 +38,7 @@ function App() {
 
 	return (
 		<div className="main-layout">
+			<img src="/assets/bg-home.jpg" alt="" className="bg-photo" aria-hidden="true" />
 			<Header />
 			<main className="main-content">
 				<ScrollToTop />

@@ -7,7 +7,7 @@
 
   // Backgrounds
   --bg-primary: #f0f2f5;
-  --bg-gradient: linear-gradient(135deg, #e8f5f3 0%, #f0f2f5 40%, #eef1f8 100%);
+  --bg-photo-opacity: 0.4;
   --bg-surface: rgb(255 255 255 / 85%);
   --bg-surface-solid: #fff;
   --bg-surface-hover: rgb(249 250 251 / 90%);
@@ -93,7 +93,7 @@
 [data-theme='dark'] {
   --color-primary: #14b8a6;
   --bg-primary: #0f172a;
-  --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1a2744 40%, #0f172a 100%);
+  --bg-photo-opacity: 0.05;
   --bg-surface: rgb(30 41 59 / 85%);
   --bg-surface-solid: #1e293b;
   --bg-surface-hover: rgb(51 65 85 / 90%);

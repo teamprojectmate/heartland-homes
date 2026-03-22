@@ -17,19 +17,33 @@ body {
   font-size: $font-size-base;
   line-height: $line-height-base;
   color: var(--text-primary);
-  background: var(--bg-gradient);
-  background-attachment: fixed;
+  background: var(--bg-primary);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 // 2. Sticky Footer
 .main-layout {
+  position: relative;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
+.bg-photo {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  object-fit: cover;
+  opacity: var(--bg-photo-opacity);
+  filter: blur(2px);
+}
+
 .main-content {
+  position: relative;
+  z-index: 1;
   flex: 1 0 auto;
 }
 
