@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { getAccommodationById } from '../../api/accommodations/accommodationService';
 import { fetchBookingById } from '../../api/bookings/bookingsService';
+import EmptyState from '../../components/EmptyState';
 import ErrorState from '../../components/ErrorState';
 import Pagination from '../../components/Pagination';
 import { CardSkeleton } from '../../components/skeletons';
@@ -86,7 +87,13 @@ const PaymentsList = () => {
 			<h2 className="auth-title">{t('payment.myPayments')}</h2>
 
 			{enrichedPayments.length === 0 ? (
-				<p className="text-center">{t('payment.noPayments')}</p>
+				<EmptyState
+					icon="💳"
+					title={t('payment.noPayments')}
+					description={t('payment.noPaymentsDesc')}
+					actionLabel={t('accommodations.browseAll')}
+					actionTo="/accommodations"
+				/>
 			) : (
 				<>
 					<div className="payments-grid">

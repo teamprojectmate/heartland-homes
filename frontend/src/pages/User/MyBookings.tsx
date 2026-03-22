@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { BookingList } from '../../components/booking/index';
+import EmptyState from '../../components/EmptyState';
 import Notification from '../../components/Notification';
 import { CardSkeleton } from '../../components/skeletons';
 import { useEnrichedBookings } from '../../hooks/useEnrichedBookings';
@@ -20,9 +21,7 @@ const MyBookings = () => {
 	const [notification, setNotification] = useState({ message: '', type: '' });
 
 	const { isAuthenticated, user } = useAppSelector((state) => state.auth);
-	const { bookings, status, error, page, totalPages, totalElements } = useAppSelector(
-		(state) => state.bookings,
-	);
+	const { bookings, status, error, page, totalPages } = useAppSelector((state) => state.bookings);
 	const { payments } = useAppSelector((state) => state.payments);
 
 	const enrichedBookings = useEnrichedBookings(
@@ -90,7 +89,6 @@ const MyBookings = () => {
 
 	const filteredBookings = enrichedBookings.filter((booking) => booking.status !== 'CANCELED');
 
-	const hasBookings = totalElements > 0;
 	const hasActiveBookingsOnThisPage = filteredBookings.length > 0;
 
 	return (
@@ -110,20 +108,14 @@ const MyBookings = () => {
 					totalPages={totalPages}
 					onPageChange={handlePageChange}
 				/>
-			) : hasBookings ? (
-				<p className="text-center mt-5">
-					{t('booking.noActiveBookings')}{' '}
-					<button
-						type="button"
-						className="btn btn-link p-0 align-baseline"
-						onClick={() => handlePageChange(0)}
-					>
-						{t('booking.goToFirstPage')}
-					</button>{' '}
-					{t('booking.orOtherPages')}
-				</p>
 			) : (
-				<p className="text-center mt-5">{t('booking.noBookings')}</p>
+				<EmptyState
+					icon="📋"
+					title={t('booking.noBookings')}
+					description={t('booking.noBookingsDesc')}
+					actionLabel={t('accommodations.browseAll')}
+					actionTo="/accommodations"
+				/>
 			)}
 		</div>
 	);

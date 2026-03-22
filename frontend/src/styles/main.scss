@@ -36,6 +36,7 @@
 @use './components/profile' as *;
 @use './components/searchForm' as *;
 @use './components/skeleton' as *;
+@use './components/empty-state' as *;
 @use './components/status-select' as *;
 
 // 6) settings bar (theme/language switcher)
