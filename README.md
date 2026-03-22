@@ -174,7 +174,13 @@ npm install
 npm run dev
 ```
 
-### Docker Compose (бекенд + база)
+### Docker Compose (fullstack — NestJS + PostgreSQL + Frontend)
+```bash
+docker compose up --build
+```
+Відкрити: frontend [http://localhost:5173](http://localhost:5173), backend [http://localhost:3000](http://localhost:3000)
+
+### Docker Compose (Spring Boot бекенд + база)
 ```bash
 cd backend
 docker compose up --build
