@@ -123,6 +123,20 @@ export class AccommodationsService {
 		});
 	}
 
+	async getBookedDates(accommodationId: number) {
+		await this.findOne(accommodationId);
+
+		return this.prisma.booking.findMany({
+			where: {
+				accommodationId,
+				status: { not: 'CANCELED' },
+				checkOutDate: { gte: new Date() },
+			},
+			select: { checkInDate: true, checkOutDate: true },
+			orderBy: { checkInDate: 'asc' },
+		});
+	}
+
 	async remove(id: number) {
 		await this.findOne(id);
 

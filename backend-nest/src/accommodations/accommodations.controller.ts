@@ -46,6 +46,14 @@ export class AccommodationsController {
 		return this.accommodationsService.findMyAccommodations(user.sub);
 	}
 
+	@ApiOperation({ summary: 'Get booked dates for an accommodation' })
+	@ApiResponse({ status: 200, description: 'List of booked date ranges' })
+	@ApiResponse({ status: 404, description: 'Accommodation not found' })
+	@Get(':id/booked-dates')
+	getBookedDates(@Param('id', ParseIntPipe) id: number) {
+		return this.accommodationsService.getBookedDates(id);
+	}
+
 	@ApiOperation({ summary: 'Get accommodation by ID' })
 	@ApiResponse({ status: 200, description: 'Accommodation found' })
 	@ApiResponse({ status: 404, description: 'Accommodation not found' })
