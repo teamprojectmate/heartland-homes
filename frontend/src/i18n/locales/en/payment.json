@@ -1,0 +1,26 @@
+{
+	"payment": {
+		"title": "Booking Payment",
+		"subtitle": "Secure payment via banking system. Please verify the details before confirming.",
+		"accommodation": "Accommodation",
+		"address": "Address",
+		"dates": "Dates",
+		"payNow": "Pay Now",
+		"successTitle": "Payment completed successfully!",
+		"successSubtitle": "Thank you for your payment. You will be redirected to \"My Payments\" page.",
+		"cancelTitle": "Payment cancelled",
+		"cancelSubtitle": "You cancelled the payment process. You can try again.",
+		"backToBookings": "Back to my bookings",
+		"myPayments": "My Payments",
+		"noPayments": "You have no payments yet.",
+		"loadError": "Could not load payments.",
+		"retry": "Retry",
+		"paymentId": "Payment #{{id}}",
+		"type": "Type",
+		"typePayment": "Payment",
+		"typeRefund": "Refund",
+		"paidBadge": "Paid",
+		"bookingId": "Booking ID",
+		"pay": "Pay now"
+	}
+}
