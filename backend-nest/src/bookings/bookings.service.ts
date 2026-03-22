@@ -1,5 +1,6 @@
 import {
 	BadRequestException,
+	ConflictException,
 	ForbiddenException,
 	Injectable,
 	NotFoundException,
@@ -95,18 +96,7 @@ export class BookingsService {
 			throw new BadRequestException('Accommodation is not available for booking');
 		}
 
-		const overlapping = await this.prisma.booking.findFirst({
-			where: {
-				accommodationId: dto.accommodationId,
-				status: { not: 'CANCELED' },
-				checkInDate: { lt: dto.checkOutDate },
-				checkOutDate: { gt: dto.checkInDate },
-			},
-		});
-
-		if (overlapping) {
-			throw new BadRequestException('These dates are already booked');
-		}
+		await this.checkOverlap(dto.accommodationId, dto.checkInDate, dto.checkOutDate);
 
 		return this.prisma.booking.create({
 			data: {
@@ -130,8 +120,14 @@ export class BookingsService {
 			throw new BadRequestException('Cannot modify a paid booking');
 		}
 
-		if (dto.checkInDate && dto.checkOutDate) {
-			this.validateDates(dto.checkInDate, dto.checkOutDate);
+		// Resolve final dates: use new values or fall back to existing
+		const checkIn = dto.checkInDate ?? booking.checkInDate;
+		const checkOut = dto.checkOutDate ?? booking.checkOutDate;
+
+		// Validate dates if either date is being changed
+		if (dto.checkInDate || dto.checkOutDate) {
+			this.validateDates(checkIn, checkOut);
+			await this.checkOverlap(booking.accommodationId, checkIn, checkOut, id);
 		}
 
 		return this.prisma.booking.update({
@@ -150,6 +146,30 @@ export class BookingsService {
 
 		await this.prisma.booking.delete({ where: { id } });
 		return { message: 'Booking deleted' };
+	}
+
+	private async checkOverlap(
+		accommodationId: number,
+		checkIn: Date,
+		checkOut: Date,
+		excludeBookingId?: number,
+	): Promise<void> {
+		const where: Prisma.BookingWhereInput = {
+			accommodationId,
+			status: { not: 'CANCELED' },
+			checkInDate: { lt: checkOut },
+			checkOutDate: { gt: checkIn },
+		};
+
+		if (excludeBookingId) {
+			where.id = { not: excludeBookingId };
+		}
+
+		const overlapping = await this.prisma.booking.findFirst({ where });
+
+		if (overlapping) {
+			throw new ConflictException('Selected dates are not available');
+		}
 	}
 
 	private validateDates(checkIn: Date, checkOut: Date): void {
