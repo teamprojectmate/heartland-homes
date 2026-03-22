@@ -4,7 +4,8 @@
   padding: 80px 0;
   color: $white-color;
   text-align: center;
-  background-color: $primary-600;
+  background-color: rgb(11 95 89 / 80%);
+  backdrop-filter: saturate(180%) blur(10px);
 }
 
 .hero-heading {
