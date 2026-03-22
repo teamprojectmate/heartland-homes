@@ -7,7 +7,6 @@
 
   min-height: calc(100vh - #{$z-header} - 5rem);
   padding: $spacer;
-  background: var(--bg-primary);
 }
 
 .payment-checkout {

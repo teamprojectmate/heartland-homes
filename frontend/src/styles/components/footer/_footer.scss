@@ -23,6 +23,7 @@
     background-color: var(--footer-property-bg);
     border-radius: $radius-lg;
     box-shadow: var(--shadow-sm);
+    backdrop-filter: saturate(180%) blur(10px);
 
     &__title {
       margin-bottom: $spacer-sm;
