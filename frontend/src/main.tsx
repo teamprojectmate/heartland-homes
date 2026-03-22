@@ -8,17 +8,25 @@ import App from './App';
 import { store } from './store/store';
 import './styles/main.scss';
 
-const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID ?? '';
 
 // biome-ignore lint/style/noNonNullAssertion: root element guaranteed by index.html
-ReactDOM.createRoot(document.getElementById('root')!).render(
+const root = document.getElementById('root')!;
+
+const app = (
 	<React.StrictMode>
 		<Provider store={store}>
 			<BrowserRouter>
-				<GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-					<App />
-				</GoogleOAuthProvider>
+				<App />
 			</BrowserRouter>
 		</Provider>
-	</React.StrictMode>,
+	</React.StrictMode>
+);
+
+ReactDOM.createRoot(root).render(
+	GOOGLE_CLIENT_ID ? (
+		<GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>{app}</GoogleOAuthProvider>
+	) : (
+		app
+	),
 );
