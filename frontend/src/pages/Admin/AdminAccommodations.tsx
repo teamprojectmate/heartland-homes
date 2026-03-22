@@ -68,7 +68,12 @@ const AdminAccommodations = () => {
 	const columns = useMemo(
 		() => [
 			{ key: 'id', label: 'ID' },
-			{ key: 'name', label: t('admin.name') },
+			{
+				key: 'name',
+				label: t('admin.name'),
+				render: (acc: Record<string, unknown>) =>
+					localized(acc.name as string, acc.nameUk as string | undefined, lang),
+			},
 			{
 				key: 'city',
 				label: t('admin.city'),

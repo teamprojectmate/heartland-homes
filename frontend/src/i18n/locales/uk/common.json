@@ -130,6 +130,25 @@
 		"priceTo": "Ціна до",
 		"search": "Шукати"
 	},
+	"validation": {
+		"emailRequired": "Електронна пошта обов'язкова",
+		"emailInvalid": "Невірний формат email",
+		"passwordMin": "Пароль повинен містити мінімум 6 символів",
+		"firstNameMin": "Ім'я повинно містити мінімум 2 символи",
+		"lastNameMin": "Прізвище повинно містити мінімум 2 символи",
+		"confirmPassword": "Будь ласка, підтвердіть пароль",
+		"passwordsNoMatch": "Паролі не збігаються",
+		"nameRequired": "Назва обов'язкова",
+		"typeRequired": "Тип обов'язковий",
+		"cityRequired": "Місто обов'язкове",
+		"dailyRateRequired": "Ціна за добу обов'язкова",
+		"dailyRatePositive": "Ціна за добу повинна бути більше 0",
+		"checkInRequired": "Оберіть дату",
+		"checkOutRequired": "Оберіть дату",
+		"checkOutAfterCheckIn": "Має бути пізніше дати заїзду",
+		"firstNameRequired": "Ім'я обов'язкове",
+		"lastNameRequired": "Прізвище обов'язкове"
+	},
 	"footer": {
 		"support": "Підтримка",
 		"faq": "FAQ",

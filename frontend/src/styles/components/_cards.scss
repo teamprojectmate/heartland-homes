@@ -8,12 +8,14 @@
   height: 100%;
   overflow: hidden;
   background: var(--bg-surface);
+  border: 1px solid var(--card-border);
   border-radius: $radius;
   box-shadow: var(--shadow-card);
+  backdrop-filter: blur(12px);
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease,
-    border 0.2s ease;
+    border-color 0.2s ease;
 }
 
 // Grid
@@ -36,8 +38,8 @@
   @extend %card-base;
 
   &:hover {
-    border: 1px solid var(--color-primary);
-    box-shadow: $box-shadow-card-hover;
+    border-color: var(--color-primary);
+    box-shadow: 0 8px 32px rgb(0 0 0 / 12%), 0 4px 16px rgb(0 0 0 / 8%);
     transform: translateY(-4px);
   }
 }
@@ -78,9 +80,16 @@
 }
 
 .city-label {
+  display: -webkit-box;
+  min-height: calc(1rem * 1.5 * 2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 2;
   font-size: 1rem;
   font-weight: 600;
+  line-height: 1.5;
   color: var(--color-primary);
+  -webkit-box-orient: vertical;
 }
 
 .card-price {

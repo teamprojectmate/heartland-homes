@@ -130,6 +130,25 @@
 		"priceTo": "Price to",
 		"search": "Search"
 	},
+	"validation": {
+		"emailRequired": "Email is required",
+		"emailInvalid": "Invalid email",
+		"passwordMin": "Password must be at least 6 characters",
+		"firstNameMin": "First name must be at least 2 characters",
+		"lastNameMin": "Last name must be at least 2 characters",
+		"confirmPassword": "Please confirm your password",
+		"passwordsNoMatch": "Passwords do not match",
+		"nameRequired": "Name is required",
+		"typeRequired": "Type is required",
+		"cityRequired": "City is required",
+		"dailyRateRequired": "Daily rate is required",
+		"dailyRatePositive": "Daily rate must be greater than 0",
+		"checkInRequired": "Select a date",
+		"checkOutRequired": "Select a date",
+		"checkOutAfterCheckIn": "Must be after check-in date",
+		"firstNameRequired": "First name is required",
+		"lastNameRequired": "Last name is required"
+	},
 	"footer": {
 		"support": "Support",
 		"faq": "FAQ",

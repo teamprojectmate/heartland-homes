@@ -34,11 +34,15 @@ const AdminTable = ({ columns, data, actions }: AdminTableProps) => {
 						data.map((row, idx) => (
 							<tr key={(row.id as string | number) || idx}>
 								{columns.map((col) => (
-									<td key={col.key} className={col.className || ''}>
+									<td key={col.key} className={col.className || ''} data-label={col.label}>
 										{col.render ? col.render(row) : String(row[col.key] ?? '')}
 									</td>
 								))}
-								{actions && <td className="actions">{actions(row)}</td>}
+								{actions && (
+									<td className="actions" data-label={t('admin.actions')}>
+										{actions(row)}
+									</td>
+								)}
 							</tr>
 						))
 					) : (

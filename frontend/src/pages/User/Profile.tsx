@@ -61,7 +61,7 @@ const Profile = () => {
 								{...register('email')}
 							/>
 							<label htmlFor="profile-email">{t('profile.email')}</label>
-							{errors.email && <span className="form-error">{errors.email.message}</span>}
+							{errors.email && <span className="form-error">{t(errors.email.message ?? '')}</span>}
 						</div>
 
 						<div className="form-group">
@@ -73,7 +73,9 @@ const Profile = () => {
 								{...register('firstName')}
 							/>
 							<label htmlFor="profile-firstName">{t('profile.firstName')}</label>
-							{errors.firstName && <span className="form-error">{errors.firstName.message}</span>}
+							{errors.firstName && (
+								<span className="form-error">{t(errors.firstName.message ?? '')}</span>
+							)}
 						</div>
 
 						<div className="form-group">
@@ -85,7 +87,9 @@ const Profile = () => {
 								{...register('lastName')}
 							/>
 							<label htmlFor="profile-lastName">{t('profile.lastName')}</label>
-							{errors.lastName && <span className="form-error">{errors.lastName.message}</span>}
+							{errors.lastName && (
+								<span className="form-error">{t(errors.lastName.message ?? '')}</span>
+							)}
 						</div>
 
 						<button

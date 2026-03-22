@@ -55,7 +55,9 @@ const Register = () => {
 							placeholder={t('auth.firstName')}
 							{...register('firstName')}
 						/>
-						{errors.firstName && <span className="form-error">{errors.firstName.message}</span>}
+						{errors.firstName && (
+							<span className="form-error">{t(errors.firstName.message ?? '')}</span>
+						)}
 					</div>
 
 					<div className="form-group with-icon">
@@ -67,7 +69,9 @@ const Register = () => {
 							placeholder={t('auth.lastName')}
 							{...register('lastName')}
 						/>
-						{errors.lastName && <span className="form-error">{errors.lastName.message}</span>}
+						{errors.lastName && (
+							<span className="form-error">{t(errors.lastName.message ?? '')}</span>
+						)}
 					</div>
 
 					<div className="form-group with-icon">
@@ -79,7 +83,7 @@ const Register = () => {
 							placeholder={t('auth.email')}
 							{...register('email')}
 						/>
-						{errors.email && <span className="form-error">{errors.email.message}</span>}
+						{errors.email && <span className="form-error">{t(errors.email.message ?? '')}</span>}
 					</div>
 
 					<div className="form-group with-icon">
@@ -91,7 +95,9 @@ const Register = () => {
 							placeholder={t('auth.password')}
 							{...register('password')}
 						/>
-						{errors.password && <span className="form-error">{errors.password.message}</span>}
+						{errors.password && (
+							<span className="form-error">{t(errors.password.message ?? '')}</span>
+						)}
 					</div>
 
 					<div className="form-group with-icon">
@@ -104,7 +110,7 @@ const Register = () => {
 							{...register('confirmPassword')}
 						/>
 						{errors.confirmPassword && (
-							<span className="form-error">{errors.confirmPassword.message}</span>
+							<span className="form-error">{t(errors.confirmPassword.message ?? '')}</span>
 						)}
 					</div>
 

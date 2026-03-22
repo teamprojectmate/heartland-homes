@@ -148,7 +148,7 @@ const EditMyAccommodation = () => {
 				<div className="form-group">
 					<label htmlFor="edit-name">{t('accommodationForm.name')}</label>
 					<input type="text" id="edit-name" {...register('name')} />
-					{errors.name && <span className="form-error">{errors.name.message}</span>}
+					{errors.name && <span className="form-error">{t(errors.name.message ?? '')}</span>}
 				</div>
 
 				<div className="form-group">
@@ -160,7 +160,7 @@ const EditMyAccommodation = () => {
 						<option value="VACATION_HOME">{t('accommodationType.vacationHome')}</option>
 						<option value="HOSTEL">{t('accommodationType.hostel')}</option>
 					</select>
-					{errors.type && <span className="form-error">{errors.type.message}</span>}
+					{errors.type && <span className="form-error">{t(errors.type.message ?? '')}</span>}
 				</div>
 
 				<div className="form-group">
@@ -183,7 +183,7 @@ const EditMyAccommodation = () => {
 						{...register('city')}
 						onBlur={normalizeFormAddress}
 					/>
-					{errors.city && <span className="form-error">{errors.city.message}</span>}
+					{errors.city && <span className="form-error">{t(errors.city.message ?? '')}</span>}
 				</div>
 
 				<div className="form-group">
@@ -218,7 +218,9 @@ const EditMyAccommodation = () => {
 				<div className="form-group">
 					<label htmlFor="edit-dailyRate">{t('accommodationForm.dailyRate')}</label>
 					<input type="number" min="1" step="1" id="edit-dailyRate" {...register('dailyRate')} />
-					{errors.dailyRate && <span className="form-error">{errors.dailyRate.message}</span>}
+					{errors.dailyRate && (
+						<span className="form-error">{t(errors.dailyRate.message ?? '')}</span>
+					)}
 				</div>
 
 				<div className="form-group">

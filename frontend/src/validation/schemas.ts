@@ -1,9 +1,30 @@
 import { z } from 'zod';
 
+// Validation messages use i18n keys — translated via t() in form components
+const V = {
+	emailRequired: 'validation.emailRequired',
+	emailInvalid: 'validation.emailInvalid',
+	passwordMin: 'validation.passwordMin',
+	firstNameMin: 'validation.firstNameMin',
+	lastNameMin: 'validation.lastNameMin',
+	confirmPassword: 'validation.confirmPassword',
+	passwordsNoMatch: 'validation.passwordsNoMatch',
+	nameRequired: 'validation.nameRequired',
+	typeRequired: 'validation.typeRequired',
+	cityRequired: 'validation.cityRequired',
+	dailyRateRequired: 'validation.dailyRateRequired',
+	dailyRatePositive: 'validation.dailyRatePositive',
+	checkInRequired: 'validation.checkInRequired',
+	checkOutRequired: 'validation.checkOutRequired',
+	checkOutAfterCheckIn: 'validation.checkOutAfterCheckIn',
+	firstNameRequired: 'validation.firstNameRequired',
+	lastNameRequired: 'validation.lastNameRequired',
+} as const;
+
 // ── Login ──
 export const loginSchema = z.object({
-	email: z.string().min(1, 'Email is required').email('Invalid email'),
-	password: z.string().min(6, 'Password must be at least 6 characters'),
+	email: z.string().min(1, V.emailRequired).email(V.emailInvalid),
+	password: z.string().min(6, V.passwordMin),
 });
 
 export type LoginFormData = z.infer<typeof loginSchema>;
@@ -11,14 +32,14 @@ export type LoginFormData = z.infer<typeof loginSchema>;
 // ── Register ──
 export const registerSchema = z
 	.object({
-		firstName: z.string().min(2, 'First name must be at least 2 characters'),
-		lastName: z.string().min(2, 'Last name must be at least 2 characters'),
-		email: z.string().min(1, 'Email is required').email('Invalid email'),
-		password: z.string().min(6, 'Password must be at least 6 characters'),
-		confirmPassword: z.string().min(1, 'Please confirm your password'),
+		firstName: z.string().min(2, V.firstNameMin),
+		lastName: z.string().min(2, V.lastNameMin),
+		email: z.string().min(1, V.emailRequired).email(V.emailInvalid),
+		password: z.string().min(6, V.passwordMin),
+		confirmPassword: z.string().min(1, V.confirmPassword),
 	})
 	.refine((data) => data.password === data.confirmPassword, {
-		message: 'Passwords do not match',
+		message: V.passwordsNoMatch,
 		path: ['confirmPassword'],
 	});
 
@@ -26,10 +47,10 @@ export type RegisterFormData = z.infer<typeof registerSchema>;
 
 // ── Create Accommodation ──
 export const accommodationSchema = z.object({
-	name: z.string().min(1, 'Name is required'),
-	type: z.string().min(1, 'Type is required'),
+	name: z.string().min(1, V.nameRequired),
+	type: z.string().min(1, V.typeRequired),
 	region: z.string(),
-	city: z.string().min(1, 'City is required'),
+	city: z.string().min(1, V.cityRequired),
 	street: z.string(),
 	houseNumber: z.string(),
 	apartment: z.string(),
@@ -39,9 +60,9 @@ export const accommodationSchema = z.object({
 	amenities: z.string(),
 	dailyRate: z
 		.string()
-		.min(1, 'Daily rate is required')
+		.min(1, V.dailyRateRequired)
 		.refine((val) => !Number.isNaN(Number(val)) && Number(val) > 0, {
-			message: 'Daily rate must be greater than 0',
+			message: V.dailyRatePositive,
 		}),
 	image: z.string(),
 });
@@ -50,19 +71,19 @@ export type AccommodationFormData = z.infer<typeof accommodationSchema>;
 
 // ── Admin Edit Accommodation ──
 export const adminAccommodationSchema = z.object({
-	name: z.string().min(1, 'Name is required'),
-	type: z.string().min(1, 'Type is required'),
+	name: z.string().min(1, V.nameRequired),
+	type: z.string().min(1, V.typeRequired),
 	location: z.string(),
-	city: z.string().min(1, 'City is required'),
+	city: z.string().min(1, V.cityRequired),
 	latitude: z.string(),
 	longitude: z.string(),
 	size: z.string(),
 	amenities: z.string(),
 	dailyRate: z
 		.string()
-		.min(1, 'Daily rate is required')
+		.min(1, V.dailyRateRequired)
 		.refine((val) => !Number.isNaN(Number(val)) && Number(val) > 0, {
-			message: 'Daily rate must be greater than 0',
+			message: V.dailyRatePositive,
 		}),
 	image: z.string(),
 });
@@ -71,10 +92,10 @@ export type AdminAccommodationFormData = z.infer<typeof adminAccommodationSchema
 
 // ── Edit My Accommodation ──
 export const editMyAccommodationSchema = z.object({
-	name: z.string().min(1, 'Name is required'),
-	type: z.string().min(1, 'Type is required'),
+	name: z.string().min(1, V.nameRequired),
+	type: z.string().min(1, V.typeRequired),
 	region: z.string(),
-	city: z.string().min(1, 'City is required'),
+	city: z.string().min(1, V.cityRequired),
 	location: z.string(),
 	size: z.string(),
 	latitude: z.string(),
@@ -82,9 +103,9 @@ export const editMyAccommodationSchema = z.object({
 	amenities: z.string(),
 	dailyRate: z
 		.string()
-		.min(1, 'Daily rate is required')
+		.min(1, V.dailyRateRequired)
 		.refine((val) => !Number.isNaN(Number(val)) && Number(val) > 0, {
-			message: 'Daily rate must be greater than 0',
+			message: V.dailyRatePositive,
 		}),
 	image: z.string(),
 });
@@ -94,11 +115,11 @@ export type EditMyAccommodationFormData = z.infer<typeof editMyAccommodationSche
 // ── Booking ──
 export const bookingSchema = z
 	.object({
-		checkInDate: z.string().min(1, 'Check-in date is required'),
-		checkOutDate: z.string().min(1, 'Check-out date is required'),
+		checkInDate: z.string().min(1, V.checkInRequired),
+		checkOutDate: z.string().min(1, V.checkOutRequired),
 	})
 	.refine((data) => new Date(data.checkOutDate) > new Date(data.checkInDate), {
-		message: 'Check-out date must be after check-in date',
+		message: V.checkOutAfterCheckIn,
 		path: ['checkOutDate'],
 	});
 
@@ -106,9 +127,9 @@ export type BookingFormData = z.infer<typeof bookingSchema>;
 
 // ── Profile ──
 export const profileSchema = z.object({
-	email: z.string().min(1, 'Email is required').email('Invalid email'),
-	firstName: z.string().min(1, 'First name is required'),
-	lastName: z.string().min(1, 'Last name is required'),
+	email: z.string().min(1, V.emailRequired).email(V.emailInvalid),
+	firstName: z.string().min(1, V.firstNameRequired),
+	lastName: z.string().min(1, V.lastNameRequired),
 });
 
 export type ProfileFormData = z.infer<typeof profileSchema>;

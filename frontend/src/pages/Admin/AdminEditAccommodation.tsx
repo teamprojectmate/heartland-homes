@@ -110,7 +110,7 @@ const AdminEditAccommodation = () => {
 				<div className="form-group">
 					<label htmlFor="admin-edit-name">{t('accommodationForm.name')}</label>
 					<input type="text" id="admin-edit-name" {...register('name')} />
-					{errors.name && <span className="form-error">{errors.name.message}</span>}
+					{errors.name && <span className="form-error">{t(errors.name.message ?? '')}</span>}
 				</div>
 
 				<div className="form-group">
@@ -123,7 +123,7 @@ const AdminEditAccommodation = () => {
 							</option>
 						))}
 					</select>
-					{errors.type && <span className="form-error">{errors.type.message}</span>}
+					{errors.type && <span className="form-error">{t(errors.type.message ?? '')}</span>}
 
 					{typeValue && (
 						<div className="badge-group" style={{ marginTop: '0.5rem' }}>
@@ -147,7 +147,7 @@ const AdminEditAccommodation = () => {
 				<div className="form-group">
 					<label htmlFor="admin-edit-city">{t('accommodationForm.city')}</label>
 					<input type="text" id="admin-edit-city" {...register('city')} />
-					{errors.city && <span className="form-error">{errors.city.message}</span>}
+					{errors.city && <span className="form-error">{t(errors.city.message ?? '')}</span>}
 				</div>
 
 				{/* Latitude */}
@@ -196,7 +196,9 @@ const AdminEditAccommodation = () => {
 				<div className="form-group">
 					<label htmlFor="admin-edit-dailyRate">{t('accommodationForm.dailyRate')}</label>
 					<input type="number" id="admin-edit-dailyRate" {...register('dailyRate')} />
-					{errors.dailyRate && <span className="form-error">{errors.dailyRate.message}</span>}
+					{errors.dailyRate && (
+						<span className="form-error">{t(errors.dailyRate.message ?? '')}</span>
+					)}
 				</div>
 
 				{/* Image */}

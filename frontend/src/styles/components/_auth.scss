@@ -18,8 +18,10 @@
   width: 100%;
   padding: 2rem;
   background: var(--bg-surface);
+  border: 1px solid var(--card-border);
   border-radius: $radius-md;
   box-shadow: var(--shadow-card);
+  backdrop-filter: blur(12px);
 
   .auth-title {
     margin-bottom: 1rem;
