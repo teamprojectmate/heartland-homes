@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import StatusSelect from '../../components/selects/StatusSelect';
 import type { Accommodation } from '../../types';
 import { fixDropboxUrl } from '../../utils/fixDropboxUrl';
-import { mapType } from '../../utils/translations';
+import { localized, mapCity, mapType } from '../../utils/translations';
 
 const fallbackImage = '/assets/no-image.svg';
 
@@ -15,7 +15,8 @@ type AdminAccommodationCardProps = {
 };
 
 const AdminAccommodationCard = ({ acc, onStatusChange, onDelete }: AdminAccommodationCardProps) => {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
+	const lang = i18n.language;
 	const image = acc.image ? fixDropboxUrl(acc.image) : fallbackImage;
 	const { label, icon, color } = mapType(acc.type as string, t);
 
@@ -23,14 +24,14 @@ const AdminAccommodationCard = ({ acc, onStatusChange, onDelete }: AdminAccommod
 		<div className="admin-accommodation-card">
 			<img
 				src={image}
-				alt={acc.name || t('accommodations.accommodation')}
+				alt={localized(acc.name, acc.nameUk, lang) || t('accommodations.accommodation')}
 				className="accommodation-card-img"
 				onError={(e) => (e.currentTarget.src = fallbackImage)}
 			/>
 
 			<div className="accommodation-card-content">
 				<div className="card-header">
-					<h3 className="accommodation-title">{acc.name}</h3>
+					<h3 className="accommodation-title">{localized(acc.name, acc.nameUk, lang)}</h3>
 					<StatusSelect
 						type="accommodation"
 						value={acc.status || ''}
@@ -44,7 +45,7 @@ const AdminAccommodationCard = ({ acc, onStatusChange, onDelete }: AdminAccommod
 
 				<div className="card-body">
 					<p>
-						<strong>{t('admin.city')}:</strong> {acc.city}
+						<strong>{t('admin.city')}:</strong> {mapCity(acc.city, t)}
 					</p>
 					<p className="price">
 						<strong>{t('admin.price')}:</strong> {acc.dailyRate} {t('common.currency')}

@@ -15,7 +15,7 @@ import {
 	updateAccommodationStatusAsync,
 } from '../../store/slices/accommodationsSlice';
 import { fixDropboxUrl } from '../../utils/fixDropboxUrl';
-import { mapType } from '../../utils/translations';
+import { localized, mapCity, mapType } from '../../utils/translations';
 import AdminTable from '../Admin/AdminTable';
 import AdminAccommodationCard from './AdminAccommodationCard';
 
@@ -28,7 +28,8 @@ import '../../styles/components/admin/_admin-accommodations.scss';
 const fallbackImage = '/assets/no-image.svg';
 
 const AdminAccommodations = () => {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
+	const lang = i18n.language;
 	const navigate = useNavigate();
 	const dispatch = useAppDispatch();
 
@@ -68,7 +69,11 @@ const AdminAccommodations = () => {
 		() => [
 			{ key: 'id', label: 'ID' },
 			{ key: 'name', label: t('admin.name') },
-			{ key: 'city', label: t('admin.city') },
+			{
+				key: 'city',
+				label: t('admin.city'),
+				render: (acc: Record<string, unknown>) => mapCity(acc.city as string, t),
+			},
 			{
 				key: 'type',
 				label: t('admin.type'),
@@ -97,7 +102,10 @@ const AdminAccommodations = () => {
 				render: (acc: Record<string, unknown>) => (
 					<img
 						src={acc.image ? fixDropboxUrl(acc.image as string) : fallbackImage}
-						alt={(acc.name as string) || t('accommodations.imageAlt')}
+						alt={
+							localized(acc.name as string, acc.nameUk as string | undefined, lang) ||
+							t('accommodations.imageAlt')
+						}
 						className="table-img"
 						onError={(e) => (e.currentTarget.src = fallbackImage)}
 					/>
@@ -115,7 +123,7 @@ const AdminAccommodations = () => {
 				),
 			},
 		],
-		[handleStatusChange, t],
+		[handleStatusChange, t, lang],
 	);
 
 	if (loading) return <TableSkeleton rows={5} columns={6} />;

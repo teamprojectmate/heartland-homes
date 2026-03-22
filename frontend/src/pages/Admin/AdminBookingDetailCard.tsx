@@ -1,6 +1,7 @@
 import { TrashIcon } from '@heroicons/react/24/solid';
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '../../utils/dateCalc';
+import { localized } from '../../utils/translations';
 
 export type BookingRow = Record<string, unknown> & {
 	id: number;
@@ -20,10 +21,17 @@ type Props = {
 };
 
 const AdminBookingDetailCard = ({ booking, onStatusChange, onDelete }: Props) => {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
+	const lang = i18n.language;
 	return (
 		<div className="admin-booking-card">
-			<h3 className="admin-booking-title">{booking.accommodation?.name || t('common.noName')}</h3>
+			<h3 className="admin-booking-title">
+				{localized(
+					booking.accommodation?.name,
+					(booking.accommodation as Record<string, unknown> | null)?.nameUk as string | undefined,
+					lang,
+				) || t('common.noName')}
+			</h3>
 			<p>
 				<strong>{t('admin.user')}:</strong>{' '}
 				{booking.user

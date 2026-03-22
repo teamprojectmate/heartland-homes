@@ -3,7 +3,7 @@ import { FaInfoCircle, FaTrash } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import type { Booking } from '../../types';
 import { formatDate } from '../../utils/dateCalc';
-import { mapStatus } from '../../utils/translations';
+import { localized, mapCity, mapStatus } from '../../utils/translations';
 
 type BookingRowProps = {
 	booking: Booking;
@@ -14,7 +14,8 @@ type BookingRowProps = {
 };
 
 const BookingRow = ({ booking, onStatusChange, onDelete }: BookingRowProps) => {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
+	const lang = i18n.language;
 	const { label, color, slug } = mapStatus(booking.status, t);
 
 	return (
@@ -23,7 +24,7 @@ const BookingRow = ({ booking, onStatusChange, onDelete }: BookingRowProps) => {
 			<td>{booking.user ? `${booking.user.firstName} ${booking.user.lastName}` : '—'}</td>
 			<td>
 				{booking.accommodation
-					? `${booking.accommodation.name} (${booking.accommodation.city})`
+					? `${localized(booking.accommodation.name, booking.accommodation.nameUk, lang)} (${mapCity(booking.accommodation.city, t)})`
 					: '—'}
 			</td>
 			<td>{formatDate(booking.checkInDate)}</td>

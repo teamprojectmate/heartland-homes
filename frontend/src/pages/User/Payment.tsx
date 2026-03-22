@@ -10,9 +10,11 @@ import type { Booking } from '../../types';
 import { formatDate } from '../../utils/dateCalc';
 import '../../styles/components/payment/_payment-checkout.scss';
 import { calcNights } from '../../utils/dateCalc';
+import { localized, mapCity } from '../../utils/translations';
 
 const Payment = () => {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
+	const lang = i18n.language;
 	const dispatch = useAppDispatch();
 	const { bookingId } = useParams();
 
@@ -87,11 +89,17 @@ const Payment = () => {
 
 				<div className="payment-info">
 					<p>
-						<strong>{t('payment.accommodation')}:</strong> {booking?.accommodation?.name || '—'},{' '}
-						{booking?.accommodation?.city || '—'}
+						<strong>{t('payment.accommodation')}:</strong>{' '}
+						{localized(booking?.accommodation?.name, booking?.accommodation?.nameUk, lang) || '—'},{' '}
+						{mapCity(booking?.accommodation?.city ?? '', t) || '—'}
 					</p>
 					<p>
-						<strong>{t('payment.address')}:</strong> {booking?.accommodation?.location || '—'}
+						<strong>{t('payment.address')}:</strong>{' '}
+						{localized(
+							booking?.accommodation?.location,
+							booking?.accommodation?.locationUk,
+							lang,
+						) || '—'}
 					</p>
 					<p>
 						<strong>{t('payment.dates')}:</strong>{' '}

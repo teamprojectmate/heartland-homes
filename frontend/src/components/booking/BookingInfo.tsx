@@ -1,10 +1,11 @@
 import { useTranslation } from 'react-i18next';
 import type { Booking } from '../../types';
 import { formatDate } from '../../utils/dateCalc';
-import { mapStatus } from '../../utils/translations';
+import { localized, mapCity, mapStatus } from '../../utils/translations';
 
 const BookingInfo = ({ booking }: { booking: Booking }) => {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
+	const lang = i18n.language;
 	const { label, color, slug } = mapStatus(booking.status, t);
 
 	return (
@@ -17,8 +18,9 @@ const BookingInfo = ({ booking }: { booking: Booking }) => {
 			)}
 			{booking.accommodation && (
 				<p>
-					<strong>{t('accommodations.accommodation')}:</strong> {booking.accommodation.name} (
-					{booking.accommodation.city})
+					<strong>{t('accommodations.accommodation')}:</strong>{' '}
+					{localized(booking.accommodation.name, booking.accommodation.nameUk, lang)} (
+					{mapCity(booking.accommodation.city, t)})
 				</p>
 			)}
 			<p>

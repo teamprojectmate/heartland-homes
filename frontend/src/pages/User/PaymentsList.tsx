@@ -10,6 +10,7 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { fetchPaymentsByUser, resetPaymentsList } from '../../store/slices/paymentsSlice';
 import type { Payment } from '../../types';
 import { formatDate } from '../../utils/dateCalc';
+import { localized } from '../../utils/translations';
 import '../../styles/components/payment/_payments-list.scss';
 
 type EnrichedPayment = {
@@ -19,14 +20,15 @@ type EnrichedPayment = {
 	currency?: string;
 	createdAt?: string;
 	sessionUrl?: string;
-	accommodation?: { name?: string; location?: string };
+	accommodation?: { name?: string; nameUk?: string; location?: string; locationUk?: string };
 	booking?: { checkInDate?: string; checkOutDate?: string };
 	bookingId: number;
 	[key: string]: unknown;
 };
 
 const PaymentsList = () => {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
+	const lang = i18n.language;
 	const dispatch = useAppDispatch();
 	const { fetchStatus, error, totalPages } = useAppSelector((state) => state.payments);
 	const { isAuthenticated, user } = useAppSelector((state) => state.auth);
@@ -98,10 +100,12 @@ const PaymentsList = () => {
 
 								<div className="payment-card-body">
 									<p>
-										<strong>{t('payment.accommodation')}:</strong> {p.accommodation?.name || '—'}
+										<strong>{t('payment.accommodation')}:</strong>{' '}
+										{localized(p.accommodation?.name, p.accommodation?.nameUk, lang) || '—'}
 									</p>
 									<p>
-										<strong>{t('payment.address')}:</strong> {p.accommodation?.location || '—'}
+										<strong>{t('payment.address')}:</strong>{' '}
+										{localized(p.accommodation?.location, p.accommodation?.locationUk, lang) || '—'}
 									</p>
 									{p.booking?.checkInDate && (
 										<p>

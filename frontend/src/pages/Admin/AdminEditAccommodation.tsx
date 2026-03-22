@@ -178,7 +178,7 @@ const AdminEditAccommodation = () => {
 							.map((a) => a.trim())
 							.filter(Boolean)
 							.map((a) => {
-								const { label, icon, slug, color } = mapAmenity(a);
+								const { label, icon, slug, color } = mapAmenity(a, t);
 								return (
 									<span
 										key={slug}

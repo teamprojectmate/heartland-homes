@@ -5,10 +5,12 @@ import { Link } from 'react-router-dom';
 import Notification from '../../components/Notification';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { loadMyAccommodations, removeAccommodation } from '../../store/slices/accommodationsSlice';
+import { localized, mapCity } from '../../utils/translations';
 import '../../styles/components/admin/_admin-tables.scss';
 
 const MyAccommodations = () => {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
+	const lang = i18n.language;
 	const dispatch = useAppDispatch();
 	const { items, loading, error } = useAppSelector((s) => s.accommodations);
 
@@ -50,8 +52,8 @@ const MyAccommodations = () => {
 					<tbody>
 						{items.map((acc) => (
 							<tr key={acc.id}>
-								<td>{acc.name}</td>
-								<td>{acc.city}</td>
+								<td>{localized(acc.name, acc.nameUk, lang)}</td>
+								<td>{mapCity(acc.city, t)}</td>
 								<td>
 									{acc.dailyRate} {t('common.currency')}
 								</td>

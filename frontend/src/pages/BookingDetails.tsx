@@ -12,7 +12,7 @@ import { fetchPaymentsByUser } from '../store/slices/paymentsSlice';
 import type { Booking } from '../types';
 import { calcNights, formatDate } from '../utils/dateCalc';
 import { fixDropboxUrl } from '../utils/fixDropboxUrl';
-import { mapStatus } from '../utils/translations';
+import { localized, mapCity, mapStatus } from '../utils/translations';
 
 import '../styles/components/booking/_booking-card.scss';
 import '../styles/components/booking/_booking-details.scss';
@@ -20,7 +20,8 @@ import '../styles/components/booking/_booking-details.scss';
 const fallbackImage = '/no-image.png';
 
 const BookingDetails = () => {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
+	const lang = i18n.language;
 	const { id } = useParams<{ id: string }>();
 	const navigate = useNavigate();
 	const dispatch = useAppDispatch();
@@ -151,11 +152,19 @@ const BookingDetails = () => {
 					<img src={imageUrl} alt={t('accommodations.accommodation')} className="booking-image" />
 					<div className="booking-info-header">
 						<h3 className="card-title">
-							{enrichedBooking.accommodation?.name || t('accommodations.accommodation')}
+							{localized(
+								enrichedBooking.accommodation?.name,
+								enrichedBooking.accommodation?.nameUk,
+								lang,
+							) || t('accommodations.accommodation')}
 						</h3>
 						<p className="card-subtitle">
-							{enrichedBooking.accommodation?.city || '—'},{' '}
-							{enrichedBooking.accommodation?.location || '—'}
+							{mapCity(enrichedBooking.accommodation?.city ?? '', t) || '—'},{' '}
+							{localized(
+								enrichedBooking.accommodation?.location,
+								enrichedBooking.accommodation?.locationUk,
+								lang,
+							) || '—'}
 						</p>
 					</div>
 

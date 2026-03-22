@@ -27,6 +27,7 @@ export type User = {
 export type Accommodation = {
 	id: number;
 	name: string;
+	nameUk?: string;
 	type: AccommodationType;
 	status: AccommodationStatus;
 	city: string;
@@ -42,6 +43,7 @@ export type Accommodation = {
 	userId?: number;
 	size?: number;
 	location?: string;
+	locationUk?: string;
 	images?: string[];
 };
 
