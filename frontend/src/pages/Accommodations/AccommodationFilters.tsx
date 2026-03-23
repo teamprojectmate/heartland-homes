@@ -176,7 +176,7 @@ const AccommodationFilters = ({
 						value={localFilters.minDailyRate}
 						onChange={handleChange}
 						className="filter-input"
-						placeholder="min"
+						placeholder={`${t('common.currencySymbol')} ${t('common.min')}`}
 					/>
 				</div>
 
@@ -189,7 +189,7 @@ const AccommodationFilters = ({
 						value={localFilters.maxDailyRate}
 						onChange={handleChange}
 						className="filter-input"
-						placeholder="max"
+						placeholder={`${t('common.currencySymbol')} ${t('common.max')}`}
 					/>
 				</div>
 

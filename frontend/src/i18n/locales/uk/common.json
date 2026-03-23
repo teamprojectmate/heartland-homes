@@ -34,7 +34,9 @@
 		"perNight": "/ доба",
 		"selectedCoordinates": "Обрані координати: {{lat}}, {{lng}}",
 		"tryAgain": "Спробувати знову",
-		"goHome": "На головну"
+		"goHome": "На головну",
+		"min": "мін",
+		"max": "макс"
 	},
 	"nav": {
 		"home": "Головна",

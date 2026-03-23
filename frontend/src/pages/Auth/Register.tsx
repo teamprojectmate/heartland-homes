@@ -53,6 +53,7 @@ const Register = () => {
 							id="firstName"
 							className="form-control"
 							placeholder={t('auth.firstName')}
+							autoComplete="given-name"
 							{...register('firstName')}
 						/>
 						{errors.firstName && (
@@ -67,6 +68,7 @@ const Register = () => {
 							id="lastName"
 							className="form-control"
 							placeholder={t('auth.lastName')}
+							autoComplete="family-name"
 							{...register('lastName')}
 						/>
 						{errors.lastName && (
@@ -81,6 +83,7 @@ const Register = () => {
 							id="email"
 							className="form-control"
 							placeholder={t('auth.email')}
+							autoComplete="email"
 							{...register('email')}
 						/>
 						{errors.email && <span className="form-error">{t(errors.email.message ?? '')}</span>}
@@ -93,6 +96,7 @@ const Register = () => {
 							id="password"
 							className="form-control"
 							placeholder={t('auth.password')}
+							autoComplete="new-password"
 							{...register('password')}
 						/>
 						{errors.password && (
@@ -107,6 +111,7 @@ const Register = () => {
 							id="confirmPassword"
 							className="form-control"
 							placeholder={t('auth.confirmPassword')}
+							autoComplete="new-password"
 							{...register('confirmPassword')}
 						/>
 						{errors.confirmPassword && (

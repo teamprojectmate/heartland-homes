@@ -63,6 +63,7 @@ const Login = () => {
 							type="email"
 							className="form-control"
 							placeholder={t('auth.email')}
+							autoComplete="email"
 							{...register('email')}
 						/>
 						{errors.email && <span className="form-error">{t(errors.email.message ?? '')}</span>}
@@ -74,6 +75,7 @@ const Login = () => {
 							type="password"
 							className="form-control"
 							placeholder={t('auth.password')}
+							autoComplete="current-password"
 							{...register('password')}
 						/>
 						{errors.password && (

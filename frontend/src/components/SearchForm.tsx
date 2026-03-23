@@ -153,7 +153,7 @@ const SearchForm = ({ onSearch }: SearchFormProps) => {
 					type="number"
 					id="minDailyRate"
 					name="minDailyRate"
-					placeholder={`${t('common.currencySymbol')} min`}
+					placeholder={`${t('common.currencySymbol')} ${t('common.min')}`}
 					className="form-control"
 					value={formData.minDailyRate}
 					onChange={handleChange}
@@ -166,7 +166,7 @@ const SearchForm = ({ onSearch }: SearchFormProps) => {
 					type="number"
 					id="maxDailyRate"
 					name="maxDailyRate"
-					placeholder={`${t('common.currencySymbol')} max`}
+					placeholder={`${t('common.currencySymbol')} ${t('common.max')}`}
 					className="form-control"
 					value={formData.maxDailyRate}
 					onChange={handleChange}
