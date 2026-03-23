@@ -23,7 +23,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
 			return (
 				<div className="container text-center mt-5">
 					<h2>{i18n.t('common.errorOccurred')}</h2>
-					<p>{this.state.error?.message || i18n.t('common.unexpectedError')}</p>
+					<p>{i18n.t('common.unexpectedError')}</p>
 					<div
 						style={{ display: 'flex', gap: '1rem', justifyContent: 'center', marginTop: '1.5rem' }}
 					>

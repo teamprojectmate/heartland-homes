@@ -17,7 +17,7 @@ const DesktopNav = ({ isAuthenticated, isCustomer, isManager, onLogout }: Deskto
 	return (
 		<nav className="nav-desktop" aria-label={t('nav.mainNav')}>
 			<ul>
-				<NavLinks isCustomer={isCustomer} isManager={isManager} />
+				<NavLinks isAuthenticated={isAuthenticated} isCustomer={isCustomer} isManager={isManager} />
 			</ul>
 
 			{isAuthenticated ? (

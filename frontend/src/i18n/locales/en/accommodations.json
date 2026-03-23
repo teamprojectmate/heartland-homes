@@ -24,6 +24,7 @@
 		"addAccommodation": "Add Accommodation",
 		"deleteConfirm": "Delete your accommodation?",
 		"noAccommodations": "You have not registered any accommodation yet.",
+		"createdSuccess": "Accommodation created successfully!",
 		"errorCreating": "Error while creating",
 		"errorUpdating": "Error while updating",
 		"errorLoading": "Could not load accommodation",

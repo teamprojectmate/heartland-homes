@@ -12,11 +12,12 @@ type BookingActionsProps = {
 const BookingActions = ({ booking, onCancel, onPay, onDelete }: BookingActionsProps) => {
 	const { t } = useTranslation();
 	const enrichedBooking = normalizeBooking(booking as Record<string, unknown>) as Booking;
+	const hasPayment = !!enrichedBooking?.payment;
 	const isPaid = enrichedBooking?.payment?.status === 'PAID';
 
 	return (
 		<div className="booking-actions">
-			{!isPaid && enrichedBooking.status === 'PENDING' && (
+			{!hasPayment && enrichedBooking.status === 'PENDING' && (
 				<button type="button" className="btn btn-success" onClick={() => onPay(enrichedBooking.id)}>
 					{t('booking.pay')}
 				</button>

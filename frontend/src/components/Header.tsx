@@ -38,6 +38,17 @@ const Header = () => {
 		return () => document.body.classList.remove('no-scroll');
 	}, [open]);
 
+	useEffect(() => {
+		const DESKTOP_BREAKPOINT = 1024;
+		const handleResize = () => {
+			if (window.innerWidth >= DESKTOP_BREAKPOINT) {
+				setOpen(false);
+			}
+		};
+		window.addEventListener('resize', handleResize);
+		return () => window.removeEventListener('resize', handleResize);
+	}, []);
+
 	return (
 		<>
 			<header className="main-header">

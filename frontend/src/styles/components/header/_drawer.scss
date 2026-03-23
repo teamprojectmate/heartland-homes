@@ -8,11 +8,17 @@
   inset: 0;
   z-index: $z-drawer;
   display: flex;
+  visibility: hidden;
   justify-content: flex-end;
   pointer-events: none;
 
   &.open {
+    visibility: visible;
     pointer-events: auto;
+  }
+
+  @include media(lg) {
+    display: none;
   }
 }
 

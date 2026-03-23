@@ -5,14 +5,20 @@
   align-items: center;
   justify-content: space-between;
   min-width: 280px;
-  max-width: 400px;
+  max-width: 420px;
   padding: 1rem 1.5rem;
   margin-top: 0.5rem;
   font-weight: 600;
-  border-radius: $radius;
-  box-shadow: $box-shadow-md;
+  border-radius: $radius-lg;
+  box-shadow:
+    0 4px 16px rgb(0 0 0 / 12%),
+    0 1px 4px rgb(0 0 0 / 6%);
   transition: all 0.3s ease-in-out;
   animation: slide-in 0.3s ease-out forwards;
+
+  @supports (backdrop-filter: blur(8px)) {
+    backdrop-filter: blur(8px);
+  }
 
   &.closing {
     animation: slide-out 0.3s ease-in forwards;
@@ -26,31 +32,62 @@
     cursor: pointer;
     background: none;
     border: none;
+    opacity: 0.8;
 
     &:hover {
-      opacity: 0.7;
+      opacity: 1;
     }
   }
 }
 
 .notification-success {
-  color: $white-color;
-  background-color: $success-color;
+  color: #065f46;
+  background: rgb(209 250 229 / 95%);
+  border: 1px solid rgb(6 95 70 / 15%);
 }
 
 .notification-danger {
-  color: $white-color;
-  background-color: $danger-color;
+  color: #991b1b;
+  background: rgb(254 226 226 / 95%);
+  border: 1px solid rgb(153 27 27 / 15%);
 }
 
 .notification-info {
-  color: $white-color;
-  background-color: $info-color;
+  color: #1e40af;
+  background: rgb(219 234 254 / 95%);
+  border: 1px solid rgb(30 64 175 / 15%);
 }
 
 .notification-warning {
-  color: $white-color;
-  background-color: $warning-alt;
+  color: #92400e;
+  background: rgb(254 243 199 / 95%);
+  border: 1px solid rgb(146 64 14 / 15%);
+}
+
+[data-theme='dark'] {
+  .notification-success {
+    color: #a7f3d0;
+    background: rgb(6 95 70 / 85%);
+    border-color: rgb(167 243 208 / 15%);
+  }
+
+  .notification-danger {
+    color: #fecaca;
+    background: rgb(153 27 27 / 85%);
+    border-color: rgb(254 202 202 / 15%);
+  }
+
+  .notification-info {
+    color: #bfdbfe;
+    background: rgb(30 64 175 / 85%);
+    border-color: rgb(191 219 254 / 15%);
+  }
+
+  .notification-warning {
+    color: #fde68a;
+    background: rgb(146 64 14 / 85%);
+    border-color: rgb(253 230 138 / 15%);
+  }
 }
 
 .fixed-bottom-right {

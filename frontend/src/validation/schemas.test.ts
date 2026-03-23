@@ -92,7 +92,7 @@ describe('accommodationSchema', () => {
 		size: '',
 		latitude: '',
 		longitude: '',
-		amenities: '',
+		amenities: 'WiFi, Parking',
 		dailyRate: '100',
 		image: '',
 	};
@@ -104,6 +104,11 @@ describe('accommodationSchema', () => {
 
 	it('fails without name', () => {
 		const result = accommodationSchema.safeParse({ ...validData, name: '' });
+		expect(result.success).toBe(false);
+	});
+
+	it('fails without amenities', () => {
+		const result = accommodationSchema.safeParse({ ...validData, amenities: '' });
 		expect(result.success).toBe(false);
 	});
 

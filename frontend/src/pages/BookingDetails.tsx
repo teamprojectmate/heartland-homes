@@ -81,6 +81,7 @@ const BookingDetails = () => {
 		return { ...booking, payment, status: fixedStatus };
 	}, [booking, payments]);
 
+	const hasPayment = !!enrichedBooking?.payment;
 	const isPaid = enrichedBooking?.payment?.status === 'PAID';
 	const imageUrl = enrichedBooking?.accommodation?.image
 		? fixDropboxUrl(enrichedBooking.accommodation.image)
@@ -209,7 +210,7 @@ const BookingDetails = () => {
 						<span className="currency">{t('common.currency')}</span>
 					</div>
 
-					{!isPaid && enrichedBooking.status === 'PENDING' && (
+					{!hasPayment && enrichedBooking.status === 'PENDING' && (
 						<button type="button" className="btn btn-success" onClick={handlePay}>
 							{t('booking.pay')}
 						</button>
