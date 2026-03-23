@@ -34,7 +34,9 @@
 		"perNight": "/ night",
 		"selectedCoordinates": "Selected coordinates: {{lat}}, {{lng}}",
 		"tryAgain": "Try again",
-		"goHome": "Go to home page"
+		"goHome": "Go to home page",
+		"min": "min",
+		"max": "max"
 	},
 	"nav": {
 		"home": "Home",
