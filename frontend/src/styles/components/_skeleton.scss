@@ -151,30 +151,37 @@
 }
 
 .error-state-icon {
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
   margin-bottom: 16px;
-  color: #dc3545;
+  color: #ef4444;
+  opacity: 0.85;
 }
 
 .error-state-message {
-  max-width: 400px;
+  max-width: 420px;
   margin-bottom: 20px;
   font-size: 1rem;
+  line-height: 1.5;
   color: var(--text-secondary);
+  text-shadow: 0 1px 4px rgb(255 255 255 / 30%);
 }
 
 .error-state-retry {
   padding: 10px 24px;
   font-size: 0.95rem;
+  font-weight: 600;
   color: #fff;
   cursor: pointer;
-  background: #dc3545;
+  background: #ef4444;
   border: none;
-  border-radius: 8px;
-  transition: background 0.2s;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgb(239 68 68 / 25%);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s;
 
   &:hover {
-    background: #c82333;
+    background: #dc2626;
+    box-shadow: 0 4px 12px rgb(239 68 68 / 35%);
+    transform: translateY(-1px);
   }
 }

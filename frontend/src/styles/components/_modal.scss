@@ -56,7 +56,7 @@
 
   &:hover {
     color: var(--color-primary);
-    background: rgba(20, 184, 166, 0.1);
+    background: rgb(20 184 166 / 10%);
     transform: rotate(90deg);
   }
 }

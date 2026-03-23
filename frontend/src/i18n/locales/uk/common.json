@@ -26,7 +26,7 @@
 		"pageOf": "Сторінка {{current}} із {{total}}",
 		"noDataForMap": "Немає доступних даних для карти",
 		"errorOccurred": "Сталася помилка",
-		"unexpectedError": "Непередбачувана помилка",
+		"unexpectedError": "Щось пішло не так. Будь ласка, спробуйте ще раз або поверніться на головну.",
 		"errorPrefix": "Помилка: {{message}}",
 		"any": "Будь-який",
 		"currency": "грн",
@@ -122,10 +122,10 @@
 		"pricePlaceholder": "грн"
 	},
 	"searchForm": {
-		"city": "Місто",
-		"cityPlaceholder": "Наприклад, Київ",
-		"type": "Тип житла",
-		"selectType": "— Оберіть тип —",
+		"city": "Куди",
+		"cityPlaceholder": "Пошук за містом...",
+		"type": "Тип",
+		"selectType": "Будь-який",
 		"priceFrom": "Ціна від",
 		"priceTo": "Ціна до",
 		"search": "Шукати"
@@ -141,6 +141,7 @@
 		"nameRequired": "Назва обов'язкова",
 		"typeRequired": "Тип обов'язковий",
 		"cityRequired": "Місто обов'язкове",
+		"amenitiesRequired": "Вкажіть хоча б одну зручність",
 		"dailyRateRequired": "Ціна за добу обов'язкова",
 		"dailyRatePositive": "Ціна за добу повинна бути більше 0",
 		"checkInRequired": "Оберіть дату",

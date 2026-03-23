@@ -35,6 +35,7 @@ const BookingCard = ({
 		? fixDropboxUrl(booking.accommodation.image)
 		: fallbackImage;
 
+	const hasPayment = !!booking.payment;
 	const isPaid = booking.payment?.status === 'PAID';
 
 	return (
@@ -98,7 +99,7 @@ const BookingCard = ({
 							<Link to={`/my-bookings/${booking.id}`} className="btn btn-primary">
 								{t('common.details')}
 							</Link>
-							{booking.status === 'PENDING' && !isPaid && (
+							{booking.status === 'PENDING' && !hasPayment && (
 								<button
 									type="button"
 									className="btn btn-warning"

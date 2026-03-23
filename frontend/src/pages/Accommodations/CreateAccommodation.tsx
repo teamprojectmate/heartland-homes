@@ -41,6 +41,7 @@ const CreateAccommodation = () => {
 	});
 
 	const [error, setError] = useState<string | null>(null);
+	const [success, setSuccess] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
 	useUnsavedChangesWarning(isDirty);
 
@@ -76,7 +77,8 @@ const CreateAccommodation = () => {
 			};
 
 			await createAccommodation(payload);
-			navigate('/accommodations');
+			setSuccess(t('accommodations.createdSuccess'));
+			setTimeout(() => navigate('/my-accommodations'), 1500);
 		} catch (err: unknown) {
 			setError(getApiErrorMessage(err, t('accommodations.errorCreating')));
 		} finally {
@@ -96,6 +98,7 @@ const CreateAccommodation = () => {
 			<form onSubmit={handleSubmit(onSubmit)} className="admin-form">
 				<h1>{t('accommodations.createTitle')}</h1>
 				{error && <Notification message={error} type="danger" />}
+				{success && <Notification message={success} type="success" />}
 
 				<div className="form-group">
 					<label htmlFor="create-name">{t('accommodationForm.name')}</label>
@@ -161,6 +164,9 @@ const CreateAccommodation = () => {
 						placeholder={t('accommodationForm.amenitiesPlaceholder')}
 						{...register('amenities')}
 					/>
+					{errors.amenities && (
+						<span className="form-error">{t(errors.amenities.message ?? '')}</span>
+					)}
 				</div>
 
 				<div className="form-group">

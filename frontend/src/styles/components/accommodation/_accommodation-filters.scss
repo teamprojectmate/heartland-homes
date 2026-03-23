@@ -1,0 +1,388 @@
+@use '../../abstract/variables' as *;
+
+.filter-bar {
+  position: relative;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0;
+  align-items: stretch;
+  max-width: 920px;
+  padding: 0.35rem;
+  margin: 0 auto 1.5rem;
+  overflow: visible;
+  background: rgb(255 255 255 / 95%);
+  border: 1px solid rgb(255 255 255 / 60%);
+  border-radius: 50px;
+  box-shadow:
+    0 4px 20px rgb(0 0 0 / 8%),
+    0 1px 4px rgb(0 0 0 / 4%);
+
+  @supports (backdrop-filter: blur(12px)) {
+    background: rgb(255 255 255 / 88%);
+    backdrop-filter: saturate(180%) blur(12px);
+  }
+}
+
+.filter-field {
+  position: relative;
+  display: grid;
+  flex: 1 1 0;
+  grid-template-rows: 0.85rem 1.6rem;
+  align-content: center;
+  min-width: 0;
+  padding: 0.45rem 1rem;
+  cursor: pointer;
+  border-radius: 40px;
+  transition: background-color 0.2s ease;
+
+  &:not(:last-of-type)::after {
+    position: absolute;
+    top: 25%;
+    right: 0;
+    width: 1px;
+    height: 50%;
+    content: '';
+    background: rgb(0 0 0 / 10%);
+  }
+
+  &:hover {
+    background: rgb(0 0 0 / 4%);
+  }
+
+  &:focus-within {
+    background: rgb(0 0 0 / 4%);
+    box-shadow: inset 0 0 0 2px var(--color-primary);
+  }
+
+  label {
+    display: block;
+    margin-bottom: 0.1rem;
+    font-size: 0.65rem;
+    font-weight: 800;
+    line-height: 1;
+    color: #1f2937;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  // City field gets more space for longer placeholders
+  &:first-child {
+    flex: 1.6 1 0;
+  }
+
+  &.filter-price {
+    flex: 0.7 1 0;
+    min-width: 80px;
+  }
+}
+
+.filter-input,
+.filter-select-trigger {
+  box-sizing: border-box;
+  width: 100%;
+  height: 1.6rem;
+  padding: 0;
+  margin: 0;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.6rem;
+  color: #1f2937;
+  appearance: none;
+  cursor: pointer;
+  outline: none;
+  background: transparent;
+  border: none;
+
+  &::placeholder {
+    font-weight: 400;
+    color: #9ca3af;
+  }
+}
+
+// Extra styles for select trigger — render inline like input, not flex
+.filter-select-trigger {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+  white-space: nowrap;
+
+  .placeholder-value {
+    font-weight: 400;
+    color: #9ca3af;
+  }
+
+  .selected-value {
+    .type-icon {
+      margin-right: 0.2rem;
+      font-size: 0.95rem;
+    }
+  }
+
+  .chevron {
+    position: absolute;
+    top: 50%;
+    right: 0.75rem;
+    color: #6b7280;
+    transform: translateY(-50%);
+    transition: transform 0.2s ease;
+
+    &.open {
+      transform: translateY(-50%) rotate(180deg);
+    }
+  }
+}
+
+// Type dropdown
+.filter-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 100;
+  width: max-content;
+  min-width: 100%;
+  padding: 0.3rem;
+  list-style: none;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  box-shadow:
+    0 8px 30px rgb(0 0 0 / 10%),
+    0 2px 6px rgb(0 0 0 / 5%);
+  animation: filter-dropdown-in 0.15s ease-out;
+
+  .dropdown-item {
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background 0.15s ease;
+
+    &:hover {
+      background: #f3f4f6;
+    }
+
+    &.active {
+      font-weight: 600;
+      color: #0f766e;
+      background: #f0fdfa;
+    }
+
+    .type-icon {
+      font-size: 1rem;
+    }
+  }
+}
+
+@keyframes filter-dropdown-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Action buttons
+.filter-actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 0.3rem;
+  align-items: center;
+  margin-left: 0.15rem;
+}
+
+.btn-filter-apply {
+  display: flex;
+  gap: 0.3rem;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 1.2rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  background: $primary-color;
+  border: none;
+  border-radius: 40px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover {
+    box-shadow: 0 4px 14px rgb(15 118 110 / 30%);
+    transform: scale(1.03);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+.btn-filter-reset {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  color: #6b7280;
+  cursor: pointer;
+  background: rgb(0 0 0 / 5%);
+  border: none;
+  border-radius: 50%;
+  transition: background 0.2s ease, color 0.2s ease;
+
+  &:hover {
+    color: #dc2626;
+    background: rgb(220 38 38 / 8%);
+  }
+}
+
+// ── Dark theme ──
+[data-theme='dark'] {
+  .filter-bar {
+    background: rgb(30 41 59 / 90%);
+    border-color: rgb(255 255 255 / 8%);
+
+    @supports (backdrop-filter: blur(12px)) {
+      background: rgb(30 41 59 / 80%);
+    }
+  }
+
+  .filter-field {
+    &:not(:last-of-type)::after {
+      background: rgb(255 255 255 / 10%);
+    }
+
+    &:hover {
+      background: rgb(255 255 255 / 5%);
+    }
+
+    &:focus-within {
+      background: rgb(255 255 255 / 5%);
+    }
+
+    label {
+      color: #cbd5e1;
+    }
+  }
+
+  .filter-input {
+    color: #e2e8f0;
+
+    &::placeholder {
+      color: #64748b;
+    }
+  }
+
+  .filter-select-trigger {
+    color: #e2e8f0;
+
+    .placeholder-value {
+      color: #64748b;
+    }
+
+    .chevron {
+      color: #94a3b8;
+    }
+  }
+
+  .filter-dropdown {
+    background: #1e293b;
+    border-color: #334155;
+
+    .dropdown-item {
+      color: #e2e8f0;
+
+      &:hover {
+        background: #334155;
+      }
+
+      &.active {
+        color: #14b8a6;
+        background: rgb(20 184 166 / 12%);
+      }
+    }
+  }
+
+  .btn-filter-reset {
+    color: #94a3b8;
+    background: rgb(255 255 255 / 6%);
+
+    &:hover {
+      color: #f87171;
+      background: rgb(248 113 113 / 10%);
+    }
+  }
+}
+
+// ── Mobile ──
+@media (max-width: $breakpoint-md) {
+  .filter-bar {
+    flex-direction: column;
+    gap: 0;
+    padding: 0.75rem;
+    border-radius: $radius-xl;
+  }
+
+  .filter-field {
+    padding: 0.6rem 0.85rem;
+    border-radius: 0;
+
+    &:not(:last-of-type)::after {
+      inset: auto 0.85rem 0;
+      width: auto;
+      height: 1px;
+    }
+
+    &:first-child {
+      border-radius: $radius-lg $radius-lg 0 0;
+    }
+
+    &:last-of-type {
+      border-radius: 0 0 $radius-lg $radius-lg;
+    }
+
+    &.filter-price {
+      max-width: none;
+    }
+
+    label {
+      font-size: 0.7rem;
+    }
+
+    .filter-input {
+      font-size: 0.95rem;
+    }
+  }
+
+  .filter-actions {
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 0.6rem;
+    margin-left: 0;
+
+    .btn-filter-apply {
+      flex: 1;
+      min-height: 42px;
+      font-size: 0.9rem;
+      border-radius: $radius-lg;
+    }
+
+    .btn-filter-reset {
+      width: 42px;
+      height: 42px;
+    }
+  }
+}

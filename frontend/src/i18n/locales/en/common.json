@@ -26,7 +26,7 @@
 		"pageOf": "Page {{current}} of {{total}}",
 		"noDataForMap": "No data available for the map",
 		"errorOccurred": "An error occurred",
-		"unexpectedError": "Unexpected error",
+		"unexpectedError": "Something went wrong. Please try again or return to the home page.",
 		"errorPrefix": "Error: {{message}}",
 		"any": "Any",
 		"currency": "UAH",
@@ -122,12 +122,12 @@
 		"pricePlaceholder": "UAH"
 	},
 	"searchForm": {
-		"city": "City",
-		"cityPlaceholder": "e.g., Kyiv",
-		"type": "Accommodation type",
-		"selectType": "-- Select type --",
-		"priceFrom": "Price from",
-		"priceTo": "Price to",
+		"city": "Where",
+		"cityPlaceholder": "Search by city...",
+		"type": "Type",
+		"selectType": "Any type",
+		"priceFrom": "Min price",
+		"priceTo": "Max price",
 		"search": "Search"
 	},
 	"validation": {
@@ -141,6 +141,7 @@
 		"nameRequired": "Name is required",
 		"typeRequired": "Type is required",
 		"cityRequired": "City is required",
+		"amenitiesRequired": "At least one amenity is required",
 		"dailyRateRequired": "Daily rate is required",
 		"dailyRatePositive": "Daily rate must be greater than 0",
 		"checkInRequired": "Select a date",

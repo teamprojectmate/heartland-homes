@@ -6,7 +6,7 @@ import { FaEnvelope, FaHome, FaLock } from 'react-icons/fa';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import GoogleLoginButton from '../../components/GoogleLoginButton';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { login } from '../../store/slices/authSlice';
+import { login, reset } from '../../store/slices/authSlice';
 import '../../styles/components/_auth.scss';
 import { type LoginFormData, loginSchema } from '../../validation/schemas';
 
@@ -24,18 +24,29 @@ const Login = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
 
-	const { isAuthenticated, isLoading, isError, message } = useAppSelector((s) => s.auth);
+	const { isAuthenticated, isLoading, isError, message, user } = useAppSelector((s) => s.auth);
+
+	// Clear stale auth errors on mount so PageWrapper title stays clean
+	useEffect(() => {
+		dispatch(reset());
+	}, [dispatch]);
 
 	const onSubmit = (data: LoginFormData) => {
 		dispatch(login(data));
 	};
 
 	useEffect(() => {
-		if (isAuthenticated) {
-			const redirectPath = location.state?.from?.pathname || '/';
-			navigate(redirectPath, { replace: true });
-		}
-	}, [isAuthenticated, navigate, location]);
+		if (!isAuthenticated || !user) return;
+
+		const rawPath = location.state?.from?.pathname || '/';
+		const userRole = user.cleanRole || (Array.isArray(user.roles) ? user.roles[0] : user.role);
+		const isManager = userRole === 'MANAGER';
+
+		// Don't redirect non-managers to admin routes
+		const redirectPath = rawPath.startsWith('/admin') && !isManager ? '/' : rawPath;
+
+		navigate(redirectPath, { replace: true });
+	}, [isAuthenticated, user, navigate, location]);
 
 	return (
 		<div className="auth-layout">

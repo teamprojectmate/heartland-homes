@@ -1,42 +1,42 @@
 .settings-bar {
   display: flex;
-  align-items: center;
   gap: 8px;
+  align-items: center;
 }
 
 .toggle-group {
   display: flex;
-  background: var(--bg-surface-hover);
-  border-radius: 20px;
-  padding: 2px;
-  border: 1px solid var(--border-color);
-  margin: 0;
   min-width: 0;
+  padding: 2px;
+  margin: 0;
+  background: var(--bg-surface-hover);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
 }
 
 .toggle-btn {
   display: inline-flex;
+  gap: 4px;
   align-items: center;
   justify-content: center;
   padding: 4px 10px;
-  border-radius: 18px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
   font-size: 0.8rem;
   font-weight: 500;
-  color: var(--text-secondary);
-  transition: all 0.2s ease;
   line-height: 1;
-  gap: 4px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  border-radius: 18px;
+  transition: all 0.2s ease;
 
   &:hover {
     color: var(--text-primary);
   }
 
   &.active {
-    background: var(--bg-surface);
     color: var(--text-primary);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    background: var(--bg-surface);
+    box-shadow: 0 1px 3px rgb(0 0 0 / 10%);
   }
 }

@@ -19,6 +19,7 @@ const V = {
 	checkOutAfterCheckIn: 'validation.checkOutAfterCheckIn',
 	firstNameRequired: 'validation.firstNameRequired',
 	lastNameRequired: 'validation.lastNameRequired',
+	amenitiesRequired: 'validation.amenitiesRequired',
 } as const;
 
 // ── Login ──
@@ -57,7 +58,7 @@ export const accommodationSchema = z.object({
 	size: z.string(),
 	latitude: z.string(),
 	longitude: z.string(),
-	amenities: z.string(),
+	amenities: z.string().min(1, V.amenitiesRequired),
 	dailyRate: z
 		.string()
 		.min(1, V.dailyRateRequired)
@@ -78,7 +79,7 @@ export const adminAccommodationSchema = z.object({
 	latitude: z.string(),
 	longitude: z.string(),
 	size: z.string(),
-	amenities: z.string(),
+	amenities: z.string().min(1, V.amenitiesRequired),
 	dailyRate: z
 		.string()
 		.min(1, V.dailyRateRequired)
@@ -100,7 +101,7 @@ export const editMyAccommodationSchema = z.object({
 	size: z.string(),
 	latitude: z.string(),
 	longitude: z.string(),
-	amenities: z.string(),
+	amenities: z.string().min(1, V.amenitiesRequired),
 	dailyRate: z
 		.string()
 		.min(1, V.dailyRateRequired)

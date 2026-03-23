@@ -84,7 +84,12 @@ const MobileDrawer = ({
 				) : (
 					<>
 						<ul className="drawer-nav">
-							<NavLinks isCustomer={isCustomer} isManager={isManager} onClick={onClose} />
+							<NavLinks
+								isAuthenticated={isAuthenticated}
+								isCustomer={isCustomer}
+								isManager={isManager}
+								onClick={onClose}
+							/>
 						</ul>
 
 						{isAuthenticated ? (
