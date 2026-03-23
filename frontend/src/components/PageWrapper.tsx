@@ -12,16 +12,14 @@ type PageWrapperProps = {
 
 const PageWrapper = ({ title, children, extraErrors = [] }: PageWrapperProps) => {
 	const { t } = useTranslation();
-	const authError = useAppSelector((s) =>
-		s.auth.message && s.auth.isError ? s.auth.message : null,
-	);
+	// Auth errors are handled inline by Login/Register forms — skip them here
+	// to avoid raw backend messages in the page title and notification banner
 	const userError = useAppSelector((s) => s.user.error);
 	const bookingsError = useAppSelector((s) => s.bookings.error);
 	const accommodationsError = useAppSelector((s) => s.accommodations.error);
 	const paymentsError = useAppSelector((s) => s.payments.error);
 
 	const errors = [
-		authError,
 		userError,
 		bookingsError,
 		accommodationsError,

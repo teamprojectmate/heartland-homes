@@ -24,7 +24,7 @@ const Login = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
 
-	const { isAuthenticated, isLoading, isError, message, user } = useAppSelector((s) => s.auth);
+	const { isAuthenticated, isLoading, isError, user } = useAppSelector((s) => s.auth);
 
 	// Clear stale auth errors on mount so PageWrapper title stays clean
 	useEffect(() => {
@@ -83,7 +83,7 @@ const Login = () => {
 
 					{isError && (
 						<p className="form-error" data-testid="login-error">
-							{message || t('auth.invalidCredentials')}
+							{t('auth.invalidCredentials')}
 						</p>
 					)}
 
