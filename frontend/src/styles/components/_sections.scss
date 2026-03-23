@@ -52,14 +52,12 @@
 
   .accommodations-list-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
-    justify-content: center;
-  }
 
-  .accommodation-card-wrapper {
-    max-width: 360px;
-    margin: 0 auto;
+    @media (max-width: $breakpoint-md) {
+      grid-template-columns: 1fr;
+    }
   }
 
   .text-center.mt-4 {
