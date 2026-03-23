@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { Trans, useTranslation } from 'react-i18next';
 import { FaEnvelope, FaLock, FaUser } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
+import GoogleLoginButton from '../../components/GoogleLoginButton';
 import Notification from '../../components/Notification';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { register as registerUser, reset } from '../../store/slices/authSlice';
@@ -127,6 +128,8 @@ const Register = () => {
 						{isLoading ? t('auth.registering') : t('auth.registerLink')}
 					</button>
 				</form>
+
+				<GoogleLoginButton />
 
 				<p className="form-subtitle text-center">
 					{t('auth.haveAccount')} <Link to="/login">{t('auth.loginLink')}</Link>
