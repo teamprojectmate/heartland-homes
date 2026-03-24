@@ -51,11 +51,6 @@ footer {
   flex-shrink: 0;
   padding: 20px 0;
   margin-top: auto;
-  text-align: center;
-
-  @include media(sm) {
-    text-align: left;
-  }
 }
 
 // 3. Other Layout Components

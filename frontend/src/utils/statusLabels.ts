@@ -22,8 +22,8 @@ const accommodationStatusKeys = {
 const paymentStatusKeys = {
 	PENDING: { i18nKey: 'status.awaitingPayment', className: 'badge-status-pending' },
 	PAID: { i18nKey: 'status.paid', className: 'badge-status-paid' },
-	FAILED: { i18nKey: 'status.failed', className: 'badge-status-failed' },
-	CANCELED: { i18nKey: 'status.cancelled', className: 'badge-status-canceled' },
+	FAILED: { i18nKey: 'status.paymentFailed', className: 'badge-status-failed' },
+	CANCELED: { i18nKey: 'status.paymentFailed', className: 'badge-status-canceled' },
 	REFUNDED: { i18nKey: 'status.refunded', className: 'badge-status-refunded' },
 };
 
