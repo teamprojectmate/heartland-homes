@@ -22,7 +22,9 @@ Stripe test card: `4242 4242 4242 4242`, any future expiry, any CVC.
 ![Home page — light theme](docs/screenshots/home-light.png)
 
 <details>
-<summary>More screenshots</summary>
+<summary>More screenshots (20+)</summary>
+
+### Customer Pages
 
 | Page | Screenshot |
 |------|-----------|
@@ -30,17 +32,42 @@ Stripe test card: `4242 4242 4242 4242`, any future expiry, any CVC.
 | Accommodations + Map (dark) | ![Accommodations dark](docs/screenshots/accommodations-dark.png) |
 | Accommodation Details | ![Details](docs/screenshots/details.png) |
 | Details (dark) | ![Details dark](docs/screenshots/details-dark.png) |
+| Booking Form | ![Booking](docs/screenshots/booking-form.png) |
+| My Bookings | ![Bookings](docs/screenshots/my-bookings.png) |
+
+### Payments (Stripe Integration)
+
+| Page | Screenshot |
+|------|-----------|
+| My Payments (3 statuses) | ![Payments](docs/screenshots/my-payments.png) |
+| All Paid | ![Paid](docs/screenshots/my-payments-paid.png) |
 | Payment Checkout | ![Payment](docs/screenshots/payment.png) |
 | Stripe Checkout | ![Stripe](docs/screenshots/stripe-checkout.png) |
+| Payment Issue | ![Cancel](docs/screenshots/payment-cancel.png) |
+
+### Auth & Profile
+
+| Page | Screenshot |
+|------|-----------|
 | Login | ![Login](docs/screenshots/login.png) |
 | Register | ![Register](docs/screenshots/register.png) |
 | Profile | ![Profile](docs/screenshots/profile.png) |
-| Create Accommodation | ![Create](docs/screenshots/create-accommodation.png) |
+
+### Other Pages
+
+| Page | Screenshot |
+|------|-----------|
 | Contact Us (light) | ![Support](docs/screenshots/support.png) |
 | Contact Us (dark) | ![Support dark](docs/screenshots/support-dark.png) |
-| Admin Dashboard | ![Admin](docs/screenshots/admin-dashboard.png) |
-| Admin Bookings | ![Admin bookings](docs/screenshots/admin-bookings.png) |
-| Admin Users | ![Admin users](docs/screenshots/admin-users.png) |
+| Create Accommodation | ![Create](docs/screenshots/create-accommodation.png) |
+
+### Admin Panel
+
+| Page | Screenshot |
+|------|-----------|
+| Dashboard | ![Admin](docs/screenshots/admin-dashboard.png) |
+| Bookings Management | ![Admin bookings](docs/screenshots/admin-bookings.png) |
+| Users Management | ![Admin users](docs/screenshots/admin-users.png) |
 
 </details>
 
