@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { uk } from 'date-fns/locale/uk';
 import { useEffect, useMemo, useState } from 'react';
-import DatePicker from 'react-datepicker';
+import DatePicker, { registerLocale } from 'react-datepicker';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -14,6 +15,8 @@ import { type BookingFormData, bookingSchema } from '../../validation/schemas';
 import Notification from '../Notification';
 
 import 'react-datepicker/dist/react-datepicker.css';
+
+registerLocale('uk', uk);
 
 type DateRange = { checkInDate: string; checkOutDate: string };
 
