@@ -84,7 +84,7 @@ Stripe test card: `4242 4242 4242 4242`, any future expiry, any CVC.
 
 **CI/CD:** GitHub Actions (typecheck + lint + build), Vercel (FE), Render (NestJS BE)
 
-> This is a **team project**. The Spring Boot backend was built by another developer and deployed on Azure. The NestJS backend was built as an alternative implementation with additional features (Prisma, Swagger, refresh tokens, webhooks).
+> **Team project** (2 developers): Frontend + NestJS backend — [Oksana Pokhvalenko](https://github.com/Opokhvalenko), Spring Boot backend — [Yaroslav Pryshchepa](https://github.com/yaroslav-pryshchepa). The project started with Spring Boot on Azure, later NestJS was added as an alternative backend with Prisma, Swagger, refresh tokens and Stripe webhooks.
 
 ## Features
 
@@ -142,8 +142,9 @@ heartland-homes/
 
 ### Prerequisites
 - Node.js 22+, PostgreSQL 15+, Stripe account (test mode)
+- Java 17+ (for Spring Boot backend)
 
-### Quick Start
+### Quick Start (NestJS)
 
 ```bash
 # Clone
@@ -156,13 +157,21 @@ cp .env.example .env
 npm install
 npm run dev                # http://localhost:5173
 
-# Backend (in another terminal)
+# NestJS Backend (in another terminal)
 cd backend-nest
 cp .env.example .env       # fill in DB + Stripe keys
 npm install
 npx prisma generate
 npx prisma migrate dev
 npx nest start             # http://localhost:3000
+```
+
+### Quick Start (Spring Boot)
+
+```bash
+# Spring Boot Backend
+cd backend-spring
+./mvnw spring-boot:run     # http://localhost:8080
 ```
 
 ### Docker Compose (full stack)
