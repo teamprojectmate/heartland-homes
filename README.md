@@ -6,7 +6,7 @@ Short-term accommodation booking platform (Airbnb-like). Search, book, and pay f
 
 [Live Demo](https://heartland-homes.vercel.app) | [NestJS API](https://heartland-homes-api.onrender.com) | [Spring Boot API](https://accommodation-booking-service.azurewebsites.net)
 
-> **Note:** NestJS backend is hosted on Render free tier — first request may take 30-60s to wake up.
+> **Note:** NestJS backend is hosted on Render free tier — first request may take up to 5 minutes to wake up.
 > Spring Boot backend was hosted on Azure (free tier expired) — currently inactive.
 
 ### Test Credentials
@@ -133,7 +133,7 @@ heartland-homes/
 │   │   ├── bookings/          # CRUD + overlap check
 │   │   └── payments/          # Stripe Checkout + Webhooks
 │   └── ...
-├── backend-spring/        # Spring Boot 3 + Java 17 (team member)
+├── backend/               # Spring Boot 3 + Java 17 (Yaroslav Pryshchepa)
 │   └── ...
 └── docker-compose.yml     # Full stack setup
 ```
@@ -170,7 +170,7 @@ npx nest start             # http://localhost:3000
 
 ```bash
 # Spring Boot Backend
-cd backend-spring
+cd backend
 ./mvnw spring-boot:run     # http://localhost:8080
 ```
 
@@ -188,7 +188,7 @@ docker compose up --build
 VITE_API_URL=http://localhost:3000
 ```
 
-### Backend (`backend-nest/.env`)
+### NestJS Backend (`backend-nest/.env`)
 ```env
 DATABASE_URL="postgresql://user:password@localhost:5432/heartland_homes"
 JWT_SECRET="your-jwt-secret-key-min-32-chars"
@@ -199,7 +199,17 @@ PORT=3000
 FRONTEND_URL="http://localhost:5173"
 ```
 
-## API Endpoints (26 total)
+### Spring Boot Backend (`backend/.env`)
+```env
+SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/booking
+SPRING_DATASOURCE_USERNAME=postgres
+SPRING_DATASOURCE_PASSWORD=postgres
+STRIPE_SECRET_KEY=stripe_secret_key_placeholder
+CORS_ALLOWED_ORIGINS=http://localhost:5173
+JWT_SECRET=your-secret
+```
+
+## API Endpoints (26 total — NestJS)
 
 | Module | Endpoints |
 |--------|-----------|
@@ -212,19 +222,26 @@ FRONTEND_URL="http://localhost:5173"
 ## Testing
 
 ```bash
-# Frontend (115 tests — utils, validation, Redux, i18n)
+# Frontend (137 tests — utils, validation, Redux, i18n)
 cd frontend && npm run test:run
 
-# Backend unit + integration (37 tests)
+# NestJS Backend unit + integration (37 tests)
 cd backend-nest && npm test
 
-# Backend E2E (14 tests)
+# NestJS Backend E2E (14 tests)
 cd backend-nest && npm run test:e2e
+
+# Spring Boot Backend
+cd backend && ./mvnw test
 ```
 
-## Challenges & Solutions
+## Troubleshooting
 
-See [CHALLENGES.md](CHALLENGES.md) for detailed technical challenges encountered during development and how they were solved.
+- **CORS:** check `CORS_ALLOWED_ORIGINS` (Spring Boot) or `FRONTEND_URL` (NestJS)
+- **Stripe:** verify API keys and webhook secret
+- **JWT expired:** token lifetime is 1h by default, refresh token available (NestJS)
+- **DB:** check PostgreSQL connection string
+- **Render cold start:** first request may take up to 5 minutes on free tier — please wait
 
 ## License
 
