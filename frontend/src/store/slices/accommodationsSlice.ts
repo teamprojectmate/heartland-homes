@@ -133,6 +133,9 @@ const accommodationsSlice = createSlice({
 		setPage(state, action) {
 			state.page = action.payload;
 		},
+		clearAccommodationsError(state) {
+			state.error = null;
+		},
 	},
 	extraReducers: (builder) => {
 		builder
@@ -218,5 +221,6 @@ const accommodationsSlice = createSlice({
 	},
 });
 
-export const { setFilters, resetFilters, setPage } = accommodationsSlice.actions;
+export const { setFilters, resetFilters, setPage, clearAccommodationsError } =
+	accommodationsSlice.actions;
 export default accommodationsSlice.reducer;

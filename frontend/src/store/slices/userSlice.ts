@@ -96,6 +96,9 @@ const userSlice = createSlice({
 			state.error = null;
 			sessionStorage.removeItem('userProfile');
 		},
+		clearUserError: (state) => {
+			state.error = null;
+		},
 	},
 	extraReducers: (builder) => {
 		builder
@@ -134,5 +137,5 @@ const userSlice = createSlice({
 	},
 });
 
-export const { clearProfile } = userSlice.actions;
+export const { clearProfile, clearUserError } = userSlice.actions;
 export default userSlice.reducer;

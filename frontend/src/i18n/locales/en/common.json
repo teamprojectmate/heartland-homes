@@ -112,6 +112,7 @@
 		"requiresVerification": "Requires verification",
 		"permitted": "Permitted",
 		"rejected": "Rejected",
+		"refunded": "Refunded",
 		"unknown": "Unknown",
 		"paymentLabel": "Payment",
 		"refundLabel": "Refund"

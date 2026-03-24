@@ -101,6 +101,9 @@ const paymentsSlice = createSlice({
 			state.fetchStatus = 'idle';
 			state.error = null;
 		},
+		clearPaymentsError: (state) => {
+			state.error = null;
+		},
 	},
 	extraReducers: (builder) => {
 		builder
@@ -162,5 +165,5 @@ const paymentsSlice = createSlice({
 	},
 });
 
-export const { resetPayment, resetPaymentsList } = paymentsSlice.actions;
+export const { resetPayment, resetPaymentsList, clearPaymentsError } = paymentsSlice.actions;
 export default paymentsSlice.reducer;

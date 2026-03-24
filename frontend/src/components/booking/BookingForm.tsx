@@ -116,8 +116,8 @@ const BookingForm = ({ accommodation }: { accommodation: Accommodation }) => {
 							excludeDates={excludedDates}
 							minDate={today}
 							locale={locale}
-							dateFormat="dd/MM/yyyy"
-							placeholderText="дд/мм/рррр"
+							dateFormat="dd MMM yyyy"
+							placeholderText={t('booking.datePlaceholder')}
 							autoComplete="off"
 						/>
 					)}
@@ -143,8 +143,8 @@ const BookingForm = ({ accommodation }: { accommodation: Accommodation }) => {
 							excludeDates={excludedDates}
 							minDate={checkInDate ? new Date(checkInDate) : today}
 							locale={locale}
-							dateFormat="dd/MM/yyyy"
-							placeholderText="дд/мм/рррр"
+							dateFormat="dd MMM yyyy"
+							placeholderText={t('booking.datePlaceholder')}
 							autoComplete="off"
 						/>
 					)}

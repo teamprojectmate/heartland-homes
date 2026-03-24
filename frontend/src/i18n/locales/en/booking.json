@@ -34,6 +34,7 @@
 		"user": "User",
 		"unknownCity": "Unknown city",
 		"dates": "Dates",
-		"loginRequired": "Please sign in to book an accommodation."
+		"loginRequired": "Please sign in to book an accommodation.",
+		"datePlaceholder": "Select date"
 	}
 }

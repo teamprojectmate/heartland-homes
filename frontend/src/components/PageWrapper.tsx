@@ -1,7 +1,12 @@
 import type React from 'react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAppSelector } from '../store/hooks';
+import { useLocation } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { clearAccommodationsError } from '../store/slices/accommodationsSlice';
+import { clearBookingsError } from '../store/slices/bookingsSlice';
+import { clearPaymentsError } from '../store/slices/paymentsSlice';
+import { clearUserError } from '../store/slices/userSlice';
 import Notification from './Notification';
 
 type PageWrapperProps = {
@@ -12,8 +17,9 @@ type PageWrapperProps = {
 
 const PageWrapper = ({ title, children, extraErrors = [] }: PageWrapperProps) => {
 	const { t } = useTranslation();
-	// Auth errors are handled inline by Login/Register forms — skip them here
-	// to avoid raw backend messages in the page title and notification banner
+	const dispatch = useAppDispatch();
+	const location = useLocation();
+
 	const userError = useAppSelector((s) => s.user.error);
 	const bookingsError = useAppSelector((s) => s.bookings.error);
 	const accommodationsError = useAppSelector((s) => s.accommodations.error);
@@ -28,6 +34,23 @@ const PageWrapper = ({ title, children, extraErrors = [] }: PageWrapperProps) =>
 	].filter(Boolean);
 
 	const [blink, setBlink] = useState(false);
+	const [prevPath, setPrevPath] = useState(location.pathname);
+
+	// Clear all errors on route change
+	if (location.pathname !== prevPath) {
+		setPrevPath(location.pathname);
+		dispatch(clearUserError());
+		dispatch(clearBookingsError());
+		dispatch(clearAccommodationsError());
+		dispatch(clearPaymentsError());
+	}
+
+	const clearAllErrors = useCallback(() => {
+		dispatch(clearUserError());
+		dispatch(clearBookingsError());
+		dispatch(clearAccommodationsError());
+		dispatch(clearPaymentsError());
+	}, [dispatch]);
 
 	useEffect(() => {
 		if (errors.length === 0) return;
@@ -62,7 +85,12 @@ const PageWrapper = ({ title, children, extraErrors = [] }: PageWrapperProps) =>
 	return (
 		<>
 			{errors.map((err) => (
-				<Notification key={String(err)} message={String(err)} type="danger" />
+				<Notification
+					key={String(err)}
+					message={String(err)}
+					type="danger"
+					onClose={clearAllErrors}
+				/>
 			))}
 			{children}
 		</>

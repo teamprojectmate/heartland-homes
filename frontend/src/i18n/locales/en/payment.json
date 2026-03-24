@@ -22,6 +22,8 @@
 		"typeRefund": "Refund",
 		"paidBadge": "Paid",
 		"bookingId": "Booking ID",
-		"pay": "Pay now"
+		"pay": "Pay now",
+		"paidDescription": "This booking has already been paid. No further action required.",
+		"backToPayments": "Back to my payments"
 	}
 }

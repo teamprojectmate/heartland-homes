@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { getAccommodationById } from '../../api/accommodations/accommodationService';
 import { fetchBookingById } from '../../api/bookings/bookingsService';
-import Notification from '../../components/Notification';
+import { fetchPaymentsByUser } from '../../api/payments/paymentService';
+import StatusBadge from '../../components/status/StatusBadge';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { createPayment } from '../../store/slices/paymentsSlice';
-import type { Booking } from '../../types';
-import { formatDate } from '../../utils/dateCalc';
-import '../../styles/components/payment/_payment-checkout.scss';
-import { calcNights } from '../../utils/dateCalc';
+import { clearPaymentsError, createPayment } from '../../store/slices/paymentsSlice';
+import type { Booking, Payment as PaymentType } from '../../types';
+import { calcNights, formatDate } from '../../utils/dateCalc';
 import { localized, mapCity } from '../../utils/translations';
+import '../../styles/components/payment/_payment-checkout.scss';
 
 const Payment = () => {
 	const { t, i18n } = useTranslation();
@@ -18,13 +18,19 @@ const Payment = () => {
 	const dispatch = useAppDispatch();
 	const { bookingId } = useParams();
 
-	const { payment, createStatus, error } = useAppSelector((s) => s.payments);
+	const { payment: newPayment, createStatus } = useAppSelector((s) => s.payments);
+	const { user } = useAppSelector((s) => s.auth);
 
 	const [booking, setBooking] = useState<Booking | null>(null);
+	const [existingPayment, setExistingPayment] = useState<PaymentType | null>(null);
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-		const loadBooking = async () => {
+		dispatch(clearPaymentsError());
+	}, [dispatch]);
+
+	useEffect(() => {
+		const loadData = async () => {
 			try {
 				if (!bookingId) return;
 				const data = await fetchBookingById(bookingId);
@@ -37,7 +43,6 @@ const Payment = () => {
 				}
 
 				const nights = calcNights(data.checkInDate, data.checkOutDate);
-
 				const calculatedPrice =
 					data.totalPrice || (accommodation?.dailyRate ? accommodation.dailyRate * nights : 0);
 
@@ -46,31 +51,59 @@ const Payment = () => {
 					accommodation: accommodation ?? undefined,
 					totalPrice: calculatedPrice,
 				});
+
+				// Check if payment already exists for this booking
+				if (user?.id) {
+					try {
+						const paymentsData = await fetchPaymentsByUser(user.id, {
+							page: 0,
+							size: 100,
+						});
+						const found = paymentsData.content?.find((p) => p.bookingId === Number(bookingId));
+						if (found) {
+							setExistingPayment(found);
+						}
+					} catch (_err) {
+						/* no existing payment — will create new */
+					}
+				}
 			} catch (_err) {
 				/* error handled silently */
 			} finally {
 				setLoading(false);
 			}
 		};
-		loadBooking();
-	}, [bookingId]);
+		loadData();
+	}, [bookingId, user?.id]);
 
 	const handlePay = () => {
+		// If existing payment has session URL, redirect to it
+		if (existingPayment?.sessionUrl) {
+			try {
+				const url = new URL(existingPayment.sessionUrl);
+				if (url.protocol === 'https:') {
+					window.location.href = existingPayment.sessionUrl;
+					return;
+				}
+			} catch {
+				/* invalid URL — fall through */
+			}
+		}
 		dispatch(createPayment({ bookingId: Number(bookingId), paymentType: 'PAYMENT' }));
 	};
 
 	useEffect(() => {
-		if (payment?.sessionUrl) {
+		if (newPayment?.sessionUrl) {
 			try {
-				const url = new URL(payment.sessionUrl as string);
+				const url = new URL(newPayment.sessionUrl as string);
 				if (url.protocol === 'https:') {
-					window.location.href = payment.sessionUrl as string;
+					window.location.href = newPayment.sessionUrl as string;
 				}
 			} catch {
 				/* invalid URL — ignore */
 			}
 		}
-	}, [payment]);
+	}, [newPayment]);
 
 	if (loading)
 		return (
@@ -79,13 +112,21 @@ const Payment = () => {
 			</div>
 		);
 
+	const isPaid = existingPayment?.status === 'PAID';
+
 	return (
 		<div className="payment-page">
 			<div className="payment-card payment-checkout">
-				<h2 className="payment-title">{t('payment.title')}</h2>
-				<p className="payment-subtitle">{t('payment.subtitle')}</p>
+				<h2 className="payment-title">{isPaid ? t('payment.successTitle') : t('payment.title')}</h2>
+				<p className="payment-subtitle">
+					{isPaid ? t('payment.paidDescription') : t('payment.subtitle')}
+				</p>
 
-				{error && <Notification type="danger" message={error} />}
+				{existingPayment && (
+					<div className="payment-status-row">
+						<StatusBadge status={existingPayment.status} context="payment" />
+					</div>
+				)}
 
 				<div className="payment-info">
 					<p>
@@ -111,15 +152,21 @@ const Payment = () => {
 					</p>
 				</div>
 
-				<button
-					type="button"
-					className="payment-button"
-					onClick={handlePay}
-					disabled={createStatus === 'loading'}
-				>
-					<span className="icon">💳</span>{' '}
-					{createStatus === 'loading' ? t('common.processing') : t('payment.payNow')}
-				</button>
+				{isPaid ? (
+					<Link to="/my-payments" className="payment-button">
+						{t('payment.backToPayments')}
+					</Link>
+				) : (
+					<button
+						type="button"
+						className="payment-button"
+						onClick={handlePay}
+						disabled={createStatus === 'loading'}
+					>
+						<span className="icon">💳</span>{' '}
+						{createStatus === 'loading' ? t('common.processing') : t('payment.payNow')}
+					</button>
+				)}
 
 				<div className="payment-systems">
 					<span className="powered">Powered by</span>
