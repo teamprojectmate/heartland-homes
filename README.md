@@ -4,9 +4,10 @@ Short-term accommodation booking platform (Airbnb-like). Search, book, and pay f
 
 ## Demo
 
-[Live Demo](https://heartland-homes.vercel.app) | [API](https://heartland-homes-api.onrender.com)
+[Live Demo](https://heartland-homes.vercel.app) | [NestJS API](https://heartland-homes-api.onrender.com) | [Spring Boot API](https://accommodation-booking-service.azurewebsites.net)
 
-> **Note:** Backend is hosted on Render free tier — first request may take 30-60s to wake up.
+> **Note:** NestJS backend is hosted on Render free tier — first request may take 30-60s to wake up.
+> Spring Boot backend was hosted on Azure (free tier expired) — currently inactive.
 
 ### Test Credentials
 
@@ -75,11 +76,15 @@ Stripe test card: `4242 4242 4242 4242`, any future expiry, any CVC.
 
 **Frontend:** React 19, TypeScript (strict), Vite, Redux Toolkit, React Hook Form + Zod, SCSS, i18next (EN/UA), Leaflet maps, Stripe.js
 
-**Backend:** NestJS 11, TypeScript, Prisma v7, PostgreSQL, JWT + RBAC, Stripe Checkout + Webhooks, Helmet, ThrottlerGuard
+**Backend (NestJS):** NestJS 11, TypeScript, Prisma v7, PostgreSQL, JWT + RBAC, Stripe Checkout + Webhooks, Helmet, ThrottlerGuard
 
-**Testing:** Vitest (frontend, 137 tests), Jest (backend, 51 tests — unit, integration, E2E)
+**Backend (Spring Boot):** Java 17, Spring Boot 3, Spring Security + JWT, Stripe API, PostgreSQL, Docker
 
-**CI/CD:** GitHub Actions (typecheck + lint + build), Vercel (FE), Render (BE)
+**Testing:** Vitest (frontend, 137 tests), Jest (NestJS backend, 51 tests — unit, integration, E2E)
+
+**CI/CD:** GitHub Actions (typecheck + lint + build), Vercel (FE), Render (NestJS BE)
+
+> This is a **team project**. The Spring Boot backend was built by another developer and deployed on Azure. The NestJS backend was built as an alternative implementation with additional features (Prisma, Swagger, refresh tokens, webhooks).
 
 ## Features
 
@@ -110,25 +115,27 @@ Stripe test card: `4242 4242 4242 4242`, any future expiry, any CVC.
 
 ```
 heartland-homes/
-├── frontend/          # React 19 + Vite + TypeScript
+├── frontend/              # React 19 + Vite + TypeScript
 │   ├── src/
-│   │   ├── components/    # Reusable UI components
-│   │   ├── pages/         # Route-level pages
-│   │   ├── store/         # Redux Toolkit slices
-│   │   ├── styles/        # SCSS modules (BEM-like)
-│   │   ├── i18n/          # EN/UA translations
-│   │   ├── validation/    # Zod schemas
-│   │   └── utils/         # Helpers
+│   │   ├── components/        # Reusable UI components
+│   │   ├── pages/             # Route-level pages
+│   │   ├── store/             # Redux Toolkit slices
+│   │   ├── styles/            # SCSS modules (BEM-like)
+│   │   ├── i18n/              # EN/UA translations
+│   │   ├── validation/        # Zod schemas
+│   │   └── utils/             # Helpers
 │   └── ...
-├── backend-nest/      # NestJS 11 + Prisma + PostgreSQL
+├── backend-nest/          # NestJS 11 + Prisma + PostgreSQL
 │   ├── src/
-│   │   ├── auth/          # JWT + Google OAuth
-│   │   ├── users/         # User CRUD + roles
-│   │   ├── accommodations/# CRUD + search + status
-│   │   ├── bookings/      # CRUD + overlap check
-│   │   └── payments/      # Stripe integration
+│   │   ├── auth/              # JWT + Google OAuth + Refresh tokens
+│   │   ├── users/             # User CRUD + roles
+│   │   ├── accommodations/    # CRUD + search + status
+│   │   ├── bookings/          # CRUD + overlap check
+│   │   └── payments/          # Stripe Checkout + Webhooks
 │   └── ...
-└── docker-compose.yml # Full stack setup
+├── backend-spring/        # Spring Boot 3 + Java 17 (team member)
+│   └── ...
+└── docker-compose.yml     # Full stack setup
 ```
 
 ## Getting Started
