@@ -24,6 +24,7 @@
 		"bookingId": "Booking ID",
 		"pay": "Pay now",
 		"paidDescription": "This booking has already been paid. No further action required.",
-		"backToPayments": "Back to my payments"
+		"backToPayments": "Back to my payments",
+		"cancelledDescription": "Payment has been cancelled. You can create a new booking if needed."
 	}
 }
