@@ -8,8 +8,8 @@
 		"payNow": "Pay Now",
 		"successTitle": "Payment completed successfully!",
 		"successSubtitle": "Thank you for your payment. You will be redirected to \"My Payments\" page.",
-		"cancelTitle": "Payment cancelled",
-		"cancelSubtitle": "You cancelled the payment process. You can try again.",
+		"cancelTitle": "Payment issue",
+		"cancelSubtitle": "Payment was not completed. Please try again or choose another method.",
 		"backToBookings": "Back to my bookings",
 		"myPayments": "My Payments",
 		"noPayments": "No payments yet",
@@ -25,6 +25,6 @@
 		"pay": "Pay now",
 		"paidDescription": "This booking has already been paid. No further action required.",
 		"backToPayments": "Back to my payments",
-		"cancelledDescription": "Payment has been cancelled. You can create a new booking if needed."
+		"cancelledDescription": "Payment was not completed. You can try again."
 	}
 }

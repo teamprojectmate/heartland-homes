@@ -113,6 +113,7 @@
 		"permitted": "Дозволено",
 		"rejected": "Відхилено",
 		"refunded": "Повернено",
+		"paymentFailed": "Помилка оплати",
 		"unknown": "Невідомо",
 		"paymentLabel": "Оплата",
 		"refundLabel": "Повернення"

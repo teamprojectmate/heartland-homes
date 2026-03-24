@@ -113,6 +113,7 @@
 		"permitted": "Permitted",
 		"rejected": "Rejected",
 		"refunded": "Refunded",
+		"paymentFailed": "Payment failed",
 		"unknown": "Unknown",
 		"paymentLabel": "Payment",
 		"refundLabel": "Refund"
