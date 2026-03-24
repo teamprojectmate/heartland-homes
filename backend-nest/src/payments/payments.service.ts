@@ -90,8 +90,13 @@ export class PaymentsService {
 			throw new BadRequestException('You can only pay for your own bookings');
 		}
 
-		if (booking.payment) {
+		if (booking.payment && booking.payment.status !== 'CANCELED') {
 			throw new BadRequestException('Payment already exists for this booking');
+		}
+
+		// Delete canceled payment so a new one can be created
+		if (booking.payment?.status === 'CANCELED') {
+			await this.prisma.payment.delete({ where: { id: booking.payment.id } });
 		}
 
 		const nights = Math.ceil(

@@ -159,7 +159,9 @@ const PaymentsList = () => {
 										</Link>
 									)}
 									{p.status === 'CANCELED' && (
-										<span className="badge badge-canceled">{t('status.cancelled')}</span>
+										<Link to={`/payment/${p.bookingId}`} className="btn btn-danger btn-sm">
+											{t('payment.retry')}
+										</Link>
 									)}
 								</div>
 							</div>
