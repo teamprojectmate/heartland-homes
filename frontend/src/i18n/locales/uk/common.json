@@ -112,6 +112,7 @@
 		"requiresVerification": "Очікує перевірки",
 		"permitted": "Дозволено",
 		"rejected": "Відхилено",
+		"refunded": "Повернено",
 		"unknown": "Невідомо",
 		"paymentLabel": "Оплата",
 		"refundLabel": "Повернення"

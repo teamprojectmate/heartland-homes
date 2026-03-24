@@ -173,6 +173,16 @@ $badge-status-colors: (
     // світло-оранжевий
     color: #9a3412
   ),
+  failed: (
+    bg: #fef2f2,
+    // світло-червоний
+    color: #dc2626
+  ),
+  refunded: (
+    bg: #ede9fe,
+    // світло-фіолетовий
+    color: #6d28d9
+  ),
   unknown: (
     bg: #e5e7eb,
     color: #374151

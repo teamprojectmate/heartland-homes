@@ -172,6 +172,9 @@ const bookingsSlice = createSlice({
 		setPage: (state, action) => {
 			state.page = action.payload;
 		},
+		clearBookingsError: (state) => {
+			state.error = null;
+		},
 	},
 	extraReducers: (builder) => {
 		builder
@@ -238,5 +241,6 @@ const bookingsSlice = createSlice({
 });
 
 export { changeBookingStatus as updateBookingStatus };
-export const { clearCurrentBooking, resetPaymentStatus, setPage } = bookingsSlice.actions;
+export const { clearCurrentBooking, resetPaymentStatus, setPage, clearBookingsError } =
+	bookingsSlice.actions;
 export default bookingsSlice.reducer;

@@ -7,6 +7,7 @@ import EmptyState from '../../components/EmptyState';
 import ErrorState from '../../components/ErrorState';
 import Pagination from '../../components/Pagination';
 import { CardSkeleton } from '../../components/skeletons';
+import StatusBadge from '../../components/status/StatusBadge';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { fetchPaymentsByUser, resetPaymentsList } from '../../store/slices/paymentsSlice';
 import type { Payment } from '../../types';
@@ -103,6 +104,7 @@ const PaymentsList = () => {
 									<h4>
 										<span className="icon-chip">💳</span> {t('payment.paymentId', { id: p.id })}
 									</h4>
+									<StatusBadge status={p.status} context="payment" />
 								</div>
 
 								<div className="payment-card-body">

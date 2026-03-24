@@ -26,7 +26,7 @@ Short-term vacation rental platform (similar to Airbnb). Built with React 19, Ty
 | Auth | JWT + Google OAuth |
 | i18n | i18next (EN/UA) |
 | Linter | Biome (strict: noExplicitAny, noDoubleEquals, a11y rules) |
-| Tests | Vitest (unit) + Cypress (E2E) |
+| Tests | Vitest (137 tests) + Cypress (E2E) |
 
 ## Getting Started
 
@@ -46,7 +46,7 @@ npm install
 Create `.env` in `frontend/`:
 
 ```env
-VITE_API_URL=http://localhost:8080/api/v1
+VITE_API_URL=http://localhost:3000
 VITE_GOOGLE_CLIENT_ID=your_google_client_id
 VITE_STRIPE_PUBLIC_KEY=pk_test_your_key
 ```
@@ -77,7 +77,7 @@ Output: `dist/`
 | `npm run biome:check` | Lint (errors only) |
 | `npm run biome:fix` | Lint + autofix |
 | `npm run test` | Run tests (watch) |
-| `npm run test:run` | Run tests (single run) |
+| `npm run test:run` | Run tests (137 tests) |
 | `npm run check` | type-check + biome:check |
 
 ## Project Structure

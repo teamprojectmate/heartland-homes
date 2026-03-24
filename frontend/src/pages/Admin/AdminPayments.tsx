@@ -60,8 +60,10 @@ const AdminPayments = () => {
 					}}
 				>
 					<option value="">{t('admin.all')}</option>
-					<option value="PENDING">{t('admin.awaitingPayment')}</option>
-					<option value="PAID">{t('admin.paid')}</option>
+					<option value="PENDING">{t('status.awaitingPayment')}</option>
+					<option value="PAID">{t('status.paid')}</option>
+					<option value="FAILED">{t('status.failed')}</option>
+					<option value="CANCELED">{t('status.cancelled')}</option>
 				</select>
 			</div>
 

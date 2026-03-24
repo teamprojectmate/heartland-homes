@@ -42,6 +42,12 @@
     color: var(--text-muted);
   }
 
+  .payment-status-row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: $spacer;
+  }
+
   .payment-info {
     margin-bottom: $spacer;
     font-size: $font-size-md;

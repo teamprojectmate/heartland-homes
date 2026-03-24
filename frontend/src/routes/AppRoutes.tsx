@@ -188,7 +188,27 @@ const AppRoutes = () => {
 				}
 			/>
 			<Route
+				path="/payment-success"
+				element={
+					<ProtectedRoute>
+						<PageWrapper title={t('pages.paymentSuccess')}>
+							<PaymentSuccess />
+						</PageWrapper>
+					</ProtectedRoute>
+				}
+			/>
+			<Route
 				path="/payments/cancel"
+				element={
+					<ProtectedRoute>
+						<PageWrapper title={t('pages.paymentCancelled')}>
+							<PaymentCancel />
+						</PageWrapper>
+					</ProtectedRoute>
+				}
+			/>
+			<Route
+				path="/payment-cancel"
 				element={
 					<ProtectedRoute>
 						<PageWrapper title={t('pages.paymentCancelled')}>
@@ -210,16 +230,6 @@ const AppRoutes = () => {
 
 			{/* ── Admin routes (MANAGER only) ────────────── */}
 			<Route
-				path="/admin/accommodations"
-				element={
-					<ProtectedRoute requiredRole="MANAGER">
-						<PageWrapper title={t('pages.allAccommodations')}>
-							<AdminAccommodations />
-						</PageWrapper>
-					</ProtectedRoute>
-				}
-			/>
-			<Route
 				path="/admin/*"
 				element={
 					<ProtectedRoute requiredRole="MANAGER">
@@ -228,6 +238,7 @@ const AppRoutes = () => {
 				}
 			>
 				<Route index element={<AdminDashboard />} />
+				<Route path="accommodations" element={<AdminAccommodations />} />
 				<Route path="accommodations/edit/:id" element={<AdminEditAccommodation />} />
 				<Route path="bookings" element={<AdminBookings />} />
 				<Route path="bookings/:id" element={<AdminBookingDetails />} />
