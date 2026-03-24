@@ -151,7 +151,7 @@ export class PaymentsService {
 
 				await this.prisma.payment.update({
 					where: { id: payment.id },
-					data: { stripeSessionId: session.id },
+					data: { stripeSessionId: session.id, sessionUrl: session.url },
 				});
 			} catch (err: unknown) {
 				this.logger.error(
