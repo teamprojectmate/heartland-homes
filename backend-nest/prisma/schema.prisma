@@ -120,6 +120,7 @@ model Payment {
   currency        String        @default("UAH")
   status          PaymentStatus @default(PENDING)
   stripeSessionId String?
+  sessionUrl      String?
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
 
