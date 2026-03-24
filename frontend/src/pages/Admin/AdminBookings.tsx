@@ -17,7 +17,7 @@ import {
 } from '../../store/slices/bookingsSlice';
 import { fetchAllPayments } from '../../store/slices/paymentsSlice';
 import type { Booking, Payment, User } from '../../types';
-import { formatDate } from '../../utils/dateCalc';
+import { formatDateCompact } from '../../utils/dateCalc';
 import { localized } from '../../utils/translations';
 import AdminBookingCard from './AdminBookingCard';
 import AdminTable from './AdminTable';
@@ -117,12 +117,14 @@ const AdminBookings = () => {
 		{
 			key: 'checkInDate',
 			label: t('admin.checkIn'),
-			render: (r: Record<string, unknown>) => formatDate(r.checkInDate as string | undefined),
+			render: (r: Record<string, unknown>) =>
+				formatDateCompact(r.checkInDate as string | undefined),
 		},
 		{
 			key: 'checkOutDate',
 			label: t('admin.checkOut'),
-			render: (r: Record<string, unknown>) => formatDate(r.checkOutDate as string | undefined),
+			render: (r: Record<string, unknown>) =>
+				formatDateCompact(r.checkOutDate as string | undefined),
 		},
 		{
 			key: 'totalPrice',

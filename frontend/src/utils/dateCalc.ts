@@ -22,3 +22,13 @@ export const formatDate = (date: string | Date | null | undefined): string => {
 		year: 'numeric',
 	});
 };
+
+/** Compact date for tables: "10.07.2026" */
+export const formatDateCompact = (date: string | Date | null | undefined): string => {
+	if (!date) return '—';
+	const d = typeof date === 'string' ? new Date(date) : date;
+	if (Number.isNaN(d.getTime())) return '—';
+	const dd = String(d.getDate()).padStart(2, '0');
+	const mm = String(d.getMonth() + 1).padStart(2, '0');
+	return `${dd}.${mm}.${d.getFullYear()}`;
+};
