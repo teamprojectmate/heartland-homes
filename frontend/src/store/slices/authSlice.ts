@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import authService from '../../api/auth/authService';
 import { getApiErrorMessage } from '../../utils/accommodationPayload';
+import { normalizeRole } from '../../utils/roles';
 
 const safeParse = (key: string) => {
 	try {
@@ -19,7 +20,7 @@ if (savedAuth?.token) {
 	initialUser = { token: savedAuth.token, ...savedProfile };
 
 	const rawRole = Array.isArray(initialUser.roles) ? initialUser.roles[0] : initialUser.role;
-	initialUser.cleanRole = rawRole?.startsWith('ROLE_') ? rawRole.replace('ROLE_', '') : rawRole;
+	initialUser.cleanRole = normalizeRole(rawRole);
 }
 
 const initialState = {
@@ -43,7 +44,7 @@ export const login = createAsyncThunk(
 			const profile = await authService.getProfile();
 
 			const rawRole = profile.role || (profile.roles?.[0] ?? null);
-			const cleanRole = rawRole?.startsWith('ROLE_') ? rawRole.replace('ROLE_', '') : rawRole;
+			const cleanRole = normalizeRole(rawRole);
 
 			sessionStorage.setItem('userProfile', JSON.stringify(profile));
 
@@ -68,7 +69,8 @@ export const register = createAsyncThunk(
 );
 
 export const logout = createAsyncThunk('auth/logout', async () => {
-	authService.logout();
+	// Await so the server revokes the refresh token and storage is cleared before state says "logged out"
+	await authService.logout();
 });
 
 const authSlice = createSlice({

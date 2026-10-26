@@ -40,6 +40,7 @@
 		"requiresVerification": "Потребує перевірки",
 		"permitted": "Дозволено",
 		"rejected": "Відхилено",
-		"paymentFailed": "Помилка"
+		"paymentFailed": "Помилка",
+		"updateError": "Не вдалося оновити бронювання."
 	}
 }

@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { getAccommodationById } from '../../api/accommodations/accommodationService';
-import { fetchBookingById } from '../../api/bookings/bookingsService';
 import EmptyState from '../../components/EmptyState';
 import ErrorState from '../../components/ErrorState';
 import Pagination from '../../components/Pagination';
@@ -52,19 +50,8 @@ const PaymentsList = () => {
 				const payload = action.payload as { content?: Payment[] } | undefined;
 				const data = payload?.content || [];
 
-				const enriched = await Promise.all(
-					data.map(async (p) => {
-						try {
-							const booking = await fetchBookingById(p.bookingId);
-							const accommodation = await getAccommodationById(booking.accommodationId);
-							return { ...p, booking, accommodation } as unknown as EnrichedPayment;
-						} catch {
-							return p as unknown as EnrichedPayment;
-						}
-					}),
-				);
-
-				setEnrichedPayments(enriched);
+				// The API embeds the booking and its accommodation — no per-payment requests needed
+				setEnrichedPayments(data.map((p) => ({ ...p, accommodation: p.booking?.accommodation })));
 			}
 		};
 

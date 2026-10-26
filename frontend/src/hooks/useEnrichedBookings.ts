@@ -23,7 +23,11 @@ export const useEnrichedBookings = (
 		() => bookings.map((b) => `${b.id}:${b.status}`).join(','),
 		[bookings],
 	);
-	const paymentIds = useMemo(() => payments.map((p) => p.id).join(','), [payments]);
+	// include status so a payment that turns PAID re-enriches the list
+	const paymentIds = useMemo(
+		() => payments.map((p) => `${p.id}:${p.status}`).join(','),
+		[payments],
+	);
 	const usersKey = useMemo(() => Object.keys(usersMap).sort().join(','), [usersMap]);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: using stable string keys to prevent infinite re-fetch loops
@@ -36,6 +40,11 @@ export const useEnrichedBookings = (
 		let cancelled = false;
 
 		const enrich = async () => {
+			// The NestJS API already embeds the accommodation; fetch only the ones that are missing
+			for (const booking of bookings) {
+				if (booking.accommodation)
+					accCacheRef.current[booking.accommodationId] = booking.accommodation;
+			}
 			const uniqueIds = [...new Set(bookings.map((b) => b.accommodationId))];
 			const missingIds = uniqueIds.filter((id) => !(id in accCacheRef.current));
 
@@ -65,8 +74,8 @@ export const useEnrichedBookings = (
 					totalPrice = nights * (accommodation.dailyRate || 0);
 				}
 
-				const user = usersMap[booking.userId ?? ''] ?? null;
-				const payment = payments.find((p) => p.bookingId === booking.id) ?? null;
+				const user = usersMap[booking.userId ?? ''] ?? booking.user ?? null;
+				const payment = payments.find((p) => p.bookingId === booking.id) ?? booking.payment ?? null;
 
 				return normalizeBooking({
 					...booking,

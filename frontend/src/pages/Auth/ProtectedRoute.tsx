@@ -4,6 +4,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import Notification from '../../components/Notification';
 import { PageSkeleton } from '../../components/skeletons';
 import { useAppSelector } from '../../store/hooks';
+import { normalizeRole } from '../../utils/roles';
 
 type ProtectedRouteProps = {
 	children: React.ReactNode;
@@ -24,7 +25,7 @@ const ProtectedRoute = ({ children, requiredRole = null }: ProtectedRouteProps) 
 	}
 
 	const rawRole = user?.cleanRole || (Array.isArray(user?.roles) ? user.roles[0] : user?.role);
-	const userRole = rawRole?.startsWith('ROLE_') ? rawRole.replace('ROLE_', '') : rawRole;
+	const userRole = normalizeRole(rawRole);
 
 	if (requiredRole) {
 		const roles = Array.isArray(requiredRole) ? requiredRole : [requiredRole];

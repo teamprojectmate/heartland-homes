@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import authService from '../../api/auth/authService';
 import { useAppDispatch } from '../../store/hooks';
 import { setUser } from '../../store/slices/authSlice';
+import { normalizeRole } from '../../utils/roles';
 
 const LoginSuccess = () => {
 	const { t } = useTranslation();
@@ -30,7 +31,7 @@ const LoginSuccess = () => {
 			.getProfile()
 			.then((profile) => {
 				const rawRole = profile.role || (profile.roles?.[0] ?? null);
-				const cleanRole = rawRole?.startsWith('ROLE_') ? rawRole.replace('ROLE_', '') : rawRole;
+				const cleanRole = normalizeRole(rawRole);
 
 				sessionStorage.setItem('userProfile', JSON.stringify(profile));
 				dispatch(setUser({ token, ...profile, cleanRole }));

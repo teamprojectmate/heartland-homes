@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { getAccommodationById } from '../../api/accommodations/accommodationService';
 import bookingsService from '../../api/bookings/bookingsService';
+import type { Accommodation, Booking, CreateBookingPayload } from '../../types';
 import { getApiErrorMessage } from '../../utils/accommodationPayload';
 import { calcNights } from '../../utils/dateCalc';
 
@@ -14,16 +15,19 @@ type RawBooking = {
 const enrichBookings = async (bookings: RawBooking[]) =>
 	Promise.all(
 		bookings.map(async (b) => {
-			let accommodation = null;
-			let totalPrice = null;
-			try {
-				accommodation = await getAccommodationById(b.accommodationId);
-				if (accommodation && b.checkInDate && b.checkOutDate) {
-					totalPrice = calcNights(b.checkInDate, b.checkOutDate) * (accommodation.dailyRate || 0);
+			// The NestJS API embeds the accommodation; fetch it only if it is missing
+			let accommodation = (b.accommodation as Accommodation | undefined) ?? null;
+			if (!accommodation) {
+				try {
+					accommodation = await getAccommodationById(b.accommodationId);
+				} catch {
+					/* accommodation not found — show the booking without it */
 				}
-			} catch {
-				/* accommodation not found — skip */
 			}
+			const totalPrice =
+				accommodation && b.checkInDate && b.checkOutDate
+					? calcNights(b.checkInDate, b.checkOutDate) * (accommodation.dailyRate || 0)
+					: null;
 			return { ...b, accommodation, totalPrice };
 		}),
 	);
@@ -52,7 +56,8 @@ const initialState: BookingsState = {
 
 function updatePageState(state: BookingsState, payload: Record<string, unknown>) {
 	state.bookings = (payload.content as Record<string, unknown>[]) || [];
-	state.page = ((payload.pageable as Record<string, unknown>)?.pageNumber as number) ?? 0;
+	// NestJS PaginatedResponse returns `page` (the old Spring API used pageable.pageNumber)
+	state.page = (payload.page as number) ?? 0;
 	state.totalPages = (payload.totalPages as number) || 0;
 	state.totalElements = (payload.totalElements as number) || 0;
 }
@@ -64,16 +69,17 @@ function removeBooking(state: BookingsState, id: number) {
 }
 
 // Create booking
-export const createBooking = createAsyncThunk(
-	'bookings/createBooking',
-	async (bookingData: Record<string, unknown>, { rejectWithValue }) => {
-		try {
-			return await bookingsService.createBooking(bookingData);
-		} catch (err: unknown) {
-			return rejectWithValue(getApiErrorMessage(err, 'Failed to create booking'));
-		}
-	},
-);
+export const createBooking = createAsyncThunk<
+	Booking,
+	CreateBookingPayload,
+	{ rejectValue: string }
+>('bookings/createBooking', async (bookingData, { rejectWithValue }) => {
+	try {
+		return await bookingsService.createBooking(bookingData);
+	} catch (err: unknown) {
+		return rejectWithValue(getApiErrorMessage(err, 'Failed to create booking'));
+	}
+});
 
 //  Fetch all bookings (admin)
 export const fetchBookings = createAsyncThunk(
@@ -118,14 +124,8 @@ export const changeBookingStatus = createAsyncThunk(
 		{ rejectWithValue },
 	) => {
 		try {
-			const updatedBooking = {
-				checkInDate: booking.checkInDate,
-				checkOutDate: booking.checkOutDate,
-				accommodationId: booking.accommodationId,
-				status,
-			};
-
-			const response = await bookingsService.updateBooking(booking.id as number, updatedBooking);
+			// Send only the status: resending dates re-ran date validation and blocked completing past bookings
+			const response = await bookingsService.updateBookingStatus(booking.id as number, status);
 			return response;
 		} catch (err: unknown) {
 			return rejectWithValue(getApiErrorMessage(err, 'Failed to update booking status'));

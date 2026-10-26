@@ -11,8 +11,7 @@ export const loadAccommodations = createAsyncThunk(
 		{ getState, rejectWithValue },
 	) => {
 		try {
-			// biome-ignore lint/suspicious/noExplicitAny: getState() returns unknown in RTK, accommodations slice shape is internal
-			const state = (getState() as any).accommodations;
+			const state = (getState() as { accommodations: AccommodationsState }).accommodations;
 
 			const filters = {
 				city: state.filters.city || undefined,
@@ -96,26 +95,30 @@ export const updateAccommodationStatusAsync = createAsyncThunk(
 	},
 );
 
+const initialState = {
+	items: [] as Accommodation[],
+	totalPages: 0,
+	totalElements: 0,
+	page: 0,
+	size: 10,
+	sort: null as string | null,
+	loading: false,
+	error: null as string | null,
+	filters: {
+		city: null as string | null,
+		type: null as string | null,
+		minDailyRate: null as number | null,
+		maxDailyRate: null as number | null,
+	},
+	adminMode: false,
+	myMode: false,
+};
+
+type AccommodationsState = typeof initialState;
+
 const accommodationsSlice = createSlice({
 	name: 'accommodations',
-	initialState: {
-		items: [] as Accommodation[],
-		totalPages: 0,
-		totalElements: 0,
-		page: 0,
-		size: 10,
-		sort: null as string | null,
-		loading: false,
-		error: null as string | null,
-		filters: {
-			city: null as string | null,
-			type: null as string | null,
-			minDailyRate: null as number | null,
-			maxDailyRate: null as number | null,
-		},
-		adminMode: false,
-		myMode: false,
-	},
+	initialState,
 	reducers: {
 		setFilters(state, action) {
 			state.filters = { ...state.filters, ...action.payload };
@@ -194,6 +197,13 @@ const accommodationsSlice = createSlice({
 			})
 
 			// Admin remove
+			// Mutation failures (e.g. paid bookings, not the owner) must reach the user, not vanish
+			.addCase(removeAccommodation.rejected, (s, { payload }) => {
+				s.error = (payload as string) ?? null;
+			})
+			.addCase(updateAccommodationStatusAsync.rejected, (s, { payload }) => {
+				s.error = (payload as string) ?? null;
+			})
 			.addCase(removeAccommodation.fulfilled, (s, { payload }) => {
 				s.items = s.items.filter((acc) => acc.id !== payload);
 			})

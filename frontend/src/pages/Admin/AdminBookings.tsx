@@ -5,6 +5,7 @@ import { FaInfoCircle } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { getAllUsers } from '../../api/user/userService';
 import ErrorState from '../../components/ErrorState';
+import Notification from '../../components/Notification';
 import StatusSelect from '../../components/selects/StatusSelect';
 import { TableSkeleton } from '../../components/skeletons';
 import { useEnrichedBookings } from '../../hooks/useEnrichedBookings';
@@ -71,18 +72,28 @@ const AdminBookings = () => {
 			});
 	}, [dispatch]);
 
+	const [actionError, setActionError] = useState<string | null>(null);
+
+	// Mutation errors are shown as a notice — the table stays visible (state.error would replace it)
 	const handleStatusChange = useCallback(
-		(booking: EnrichedBookingRow, newStatus: string) => {
-			dispatch(updateBookingStatus({ booking, status: newStatus }));
+		async (booking: EnrichedBookingRow, newStatus: string) => {
+			const result = await dispatch(updateBookingStatus({ booking, status: newStatus }));
+			if (updateBookingStatus.rejected.match(result)) {
+				setActionError((result.payload as string | undefined) ?? t('admin.updateError'));
+			}
 		},
-		[dispatch],
+		[dispatch, t],
 	);
 
 	const handleDelete = useCallback(
-		(id: number) => {
-			dispatch(deleteBooking(id));
+		async (id: number) => {
+			if (!window.confirm(t('booking.deleteConfirm'))) return;
+			const result = await dispatch(deleteBooking(id));
+			if (deleteBooking.rejected.match(result)) {
+				setActionError((result.payload as string | undefined) ?? t('booking.deleteError'));
+			}
 		},
-		[dispatch],
+		[dispatch, t],
 	);
 
 	if (status === 'loading') return <TableSkeleton rows={5} columns={7} />;
@@ -167,6 +178,9 @@ const AdminBookings = () => {
 	return (
 		<div className="admin-bookings container admin-page-container">
 			<h1 className="section-heading text-center">{t('admin.manageBookings')}</h1>
+			{actionError && (
+				<Notification message={actionError} type="danger" onClose={() => setActionError(null)} />
+			)}
 
 			{isMobile ? (
 				<div className="admin-bookings-cards">

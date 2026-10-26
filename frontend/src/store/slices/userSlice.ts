@@ -7,6 +7,7 @@ import {
 	getCurrentUser,
 } from '../../api/user/userService';
 import { getApiErrorMessage } from '../../utils/accommodationPayload';
+import { normalizeRole } from '../../utils/roles';
 
 const savedProfile = sessionStorage.getItem('userProfile');
 
@@ -53,8 +54,7 @@ export const fetchUsers = createAsyncThunk(
 			const users = await getAllUsers();
 
 			return users.map((u: Record<string, unknown>) => {
-				let role = u.role || (Array.isArray(u.roles) ? u.roles[0] : null);
-				if (role?.startsWith('ROLE_')) role = role.replace('ROLE_', '');
+				const role = normalizeRole(u.role || (Array.isArray(u.roles) ? u.roles[0] : null));
 				return { ...u, role };
 			});
 		} catch (err: unknown) {

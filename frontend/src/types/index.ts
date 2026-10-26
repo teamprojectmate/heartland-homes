@@ -60,6 +60,12 @@ export type Booking = {
 	payment?: Payment;
 };
 
+export type CreateBookingPayload = {
+	accommodationId: number;
+	checkInDate: string;
+	checkOutDate: string;
+};
+
 export type Payment = {
 	id: number;
 	bookingId: number;
@@ -68,6 +74,8 @@ export type Payment = {
 	status: PaymentStatus;
 	sessionUrl?: string;
 	createdAt?: string;
+	/** Embedded by the API (booking + its accommodation) */
+	booking?: Booking;
 };
 
 export type PaginatedResponse<T> = {

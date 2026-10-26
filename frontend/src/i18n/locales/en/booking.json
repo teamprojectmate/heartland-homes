@@ -35,6 +35,8 @@
 		"unknownCity": "Unknown city",
 		"dates": "Dates",
 		"loginRequired": "Please sign in to book an accommodation.",
-		"datePlaceholder": "Select date"
+		"datePlaceholder": "Select date",
+		"bookedDatesError": "Could not load booked dates. Availability is checked again when you book.",
+		"createError": "Could not create the booking. Please try again."
 	}
 }
