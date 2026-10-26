@@ -187,4 +187,18 @@ describe('bookingsSlice', () => {
 			expect(store.getState().bookings.paymentStatus).toBe('idle');
 		});
 	});
+
+	describe('pagination', () => {
+		it('keeps the page number returned by the API (NestJS `page`)', () => {
+			const store = createTestStore();
+			store.dispatch({
+				type: 'bookings/fetchMyBookings/fulfilled',
+				payload: { content: [mockBooking], page: 2, totalPages: 3, totalElements: 11 },
+			});
+
+			const state = store.getState().bookings;
+			expect(state.page).toBe(2);
+			expect(state.totalPages).toBe(3);
+		});
+	});
 });

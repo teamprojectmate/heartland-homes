@@ -1,9 +1,11 @@
+import { createHash, randomUUID, timingSafeEqual } from 'node:crypto';
 import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import type { Role, User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
+import { REFRESH_TOKEN_TYPE, type RefreshTokenPayload } from './auth.constants';
 import type { LoginDto } from './dto/login.dto';
 import type { RegisterDto } from './dto/register.dto';
 
@@ -76,11 +78,15 @@ export class AuthService {
 	}
 
 	async refresh(refreshToken: string): Promise<AuthResponse> {
-		let payload: { sub: number; email: string; role: Role };
+		let payload: Partial<RefreshTokenPayload>;
 
 		try {
 			payload = this.jwtService.verify(refreshToken, { secret: this.jwtSecret });
 		} catch {
+			throw new UnauthorizedException('Invalid or expired refresh token');
+		}
+
+		if (payload.tokenType !== REFRESH_TOKEN_TYPE || typeof payload.sub !== 'number') {
 			throw new UnauthorizedException('Invalid or expired refresh token');
 		}
 
@@ -92,9 +98,7 @@ export class AuthService {
 			throw new UnauthorizedException('Invalid or expired refresh token');
 		}
 
-		const isValid = await bcrypt.compare(refreshToken, user.refreshToken);
-
-		if (!isValid) {
+		if (!this.matchesStoredHash(refreshToken, user.refreshToken)) {
 			throw new UnauthorizedException('Invalid or expired refresh token');
 		}
 
@@ -111,15 +115,20 @@ export class AuthService {
 	private async buildAuthResponse(user: User): Promise<AuthResponse> {
 		const jwtPayload = { sub: user.id, email: user.email, role: user.role };
 
+		const refreshPayload: RefreshTokenPayload = {
+			sub: user.id,
+			tokenType: REFRESH_TOKEN_TYPE,
+			jti: randomUUID(),
+		};
+
 		const token = this.jwtService.sign(jwtPayload);
-		const refreshToken = this.jwtService.sign(jwtPayload, {
+		const refreshToken = this.jwtService.sign(refreshPayload, {
 			expiresIn: REFRESH_TOKEN_EXPIRATION,
 		});
 
-		const hashedRefreshToken = await bcrypt.hash(refreshToken, SALT_ROUNDS);
 		await this.prisma.user.update({
 			where: { id: user.id },
-			data: { refreshToken: hashedRefreshToken },
+			data: { refreshToken: this.hashToken(refreshToken) },
 		});
 
 		return {
@@ -133,5 +142,19 @@ export class AuthService {
 				role: user.role,
 			},
 		};
+	}
+
+	/**
+	 * SHA-256 instead of bcrypt: bcrypt only looks at the first 72 bytes, and all JWTs of one user
+	 * share that prefix, so a rotated (old) refresh token would still match the new hash.
+	 */
+	private hashToken(token: string): string {
+		return createHash('sha256').update(token).digest('hex');
+	}
+
+	private matchesStoredHash(token: string, storedHash: string): boolean {
+		const actual = Buffer.from(this.hashToken(token));
+		const expected = Buffer.from(storedHash);
+		return actual.length === expected.length && timingSafeEqual(actual, expected);
 	}
 }

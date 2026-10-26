@@ -10,6 +10,7 @@ import { useAppDispatch } from './store/hooks';
 import { setUser } from './store/slices/authSlice';
 
 import './styles/main.scss';
+import { normalizeRole } from './utils/roles';
 
 function App() {
 	const dispatch = useAppDispatch();
@@ -24,9 +25,7 @@ function App() {
 		authService
 			.getProfile()
 			.then((profile) => {
-				const cleanRole = profile.role?.startsWith('ROLE_')
-					? profile.role.replace('ROLE_', '')
-					: profile.role;
+				const cleanRole = normalizeRole(profile.role);
 				dispatch(setUser({ token: stored.token, ...profile, cleanRole }));
 			})
 			.catch(() => {

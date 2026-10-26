@@ -1,5 +1,5 @@
 import { TrashIcon } from '@heroicons/react/24/solid';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ErrorState from '../../components/ErrorState';
 import Notification from '../../components/Notification';
@@ -25,10 +25,13 @@ const AdminUsers = () => {
 		dispatch(fetchUsers());
 	}, [dispatch]);
 
-	const handleDeleteUser = (id: number) => {
-		if (id === currentUser?.id) return;
-		if (window.confirm(t('admin.deleteUser'))) {
-			dispatch(removeUser(id));
+	const [actionError, setActionError] = useState<string | null>(null);
+
+	const handleDeleteUser = async (id: number) => {
+		if (id === currentUser?.id || !window.confirm(t('admin.deleteUser'))) return;
+		const result = await dispatch(removeUser(id));
+		if (removeUser.rejected.match(result)) {
+			setActionError((result.payload as string | undefined) ?? t('admin.updateError'));
 		}
 	};
 
@@ -53,6 +56,9 @@ const AdminUsers = () => {
 		<div className="container admin-page-container">
 			<h1 className="section-heading text-center">{t('admin.users')}</h1>
 			{error && <Notification message={error} type="danger" />}
+			{actionError && (
+				<Notification message={actionError} type="danger" onClose={() => setActionError(null)} />
+			)}
 
 			{isMobile ? (
 				<div className="admin-users-cards">

@@ -14,3 +14,9 @@
     border-radius: $radius;
   }
 }
+
+// Leaflet panes (z-index 400) and controls (1000) live in their own stacking context,
+// so dropdowns and date pickers above the map are not covered by it
+.leaflet-container {
+  z-index: 0;
+}

@@ -1,4 +1,4 @@
-import type { Booking, User } from '../../types';
+import type { User } from '../../types';
 import api from '../axios';
 
 export const getCurrentUser = async (): Promise<User> => {
@@ -23,12 +23,4 @@ export const updateUserRole = async ({ id, role }: { id: number; role: string })
 
 export const deleteUser = async (id: number): Promise<void> => {
 	await api.delete(`/users/${id}`);
-};
-
-export const updateBooking = async (
-	id: number,
-	bookingData: Record<string, unknown>,
-): Promise<Booking> => {
-	const response = await api.put<Booking>(`/bookings/${id}`, bookingData);
-	return response.data;
 };

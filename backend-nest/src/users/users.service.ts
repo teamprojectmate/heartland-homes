@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+	BadRequestException,
+	ConflictException,
+	Injectable,
+	NotFoundException,
+} from '@nestjs/common';
 import type { Role } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import type { UpdateUserDto } from './dto/update-user.dto';
@@ -44,7 +49,11 @@ export class UsersService {
 		});
 	}
 
-	async updateRole(userId: number, role: Role) {
+	async updateRole(userId: number, role: Role, actorId: number) {
+		if (userId === actorId) {
+			throw new BadRequestException('You cannot change your own role');
+		}
+
 		const user = await this.prisma.user.findUnique({
 			where: { id: userId },
 		});
@@ -60,13 +69,30 @@ export class UsersService {
 		});
 	}
 
-	async remove(userId: number) {
+	async remove(userId: number, actorId: number) {
+		if (userId === actorId) {
+			throw new BadRequestException('You cannot delete your own account here');
+		}
+
 		const user = await this.prisma.user.findUnique({
 			where: { id: userId },
 		});
 
 		if (!user) {
 			throw new NotFoundException('User not found');
+		}
+
+		// Deleting cascades to the user's own bookings and to every booking on accommodations they own,
+		// with their payments — never wipe records of money already paid
+		const paidBookings = await this.prisma.booking.count({
+			where: {
+				payment: { status: 'PAID' },
+				OR: [{ userId }, { accommodation: { userId } }],
+			},
+		});
+
+		if (paidBookings > 0) {
+			throw new ConflictException('User has paid bookings and cannot be deleted');
 		}
 
 		await this.prisma.user.delete({ where: { id: userId } });

@@ -1,7 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import type { JwtPayload } from '../common/decorators/current-user.decorator';
-import { PaymentsService } from '../payments/payments.service';
 import { BookingsController } from './bookings.controller';
 import { BookingsService } from './bookings.service';
 import type { SearchBookingDto } from './dto/search-booking.dto';
@@ -21,14 +20,10 @@ const mockBooking = {
 const mockBookingsService = {
 	findAll: jest.fn(),
 	findMyBookings: jest.fn(),
-	findOne: jest.fn(),
+	findOneForUser: jest.fn(),
 	create: jest.fn(),
 	update: jest.fn(),
 	remove: jest.fn(),
-};
-
-const mockPaymentsService = {
-	processPayment: jest.fn(),
 };
 
 describe('BookingsController', () => {
@@ -37,10 +32,7 @@ describe('BookingsController', () => {
 	beforeEach(async () => {
 		const module = await Test.createTestingModule({
 			controllers: [BookingsController],
-			providers: [
-				{ provide: BookingsService, useValue: mockBookingsService },
-				{ provide: PaymentsService, useValue: mockPaymentsService },
-			],
+			providers: [{ provide: BookingsService, useValue: mockBookingsService }],
 		}).compile();
 
 		controller = module.get(BookingsController);
@@ -51,16 +43,18 @@ describe('BookingsController', () => {
 	const managerUser: JwtPayload = { sub: 1, email: 'admin@test.com', role: 'MANAGER' };
 
 	describe('findOne', () => {
-		it('should return a booking by id', async () => {
-			mockBookingsService.findOne.mockResolvedValue(mockBooking);
-			const result = await controller.findOne(1);
+		it('should pass id, userId and role to service', async () => {
+			mockBookingsService.findOneForUser.mockResolvedValue(mockBooking);
+			const result = await controller.findOne(1, customerUser);
 			expect(result).toEqual(mockBooking);
-			expect(mockBookingsService.findOne).toHaveBeenCalledWith(1);
+			expect(mockBookingsService.findOneForUser).toHaveBeenCalledWith(1, 100, 'CUSTOMER');
 		});
 
 		it('should propagate NotFoundException from service', async () => {
-			mockBookingsService.findOne.mockRejectedValue(new NotFoundException('Booking not found'));
-			await expect(controller.findOne(999)).rejects.toThrow(NotFoundException);
+			mockBookingsService.findOneForUser.mockRejectedValue(
+				new NotFoundException('Booking not found'),
+			);
+			await expect(controller.findOne(999, customerUser)).rejects.toThrow(NotFoundException);
 		});
 	});
 
@@ -114,19 +108,6 @@ describe('BookingsController', () => {
 			const result = await controller.remove(1, managerUser);
 			expect(result).toEqual({ message: 'Booking deleted' });
 			expect(mockBookingsService.remove).toHaveBeenCalledWith(1, 1, 'MANAGER');
-		});
-	});
-
-	describe('processPayment', () => {
-		it('should delegate to payments service', async () => {
-			const mockResult = [
-				{ id: 1, status: 'PAID' },
-				{ id: 1, status: 'CONFIRMED' },
-			];
-			mockPaymentsService.processPayment.mockResolvedValue(mockResult);
-			const result = await controller.processPayment(1);
-			expect(result).toEqual(mockResult);
-			expect(mockPaymentsService.processPayment).toHaveBeenCalledWith(1);
 		});
 	});
 });

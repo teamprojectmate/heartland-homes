@@ -1,4 +1,9 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+	ConflictException,
+	ForbiddenException,
+	Injectable,
+	NotFoundException,
+} from '@nestjs/common';
 import type { AccommodationStatus, Prisma, Role } from '@prisma/client';
 import { PaginatedResponse } from '../common/dto/pagination.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -104,14 +109,18 @@ export class AccommodationsService {
 	async update(id: number, dto: UpdateAccommodationDto, userId: number, userRole: Role) {
 		const accommodation = await this.findOne(id);
 
-		if (accommodation.userId !== userId && userRole !== 'MANAGER') {
+		const isManager = userRole === 'MANAGER';
+
+		if (accommodation.userId !== userId && !isManager) {
 			throw new ForbiddenException('You can only edit your own accommodations');
 		}
 
-		return this.prisma.accommodation.update({
-			where: { id },
-			data: dto,
-		});
+		// An owner's edit goes back to moderation, so an approved listing cannot be changed unchecked
+		const data: Prisma.AccommodationUpdateInput = isManager
+			? dto
+			: { ...dto, status: 'REQUIRES_VERIFICATION' };
+
+		return this.prisma.accommodation.update({ where: { id }, data });
 	}
 
 	async updateStatus(id: number, status: AccommodationStatus) {
@@ -137,8 +146,21 @@ export class AccommodationsService {
 		});
 	}
 
-	async remove(id: number) {
-		await this.findOne(id);
+	async remove(id: number, userId: number, userRole: Role) {
+		const accommodation = await this.findOne(id);
+
+		if (accommodation.userId !== userId && userRole !== 'MANAGER') {
+			throw new ForbiddenException('You can only delete your own accommodations');
+		}
+
+		// Deleting cascades to bookings and payments — never wipe records of money already paid
+		const paidBookings = await this.prisma.booking.count({
+			where: { accommodationId: id, payment: { status: 'PAID' } },
+		});
+
+		if (paidBookings > 0) {
+			throw new ConflictException('Accommodation has paid bookings and cannot be deleted');
+		}
 
 		await this.prisma.accommodation.delete({ where: { id } });
 		return { message: 'Accommodation deleted' };

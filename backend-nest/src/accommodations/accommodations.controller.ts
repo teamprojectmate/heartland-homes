@@ -112,16 +112,16 @@ export class AccommodationsController {
 		return this.accommodationsService.updateStatus(id, dto.status);
 	}
 
-	@ApiOperation({ summary: 'Delete accommodation (manager only)' })
+	@ApiOperation({ summary: 'Delete accommodation (owner or manager)' })
 	@ApiResponse({ status: 200, description: 'Accommodation deleted successfully' })
 	@ApiResponse({ status: 401, description: 'Unauthorized' })
-	@ApiResponse({ status: 403, description: 'Forbidden — manager role required' })
+	@ApiResponse({ status: 403, description: 'Forbidden — not the owner' })
 	@ApiResponse({ status: 404, description: 'Accommodation not found' })
+	@ApiResponse({ status: 409, description: 'Accommodation has paid bookings' })
 	@Delete(':id')
-	@UseGuards(JwtAuthGuard, RolesGuard)
-	@Roles(Role.MANAGER)
+	@UseGuards(JwtAuthGuard)
 	@ApiBearerAuth()
-	remove(@Param('id', ParseIntPipe) id: number) {
-		return this.accommodationsService.remove(id);
+	remove(@Param('id', ParseIntPipe) id: number, @CurrentUser() user: JwtPayload) {
+		return this.accommodationsService.remove(id, user.sub, user.role);
 	}
 }

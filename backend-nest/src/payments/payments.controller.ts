@@ -49,12 +49,13 @@ export class PaymentsController {
 	@ApiOperation({ summary: 'Cancel a payment' })
 	@ApiResponse({ status: 200, description: 'Payment cancelled successfully' })
 	@ApiResponse({ status: 401, description: 'Unauthorized' })
+	@ApiResponse({ status: 403, description: 'Forbidden — not the owner' })
 	@ApiResponse({ status: 404, description: 'Payment not found' })
 	@Get('cancel')
 	@UseGuards(JwtAuthGuard)
 	@ApiBearerAuth()
-	cancel(@Query('id', ParseIntPipe) id: number) {
-		return this.paymentsService.cancel(id);
+	cancel(@Query('id', ParseIntPipe) id: number, @CurrentUser() user: JwtPayload) {
+		return this.paymentsService.cancel(id, user.sub, user.role);
 	}
 
 	@ApiOperation({ summary: 'Handle Stripe webhook event' })

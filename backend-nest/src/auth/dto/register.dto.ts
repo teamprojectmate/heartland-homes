@@ -1,22 +1,28 @@
 import { Transform } from 'class-transformer';
-import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { IsByteLength, IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { normalizeEmail, trimString } from '../../common/transforms';
+
+const PASSWORD_MIN_LENGTH = 6;
+/** bcrypt only uses the first 72 bytes (not characters) of a password; longer input would be silently cut. */
+const PASSWORD_MAX_BYTES = 72;
 
 export class RegisterDto {
-	@Transform(({ value }: { value: string }) => value.trim().toLowerCase())
+	@Transform(normalizeEmail)
 	@IsEmail()
 	email!: string;
 
 	@IsString()
 	@IsNotEmpty()
-	@MinLength(6)
+	@MinLength(PASSWORD_MIN_LENGTH)
+	@IsByteLength(0, PASSWORD_MAX_BYTES)
 	password!: string;
 
-	@Transform(({ value }: { value: string }) => value.trim())
+	@Transform(trimString)
 	@IsString()
 	@IsNotEmpty()
 	firstName!: string;
 
-	@Transform(({ value }: { value: string }) => value.trim())
+	@Transform(trimString)
 	@IsString()
 	@IsNotEmpty()
 	lastName!: string;

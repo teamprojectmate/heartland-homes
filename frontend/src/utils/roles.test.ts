@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { getRoleLabel } from './roles';
+import { getRoleLabel, normalizeRole } from './roles';
 
 const mockT = vi.fn((key: string) => key);
 
@@ -18,5 +18,17 @@ describe('getRoleLabel', () => {
 
 	it('handles undefined input', () => {
 		expect(getRoleLabel(undefined as unknown as string, mockT)).toBeUndefined();
+	});
+});
+
+describe('normalizeRole', () => {
+	it('strips the legacy ROLE_ prefix', () => {
+		expect(normalizeRole('ROLE_MANAGER')).toBe('MANAGER');
+	});
+
+	it('keeps a plain role and empty values as they are', () => {
+		expect(normalizeRole('CUSTOMER')).toBe('CUSTOMER');
+		expect(normalizeRole(null)).toBeNull();
+		expect(normalizeRole(undefined)).toBeUndefined();
 	});
 });

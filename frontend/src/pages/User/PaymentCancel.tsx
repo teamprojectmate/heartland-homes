@@ -24,8 +24,8 @@ const PaymentCancel = () => {
 					(p) => p.bookingId === Number(bookingId) && p.status === 'PENDING',
 				);
 				if (found) {
-					await dispatch(cancelPayment(found.id));
-					setCancelled(true);
+					const result = await dispatch(cancelPayment(found.id));
+					setCancelled(cancelPayment.fulfilled.match(result));
 				}
 			} catch (_err) {
 				/* silently ignore — payment may not exist yet */

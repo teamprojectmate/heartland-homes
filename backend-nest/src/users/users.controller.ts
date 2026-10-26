@@ -53,8 +53,12 @@ export class UsersController {
 	@Put(':id/role')
 	@UseGuards(RolesGuard)
 	@Roles(Role.MANAGER)
-	updateRole(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateRoleDto) {
-		return this.usersService.updateRole(id, dto.role);
+	updateRole(
+		@Param('id', ParseIntPipe) id: number,
+		@Body() dto: UpdateRoleDto,
+		@CurrentUser() user: JwtPayload,
+	) {
+		return this.usersService.updateRole(id, dto.role, user.sub);
 	}
 
 	@ApiOperation({ summary: 'Delete user (manager only)' })
@@ -65,7 +69,7 @@ export class UsersController {
 	@Delete(':id')
 	@UseGuards(RolesGuard)
 	@Roles(Role.MANAGER)
-	remove(@Param('id', ParseIntPipe) id: number) {
-		return this.usersService.remove(id);
+	remove(@Param('id', ParseIntPipe) id: number, @CurrentUser() user: JwtPayload) {
+		return this.usersService.remove(id, user.sub);
 	}
 }

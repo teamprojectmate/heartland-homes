@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -10,6 +10,8 @@ import { useUnsavedChangesWarning } from '../../hooks/useUnsavedChangesWarning';
 import { getApiErrorMessage, parseAmenities } from '../../utils/accommodationPayload';
 import { buildLocation } from '../../utils/addressNormalization';
 import { type AccommodationFormData, accommodationSchema } from '../../validation/schemas';
+
+const SUCCESS_REDIRECT_DELAY_MS = 1500;
 
 const CreateAccommodation = () => {
 	const { t } = useTranslation();
@@ -42,6 +44,13 @@ const CreateAccommodation = () => {
 
 	const [error, setError] = useState<string | null>(null);
 	const [success, setSuccess] = useState<string | null>(null);
+
+	// Show the success message briefly, then go to the list; the timer is cleared if the user leaves first
+	useEffect(() => {
+		if (!success) return;
+		const timer = setTimeout(() => navigate('/my-accommodations'), SUCCESS_REDIRECT_DELAY_MS);
+		return () => clearTimeout(timer);
+	}, [success, navigate]);
 	const [loading, setLoading] = useState(false);
 	useUnsavedChangesWarning(isDirty);
 
@@ -78,7 +87,6 @@ const CreateAccommodation = () => {
 
 			await createAccommodation(payload);
 			setSuccess(t('accommodations.createdSuccess'));
-			setTimeout(() => navigate('/my-accommodations'), 1500);
 		} catch (err: unknown) {
 			setError(getApiErrorMessage(err, t('accommodations.errorCreating')));
 		} finally {

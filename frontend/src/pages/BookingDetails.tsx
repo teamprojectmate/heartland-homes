@@ -2,13 +2,11 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FaTrash } from 'react-icons/fa';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { getAccommodationById } from '../api/accommodations/accommodationService';
 import { cancelBooking, fetchBookingById } from '../api/bookings/bookingsService';
 import ErrorState from '../components/ErrorState';
 import { FormSkeleton } from '../components/skeletons';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { useAppDispatch } from '../store/hooks';
 import { deleteBooking } from '../store/slices/bookingsSlice';
-import { fetchPaymentsByUser } from '../store/slices/paymentsSlice';
 import type { Booking } from '../types';
 import { calcNights, formatDate } from '../utils/dateCalc';
 import { fixDropboxUrl } from '../utils/fixDropboxUrl';
@@ -26,9 +24,6 @@ const BookingDetails = () => {
 	const navigate = useNavigate();
 	const dispatch = useAppDispatch();
 
-	const { user } = useAppSelector((state) => state.auth);
-	const { payments } = useAppSelector((state) => state.payments);
-
 	const [booking, setBooking] = useState<Booking | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -44,14 +39,8 @@ const BookingDetails = () => {
 					return;
 				}
 
-				let accommodation = null;
-				try {
-					accommodation = await getAccommodationById(bookingData.accommodationId);
-				} catch (_err) {
-					/* error handled silently */
-				}
-
-				setBooking({ ...bookingData, accommodation: accommodation ?? undefined });
+				// The booking already includes its accommodation and payment
+				setBooking(bookingData);
 			} catch (_err) {
 				/* error handled silently */
 				setError(t('booking.loadError'));
@@ -63,15 +52,9 @@ const BookingDetails = () => {
 		fetchBooking();
 	}, [id, t]);
 
-	useEffect(() => {
-		if (user?.id) {
-			dispatch(fetchPaymentsByUser({ userId: user.id, pageable: { page: 0, size: 50 } }));
-		}
-	}, [user, dispatch]);
-
 	const enrichedBooking = useMemo(() => {
 		if (!booking) return null;
-		const payment = payments.find((p) => p.bookingId === booking.id);
+		const payment = booking.payment;
 
 		let fixedStatus = booking.status;
 		if (payment?.status === 'PAID' && booking.status === 'PENDING') {
@@ -79,7 +62,7 @@ const BookingDetails = () => {
 		}
 
 		return { ...booking, payment, status: fixedStatus };
-	}, [booking, payments]);
+	}, [booking]);
 
 	const hasPayment = !!enrichedBooking?.payment;
 	const isPaid = enrichedBooking?.payment?.status === 'PAID';

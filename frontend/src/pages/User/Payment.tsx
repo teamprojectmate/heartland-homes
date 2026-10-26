@@ -1,13 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
-import { getAccommodationById } from '../../api/accommodations/accommodationService';
 import { fetchBookingById } from '../../api/bookings/bookingsService';
-import { fetchPaymentsByUser } from '../../api/payments/paymentService';
 import StatusBadge from '../../components/status/StatusBadge';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { clearPaymentsError, createPayment } from '../../store/slices/paymentsSlice';
-import type { Booking, Payment as PaymentType } from '../../types';
+import type { Booking } from '../../types';
 import { calcNights, formatDate } from '../../utils/dateCalc';
 import { localized, mapCity } from '../../utils/translations';
 import '../../styles/components/payment/_payment-checkout.scss';
@@ -19,66 +17,51 @@ const Payment = () => {
 	const { bookingId } = useParams();
 
 	const { payment: newPayment, createStatus } = useAppSelector((s) => s.payments);
-	const { user } = useAppSelector((s) => s.auth);
 
 	const [booking, setBooking] = useState<Booking | null>(null);
-	const [existingPayment, setExistingPayment] = useState<PaymentType | null>(null);
 	const [loading, setLoading] = useState(true);
+	const [loadFailed, setLoadFailed] = useState(false);
 
 	useEffect(() => {
 		dispatch(clearPaymentsError());
 	}, [dispatch]);
 
 	useEffect(() => {
-		const loadData = async () => {
-			try {
-				if (!bookingId) return;
-				const data = await fetchBookingById(bookingId);
+		if (!bookingId) {
+			setLoadFailed(true);
+			setLoading(false);
+			return;
+		}
 
-				let accommodation = null;
-				try {
-					accommodation = await getAccommodationById(data.accommodationId);
-				} catch (_err) {
-					/* error handled silently */
-				}
+		let isCurrent = true;
+		setLoading(true);
+		setLoadFailed(false);
 
-				const nights = calcNights(data.checkInDate, data.checkOutDate);
-				const calculatedPrice =
-					data.totalPrice || (accommodation?.dailyRate ? accommodation.dailyRate * nights : 0);
+		// The booking already includes its accommodation and payment — no extra requests needed
+		fetchBookingById(bookingId)
+			.then((data) => {
+				if (isCurrent) setBooking(data);
+			})
+			.catch(() => {
+				if (isCurrent) setLoadFailed(true);
+			})
+			.finally(() => {
+				if (isCurrent) setLoading(false);
+			});
 
-				setBooking({
-					...data,
-					accommodation: accommodation ?? undefined,
-					totalPrice: calculatedPrice,
-				});
-
-				// Check if payment already exists for this booking
-				if (user?.id) {
-					try {
-						const paymentsData = await fetchPaymentsByUser(user.id, {
-							page: 0,
-							size: 100,
-						});
-						const found = paymentsData.content?.find((p) => p.bookingId === Number(bookingId));
-						if (found) {
-							setExistingPayment(found);
-						}
-					} catch (_err) {
-						/* no existing payment — will create new */
-					}
-				}
-			} catch (_err) {
-				/* error handled silently */
-			} finally {
-				setLoading(false);
-			}
+		return () => {
+			isCurrent = false;
 		};
-		loadData();
-	}, [bookingId, user?.id]);
+	}, [bookingId]);
+
+	const existingPayment = booking?.payment ?? null;
+	const nights = booking ? calcNights(booking.checkInDate, booking.checkOutDate) : 0;
+	// The amount the server charges wins; the client-side estimate is only a fallback for display
+	const amount = existingPayment?.amount ?? nights * (booking?.accommodation?.dailyRate ?? 0);
 
 	const handlePay = () => {
-		// If existing payment has session URL, redirect to it
-		if (existingPayment?.sessionUrl) {
+		// Reuse the Stripe session only while the payment is still pending; a canceled/failed one is recreated
+		if (existingPayment?.status === 'PENDING' && existingPayment.sessionUrl) {
 			try {
 				const url = new URL(existingPayment.sessionUrl);
 				if (url.protocol === 'https:') {
@@ -112,7 +95,20 @@ const Payment = () => {
 			</div>
 		);
 
+	if (loadFailed || !booking)
+		return (
+			<div className="payment-page">
+				<div className="payment-card payment-checkout">
+					<p className="text-center">{t('payment.loadError')}</p>
+					<Link to="/my-bookings" className="payment-button">
+						{t('payment.backToBookings')}
+					</Link>
+				</div>
+			</div>
+		);
+
 	const isPaid = existingPayment?.status === 'PAID';
+	const isCanceled = booking.status === 'CANCELED';
 
 	return (
 		<div className="payment-page">
@@ -148,15 +144,17 @@ const Payment = () => {
 						{booking?.checkOutDate ? formatDate(booking.checkOutDate) : ''}
 					</p>
 					<p className="payment-amount">
-						<span className="icon">💰</span> {booking?.totalPrice || '—'} ₴
+						<span className="icon">💰</span> {amount || '—'} ₴
 					</p>
 				</div>
 
-				{isPaid ? (
+				{isPaid && (
 					<Link to="/my-payments" className="payment-button">
 						{t('payment.backToPayments')}
 					</Link>
-				) : (
+				)}
+				{isCanceled && !isPaid && <p className="text-center">{t('payment.bookingCanceled')}</p>}
+				{!isPaid && !isCanceled && (
 					<button
 						type="button"
 						className="payment-button"

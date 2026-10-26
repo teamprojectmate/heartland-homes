@@ -1,14 +1,21 @@
 import { Transform } from 'class-transformer';
-import { IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
+import { trimString } from '../../common/transforms';
+
+const NAME_MAX_LENGTH = 100;
 
 export class UpdateUserDto {
-	@Transform(({ value }: { value: string }) => value?.trim())
+	@Transform(trimString)
 	@IsString()
+	@IsNotEmpty()
+	@MaxLength(NAME_MAX_LENGTH)
 	@IsOptional()
 	firstName?: string;
 
-	@Transform(({ value }: { value: string }) => value?.trim())
+	@Transform(trimString)
 	@IsString()
+	@IsNotEmpty()
+	@MaxLength(NAME_MAX_LENGTH)
 	@IsOptional()
 	lastName?: string;
 }

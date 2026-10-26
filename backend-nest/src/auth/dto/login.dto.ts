@@ -1,8 +1,9 @@
 import { Transform } from 'class-transformer';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { normalizeEmail } from '../../common/transforms';
 
 export class LoginDto {
-	@Transform(({ value }: { value: string }) => value.trim().toLowerCase())
+	@Transform(normalizeEmail)
 	@IsEmail()
 	email!: string;
 

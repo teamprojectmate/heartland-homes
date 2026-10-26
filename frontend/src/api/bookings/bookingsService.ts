@@ -1,7 +1,7 @@
-import type { Booking, PaginatedResponse } from '../../types';
+import type { Booking, CreateBookingPayload, PaginatedResponse } from '../../types';
 import api from '../axios';
 
-export const createBooking = async (bookingData: Record<string, unknown>): Promise<Booking> => {
+export const createBooking = async (bookingData: CreateBookingPayload): Promise<Booking> => {
 	const response = await api.post<Booking>('/bookings', bookingData);
 	return response.data;
 };
@@ -31,32 +31,19 @@ export const fetchBookingById = async (id: number | string): Promise<Booking> =>
 	return response.data;
 };
 
-export const updateBooking = async (
-	id: number,
-	booking: Record<string, unknown>,
-): Promise<Booking> => {
-	const payload = {
-		checkInDate: booking.checkInDate,
-		checkOutDate: booking.checkOutDate,
-		accommodationId: booking.accommodationId,
-		userId: booking.userId,
-		status: booking.status,
-	};
-	const response = await api.put<Booking>(`/bookings/${id}`, payload);
+export const updateBookingStatus = async (id: number, status: string): Promise<Booking> => {
+	const response = await api.put<Booking>(`/bookings/${id}`, { status });
 	return response.data;
 };
 
-export const cancelBooking = async (id: number): Promise<void> => {
-	await api.delete(`/bookings/${id}`);
+/** Cancel = status CANCELED (the record and its payment history stay); delete is a separate admin action. */
+export const cancelBooking = async (id: number): Promise<Booking> => {
+	const response = await api.put<Booking>(`/bookings/${id}`, { status: 'CANCELED' });
+	return response.data;
 };
 
 export const deleteBooking = async (id: number): Promise<void> => {
 	await api.delete(`/bookings/${id}`);
-};
-
-export const processPayment = async (bookingId: number): Promise<{ sessionUrl: string }> => {
-	const response = await api.post<{ sessionUrl: string }>(`/bookings/${bookingId}/payment`);
-	return response.data;
 };
 
 const bookingsService = {
@@ -64,10 +51,9 @@ const bookingsService = {
 	fetchMyBookings,
 	fetchBookings,
 	fetchBookingById,
-	updateBooking,
+	updateBookingStatus,
 	cancelBooking,
 	deleteBooking,
-	processPayment,
 };
 
 export default bookingsService;

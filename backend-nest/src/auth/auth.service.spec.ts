@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { ConflictException, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
@@ -5,6 +6,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import type { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
+import { REFRESH_TOKEN_TYPE } from './auth.constants';
 import { AuthService } from './auth.service';
 
 jest.mock('bcrypt', () => ({
@@ -138,6 +140,70 @@ describe('AuthService', () => {
 			expect(result.refreshToken).toBe('mock-jwt-token');
 			expect(result.user.id).toBe(mockUser.id);
 			expect(mockedBcrypt.compare).toHaveBeenCalledWith('password123', mockUser.password);
+		});
+	});
+
+	describe('refresh token', () => {
+		const sha256 = (value: string): string => createHash('sha256').update(value).digest('hex');
+
+		it('should sign a separate refresh token with tokenType and jti, and store its SHA-256 hash', async () => {
+			mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
+			mockedBcrypt.compare.mockResolvedValue(true as never);
+			mockJwtService.sign.mockReturnValueOnce('access-token').mockReturnValueOnce('refresh-token');
+
+			const result = await service.login({ email: mockUser.email, password: 'password123' });
+
+			expect(result.refreshToken).toBe('refresh-token');
+			expect(mockJwtService.sign).toHaveBeenNthCalledWith(
+				2,
+				expect.objectContaining({
+					sub: mockUser.id,
+					tokenType: REFRESH_TOKEN_TYPE,
+					jti: expect.any(String),
+				}),
+				expect.objectContaining({ expiresIn: '7d' }),
+			);
+			expect(mockPrismaService.user.update).toHaveBeenCalledWith({
+				where: { id: mockUser.id },
+				data: { refreshToken: sha256('refresh-token') },
+			});
+		});
+
+		it('should reject an access token sent to /auth/refresh', async () => {
+			mockJwtService.verify.mockReturnValue({ sub: 1, email: mockUser.email, role: 'CUSTOMER' });
+
+			await expect(service.refresh('access-token')).rejects.toThrow(UnauthorizedException);
+			expect(mockPrismaService.user.findUnique).not.toHaveBeenCalled();
+		});
+
+		it('should reject a rotated (old) refresh token', async () => {
+			mockJwtService.verify.mockReturnValue({ sub: 1, tokenType: REFRESH_TOKEN_TYPE, jti: 'old' });
+			mockPrismaService.user.findUnique.mockResolvedValue({
+				...mockUser,
+				refreshToken: sha256('new-refresh-token'),
+			});
+
+			await expect(service.refresh('old-refresh-token')).rejects.toThrow(UnauthorizedException);
+		});
+
+		it('should issue new tokens for the current refresh token', async () => {
+			mockJwtService.verify.mockReturnValue({ sub: 1, tokenType: REFRESH_TOKEN_TYPE, jti: 'cur' });
+			mockPrismaService.user.findUnique.mockResolvedValue({
+				...mockUser,
+				refreshToken: sha256('current-refresh-token'),
+			});
+
+			const result = await service.refresh('current-refresh-token');
+
+			expect(result.user.id).toBe(mockUser.id);
+			expect(mockPrismaService.user.update).toHaveBeenCalledTimes(1);
+		});
+
+		it('should reject refresh after logout (no stored hash)', async () => {
+			mockJwtService.verify.mockReturnValue({ sub: 1, tokenType: REFRESH_TOKEN_TYPE, jti: 'x' });
+			mockPrismaService.user.findUnique.mockResolvedValue({ ...mockUser, refreshToken: null });
+
+			await expect(service.refresh('any-token')).rejects.toThrow(UnauthorizedException);
 		});
 	});
 });

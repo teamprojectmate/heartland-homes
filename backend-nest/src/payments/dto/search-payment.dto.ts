@@ -1,5 +1,6 @@
+import { PaymentStatus } from '@prisma/client';
 import { Type } from 'class-transformer';
-import { IsInt, IsOptional, IsPositive } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsPositive } from 'class-validator';
 import { PaginationDto } from '../../common/dto/pagination.dto';
 
 export class SearchPaymentDto extends PaginationDto {
@@ -8,4 +9,8 @@ export class SearchPaymentDto extends PaginationDto {
 	@IsInt()
 	@IsPositive()
 	userId?: number;
+
+	@IsEnum(PaymentStatus)
+	@IsOptional()
+	status?: PaymentStatus;
 }

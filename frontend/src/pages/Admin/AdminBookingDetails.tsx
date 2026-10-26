@@ -4,6 +4,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { getAccommodationById } from '../../api/accommodations/accommodationService';
 import { fetchBookingById } from '../../api/bookings/bookingsService';
 import ErrorState from '../../components/ErrorState';
+import Notification from '../../components/Notification';
 import StatusSelect from '../../components/selects/StatusSelect';
 import { FormSkeleton } from '../../components/skeletons';
 import { useAppDispatch } from '../../store/hooks';
@@ -57,17 +58,26 @@ const AdminBookingDetails = () => {
 		fetchData();
 	}, [id, t]);
 
-	const handleStatusChange = (newStatus: string) => {
+	const [actionError, setActionError] = useState<string | null>(null);
+
+	// Update the page only after the server accepted the change
+	const handleStatusChange = async (newStatus: string) => {
 		if (!booking) return;
-		dispatch(updateBookingStatus({ booking, status: newStatus }));
-		setBooking({ ...booking, status: newStatus as BookingStatus });
+		const result = await dispatch(updateBookingStatus({ booking, status: newStatus }));
+		if (updateBookingStatus.fulfilled.match(result)) {
+			setBooking({ ...booking, status: newStatus as BookingStatus });
+		} else {
+			setActionError((result.payload as string | undefined) ?? t('admin.updateError'));
+		}
 	};
 
-	const handleDelete = () => {
-		if (!booking) return;
-		if (window.confirm(t('booking.deleteConfirm'))) {
-			dispatch(deleteBooking(booking.id));
+	const handleDelete = async () => {
+		if (!booking || !window.confirm(t('booking.deleteConfirm'))) return;
+		const result = await dispatch(deleteBooking(booking.id));
+		if (deleteBooking.fulfilled.match(result)) {
 			navigate('/admin/bookings');
+		} else {
+			setActionError((result.payload as string | undefined) ?? t('booking.deleteError'));
 		}
 	};
 
@@ -89,6 +99,9 @@ const AdminBookingDetails = () => {
 
 	return (
 		<div className="booking-details-page container">
+			{actionError && (
+				<Notification message={actionError} type="danger" onClose={() => setActionError(null)} />
+			)}
 			<div className="booking-details-header">
 				<Link to="/admin/bookings" className="btn-secondary" style={{ marginBottom: '1rem' }}>
 					← {t('booking.backToList')}
