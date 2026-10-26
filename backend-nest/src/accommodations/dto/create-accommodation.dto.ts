@@ -7,17 +7,23 @@ import {
 	IsNotEmpty,
 	IsNumber,
 	IsOptional,
+	IsPositive,
 	IsString,
+	Max,
 	Min,
 } from 'class-validator';
+import { trimString } from '../../common/transforms';
+
+const MAX_LATITUDE = 90;
+const MAX_LONGITUDE = 180;
 
 export class CreateAccommodationDto {
-	@Transform(({ value }: { value: string }) => value.trim())
+	@Transform(trimString)
 	@IsString()
 	@IsNotEmpty()
 	name!: string;
 
-	@Transform(({ value }: { value: string }) => value?.trim())
+	@Transform(trimString)
 	@IsString()
 	@IsOptional()
 	nameUk?: string;
@@ -25,17 +31,17 @@ export class CreateAccommodationDto {
 	@IsEnum(AccommodationType)
 	type!: AccommodationType;
 
-	@Transform(({ value }: { value: string }) => value.trim())
+	@Transform(trimString)
 	@IsString()
 	@IsNotEmpty()
 	city!: string;
 
-	@Transform(({ value }: { value: string }) => value.trim())
+	@Transform(trimString)
 	@IsString()
 	@IsOptional()
 	location?: string;
 
-	@Transform(({ value }: { value: string }) => value?.trim())
+	@Transform(trimString)
 	@IsString()
 	@IsOptional()
 	locationUk?: string;
@@ -43,11 +49,15 @@ export class CreateAccommodationDto {
 	@Transform(({ value }: { value: string }) => (value ? parseFloat(value) : undefined))
 	@IsNumber()
 	@IsOptional()
+	@Min(-MAX_LATITUDE)
+	@Max(MAX_LATITUDE)
 	latitude?: number;
 
 	@Transform(({ value }: { value: string }) => (value ? parseFloat(value) : undefined))
 	@IsNumber()
 	@IsOptional()
+	@Min(-MAX_LONGITUDE)
+	@Max(MAX_LONGITUDE)
 	longitude?: number;
 
 	@IsString()
@@ -61,7 +71,7 @@ export class CreateAccommodationDto {
 	bedrooms?: number;
 
 	@IsNumber()
-	@Min(0)
+	@IsPositive()
 	dailyRate!: number;
 
 	@IsArray()

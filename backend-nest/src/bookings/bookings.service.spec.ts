@@ -22,6 +22,8 @@ const mockPrismaService = {
 	accommodation: {
 		findUnique: jest.fn(),
 	},
+	$queryRaw: jest.fn(),
+	$transaction: jest.fn(),
 };
 
 const mockBooking = {
@@ -56,6 +58,10 @@ describe('BookingsService', () => {
 
 	beforeEach(async () => {
 		jest.clearAllMocks();
+		// Interactive transaction: run the callback with the same mock client
+		mockPrismaService.$transaction.mockImplementation(
+			(callback: (tx: typeof mockPrismaService) => unknown) => callback(mockPrismaService),
+		);
 
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [BookingsService, { provide: PrismaService, useValue: mockPrismaService }],
@@ -80,6 +86,30 @@ describe('BookingsService', () => {
 			mockPrismaService.booking.findUnique.mockResolvedValue(null);
 
 			await expect(service.findOne(999)).rejects.toThrow(NotFoundException);
+		});
+	});
+
+	describe('findOneForUser', () => {
+		it('should return the booking to its owner', async () => {
+			mockPrismaService.booking.findUnique.mockResolvedValue(mockBooking);
+
+			await expect(service.findOneForUser(1, mockBooking.userId, 'CUSTOMER')).resolves.toEqual(
+				mockBooking,
+			);
+		});
+
+		it('should return any booking to a MANAGER', async () => {
+			mockPrismaService.booking.findUnique.mockResolvedValue(mockBooking);
+
+			await expect(service.findOneForUser(1, 999, 'MANAGER')).resolves.toEqual(mockBooking);
+		});
+
+		it('should throw ForbiddenException for another customer', async () => {
+			mockPrismaService.booking.findUnique.mockResolvedValue(mockBooking);
+
+			await expect(service.findOneForUser(1, 999, 'CUSTOMER')).rejects.toThrow(
+				'You can only view your own bookings',
+			);
 		});
 	});
 
@@ -160,6 +190,8 @@ describe('BookingsService', () => {
 			const result = await service.create(createDto, 100);
 
 			expect(result).toEqual(mockBooking);
+			expect(mockPrismaService.$transaction).toHaveBeenCalledTimes(1);
+			expect(mockPrismaService.$queryRaw).toHaveBeenCalledTimes(1);
 			expect(mockPrismaService.booking.create).toHaveBeenCalledWith(
 				expect.objectContaining({
 					data: expect.objectContaining({
@@ -172,6 +204,16 @@ describe('BookingsService', () => {
 	});
 
 	describe('update', () => {
+		const futureCheckIn = new Date();
+		futureCheckIn.setDate(futureCheckIn.getDate() + 20);
+		const futureCheckOut = new Date();
+		futureCheckOut.setDate(futureCheckOut.getDate() + 25);
+		const pastBooking = {
+			...mockBooking,
+			checkInDate: new Date('2020-01-01'),
+			checkOutDate: new Date('2020-01-05'),
+		};
+
 		it('should throw ForbiddenException when user is not owner and not MANAGER', async () => {
 			mockPrismaService.booking.findUnique.mockResolvedValue(mockBooking);
 
@@ -181,18 +223,120 @@ describe('BookingsService', () => {
 			);
 		});
 
-		it('should throw BadRequestException when booking has PAID payment', async () => {
+		it('should throw BadRequestException when changing dates of a PAID booking', async () => {
 			const bookingWithPaidPayment = {
 				...mockBooking,
 				payment: { status: 'PAID' } as Payment,
 			};
 			mockPrismaService.booking.findUnique.mockResolvedValue(bookingWithPaidPayment);
+			const dto = { checkInDate: futureCheckIn, checkOutDate: futureCheckOut };
 
-			await expect(service.update(1, {}, mockBooking.userId, 'CUSTOMER')).rejects.toThrow(
+			await expect(service.update(1, dto, mockBooking.userId, 'CUSTOMER')).rejects.toThrow(
 				BadRequestException,
 			);
-			await expect(service.update(1, {}, mockBooking.userId, 'CUSTOMER')).rejects.toThrow(
+			await expect(service.update(1, dto, mockBooking.userId, 'CUSTOMER')).rejects.toThrow(
 				'Cannot modify a paid booking',
+			);
+		});
+
+		it('should forbid a customer from changing the booking status', async () => {
+			mockPrismaService.booking.findUnique.mockResolvedValue(mockBooking);
+
+			await expect(
+				service.update(1, { status: 'CONFIRMED' }, mockBooking.userId, 'CUSTOMER'),
+			).rejects.toThrow('Only a manager can change booking status');
+			expect(mockPrismaService.booking.update).not.toHaveBeenCalled();
+		});
+
+		it('should let a customer cancel their own unpaid booking', async () => {
+			mockPrismaService.booking.findUnique.mockResolvedValue(mockBooking);
+			mockPrismaService.booking.update.mockResolvedValue({ ...mockBooking, status: 'CANCELED' });
+
+			await service.update(1, { status: 'CANCELED' }, mockBooking.userId, 'CUSTOMER');
+
+			expect(mockPrismaService.booking.update).toHaveBeenCalledWith(
+				expect.objectContaining({ data: { status: 'CANCELED' } }),
+			);
+		});
+
+		it('should not let a customer cancel a paid booking', async () => {
+			mockPrismaService.booking.findUnique.mockResolvedValue({
+				...mockBooking,
+				payment: { status: 'PAID' } as Payment,
+			});
+
+			await expect(
+				service.update(1, { status: 'CANCELED' }, mockBooking.userId, 'CUSTOMER'),
+			).rejects.toThrow('A paid booking cannot be canceled online');
+		});
+
+		it('should reject changing the accommodation of a booking', async () => {
+			mockPrismaService.booking.findUnique.mockResolvedValue(mockBooking);
+
+			await expect(
+				service.update(1, { accommodationId: 99 }, mockBooking.userId, 'CUSTOMER'),
+			).rejects.toThrow('Accommodation of a booking cannot be changed');
+		});
+
+		it('should let a MANAGER complete a past paid booking when the dates are resent unchanged', async () => {
+			const paidPastBooking = { ...pastBooking, payment: { status: 'PAID' } as Payment };
+			mockPrismaService.booking.findUnique.mockResolvedValue(paidPastBooking);
+			mockPrismaService.booking.update.mockResolvedValue({
+				...paidPastBooking,
+				status: 'COMPLETED',
+			});
+
+			await service.update(
+				1,
+				{
+					status: 'COMPLETED',
+					accommodationId: pastBooking.accommodationId,
+					checkInDate: new Date(pastBooking.checkInDate),
+					checkOutDate: new Date(pastBooking.checkOutDate),
+				},
+				999,
+				'MANAGER',
+			);
+
+			expect(mockPrismaService.booking.update).toHaveBeenCalledWith(
+				expect.objectContaining({ data: { status: 'COMPLETED' } }),
+			);
+			expect(mockPrismaService.$transaction).not.toHaveBeenCalled();
+		});
+
+		it('should check overlap inside a locked transaction when dates change', async () => {
+			mockPrismaService.booking.findUnique.mockResolvedValue(mockBooking);
+			mockPrismaService.booking.findFirst.mockResolvedValue(null);
+			mockPrismaService.booking.update.mockResolvedValue(mockBooking);
+			const dto = { checkInDate: futureCheckIn, checkOutDate: futureCheckOut };
+
+			await service.update(1, dto, mockBooking.userId, 'CUSTOMER');
+
+			expect(mockPrismaService.$queryRaw).toHaveBeenCalledTimes(1);
+			expect(mockPrismaService.booking.findFirst).toHaveBeenCalledWith({
+				where: expect.objectContaining({ accommodationId: 10, id: { not: 1 } }),
+			});
+		});
+
+		it('should throw ConflictException when new dates overlap', async () => {
+			mockPrismaService.booking.findUnique.mockResolvedValue(mockBooking);
+			mockPrismaService.booking.findFirst.mockResolvedValue({ ...mockBooking, id: 2 });
+			const dto = { checkInDate: futureCheckIn, checkOutDate: futureCheckOut };
+
+			await expect(service.update(1, dto, mockBooking.userId, 'CUSTOMER')).rejects.toThrow(
+				ConflictException,
+			);
+		});
+
+		it('should check overlap when a MANAGER reactivates a canceled booking', async () => {
+			mockPrismaService.booking.findUnique.mockResolvedValue({
+				...mockBooking,
+				status: 'CANCELED',
+			});
+			mockPrismaService.booking.findFirst.mockResolvedValue({ ...mockBooking, id: 2 });
+
+			await expect(service.update(1, { status: 'PENDING' }, 999, 'MANAGER')).rejects.toThrow(
+				ConflictException,
 			);
 		});
 
@@ -223,6 +367,16 @@ describe('BookingsService', () => {
 			await expect(service.remove(1, 999, 'CUSTOMER')).rejects.toThrow(
 				'You can only cancel your own bookings',
 			);
+		});
+
+		it('should refuse to delete a paid booking', async () => {
+			mockPrismaService.booking.findUnique.mockResolvedValue({
+				...mockBooking,
+				payment: { status: 'PAID' } as Payment,
+			});
+
+			await expect(service.remove(1, 999, 'MANAGER')).rejects.toThrow(ConflictException);
+			expect(mockPrismaService.booking.delete).not.toHaveBeenCalled();
 		});
 
 		it('should delete booking when user is the owner', async () => {

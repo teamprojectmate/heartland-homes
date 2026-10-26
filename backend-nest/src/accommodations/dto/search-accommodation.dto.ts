@@ -2,9 +2,10 @@ import { AccommodationStatus, AccommodationType } from '@prisma/client';
 import { Transform, Type } from 'class-transformer';
 import { IsEnum, IsNumber, IsOptional, IsString, Min } from 'class-validator';
 import { PaginationDto } from '../../common/dto/pagination.dto';
+import { trimString } from '../../common/transforms';
 
 export class SearchAccommodationDto extends PaginationDto {
-	@Transform(({ value }: { value: string }) => value?.trim())
+	@Transform(trimString)
 	@IsString()
 	@IsOptional()
 	city?: string;

@@ -1,12 +1,13 @@
 import {
 	BadGatewayException,
 	BadRequestException,
+	ForbiddenException,
 	Injectable,
 	Logger,
 	NotFoundException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import type { Prisma } from '@prisma/client';
+import type { Prisma, Role } from '@prisma/client';
 import Stripe from 'stripe';
 import { PaginatedResponse } from '../common/dto/pagination.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -43,6 +44,10 @@ export class PaymentsService {
 			where.booking = { userId: dto.userId };
 		}
 
+		if (dto.status) {
+			where.status = dto.status;
+		}
+
 		const [items, total] = await Promise.all([
 			this.prisma.payment.findMany({
 				where,
@@ -60,6 +65,7 @@ export class PaymentsService {
 	async findByUser(userId: number, dto: SearchPaymentDto) {
 		const where: Prisma.PaymentWhereInput = {
 			booking: { userId },
+			...(dto.status && { status: dto.status }),
 		};
 
 		const [items, total] = await Promise.all([
@@ -88,6 +94,10 @@ export class PaymentsService {
 
 		if (booking.userId !== userId) {
 			throw new BadRequestException('You can only pay for your own bookings');
+		}
+
+		if (booking.status === 'CANCELED') {
+			throw new BadRequestException('Cannot pay for a canceled booking');
 		}
 
 		if (booking.payment && booking.payment.status !== 'CANCELED') {
@@ -174,13 +184,18 @@ export class PaymentsService {
 		};
 	}
 
-	async cancel(paymentId: number) {
+	async cancel(paymentId: number, userId: number, userRole: Role) {
 		const payment = await this.prisma.payment.findUnique({
 			where: { id: paymentId },
+			include: { booking: { select: { userId: true } } },
 		});
 
 		if (!payment) {
 			throw new NotFoundException('Payment not found');
+		}
+
+		if (payment.booking.userId !== userId && userRole !== 'MANAGER') {
+			throw new ForbiddenException('You can only cancel your own payments');
 		}
 
 		if (payment.status === 'PAID') {
@@ -193,40 +208,6 @@ export class PaymentsService {
 			where: { id: paymentId },
 			data: { status: 'CANCELED' },
 		});
-	}
-
-	async processPayment(bookingId: number) {
-		const booking = await this.prisma.booking.findUnique({
-			where: { id: bookingId },
-			include: { payment: true },
-		});
-
-		if (!booking) {
-			throw new NotFoundException('Booking not found');
-		}
-
-		if (!booking.payment) {
-			throw new BadRequestException('No payment found for this booking');
-		}
-
-		if (booking.payment.status === 'PAID') {
-			throw new BadRequestException('Payment already processed');
-		}
-
-		this.logger.log(
-			`Payment #${booking.payment.id} processed: PAID, booking #${bookingId}: CONFIRMED`,
-		);
-
-		return this.prisma.$transaction([
-			this.prisma.payment.update({
-				where: { id: booking.payment.id },
-				data: { status: 'PAID' },
-			}),
-			this.prisma.booking.update({
-				where: { id: bookingId },
-				data: { status: 'CONFIRMED' },
-			}),
-		]);
 	}
 
 	async handleStripeWebhook(payload: Buffer, signature: string) {
@@ -245,11 +226,17 @@ export class PaymentsService {
 				'Invalid Stripe webhook signature',
 				err instanceof Error ? err.message : String(err),
 			);
-			return;
+			throw new BadRequestException('Invalid webhook signature');
 		}
 
 		if (event.type === 'checkout.session.completed') {
 			const session = event.data.object;
+
+			if (session.payment_status !== 'paid') {
+				this.logger.log(`Webhook: session ${session.id} is not paid yet, skipping`);
+				return;
+			}
+
 			const rawPaymentId = session.metadata?.['paymentId'];
 
 			if (!rawPaymentId || !NUMERIC_PATTERN.test(rawPaymentId)) {

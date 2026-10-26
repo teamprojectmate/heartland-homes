@@ -1,6 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
+import type { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
@@ -8,6 +9,8 @@ import { GlobalExceptionFilter } from './common/filters/http-exception.filter';
 
 const DEFAULT_PORT = 3000;
 const DEFAULT_FRONTEND_URL = 'http://localhost:5173';
+/** Render puts one proxy in front of the app; without this every client shares the proxy IP for rate limiting. */
+const TRUSTED_PROXY_HOPS = 1;
 
 function parseCorsOrigins(configService: ConfigService): string[] {
 	const raw = configService.get<string>('FRONTEND_URL', DEFAULT_FRONTEND_URL);
@@ -15,9 +18,10 @@ function parseCorsOrigins(configService: ConfigService): string[] {
 }
 
 async function bootstrap() {
-	const app = await NestFactory.create(AppModule, {
+	const app = await NestFactory.create<NestExpressApplication>(AppModule, {
 		rawBody: true,
 	});
+	app.set('trust proxy', TRUSTED_PROXY_HOPS);
 	const configService = app.get(ConfigService);
 
 	app.use(helmet());

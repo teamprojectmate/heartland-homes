@@ -1,4 +1,4 @@
-import { ForbiddenException, NotFoundException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { PrismaService } from '../prisma/prisma.service';
 import { AccommodationsService } from './accommodations.service';
@@ -10,6 +10,9 @@ const mockPrismaService = {
 		create: jest.fn(),
 		update: jest.fn(),
 		delete: jest.fn(),
+		count: jest.fn(),
+	},
+	booking: {
 		count: jest.fn(),
 	},
 };
@@ -81,7 +84,7 @@ describe('AccommodationsService', () => {
 			);
 		});
 
-		it('should allow owner to update their accommodation', async () => {
+		it('should send an owner-edited accommodation back to moderation', async () => {
 			mockPrismaService.accommodation.findUnique.mockResolvedValue(mockAccommodation);
 			const updated = { ...mockAccommodation, name: 'Updated Cabin' };
 			mockPrismaService.accommodation.update.mockResolvedValue(updated);
@@ -96,17 +99,21 @@ describe('AccommodationsService', () => {
 			expect(result.name).toBe('Updated Cabin');
 			expect(mockPrismaService.accommodation.update).toHaveBeenCalledWith({
 				where: { id: 1 },
-				data: { name: 'Updated Cabin' },
+				data: { name: 'Updated Cabin', status: 'REQUIRES_VERIFICATION' },
 			});
 		});
 
-		it('should allow MANAGER to update any accommodation', async () => {
+		it('should allow MANAGER to update any accommodation without changing its status', async () => {
 			mockPrismaService.accommodation.findUnique.mockResolvedValue(mockAccommodation);
 			mockPrismaService.accommodation.update.mockResolvedValue(mockAccommodation);
 
 			const result = await service.update(1, { name: 'Updated' }, 999, 'MANAGER');
 
 			expect(result).toEqual(mockAccommodation);
+			expect(mockPrismaService.accommodation.update).toHaveBeenCalledWith({
+				where: { id: 1 },
+				data: { name: 'Updated' },
+			});
 		});
 	});
 
@@ -133,11 +140,36 @@ describe('AccommodationsService', () => {
 	});
 
 	describe('remove', () => {
+		it('should let the owner delete their accommodation', async () => {
+			mockPrismaService.accommodation.findUnique.mockResolvedValue(mockAccommodation);
+			mockPrismaService.booking.count.mockResolvedValue(0);
+
+			await expect(service.remove(1, mockAccommodation.userId, 'CUSTOMER')).resolves.toEqual({
+				message: 'Accommodation deleted',
+			});
+		});
+
+		it('should forbid deleting another owner accommodation', async () => {
+			mockPrismaService.accommodation.findUnique.mockResolvedValue(mockAccommodation);
+
+			await expect(service.remove(1, 999, 'CUSTOMER')).rejects.toThrow(ForbiddenException);
+			expect(mockPrismaService.accommodation.delete).not.toHaveBeenCalled();
+		});
+
+		it('should refuse to delete an accommodation with paid bookings', async () => {
+			mockPrismaService.accommodation.findUnique.mockResolvedValue(mockAccommodation);
+			mockPrismaService.booking.count.mockResolvedValue(2);
+
+			await expect(service.remove(1, 999, 'MANAGER')).rejects.toThrow(ConflictException);
+			expect(mockPrismaService.accommodation.delete).not.toHaveBeenCalled();
+		});
+
 		it('should delete accommodation and return success message', async () => {
 			mockPrismaService.accommodation.findUnique.mockResolvedValue(mockAccommodation);
+			mockPrismaService.booking.count.mockResolvedValue(0);
 			mockPrismaService.accommodation.delete.mockResolvedValue(mockAccommodation);
 
-			const result = await service.remove(1);
+			const result = await service.remove(1, 999, 'MANAGER');
 
 			expect(result).toEqual({ message: 'Accommodation deleted' });
 			expect(mockPrismaService.accommodation.delete).toHaveBeenCalledWith({
@@ -148,7 +180,7 @@ describe('AccommodationsService', () => {
 		it('should throw NotFoundException when accommodation does not exist', async () => {
 			mockPrismaService.accommodation.findUnique.mockResolvedValue(null);
 
-			await expect(service.remove(999)).rejects.toThrow(NotFoundException);
+			await expect(service.remove(999, 999, 'MANAGER')).rejects.toThrow(NotFoundException);
 		});
 	});
 });
