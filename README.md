@@ -213,11 +213,11 @@ JWT_SECRET=your-secret
 
 | Module | Endpoints |
 |--------|-----------|
-| Auth | `POST /auth/registration`, `POST /auth/login` |
+| Auth | `POST /auth/registration`, `POST /auth/login`, `POST /auth/refresh`, `POST /auth/logout` |
 | Users | `GET/PUT /users/me`, `GET /users`, `PUT /users/:id/role`, `DELETE /users/:id` |
 | Accommodations | `GET/POST /accommodations`, `GET/PUT/DELETE /accommodations/:id`, `GET /accommodations/search`, `PATCH /accommodations/:id/status` |
-| Bookings | `GET/POST /bookings`, `GET/PUT/DELETE /bookings/:id`, `GET /bookings/my`, `POST /bookings/:id/payment` |
-| Payments | `POST /payments`, `GET /payments`, `POST /payments/webhook` |
+| Bookings | `GET/POST /bookings`, `GET/PUT/DELETE /bookings/:id`, `GET /bookings/my` |
+| Payments | `POST /payments`, `GET /payments`, `GET /payments/cancel`, `POST /payments/webhook` |
 
 ## Testing
 
